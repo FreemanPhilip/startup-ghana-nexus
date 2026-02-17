@@ -2,6 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Menu, X, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navLinks = [
   { label: "Startups", href: "#startups" },
@@ -13,6 +15,7 @@ const navLinks = [
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { session } = useAuth();
 
   return (
     <motion.nav
@@ -45,12 +48,24 @@ const Navbar = () => {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Button variant="ghost" size="sm">
-            Sign In
-          </Button>
-          <Button size="sm" className="bg-gradient-gold font-semibold text-navy hover:opacity-90">
-            Join AGS
-          </Button>
+          {session ? (
+            <Link to="/dashboard">
+              <Button size="sm" className="bg-gradient-gold font-semibold text-navy hover:opacity-90">
+                Dashboard
+              </Button>
+            </Link>
+          ) : (
+            <>
+              <Link to="/auth">
+                <Button variant="ghost" size="sm">Sign In</Button>
+              </Link>
+              <Link to="/auth">
+                <Button size="sm" className="bg-gradient-gold font-semibold text-navy hover:opacity-90">
+                  Join AGS
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -82,8 +97,20 @@ const Navbar = () => {
               </a>
             ))}
             <div className="mt-2 flex flex-col gap-2">
-              <Button variant="ghost" size="sm">Sign In</Button>
-              <Button size="sm" className="bg-gradient-gold font-semibold text-navy">Join AGS</Button>
+              {session ? (
+                <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
+                  <Button size="sm" className="w-full bg-gradient-gold font-semibold text-navy">Dashboard</Button>
+                </Link>
+              ) : (
+                <>
+                  <Link to="/auth" onClick={() => setMobileOpen(false)}>
+                    <Button variant="ghost" size="sm" className="w-full">Sign In</Button>
+                  </Link>
+                  <Link to="/auth" onClick={() => setMobileOpen(false)}>
+                    <Button size="sm" className="w-full bg-gradient-gold font-semibold text-navy">Join AGS</Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </motion.div>
