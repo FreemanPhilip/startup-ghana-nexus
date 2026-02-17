@@ -14,16 +14,141 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          availability: string | null
+          avatar_url: string | null
+          bio: string | null
+          company_name: string | null
+          company_stage: string | null
+          created_at: string
+          expertise: string[] | null
+          full_name: string | null
+          funding_required: number | null
+          headline: string | null
+          id: string
+          industry: string | null
+          investment_focus: string | null
+          investment_range: string | null
+          linkedin_url: string | null
+          location: string | null
+          membership: Database["public"]["Enums"]["membership_type"]
+          onboarding_step: Database["public"]["Enums"]["onboarding_step"]
+          phone: string | null
+          portfolio_size: number | null
+          team_size: number | null
+          updated_at: string
+          user_id: string
+          verification: Database["public"]["Enums"]["verification_status"]
+          website_url: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          availability?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          company_name?: string | null
+          company_stage?: string | null
+          created_at?: string
+          expertise?: string[] | null
+          full_name?: string | null
+          funding_required?: number | null
+          headline?: string | null
+          id?: string
+          industry?: string | null
+          investment_focus?: string | null
+          investment_range?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          membership?: Database["public"]["Enums"]["membership_type"]
+          onboarding_step?: Database["public"]["Enums"]["onboarding_step"]
+          phone?: string | null
+          portfolio_size?: number | null
+          team_size?: number | null
+          updated_at?: string
+          user_id: string
+          verification?: Database["public"]["Enums"]["verification_status"]
+          website_url?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          availability?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          company_name?: string | null
+          company_stage?: string | null
+          created_at?: string
+          expertise?: string[] | null
+          full_name?: string | null
+          funding_required?: number | null
+          headline?: string | null
+          id?: string
+          industry?: string | null
+          investment_focus?: string | null
+          investment_range?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          membership?: Database["public"]["Enums"]["membership_type"]
+          onboarding_step?: Database["public"]["Enums"]["onboarding_step"]
+          phone?: string | null
+          portfolio_size?: number | null
+          team_size?: number | null
+          updated_at?: string
+          user_id?: string
+          verification?: Database["public"]["Enums"]["verification_status"]
+          website_url?: string | null
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role:
+        | "startup_founder"
+        | "investor"
+        | "mentor"
+        | "ecosystem_partner"
+        | "service_provider"
+        | "admin"
+        | "member"
+      membership_type: "standard" | "premium"
+      onboarding_step:
+        | "role_selection"
+        | "profile_details"
+        | "kyc"
+        | "subscription"
+        | "completed"
+      verification_status: "unverified" | "pending" | "verified"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +275,25 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: [
+        "startup_founder",
+        "investor",
+        "mentor",
+        "ecosystem_partner",
+        "service_provider",
+        "admin",
+        "member",
+      ],
+      membership_type: ["standard", "premium"],
+      onboarding_step: [
+        "role_selection",
+        "profile_details",
+        "kyc",
+        "subscription",
+        "completed",
+      ],
+      verification_status: ["unverified", "pending", "verified"],
+    },
   },
 } as const
