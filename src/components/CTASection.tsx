@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 const CTASection = () => {
   return (
-    <section className="bg-gradient-hero py-24">
+    <section className="dark bg-gradient-hero py-24">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -15,10 +15,10 @@ const CTASection = () => {
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-gold animate-float">
             <Star className="h-8 w-8 text-navy" fill="currentColor" />
           </div>
-          <h2 className="font-display text-3xl font-bold text-primary-foreground sm:text-4xl md:text-5xl">
+          <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl md:text-5xl">
             Ready to Join Ghana's Startup Movement?
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-primary-foreground/60">
+          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
             Whether you're a founder, investor, or mentor — AGS is your gateway
             to opportunities, connections, and growth.
           </p>
@@ -33,7 +33,7 @@ const CTASection = () => {
             <Button
               variant="outline"
               size="lg"
-              className="border-primary-foreground/20 px-8 text-base text-primary-foreground hover:bg-primary-foreground/10"
+              className="border-foreground/20 px-8 text-base text-foreground hover:bg-foreground/10"
             >
               Learn More
             </Button>
