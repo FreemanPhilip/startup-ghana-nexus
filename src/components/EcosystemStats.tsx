@@ -12,7 +12,7 @@ const stats = [
 
 const EcosystemStats = () => {
   return (
-    <section id="ecosystem" className="bg-gradient-hero py-24">
+    <section id="ecosystem" className="dark bg-gradient-hero py-24">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -23,10 +23,10 @@ const EcosystemStats = () => {
           <span className="mb-3 inline-block rounded-full border border-emerald/30 bg-emerald/10 px-4 py-1 text-sm font-semibold text-emerald-light">
             Ecosystem Intelligence
           </span>
-          <h2 className="font-display text-3xl font-bold text-primary-foreground sm:text-4xl md:text-5xl">
+          <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl md:text-5xl">
             Ghana's Startup Ecosystem at a Glance
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-primary-foreground/60">
+          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
             Real-time data and insights powering smarter decisions for founders,
             investors, and policymakers.
           </p>
@@ -40,7 +40,7 @@ const EcosystemStats = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08 }}
-              className="rounded-2xl border border-primary-foreground/10 bg-primary-foreground/5 p-6 backdrop-blur-sm"
+              className="rounded-2xl border border-foreground/10 bg-foreground/5 p-6 backdrop-blur-sm"
             >
               <div className="mb-3 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gold/10">
@@ -50,10 +50,10 @@ const EcosystemStats = () => {
                   {stat.change}
                 </span>
               </div>
-              <p className="font-display text-3xl font-bold text-primary-foreground">
+              <p className="font-display text-3xl font-bold text-foreground">
                 {stat.value}
               </p>
-              <p className="mt-1 text-sm text-primary-foreground/50">
+              <p className="mt-1 text-sm text-muted-foreground">
                 {stat.label}
               </p>
             </motion.div>

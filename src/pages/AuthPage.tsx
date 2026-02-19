@@ -36,7 +36,7 @@ const AuthPage = () => {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate("/onboarding");
+        navigate("/dashboard");
       }
     } catch (error: any) {
       toast.error(error.message);
@@ -59,7 +59,7 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-hero">
+    <div className="dark flex min-h-screen bg-gradient-hero">
       {/* Left decorative panel */}
       <div className="hidden w-1/2 items-center justify-center lg:flex">
         <motion.div
@@ -71,16 +71,16 @@ const AuthPage = () => {
           <div className="mb-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-gold">
             <Star className="h-7 w-7 text-navy" fill="currentColor" />
           </div>
-          <h1 className="font-display text-4xl font-bold leading-tight text-primary-foreground">
+          <h1 className="font-display text-4xl font-bold leading-tight text-foreground">
             Join Ghana's Startup Ecosystem
           </h1>
-          <p className="mt-4 text-lg text-primary-foreground/60">
+          <p className="mt-4 text-lg text-muted-foreground">
             Connect with investors, find mentors, and access opportunities that
             accelerate your growth.
           </p>
           <div className="mt-10 space-y-4">
             {["500+ Startups Connected", "200+ Active Investors", "$25M+ Funding Raised"].map((stat) => (
-              <div key={stat} className="flex items-center gap-3 text-primary-foreground/70">
+              <div key={stat} className="flex items-center gap-3 text-foreground/70">
                 <div className="h-2 w-2 rounded-full bg-gold" />
                 <span className="text-sm">{stat}</span>
               </div>
@@ -214,7 +214,7 @@ const AuthPage = () => {
             </p>
           </div>
 
-          <p className="mt-4 text-center text-xs text-primary-foreground/40">
+          <p className="mt-4 text-center text-xs text-muted-foreground">
             By continuing, you agree to AGS's Terms of Service and Privacy Policy.
           </p>
         </motion.div>
