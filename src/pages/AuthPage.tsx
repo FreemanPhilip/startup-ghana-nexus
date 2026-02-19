@@ -23,7 +23,7 @@ const AuthPage = () => {
     setLoading(true);
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -32,7 +32,12 @@ const AuthPage = () => {
           },
         });
         if (error) throw error;
-        toast.success("Check your email to confirm your account!");
+        // If auto-confirmed (session exists), redirect; otherwise show email confirmation toast
+        if (data.session) {
+          navigate("/dashboard");
+        } else {
+          toast.success("Check your email to confirm your account!");
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
