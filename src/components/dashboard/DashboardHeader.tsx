@@ -1,24 +1,16 @@
-import { Bell, Settings, Search, CheckCircle } from "lucide-react";
+import { Bell, Settings, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
+import AISearchChat from "./AISearchChat";
 
 const DashboardHeader = () => {
   const { profile } = useAuth();
 
   return (
     <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
-      {/* Search */}
-      <div className="relative w-full max-w-md">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Search startups, investors, or ecosystem news..."
-          className="pl-10 bg-muted/50 border-0"
-        />
-      </div>
+      <AISearchChat />
 
-      {/* Right side */}
       <div className="flex items-center gap-3">
         {profile?.membership === "premium" && (
           <Badge className="bg-gradient-gold text-navy font-semibold gap-1.5">
