@@ -4,41 +4,36 @@ import { useAuth } from "@/contexts/AuthContext";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardRightSidebar from "@/components/dashboard/DashboardRightSidebar";
-import StatsCards from "@/components/dashboard/StatsCards";
 import EcosystemFeed from "@/components/dashboard/EcosystemFeed";
 
 const DashboardPage = () => {
   const { profile } = useAuth();
   const [activeTab, setActiveTab] = useState("home");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       {/* Left Sidebar */}
-      <DashboardSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+      <DashboardSidebar
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
 
       {/* Main content area */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <DashboardHeader />
+      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
+        <DashboardHeader onMenuToggle={() => setSidebarOpen(true)} />
 
         <div className="flex flex-1 overflow-hidden">
           {/* Center content */}
           <main className="flex-1 overflow-y-auto">
-            <div className="mx-auto max-w-3xl px-6 py-8">
+            <div className="mx-auto max-w-3xl px-4 md:px-6 py-6">
               {activeTab === "home" && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="space-y-8"
                 >
-                  <div>
-                    <h1 className="font-display text-2xl font-bold">
-                      {profile?.full_name ? `Welcome back, ${profile.full_name.split(" ")[0]}` : "Welcome"} 👋
-                    </h1>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Here's what's happening in the Ghana ecosystem today.
-                    </p>
-                  </div>
-                  <StatsCards />
                   <EcosystemFeed />
                 </motion.div>
               )}
@@ -60,7 +55,7 @@ const DashboardPage = () => {
             </div>
           </main>
 
-          {/* Right Sidebar */}
+          {/* Right Sidebar - hidden on smaller screens */}
           <DashboardRightSidebar />
         </div>
       </div>
