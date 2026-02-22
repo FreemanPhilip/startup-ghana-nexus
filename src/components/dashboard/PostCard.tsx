@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MessageCircle, Share2, CheckCircle, MoreHorizontal } from "lucide-react";
+import { Heart, MessageCircle, Share2, CheckCircle, MoreHorizontal, Globe } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -59,21 +59,25 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
       {/* Author header */}
       <div className="flex items-start justify-between p-5 pb-0">
         <div className="flex gap-3">
-          <Avatar className="h-10 w-10">
+          <Avatar className="h-11 w-11">
             <AvatarImage src={post.author_avatar || undefined} />
-            <AvatarFallback className="bg-muted text-xs font-bold">{initials}</AvatarFallback>
+            <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">{initials}</AvatarFallback>
           </Avatar>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <span className="text-sm font-semibold">{post.author_name}</span>
               {post.author_verification === "verified" && (
-                <CheckCircle className="h-3.5 w-3.5 text-primary fill-primary/20" />
+                <CheckCircle className="h-4 w-4 text-primary fill-primary/20" />
               )}
-              <span className="text-xs text-muted-foreground">· {timeAgo} ago</span>
             </div>
-            {post.author_headline && (
-              <p className="text-xs text-muted-foreground">{post.author_headline}</p>
-            )}
+            <p className="text-xs text-muted-foreground">
+              {post.likes_count > 0 ? `${post.likes_count.toLocaleString()} followers` : "Member"}
+            </p>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <span>{timeAgo}</span>
+              <span>·</span>
+              <Globe className="h-3 w-3" />
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -92,6 +96,9 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
               {isFollowing ? "Following" : "Follow"}
             </Button>
           )}
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
@@ -101,8 +108,8 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
       </div>
 
       {post.image_url && (
-        <div className="px-5 pb-3">
-          <img src={post.image_url} alt="" className="w-full rounded-lg object-cover max-h-96" />
+        <div>
+          <img src={post.image_url} alt="" className="w-full object-cover max-h-96" />
         </div>
       )}
 
@@ -128,6 +135,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
         </Button>
         <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-muted-foreground">
           <Share2 className="h-4 w-4" />
+          Share
         </Button>
       </div>
 
