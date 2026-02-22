@@ -5,6 +5,7 @@ import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardRightSidebar from "@/components/dashboard/DashboardRightSidebar";
 import EcosystemFeed from "@/components/dashboard/EcosystemFeed";
+import MentorsPage from "@/components/mentorship/MentorsPage";
 
 const DashboardPage = () => {
   const { profile } = useAuth();
@@ -28,7 +29,7 @@ const DashboardPage = () => {
         <div className="flex flex-1 overflow-hidden">
           {/* Center content */}
           <main className="flex-1 overflow-y-auto">
-            <div className="mx-auto max-w-3xl px-4 md:px-6 py-6">
+            <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "mentors" ? "max-w-5xl" : "max-w-3xl"}`}>
               {activeTab === "home" && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -38,7 +39,16 @@ const DashboardPage = () => {
                 </motion.div>
               )}
 
-              {activeTab !== "home" && (
+              {activeTab === "mentors" && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <MentorsPage />
+                </motion.div>
+              )}
+
+              {activeTab !== "home" && activeTab !== "mentors" && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
