@@ -8,6 +8,7 @@ import EcosystemFeed from "@/components/dashboard/EcosystemFeed";
 import MentorsPage from "@/components/mentorship/MentorsPage";
 import InvestorsPage from "@/components/investors/InvestorsPage";
 import InvestorRightSidebar from "@/components/investors/InvestorRightSidebar";
+import NetworkPage from "@/components/network/NetworkPage";
 
 const DashboardPage = () => {
   const { profile } = useAuth();
@@ -31,10 +32,16 @@ const DashboardPage = () => {
         <div className="flex flex-1 overflow-hidden">
           {/* Center content */}
           <main className="flex-1 overflow-y-auto">
-            <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "mentors" || activeTab === "investors" ? "max-w-5xl" : "max-w-3xl"}`}>
+            <div className={`mx-auto px-4 md:px-6 py-6 ${["mentors", "investors", "network"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
               {activeTab === "home" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <EcosystemFeed />
+                </motion.div>
+              )}
+
+              {activeTab === "network" && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                  <NetworkPage />
                 </motion.div>
               )}
 
@@ -50,7 +57,7 @@ const DashboardPage = () => {
                 </motion.div>
               )}
 
-              {activeTab !== "home" && activeTab !== "mentors" && activeTab !== "investors" && (
+              {!["home", "network", "mentors", "investors"].includes(activeTab) && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
