@@ -6,6 +6,8 @@ import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardRightSidebar from "@/components/dashboard/DashboardRightSidebar";
 import EcosystemFeed from "@/components/dashboard/EcosystemFeed";
 import MentorsPage from "@/components/mentorship/MentorsPage";
+import InvestorsPage from "@/components/investors/InvestorsPage";
+import InvestorRightSidebar from "@/components/investors/InvestorRightSidebar";
 
 const DashboardPage = () => {
   const { profile } = useAuth();
@@ -29,26 +31,26 @@ const DashboardPage = () => {
         <div className="flex flex-1 overflow-hidden">
           {/* Center content */}
           <main className="flex-1 overflow-y-auto">
-            <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "mentors" ? "max-w-5xl" : "max-w-3xl"}`}>
+            <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "mentors" || activeTab === "investors" ? "max-w-5xl" : "max-w-3xl"}`}>
               {activeTab === "home" && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <EcosystemFeed />
                 </motion.div>
               )}
 
               {activeTab === "mentors" && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <MentorsPage />
                 </motion.div>
               )}
 
-              {activeTab !== "home" && activeTab !== "mentors" && (
+              {activeTab === "investors" && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                  <InvestorsPage />
+                </motion.div>
+              )}
+
+              {activeTab !== "home" && activeTab !== "mentors" && activeTab !== "investors" && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -65,8 +67,8 @@ const DashboardPage = () => {
             </div>
           </main>
 
-          {/* Right Sidebar - hidden on smaller screens */}
-          <DashboardRightSidebar />
+          {/* Right Sidebar - contextual */}
+          {activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />}
         </div>
       </div>
     </div>
