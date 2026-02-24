@@ -35,6 +35,103 @@ export type Database = {
         }
         Relationships: []
       }
+      opportunities: {
+        Row: {
+          amount: string | null
+          application_url: string | null
+          created_at: string
+          created_by: string | null
+          deadline: string | null
+          description: string
+          eligibility: string | null
+          id: string
+          is_featured: boolean | null
+          location: string | null
+          organization: string
+          organization_logo: string | null
+          tags: string[] | null
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: string | null
+          application_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          deadline?: string | null
+          description: string
+          eligibility?: string | null
+          id?: string
+          is_featured?: boolean | null
+          location?: string | null
+          organization: string
+          organization_logo?: string | null
+          tags?: string[] | null
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: string | null
+          application_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          deadline?: string | null
+          description?: string
+          eligibility?: string | null
+          id?: string
+          is_featured?: boolean | null
+          location?: string | null
+          organization?: string
+          organization_logo?: string | null
+          tags?: string[] | null
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunities_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      opportunity_applications: {
+        Row: {
+          created_at: string
+          id: string
+          opportunity_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          opportunity_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          opportunity_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_applications_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_comments: {
         Row: {
           author_id: string
