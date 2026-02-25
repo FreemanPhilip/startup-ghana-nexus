@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import OpportunityCard, { type OpportunityData } from "./OpportunityCard";
-
+import OpportunityDetailPage from "./OpportunityDetailPage";
 const typeFilters = [
   { id: "all", label: "All", icon: Layers },
   { id: "grant", label: "Grants", icon: Award },
@@ -24,7 +24,7 @@ const OpportunitiesPage = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
-
+  const [selectedOpportunityId, setSelectedOpportunityId] = useState<string | null>(null);
   const fetchData = useCallback(async () => {
     setLoading(true);
     const { data } = await supabase
@@ -47,17 +47,8 @@ const OpportunitiesPage = () => {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  const handleApply = async (opportunityId: string) => {
-    if (!user) { toast.error("Please log in to apply"); return; }
-    const { error } = await supabase
-      .from("opportunity_applications")
-      .insert({ opportunity_id: opportunityId, user_id: user.id });
-    if (error) {
-      toast.error(error.code === "23505" ? "Already applied" : "Failed to apply");
-      return;
-    }
-    setAppliedIds(prev => new Set(prev).add(opportunityId));
-    toast.success("Application submitted!");
+  const handleViewDetail = (opportunityId: string) => {
+    setSelectedOpportunityId(opportunityId);
   };
 
   const filtered = useMemo(() => {
@@ -72,6 +63,16 @@ const OpportunitiesPage = () => {
   }, [opportunities, search, typeFilter]);
 
   const myApplications = opportunities.filter(o => appliedIds.has(o.id));
+
+  // If viewing a detail page
+  if (selectedOpportunityId) {
+    return (
+      <OpportunityDetailPage
+        opportunityId={selectedOpportunityId}
+        onBack={() => { setSelectedOpportunityId(null); fetchData(); }}
+      />
+    );
+  }
 
   return (
     <div className="space-y-5">
@@ -97,7 +98,6 @@ const OpportunitiesPage = () => {
         </TabsList>
 
         <TabsContent value="browse" className="mt-5 space-y-5">
-          {/* Type filter pills */}
           <div className="flex gap-2 overflow-x-auto scrollbar-none py-1" style={{ scrollbarWidth: "none" }}>
             {typeFilters.map((f) => {
               const Icon = f.icon;
@@ -136,7 +136,7 @@ const OpportunitiesPage = () => {
                 >
                   <OpportunityCard
                     opportunity={{ ...o, has_applied: appliedIds.has(o.id) }}
-                    onApply={handleApply}
+                    onApply={handleViewDetail}
                   />
                 </motion.div>
               ))}
@@ -158,7 +158,7 @@ const OpportunitiesPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.04 }}
                 >
-                  <OpportunityCard opportunity={{ ...o, has_applied: true }} onApply={handleApply} />
+                  <OpportunityCard opportunity={{ ...o, has_applied: true }} onApply={handleViewDetail} />
                 </motion.div>
               ))}
             </div>

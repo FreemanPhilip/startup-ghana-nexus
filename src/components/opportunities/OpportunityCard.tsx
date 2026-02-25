@@ -117,9 +117,9 @@ const OpportunityCard = ({ opportunity, onApply }: OpportunityCardProps) => {
       {/* Action */}
       <div className="mt-4 flex items-center gap-2">
         {opportunity.has_applied ? (
-          <Button size="sm" variant="outline" className="flex-1 gap-1.5 text-xs font-semibold" disabled>
+          <Button size="sm" variant="outline" className="flex-1 gap-1.5 text-xs font-semibold" onClick={() => onApply(opportunity.id)}>
             <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-            Applied
+            View Application
           </Button>
         ) : (
           <Button
@@ -128,7 +128,7 @@ const OpportunityCard = ({ opportunity, onApply }: OpportunityCardProps) => {
             disabled={isExpired}
             onClick={() => onApply(opportunity.id)}
           >
-            {isExpired ? "Closed" : "Apply Now"}
+            {isExpired ? "Closed" : "View & Apply"}
           </Button>
         )}
         {opportunity.application_url && (
