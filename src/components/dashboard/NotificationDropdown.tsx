@@ -1,9 +1,12 @@
-import { Bell, UserPlus, MessageSquare, Users, Heart, MessageCircle, Check, Trash2 } from "lucide-react";
+import { Bell, UserPlus, MessageSquare, Users, Heart, MessageCircle, Check, Trash2, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNotifications, type Notification } from "@/hooks/useNotifications";
+import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
+import { toast } from "sonner";
+import { useState } from "react";
 
 const typeIconMap: Record<string, typeof Bell> = {
   follow: UserPlus,
@@ -11,6 +14,7 @@ const typeIconMap: Record<string, typeof Bell> = {
   group_invitation: Users,
   post_like: Heart,
   post_comment: MessageCircle,
+  startup_invitation: Building2,
 };
 
 const typeColorMap: Record<string, string> = {
@@ -19,23 +23,27 @@ const typeColorMap: Record<string, string> = {
   group_invitation: "bg-emerald-500/10 text-emerald-500",
   post_like: "bg-rose-500/10 text-rose-500",
   post_comment: "bg-amber-500/10 text-amber-500",
+  startup_invitation: "bg-violet-500/10 text-violet-500",
 };
 
 const NotificationItem = ({
   notification,
   onMarkRead,
+  onConfirmStartup,
 }: {
   notification: Notification;
   onMarkRead: (id: string) => void;
+  onConfirmStartup: (membershipId: string, notifId: string) => void;
 }) => {
   const Icon = typeIconMap[notification.type] || Bell;
   const colorClass = typeColorMap[notification.type] || "bg-muted text-muted-foreground";
   const isUnread = !notification.read_at;
+  const isStartupInvite = notification.type === "startup_invitation" && isUnread;
 
   return (
     <div
       className={`flex gap-3 p-3 cursor-pointer transition-colors hover:bg-muted/50 ${isUnread ? "bg-primary/5" : ""}`}
-      onClick={() => isUnread && onMarkRead(notification.id)}
+      onClick={() => !isStartupInvite && isUnread && onMarkRead(notification.id)}
     >
       <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${colorClass}`}>
         <Icon className="h-4 w-4" />
@@ -47,14 +55,58 @@ const NotificationItem = ({
         <p className="text-[10px] text-muted-foreground mt-0.5">
           {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
         </p>
+        {isStartupInvite && notification.reference_id && (
+          <div className="flex gap-2 mt-2">
+            <Button
+              size="sm"
+              className="h-6 text-[10px] bg-primary text-primary-foreground"
+              onClick={(e) => {
+                e.stopPropagation();
+                onConfirmStartup(notification.reference_id!, notification.id);
+              }}
+            >
+              Confirm
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-6 text-[10px]"
+              onClick={(e) => {
+                e.stopPropagation();
+                onMarkRead(notification.id);
+              }}
+            >
+              Dismiss
+            </Button>
+          </div>
+        )}
       </div>
-      {isUnread && <div className="h-2 w-2 rounded-full bg-primary shrink-0 mt-1.5" />}
+      {isUnread && !isStartupInvite && <div className="h-2 w-2 rounded-full bg-primary shrink-0 mt-1.5" />}
     </div>
   );
 };
 
 const NotificationDropdown = () => {
   const { notifications, unreadCount, markAsRead, markAllAsRead, clearAll } = useNotifications();
+  const [confirming, setConfirming] = useState(false);
+
+  const handleConfirmStartup = async (membershipId: string, notifId: string) => {
+    if (confirming) return;
+    setConfirming(true);
+    try {
+      const { error } = await supabase
+        .from("startup_members")
+        .update({ confirmed: true })
+        .eq("id", membershipId);
+      if (error) throw error;
+      await markAsRead(notifId);
+      toast.success("Affiliation confirmed!");
+    } catch {
+      toast.error("Failed to confirm affiliation");
+    } finally {
+      setConfirming(false);
+    }
+  };
 
   return (
     <Popover>
@@ -69,7 +121,6 @@ const NotificationDropdown = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="end" sideOffset={8}>
-        {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h3 className="font-display text-sm font-bold">Notifications</h3>
           <div className="flex gap-1">
@@ -86,7 +137,6 @@ const NotificationDropdown = () => {
           </div>
         </div>
 
-        {/* List */}
         <ScrollArea className="max-h-96">
           {notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -96,7 +146,7 @@ const NotificationDropdown = () => {
           ) : (
             <div className="divide-y divide-border">
               {notifications.map(n => (
-                <NotificationItem key={n.id} notification={n} onMarkRead={markAsRead} />
+                <NotificationItem key={n.id} notification={n} onMarkRead={markAsRead} onConfirmStartup={handleConfirmStartup} />
               ))}
             </div>
           )}

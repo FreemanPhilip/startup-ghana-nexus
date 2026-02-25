@@ -58,6 +58,11 @@ const DashboardPage = () => {
     setActiveTab("groups");
   }, []);
 
+  const handleViewStartup = useCallback((startupId: string) => {
+    setViewStartupId(startupId);
+    setActiveTab("startup-profile");
+  }, []);
+
   const handleOpenMessages = useCallback(() => {
     setActiveTab("messages");
   }, []);
@@ -106,6 +111,7 @@ const DashboardPage = () => {
                   <EcosystemFeed
                     onViewOpportunity={handleViewOpportunity}
                     onViewGroup={handleViewGroup}
+                    onViewStartup={handleViewStartup}
                     activeIdentity={activeIdentity}
                     onIdentityChange={setActiveIdentity}
                   />
@@ -162,7 +168,7 @@ const DashboardPage = () => {
 
               {activeTab === "startup-profile" && viewStartupId && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <StartupProfilePage startupId={viewStartupId} onBack={() => setActiveTab("my-startups")} />
+                  <StartupProfilePage startupId={viewStartupId} onBack={() => setActiveTab("home")} />
                 </motion.div>
               )}
 
