@@ -28,6 +28,7 @@ export interface Message {
   conversation_id: string;
   sender_id: string;
   content: string;
+  image_url: string | null;
   read_at: string | null;
   created_at: string;
 }
@@ -125,14 +126,15 @@ export function useMessages() {
     }
   }, [user]);
 
-  const sendMessage = useCallback(async (content: string) => {
-    if (!user || !activeConversation || !content.trim()) return;
+  const sendMessage = useCallback(async (content: string, imageUrl?: string | null) => {
+    if (!user || !activeConversation || (!content.trim() && !imageUrl)) return;
 
     const { error } = await supabase.from("messages").insert({
       conversation_id: activeConversation,
       sender_id: user.id,
-      content: content.trim(),
-    });
+      content: content.trim() || (imageUrl ? "📎 Attachment" : ""),
+      image_url: imageUrl || null,
+    } as any);
 
     if (!error) {
       // Refresh handled by realtime
