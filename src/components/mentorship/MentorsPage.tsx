@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import MentorSearch from "./MentorSearch";
 import MentorCategoryTabs from "./MentorCategoryTabs";
 import MentorCard, { type MentorData } from "./MentorCard";
+import MentorDetailPage from "./MentorDetailPage";
 import { Loader2, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 const MentorsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
+  const [selectedMentor, setSelectedMentor] = useState<MentorData | null>(null);
   const { toast } = useToast();
 
   // Fetch mentors (profiles with mentor role)
@@ -168,6 +170,10 @@ const MentorsPage = () => {
     });
   };
 
+  if (selectedMentor) {
+    return <MentorDetailPage mentor={selectedMentor} onBack={() => setSelectedMentor(null)} />;
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -221,7 +227,7 @@ const MentorsPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
             >
-              <MentorCard mentor={mentor} onBookSession={handleBookSession} />
+              <MentorCard mentor={mentor} onBookSession={handleBookSession} onViewProfile={() => setSelectedMentor(mentor)} />
             </motion.div>
           ))}
         </motion.div>
