@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Camera, MapPin, Globe, Linkedin, Phone, Mail, Briefcase, Users, Building2, Edit3, Save, X, Loader2, Heart, MessageCircle, CheckCircle, Calendar, Award, TrendingUp, LogOut, Shield } from "lucide-react";
+import { Camera, MapPin, Globe, Linkedin, Phone, Mail, Briefcase, Users, Building2, Edit3, Save, X, Loader2, Heart, MessageCircle, CheckCircle, Calendar, Award, TrendingUp, LogOut, Shield, Clock } from "lucide-react";
+import MentorAvailabilityManager from "@/components/mentorship/MentorAvailabilityManager";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,7 +33,7 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [activeTab, setActiveTab] = useState<"posts" | "about" | "settings">("about");
+  const [activeTab, setActiveTab] = useState<"posts" | "about" | "settings" | "availability">("about");
   const [posts, setPosts] = useState<UserPost[]>([]);
   const [postsLoading, setPostsLoading] = useState(false);
   const [followStats, setFollowStats] = useState({ followers: 0, following: 0 });
@@ -192,9 +193,11 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
   const initials = profile?.full_name?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "U";
   const verificationLabel = profile?.verification === "verified" ? "Verified" : profile?.verification === "pending" ? "Pending" : "Unverified";
 
+  const isMentor = roles.includes("mentor");
   const tabs = [
     { key: "about" as const, label: "About" },
     { key: "posts" as const, label: `Posts (${posts.length})` },
+    ...(isMentor ? [{ key: "availability" as const, label: "Availability" }] : []),
     { key: "settings" as const, label: "Settings" },
   ];
 
@@ -538,6 +541,12 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
                 </div>
               ))
             )}
+          </div>
+        )}
+
+        {activeTab === "availability" && isMentor && (
+          <div className="flex-1">
+            <MentorAvailabilityManager />
           </div>
         )}
 
