@@ -1,10 +1,11 @@
-import { Users, DollarSign, Briefcase, Calendar, MapPin, ExternalLink } from "lucide-react";
+import { DollarSign, Briefcase, Calendar, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { FeedItem } from "@/hooks/useHomeFeed";
 
 interface OpportunityFeedCardProps {
   item: FeedItem;
+  onViewDetail?: (id: string) => void;
 }
 
 const typeConfig: Record<string, { icon: typeof DollarSign; label: string; color: string }> = {
@@ -14,7 +15,7 @@ const typeConfig: Record<string, { icon: typeof DollarSign; label: string; color
   job: { icon: Briefcase, label: "Job", color: "text-purple-600 bg-purple-50" },
 };
 
-const OpportunityFeedCard = ({ item }: OpportunityFeedCardProps) => {
+const OpportunityFeedCard = ({ item, onViewDetail }: OpportunityFeedCardProps) => {
   const config = typeConfig[item.opp_type || "grant"] || typeConfig.grant;
   const Icon = config.icon;
   const deadline = item.deadline ? new Date(item.deadline) : null;
@@ -51,7 +52,11 @@ const OpportunityFeedCard = ({ item }: OpportunityFeedCardProps) => {
             ))}
           </div>
         )}
-        <Button size="sm" className="gap-1.5 text-xs mt-1">
+        <Button
+          size="sm"
+          className="gap-1.5 text-xs mt-1"
+          onClick={() => onViewDetail?.(item.id)}
+        >
           <ExternalLink className="h-3 w-3" /> View Details
         </Button>
       </div>

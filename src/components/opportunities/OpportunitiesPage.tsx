@@ -17,14 +17,19 @@ const typeFilters = [
   { id: "job", label: "Jobs", icon: Briefcase },
 ];
 
-const OpportunitiesPage = () => {
+interface OpportunitiesPageProps {
+  initialOpportunityId?: string | null;
+  onDeepLinkConsumed?: () => void;
+}
+
+const OpportunitiesPage = ({ initialOpportunityId, onDeepLinkConsumed }: OpportunitiesPageProps) => {
   const { user } = useAuth();
   const [opportunities, setOpportunities] = useState<OpportunityData[]>([]);
   const [appliedIds, setAppliedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
-  const [selectedOpportunityId, setSelectedOpportunityId] = useState<string | null>(null);
+  const [selectedOpportunityId, setSelectedOpportunityId] = useState<string | null>(initialOpportunityId ?? null);
   const fetchData = useCallback(async () => {
     setLoading(true);
     const { data } = await supabase
@@ -46,6 +51,14 @@ const OpportunitiesPage = () => {
   }, [user]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  // Handle deep-link from other pages (e.g. home feed)
+  useEffect(() => {
+    if (initialOpportunityId) {
+      setSelectedOpportunityId(initialOpportunityId);
+      onDeepLinkConsumed?.();
+    }
+  }, [initialOpportunityId, onDeepLinkConsumed]);
 
   const handleViewDetail = (opportunityId: string) => {
     setSelectedOpportunityId(opportunityId);
