@@ -53,6 +53,7 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
     team_size: "",
     expertise: [] as string[],
     availability: "",
+    booking_url: "",
   });
 
   const resetForm = useCallback(() => {
@@ -71,6 +72,7 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
         team_size: profile.team_size?.toString() || "",
         expertise: profile.expertise || [],
         availability: profile.availability || "",
+        booking_url: (profile as any).booking_url || "",
       });
     }
   }, [profile]);
@@ -168,6 +170,7 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
       team_size: form.team_size ? parseInt(form.team_size) : null,
       expertise: form.expertise.length > 0 ? form.expertise : null,
       availability: form.availability || null,
+      booking_url: form.booking_url.trim() || null,
     }).eq("user_id", user.id);
 
     if (error) {
@@ -325,6 +328,10 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
                     <div className="space-y-2">
                       <Label>LinkedIn</Label>
                       <Input placeholder="https://linkedin.com/in/..." value={form.linkedin_url} onChange={e => setForm(f => ({ ...f, linkedin_url: e.target.value }))} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Booking URL (Calendly, Cal.com, etc.)</Label>
+                      <Input placeholder="https://calendly.com/your-link" value={form.booking_url} onChange={e => setForm(f => ({ ...f, booking_url: e.target.value }))} />
                     </div>
                     <div className="space-y-2">
                       <Label>Company Name</Label>

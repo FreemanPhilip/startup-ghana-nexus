@@ -14,6 +14,7 @@ export interface MentorData {
   expertise: string[] | null;
   availability: string | null;
   bio: string | null;
+  booking_url: string | null;
   sessions_count: number;
   reviews_count: number;
   rating: number;
