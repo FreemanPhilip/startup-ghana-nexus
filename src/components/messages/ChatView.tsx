@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, Smile, Plus, MoreVertical, Video } from "lucide-react";
+import { Send, Smile, Plus, MoreVertical, Video, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,9 +14,10 @@ interface ChatViewProps {
   messages: Message[];
   loading: boolean;
   onSendMessage: (content: string) => void;
+  onBack?: () => void;
 }
 
-const ChatView = ({ conversation, messages, loading, onSendMessage }: ChatViewProps) => {
+const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: ChatViewProps) => {
   const { user } = useAuth();
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -79,7 +80,12 @@ const ChatView = ({ conversation, messages, loading, onSendMessage }: ChatViewPr
     <div className="flex flex-1 flex-col bg-background min-w-0">
       {/* Chat header */}
       <div className="flex items-center justify-between border-b border-border bg-card px-4 py-3">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          {onBack && (
+            <Button variant="ghost" size="icon" className="h-8 w-8 sm:hidden shrink-0" onClick={onBack}>
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          )}
           <Avatar className="h-9 w-9">
             <AvatarImage src={otherUser?.avatar_url || undefined} />
             <AvatarFallback className="bg-muted text-xs font-bold">
