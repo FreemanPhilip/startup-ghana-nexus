@@ -8,7 +8,9 @@ export interface Group {
   name: string;
   description: string | null;
   icon: string | null;
+  icon_url: string | null;
   cover_color: string | null;
+  category: string | null;
   created_by: string;
   is_private: boolean | null;
   created_at: string;
@@ -97,11 +99,12 @@ export function useGroups() {
 
   useEffect(() => { fetchGroups(); }, [fetchGroups]);
 
-  const createGroup = async (name: string, description: string, isPrivate: boolean, coverColor: string) => {
+  const createGroup = async (name: string, description: string, isPrivate: boolean, coverColor: string, category?: string, iconUrl?: string) => {
     if (!user) return;
     const { data, error } = await supabase.from("groups").insert({
       name, description, is_private: isPrivate, cover_color: coverColor, created_by: user.id,
-    }).select().single();
+      category: category || "general", icon_url: iconUrl || null,
+    } as any).select().single();
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     // Auto-join as admin
     await supabase.from("group_members").insert({ group_id: data.id, user_id: user.id, role: "admin" });
