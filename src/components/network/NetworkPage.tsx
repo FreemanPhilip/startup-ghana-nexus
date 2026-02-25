@@ -7,6 +7,7 @@ import { useNetwork } from "@/hooks/useNetwork";
 import { useMessages } from "@/hooks/useMessages";
 import NetworkCard from "./NetworkCard";
 import QuickChatDialog from "@/components/messages/QuickChatDialog";
+import PublicProfilePage from "@/components/profile/PublicProfilePage";
 
 const roleFilters = [
   { id: "all", label: "All", icon: Layers },
@@ -24,6 +25,7 @@ const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
   const { profiles, loading, isFollowing, toggleFollow, followerCount, followingCount } = useNetwork();
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [chatTarget, setChatTarget] = useState<{
     userId: string;
     name: string;
@@ -51,6 +53,16 @@ const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
       return matchesSearch && matchesRole;
     });
   }, [profiles, search, roleFilter]);
+
+  if (selectedUserId) {
+    return (
+      <PublicProfilePage
+        userId={selectedUserId}
+        onBack={() => setSelectedUserId(null)}
+        onMessage={handleMessage}
+      />
+    );
+  }
 
   return (
     <div className="space-y-5">
@@ -126,6 +138,7 @@ const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
                 isFollowing={isFollowing(p.user_id)}
                 onToggleFollow={toggleFollow}
                 onMessage={handleMessage}
+                onViewProfile={setSelectedUserId}
               />
             </motion.div>
           ))}
