@@ -10,6 +10,7 @@ import InvestorsPage from "@/components/investors/InvestorsPage";
 import InvestorRightSidebar from "@/components/investors/InvestorRightSidebar";
 import NetworkPage from "@/components/network/NetworkPage";
 import OpportunitiesPage from "@/components/opportunities/OpportunitiesPage";
+import MessagesPage from "@/components/messages/MessagesPage";
 
 const DashboardPage = () => {
   const { profile } = useAuth();
@@ -33,7 +34,13 @@ const DashboardPage = () => {
         <div className="flex flex-1 overflow-hidden">
           {/* Center content */}
           <main className="flex-1 overflow-y-auto">
-            <div className={`mx-auto px-4 md:px-6 py-6 ${["mentors", "investors", "network", "opportunities"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
+            <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "network", "opportunities"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
+              {activeTab === "messages" && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                  <MessagesPage />
+                </motion.div>
+              )}
+
               {activeTab === "home" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <EcosystemFeed />
@@ -64,7 +71,7 @@ const DashboardPage = () => {
                 </motion.div>
               )}
 
-              {!["home", "network", "mentors", "investors", "opportunities"].includes(activeTab) && (
+              {!["home", "network", "mentors", "investors", "opportunities", "messages"].includes(activeTab) && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -82,7 +89,7 @@ const DashboardPage = () => {
           </main>
 
           {/* Right Sidebar - contextual */}
-          {activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />}
+          {activeTab !== "messages" && (activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />)}
         </div>
       </div>
     </div>

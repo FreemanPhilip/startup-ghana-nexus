@@ -1,4 +1,4 @@
-import { UserPlus, UserCheck, MapPin, BadgeCheck, Building2 } from "lucide-react";
+import { UserPlus, UserCheck, MapPin, BadgeCheck, Building2, MessageSquare } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ interface NetworkCardProps {
   profile: NetworkProfile;
   isFollowing: boolean;
   onToggleFollow: (userId: string) => void;
+  onMessage?: (userId: string) => void;
 }
 
 const roleLabelMap: Record<string, string> = {
@@ -20,7 +21,7 @@ const roleLabelMap: Record<string, string> = {
   member: "Member",
 };
 
-const NetworkCard = ({ profile, isFollowing, onToggleFollow }: NetworkCardProps) => {
+const NetworkCard = ({ profile, isFollowing, onToggleFollow, onMessage }: NetworkCardProps) => {
   const initials = profile.full_name
     ?.split(" ")
     .map((n) => n[0])
@@ -85,25 +86,37 @@ const NetworkCard = ({ profile, isFollowing, onToggleFollow }: NetworkCardProps)
         </div>
       )}
 
-      {/* Follow/Connect button */}
-      <Button
-        size="sm"
-        variant={isFollowing ? "outline" : "default"}
-        className="mt-4 w-full gap-1.5 text-xs font-semibold"
-        onClick={() => onToggleFollow(profile.user_id)}
-      >
-        {isFollowing ? (
-          <>
-            <UserCheck className="h-3.5 w-3.5" />
-            Following
-          </>
-        ) : (
-          <>
-            <UserPlus className="h-3.5 w-3.5" />
-            Connect
-          </>
+      {/* Action buttons */}
+      <div className="mt-4 flex w-full gap-2">
+        <Button
+          size="sm"
+          variant={isFollowing ? "outline" : "default"}
+          className="flex-1 gap-1.5 text-xs font-semibold"
+          onClick={() => onToggleFollow(profile.user_id)}
+        >
+          {isFollowing ? (
+            <>
+              <UserCheck className="h-3.5 w-3.5" />
+              Following
+            </>
+          ) : (
+            <>
+              <UserPlus className="h-3.5 w-3.5" />
+              Connect
+            </>
+          )}
+        </Button>
+        {onMessage && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1 text-xs"
+            onClick={() => onMessage(profile.user_id)}
+          >
+            <MessageSquare className="h-3.5 w-3.5" />
+          </Button>
         )}
-      </Button>
+      </div>
     </div>
   );
 };
