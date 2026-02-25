@@ -480,23 +480,38 @@ export type Database = {
       }
       opportunity_applications: {
         Row: {
+          additional_docs: string[] | null
+          answers: Json | null
+          cover_letter: string | null
           created_at: string
           id: string
           opportunity_id: string
+          phone: string | null
+          resume_url: string | null
           status: string
           user_id: string
         }
         Insert: {
+          additional_docs?: string[] | null
+          answers?: Json | null
+          cover_letter?: string | null
           created_at?: string
           id?: string
           opportunity_id: string
+          phone?: string | null
+          resume_url?: string | null
           status?: string
           user_id: string
         }
         Update: {
+          additional_docs?: string[] | null
+          answers?: Json | null
+          cover_letter?: string | null
           created_at?: string
           id?: string
           opportunity_id?: string
+          phone?: string | null
+          resume_url?: string | null
           status?: string
           user_id?: string
         }
