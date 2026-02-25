@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Star, Home, MessageSquare, Users, TrendingUp, Briefcase, UserPlus, LogOut, Upload, Menu, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import PitchDeckUploadDialog from "./PitchDeckUploadDialog";
 
 interface DashboardSidebarProps {
   activeTab: string;
@@ -23,6 +25,7 @@ const navItems = [
 
 const DashboardSidebar = ({ activeTab, onTabChange, open, onClose }: DashboardSidebarProps) => {
   const { profile, roles, signOut } = useAuth();
+  const [pitchDeckOpen, setPitchDeckOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -95,7 +98,10 @@ const DashboardSidebar = ({ activeTab, onTabChange, open, onClose }: DashboardSi
 
       {/* Bottom actions */}
       <div className="border-t border-border p-3 space-y-1">
-        <Button className="w-full bg-primary text-primary-foreground font-semibold gap-2 text-sm hover:opacity-90">
+        <Button
+          className="w-full bg-primary text-primary-foreground font-semibold gap-2 text-sm hover:opacity-90"
+          onClick={() => setPitchDeckOpen(true)}
+        >
           <Upload className="h-4 w-4" />
           Pitch Deck Upload
         </Button>
@@ -107,6 +113,7 @@ const DashboardSidebar = ({ activeTab, onTabChange, open, onClose }: DashboardSi
           Sign Out
         </button>
       </div>
+      <PitchDeckUploadDialog open={pitchDeckOpen} onOpenChange={setPitchDeckOpen} />
     </>
   );
 
