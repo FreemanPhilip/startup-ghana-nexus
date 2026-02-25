@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, Building2, Globe, MapPin, Users, ExternalLink, ShieldCheck, ShieldAlert, Shield, Calendar, Linkedin, FileText, CheckCircle2, Loader2, Settings } from "lucide-react";
+import { ArrowLeft, Building2, Globe, MapPin, Users, ExternalLink, ShieldCheck, ShieldAlert, Shield, Calendar, Linkedin, FileText, CheckCircle2, Loader2, Settings, Pencil, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,6 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import PostCard from "@/components/dashboard/PostCard";
 import StartupTeamManagement from "./StartupTeamManagement";
+import StartupAnalytics from "./StartupAnalytics";
+import EditStartupDialog from "./EditStartupDialog";
 import type { PostWithDetails, Comment } from "@/hooks/usePosts";
 import { formatDistanceToNow } from "date-fns";
 
@@ -72,6 +74,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
   const [posts, setPosts] = useState<PostWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("about");
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   const fetchTeam = useCallback(async () => {
     const { data: members } = await supabase
@@ -231,6 +234,11 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
                   </p>
                 </div>
                 <div className="flex gap-2 shrink-0">
+                  {isAdmin && (
+                    <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setShowEditDialog(true)}>
+                      <Pencil className="h-3.5 w-3.5" /> Edit
+                    </Button>
+                  )}
                   {startup.website_url && (
                     <Button variant="outline" size="sm" className="gap-1.5 text-xs" asChild>
                       <a href={startup.website_url} target="_blank" rel="noopener noreferrer">
@@ -258,6 +266,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
           <TabsTrigger value="about" className="text-xs">About</TabsTrigger>
           <TabsTrigger value="team" className="text-xs">Team ({confirmedTeam.length})</TabsTrigger>
           <TabsTrigger value="posts" className="text-xs">Posts ({posts.length})</TabsTrigger>
+          {isAdmin && <TabsTrigger value="analytics" className="text-xs gap-1"><BarChart3 className="h-3 w-3" /> Analytics</TabsTrigger>}
           {isAdmin && <TabsTrigger value="manage" className="text-xs gap-1"><Settings className="h-3 w-3" /> Manage</TabsTrigger>}
         </TabsList>
 
@@ -368,6 +377,11 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
           )}
         </TabsContent>
         {isAdmin && (
+          <TabsContent value="analytics" className="mt-4">
+            <StartupAnalytics startupId={startupId} />
+          </TabsContent>
+        )}
+        {isAdmin && (
           <TabsContent value="manage" className="mt-4">
             <StartupTeamManagement
               startupId={startupId}
@@ -377,6 +391,21 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
           </TabsContent>
         )}
       </Tabs>
+
+      {/* Edit Dialog */}
+      {isAdmin && startup && (
+        <EditStartupDialog
+          open={showEditDialog}
+          onOpenChange={setShowEditDialog}
+          startup={startup}
+          onUpdated={() => {
+            // Re-fetch startup data
+            supabase.from("startups").select("*").eq("id", startupId).single().then(({ data }) => {
+              if (data) setStartup(data);
+            });
+          }}
+        />
+      )}
     </div>
   );
 };
