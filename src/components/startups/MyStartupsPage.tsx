@@ -17,7 +17,11 @@ const verificationBadge = (status: string) => {
   }
 };
 
-const MyStartupsPage = () => {
+interface MyStartupsPageProps {
+  onViewStartup?: (id: string) => void;
+}
+
+const MyStartupsPage = ({ onViewStartup }: MyStartupsPageProps) => {
   const { myStartups, loading, refetch } = useStartups();
   const [wizardOpen, setWizardOpen] = useState(false);
 
@@ -76,7 +80,7 @@ const MyStartupsPage = () => {
                 </div>
                 <div className="flex gap-1">
                   <Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8"><ExternalLink className="h-4 w-4" /></Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onViewStartup?.(startup.id)}><ExternalLink className="h-4 w-4" /></Button>
                 </div>
               </div>
             </div>

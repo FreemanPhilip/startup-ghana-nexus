@@ -23,9 +23,10 @@ export interface MentorData {
 interface MentorCardProps {
   mentor: MentorData;
   onBookSession?: (mentorId: string) => void;
+  onViewProfile?: () => void;
 }
 
-const MentorCard = ({ mentor, onBookSession }: MentorCardProps) => {
+const MentorCard = ({ mentor, onBookSession, onViewProfile }: MentorCardProps) => {
   const initials = mentor.full_name
     ?.split(" ")
     .map((n) => n[0])
@@ -54,7 +55,7 @@ const MentorCard = ({ mentor, onBookSession }: MentorCardProps) => {
   };
 
   return (
-    <div className="group rounded-xl border border-border bg-card overflow-hidden transition-shadow hover:shadow-lg hover:border-primary/30 cursor-pointer">
+    <div className="group rounded-xl border border-border bg-card overflow-hidden transition-shadow hover:shadow-lg hover:border-primary/30 cursor-pointer" onClick={onViewProfile}>
       {/* Avatar / Image area */}
       <div className="relative aspect-[4/3] bg-muted overflow-hidden">
         {mentor.avatar_url ? (
