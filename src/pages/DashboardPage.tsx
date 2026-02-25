@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
@@ -17,23 +17,34 @@ const DashboardPage = () => {
   const { profile } = useAuth();
   const [activeTab, setActiveTab] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [deepLinkOpportunityId, setDeepLinkOpportunityId] = useState<string | null>(null);
+
+  const handleViewOpportunity = useCallback((opportunityId: string) => {
+    setDeepLinkOpportunityId(opportunityId);
+    setActiveTab("opportunities");
+  }, []);
+
+  const handleTabChange = useCallback((tab: string) => {
+    // Clear deep link when manually switching tabs
+    if (tab !== "opportunities") {
+      setDeepLinkOpportunityId(null);
+    }
+    setActiveTab(tab);
+  }, []);
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      {/* Left Sidebar */}
       <DashboardSidebar
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
 
-      {/* Main content area */}
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         <DashboardHeader onMenuToggle={() => setSidebarOpen(true)} />
 
         <div className="flex flex-1 overflow-hidden">
-          {/* Center content */}
           <main className="flex-1 overflow-y-auto">
             <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "network", "opportunities", "groups"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
               {activeTab === "messages" && (
@@ -44,7 +55,7 @@ const DashboardPage = () => {
 
               {activeTab === "home" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <EcosystemFeed />
+                  <EcosystemFeed onViewOpportunity={handleViewOpportunity} />
                 </motion.div>
               )}
 
@@ -68,7 +79,10 @@ const DashboardPage = () => {
 
               {activeTab === "opportunities" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <OpportunitiesPage />
+                  <OpportunitiesPage
+                    initialOpportunityId={deepLinkOpportunityId}
+                    onDeepLinkConsumed={() => setDeepLinkOpportunityId(null)}
+                  />
                 </motion.div>
               )}
 
@@ -95,7 +109,6 @@ const DashboardPage = () => {
             </div>
           </main>
 
-          {/* Right Sidebar - contextual */}
           {activeTab !== "messages" && (activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />)}
         </div>
       </div>

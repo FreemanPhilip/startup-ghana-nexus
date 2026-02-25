@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Loader2, ChevronDown } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import CreatePostCard from "./CreatePostCard";
 import PostCard from "./PostCard";
 import GroupPostFeedCard from "./GroupPostFeedCard";
@@ -16,7 +16,11 @@ const tabs = [
   { id: "opportunities", label: "Opportunities" },
 ];
 
-const EcosystemFeed = () => {
+interface EcosystemFeedProps {
+  onViewOpportunity?: (id: string) => void;
+}
+
+const EcosystemFeed = ({ onViewOpportunity }: EcosystemFeedProps) => {
   const [activeTab, setActiveTab] = useState("all");
   const { items, loading } = useHomeFeed();
   const { createPost, toggleLike, fetchComments, addComment } = usePosts();
@@ -31,15 +35,12 @@ const EcosystemFeed = () => {
         return true;
       });
 
-  // Insert recommended connections card after 2nd item
   const showConnectionsAt = 2;
 
   return (
     <div className="space-y-5">
-      {/* Create post */}
       <CreatePostCard onSubmit={createPost} />
 
-      {/* Tabs */}
       <div className="flex items-center justify-between">
         <div className="flex gap-1 rounded-lg bg-muted p-1">
           {tabs.map(tab => (
@@ -58,7 +59,6 @@ const EcosystemFeed = () => {
         </div>
       </div>
 
-      {/* Feed */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -72,7 +72,6 @@ const EcosystemFeed = () => {
         <div className="space-y-4">
           {filtered.map((item, index) => (
             <div key={item.id}>
-              {/* Insert recommended connections after 2nd item */}
               {index === showConnectionsAt && <RecommendedConnections />}
 
               {item.type === "post" && (
@@ -105,7 +104,7 @@ const EcosystemFeed = () => {
               )}
 
               {item.type === "opportunity" && (
-                <OpportunityFeedCard item={item} />
+                <OpportunityFeedCard item={item} onViewDetail={onViewOpportunity} />
               )}
             </div>
           ))}
