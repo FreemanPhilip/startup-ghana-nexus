@@ -4,12 +4,17 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import AISearchChat from "./AISearchChat";
 import NotificationDropdown from "./NotificationDropdown";
+import AvatarDropdown, { PostingIdentity } from "./AvatarDropdown";
 
 interface DashboardHeaderProps {
   onMenuToggle?: () => void;
+  onNavigate: (tab: string) => void;
+  onSignOut: () => void;
+  activeIdentity: PostingIdentity;
+  onIdentityChange: (identity: PostingIdentity) => void;
 }
 
-const DashboardHeader = ({ onMenuToggle }: DashboardHeaderProps) => {
+const DashboardHeader = ({ onMenuToggle, onNavigate, onSignOut, activeIdentity, onIdentityChange }: DashboardHeaderProps) => {
   const { profile } = useAuth();
 
   return (
@@ -29,9 +34,12 @@ const DashboardHeader = ({ onMenuToggle }: DashboardHeaderProps) => {
           </Badge>
         )}
         <NotificationDropdown />
-        <Button variant="ghost" size="icon">
-          <Settings className="h-5 w-5" />
-        </Button>
+        <AvatarDropdown
+          onNavigate={onNavigate}
+          onSignOut={onSignOut}
+          activeIdentity={activeIdentity}
+          onIdentityChange={onIdentityChange}
+        />
       </div>
     </header>
   );

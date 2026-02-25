@@ -8,6 +8,7 @@ import RecommendedConnections from "./RecommendedConnections";
 import { useHomeFeed } from "@/hooks/useHomeFeed";
 import { usePosts } from "@/hooks/usePosts";
 import { useFollows } from "@/hooks/useFollows";
+import type { PostingIdentity } from "./AvatarDropdown";
 
 const tabs = [
   { id: "all", label: "All" },
@@ -19,9 +20,11 @@ const tabs = [
 interface EcosystemFeedProps {
   onViewOpportunity?: (id: string) => void;
   onViewGroup?: (groupId: string) => void;
+  activeIdentity: PostingIdentity;
+  onIdentityChange: (identity: PostingIdentity) => void;
 }
 
-const EcosystemFeed = ({ onViewOpportunity, onViewGroup }: EcosystemFeedProps) => {
+const EcosystemFeed = ({ onViewOpportunity, onViewGroup, activeIdentity, onIdentityChange }: EcosystemFeedProps) => {
   const [activeTab, setActiveTab] = useState("all");
   const { items, loading } = useHomeFeed();
   const { createPost, toggleLike, fetchComments, addComment } = usePosts();
@@ -38,9 +41,17 @@ const EcosystemFeed = ({ onViewOpportunity, onViewGroup }: EcosystemFeedProps) =
 
   const showConnectionsAt = 2;
 
+  const handleCreatePost = async (content: string, category: string, imageUrl?: string, videoUrl?: string, startupId?: string) => {
+    await createPost(content, category, imageUrl, videoUrl, startupId);
+  };
+
   return (
     <div className="space-y-5">
-      <CreatePostCard onSubmit={createPost} />
+      <CreatePostCard
+        onSubmit={handleCreatePost}
+        activeIdentity={activeIdentity}
+        onIdentityChange={onIdentityChange}
+      />
 
       <div className="flex items-center justify-between">
         <div className="flex gap-1 rounded-lg bg-muted p-1">
