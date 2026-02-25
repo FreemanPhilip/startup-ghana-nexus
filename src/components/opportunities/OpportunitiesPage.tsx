@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import OpportunityCard, { type OpportunityData } from "./OpportunityCard";
 import OpportunityDetailPage from "./OpportunityDetailPage";
+import CreateOpportunityDialog from "./CreateOpportunityDialog";
 const typeFilters = [
   { id: "all", label: "All", icon: Layers },
   { id: "grant", label: "Grants", icon: Award },
@@ -89,15 +90,18 @@ const OpportunitiesPage = ({ initialOpportunityId, onDeepLinkConsumed }: Opportu
 
   return (
     <div className="space-y-5">
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search grants, accelerators, funding calls..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-10 h-11 bg-card border-border text-sm"
-        />
+      {/* Header with search and create button */}
+      <div className="flex items-center gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search grants, accelerators, funding calls..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-10 h-11 bg-card border-border text-sm"
+          />
+        </div>
+        {user && <CreateOpportunityDialog onCreated={fetchData} />}
       </div>
 
       <Tabs defaultValue="browse">
