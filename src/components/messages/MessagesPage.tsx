@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import ConversationList from "./ConversationList";
 import ChatView from "./ChatView";
 import ChatRightSidebar from "./ChatRightSidebar";
@@ -69,7 +70,11 @@ const MessagesPage = () => {
       </div>
 
       {/* Right sidebar */}
-      <ChatRightSidebar conversation={activeConvoData} />
+      <ChatRightSidebar
+        conversation={activeConvoData}
+        messages={messages}
+        onViewProfile={(userId) => window.open(`/profile/${userId}`, "_blank")}
+      />
 
       {/* New conversation dialog */}
       <NewConversationDialog
