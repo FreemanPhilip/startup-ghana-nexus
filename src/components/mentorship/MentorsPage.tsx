@@ -7,7 +7,6 @@ import MentorDetailPage from "./MentorDetailPage";
 import { Loader2, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 
 interface MentorsPageProps {
   onOpenMessages?: () => void;
@@ -17,7 +16,6 @@ const MentorsPage = ({ onOpenMessages }: MentorsPageProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedMentor, setSelectedMentor] = useState<MentorData | null>(null);
-  const { toast } = useToast();
 
   // Fetch mentors (profiles with mentor role)
   const { data: mentors = [], isLoading } = useQuery({
@@ -170,14 +168,7 @@ const MentorsPage = ({ onOpenMessages }: MentorsPageProps) => {
 
   const handleBookSession = (mentorId: string) => {
     const mentor = allMentors.find(m => m.id === mentorId);
-    if (mentor?.booking_url) {
-      window.open(mentor.booking_url, "_blank", "noopener,noreferrer");
-    } else {
-      toast({
-        title: "No booking link",
-        description: "This mentor hasn't set up their booking link yet. Try sending a message instead.",
-      });
-    }
+    if (mentor) setSelectedMentor(mentor);
   };
 
   if (selectedMentor) {

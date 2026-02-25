@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Star, Clock, MapPin, Briefcase, Calendar, Globe, Linkedin, CheckCircle2, Award, Users, MessageCircle, BookOpen, ExternalLink } from "lucide-react";
+import { ArrowLeft, Star, Clock, MapPin, Briefcase, Calendar, CheckCircle2, Award, MessageCircle, BookOpen, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import type { MentorData } from "./MentorCard";
 import { useToast } from "@/hooks/use-toast";
 import QuickChatDialog from "@/components/messages/QuickChatDialog";
+import BookSessionDialog from "./BookSessionDialog";
 
 interface MentorDetailPageProps {
   mentor: MentorData;
@@ -16,8 +17,8 @@ interface MentorDetailPageProps {
 
 const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPageProps) => {
   const { toast } = useToast();
-  const [bookmarked, setBookmarked] = useState(false);
   const [quickChatOpen, setQuickChatOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
 
   const initials = mentor.full_name
     ?.split(" ")
@@ -26,18 +27,6 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
     .toUpperCase()
     .slice(0, 2) || "M";
 
-  const handleBookSession = () => {
-    if (mentor.booking_url) {
-      window.open(mentor.booking_url, "_blank", "noopener,noreferrer");
-    } else {
-      toast({
-        title: "No booking link available",
-        description: "This mentor hasn't set up their booking link yet.",
-      });
-    }
-  };
-
-  // Generate demo review data
   const demoReviews = [
     { name: "Ama K.", rating: 5, text: "Incredibly insightful session. Got actionable advice for our Series A preparation.", date: "2 weeks ago" },
     { name: "Kwesi M.", rating: 4, text: "Very knowledgeable mentor. Helped clarify our go-to-market strategy.", date: "1 month ago" },
@@ -77,9 +66,8 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
                 </div>
 
                 <div className="flex gap-2 shrink-0">
-                  <Button size="sm" className="gap-1.5 text-xs font-semibold" onClick={handleBookSession}>
-                    <Calendar className="h-3.5 w-3.5" />
-                    {mentor.booking_url ? "Book a Session" : "No Booking Link"}
+                  <Button size="sm" className="gap-1.5 text-xs font-semibold" onClick={() => setBookingOpen(true)}>
+                    <Calendar className="h-3.5 w-3.5" /> Book a Session
                   </Button>
                   <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setQuickChatOpen(true)}>
                     <MessageCircle className="h-3.5 w-3.5" /> Quick Chat
@@ -121,21 +109,6 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
             </div>
           )}
 
-          {/* Booking Info */}
-          {mentor.booking_url && (
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-5">
-              <h3 className="font-display font-bold text-sm mb-2 flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-primary" /> Book a Session
-              </h3>
-              <p className="text-xs text-muted-foreground mb-3">
-                Schedule a 1:1 mentorship session directly through {mentor.full_name?.split(" ")[0]}'s booking page.
-              </p>
-              <Button size="sm" className="gap-1.5 text-xs" onClick={handleBookSession}>
-                <ExternalLink className="h-3 w-3" /> Open Booking Page
-              </Button>
-            </div>
-          )}
-
           {/* Reviews */}
           <div className="rounded-xl border border-border bg-card p-5">
             <h3 className="font-display font-bold text-sm mb-4 flex items-center gap-2">
@@ -166,25 +139,19 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
           <div className="rounded-xl border border-border bg-card p-5">
             <h3 className="font-display font-bold text-sm mb-4">Mentor Stats</h3>
             <div className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Sessions</span>
-                  <span className="text-sm font-bold text-primary">{mentor.sessions_count}</span>
-                </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Sessions</span>
+                <span className="text-sm font-bold text-primary">{mentor.sessions_count}</span>
               </div>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Reviews</span>
-                  <span className="text-sm font-bold text-foreground">{mentor.reviews_count}</span>
-                </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Reviews</span>
+                <span className="text-sm font-bold text-foreground">{mentor.reviews_count}</span>
               </div>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Rating</span>
-                  <div className="flex items-center gap-1">
-                    <Star className="h-3.5 w-3.5 text-primary fill-primary" />
-                    <span className="text-sm font-bold text-foreground">{mentor.rating}</span>
-                  </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Rating</span>
+                <div className="flex items-center gap-1">
+                  <Star className="h-3.5 w-3.5 text-primary fill-primary" />
+                  <span className="text-sm font-bold text-foreground">{mentor.rating}</span>
                 </div>
               </div>
               <div>
@@ -221,20 +188,17 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
             <div className="space-y-3">
               {mentor.location && (
                 <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
-                  <MapPin className="h-3.5 w-3.5 shrink-0" />
-                  <span>{mentor.location}</span>
+                  <MapPin className="h-3.5 w-3.5 shrink-0" /> <span>{mentor.location}</span>
                 </div>
               )}
               {mentor.industry && (
                 <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
-                  <Briefcase className="h-3.5 w-3.5 shrink-0" />
-                  <span>{mentor.industry}</span>
+                  <Briefcase className="h-3.5 w-3.5 shrink-0" /> <span>{mentor.industry}</span>
                 </div>
               )}
               {mentor.years_experience && (
                 <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
-                  <Clock className="h-3.5 w-3.5 shrink-0" />
-                  <span>{mentor.years_experience} years experience</span>
+                  <Clock className="h-3.5 w-3.5 shrink-0" /> <span>{mentor.years_experience} years experience</span>
                 </div>
               )}
             </div>
@@ -244,24 +208,16 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
           <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 text-center">
             <h3 className="font-display font-bold text-sm mb-2">Ready to grow?</h3>
             <p className="text-xs text-muted-foreground mb-3">
-              {mentor.booking_url
-                ? `Book a 1:1 session with ${mentor.full_name?.split(" ")[0]}`
-                : `Send a message to ${mentor.full_name?.split(" ")[0]}`}
+              Book a 1:1 session with {mentor.full_name?.split(" ")[0]}
             </p>
-            {mentor.booking_url ? (
-              <Button className="w-full text-xs font-semibold" onClick={handleBookSession}>
-                Book a Session
-              </Button>
-            ) : (
-              <Button className="w-full text-xs font-semibold" onClick={() => setQuickChatOpen(true)}>
-                <MessageCircle className="h-3.5 w-3.5 mr-1" /> Send Message
-              </Button>
-            )}
+            <Button className="w-full text-xs font-semibold" onClick={() => setBookingOpen(true)}>
+              <Calendar className="h-3.5 w-3.5 mr-1" /> Book a Session
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Quick Chat Dialog */}
+      {/* Dialogs */}
       <QuickChatDialog
         open={quickChatOpen}
         onClose={() => setQuickChatOpen(false)}
@@ -269,6 +225,11 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
         targetUserName={mentor.full_name || "Mentor"}
         targetUserAvatar={mentor.avatar_url}
         onOpenFullChat={onOpenMessages}
+      />
+      <BookSessionDialog
+        open={bookingOpen}
+        onClose={() => setBookingOpen(false)}
+        mentor={mentor}
       />
     </div>
   );

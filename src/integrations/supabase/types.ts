@@ -428,6 +428,81 @@ export type Database = {
         }
         Relationships: []
       }
+      mentor_availability: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          is_active: boolean
+          mentor_id: string
+          session_duration: number
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          is_active?: boolean
+          mentor_id: string
+          session_duration?: number
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_active?: boolean
+          mentor_id?: string
+          session_duration?: number
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mentor_bookings: {
+        Row: {
+          booking_date: string
+          created_at: string
+          end_time: string
+          id: string
+          mentee_id: string
+          mentor_id: string
+          notes: string | null
+          start_time: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          booking_date: string
+          created_at?: string
+          end_time: string
+          id?: string
+          mentee_id: string
+          mentor_id: string
+          notes?: string | null
+          start_time: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          booking_date?: string
+          created_at?: string
+          end_time?: string
+          id?: string
+          mentee_id?: string
+          mentor_id?: string
+          notes?: string | null
+          start_time?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
