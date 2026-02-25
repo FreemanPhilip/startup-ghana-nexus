@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardRightSidebar from "@/components/dashboard/DashboardRightSidebar";
@@ -12,9 +13,11 @@ import NetworkPage from "@/components/network/NetworkPage";
 import OpportunitiesPage from "@/components/opportunities/OpportunitiesPage";
 import MessagesPage from "@/components/messages/MessagesPage";
 import GroupsPage from "@/components/groups/GroupsPage";
+import ProfilePage from "@/components/profile/ProfilePage";
 
 const DashboardPage = () => {
-  const { profile } = useAuth();
+  const { profile, signOut } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [deepLinkOpportunityId, setDeepLinkOpportunityId] = useState<string | null>(null);
@@ -37,6 +40,11 @@ const DashboardPage = () => {
     setActiveTab("messages");
   }, []);
 
+  const handleSignOut = useCallback(async () => {
+    await signOut();
+    navigate("/");
+  }, [signOut, navigate]);
+
   const handleTabChange = useCallback((tab: string) => {
     if (tab !== "opportunities") setDeepLinkOpportunityId(null);
     if (tab !== "groups") setDeepLinkGroupId(null);
@@ -57,7 +65,7 @@ const DashboardPage = () => {
 
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto">
-            <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "network", "opportunities", "groups"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
+            <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "network", "opportunities", "groups", "profile"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
               {activeTab === "messages" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <MessagesPage />
@@ -109,7 +117,13 @@ const DashboardPage = () => {
                 </motion.div>
               )}
 
-              {!["home", "network", "mentors", "investors", "opportunities", "messages", "groups"].includes(activeTab) && (
+              {activeTab === "profile" && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                  <ProfilePage onSignOut={handleSignOut} />
+                </motion.div>
+              )}
+
+              {!["home", "network", "mentors", "investors", "opportunities", "messages", "groups", "profile"].includes(activeTab) && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -126,7 +140,7 @@ const DashboardPage = () => {
             </div>
           </main>
 
-          {!["messages", "groups"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />)}
+          {!["messages", "groups", "profile"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />)}
         </div>
       </div>
     </div>
