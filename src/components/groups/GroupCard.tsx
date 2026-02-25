@@ -39,8 +39,12 @@ const GroupCard = ({ group, onJoin, onLeave, onView }: GroupCardProps) => {
     <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => onView(group.id)}>
       {/* Cover */}
       <div className={`h-24 bg-gradient-to-br ${gradient} relative`}>
-        <div className="absolute -bottom-5 left-4 flex h-10 w-10 items-center justify-center rounded-xl bg-card border border-border shadow-sm">
-          <Icon className="h-5 w-5 text-foreground" />
+        <div className="absolute -bottom-5 left-4 flex h-10 w-10 items-center justify-center rounded-xl bg-card border border-border shadow-sm overflow-hidden">
+          {(group as any).icon_url ? (
+            <img src={(group as any).icon_url} alt={group.name} className="h-full w-full object-cover" />
+          ) : (
+            <Icon className="h-5 w-5 text-foreground" />
+          )}
         </div>
         {group.is_private && (
           <div className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-card/80 backdrop-blur-sm">

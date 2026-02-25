@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Users, Lock, Send, Heart, MessageCircle, Loader2, Globe, Calendar, Shield, MoreHorizontal, UserMinus, ChevronUp } from "lucide-react";
+import { ArrowLeft, Users, Lock, Send, Heart, MessageCircle, Loader2, Globe, Calendar, Shield, MoreHorizontal, UserMinus, ChevronUp, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,6 +12,7 @@ import InviteMembersDialog from "./InviteMembersDialog";
 import JoinRequestsPanel from "./JoinRequestsPanel";
 import CreateEventDialog from "./CreateEventDialog";
 import GroupEventsTab from "./GroupEventsTab";
+import GroupFilesTab from "./GroupFilesTab";
 import { formatDistanceToNow } from "date-fns";
 
 interface GroupDetailPageProps {
@@ -25,7 +26,7 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
   const eventsHook = useGroupEvents(groupId);
   const [newPost, setNewPost] = useState("");
   const [posting, setPosting] = useState(false);
-  const [activeTab, setActiveTab] = useState<"feed" | "members" | "events" | "requests">("feed");
+  const [activeTab, setActiveTab] = useState<"feed" | "members" | "events" | "files" | "requests">("feed");
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
 
@@ -62,6 +63,7 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
     { key: "feed" as const, label: "Feed" },
     { key: "members" as const, label: "Members" },
     { key: "events" as const, label: "Events" },
+    { key: "files" as const, label: "Files" },
     ...(isAdmin && group.is_private ? [{ key: "requests" as const, label: `Requests (${admin.joinRequests.length})` }] : []),
   ];
 
@@ -78,8 +80,12 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
       <div className="rounded-b-xl border border-t-0 border-border bg-card px-4 sm:px-6 pb-4">
         {/* Icon overlapping banner */}
         <div className="-mt-10 mb-3">
-          <div className={`h-20 w-20 rounded-xl bg-gradient-to-br ${gradient} border-4 border-card flex items-center justify-center shadow-md`}>
-            <span className="text-white text-2xl font-bold font-display">{group.name.slice(0, 2).toUpperCase()}</span>
+          <div className={`h-20 w-20 rounded-xl ${(group as any).icon_url ? '' : `bg-gradient-to-br ${gradient}`} border-4 border-card flex items-center justify-center shadow-md overflow-hidden`}>
+            {(group as any).icon_url ? (
+              <img src={(group as any).icon_url} alt={group.name} className="h-full w-full object-cover" />
+            ) : (
+              <span className="text-white text-2xl font-bold font-display">{group.name.slice(0, 2).toUpperCase()}</span>
+            )}
           </div>
         </div>
 
@@ -93,7 +99,7 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
               {group.is_member && <Badge className="text-[10px] bg-primary/10 text-primary border-0">Member</Badge>}
             </div>
             <p className="text-sm text-muted-foreground mt-1">
-              {group.member_count.toLocaleString()} Members · {group.description || "No description"}
+              {group.member_count.toLocaleString()} Members · {(group as any).category && (group as any).category !== "general" ? `${(group as any).category} · ` : ""}{group.description || "No description"}
             </p>
           </div>
 
@@ -314,6 +320,10 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
                 onDelete={eventsHook.deleteEvent}
               />
             </div>
+          )}
+
+          {activeTab === "files" && (
+            <GroupFilesTab groupId={groupId} isMember={group.is_member} isAdmin={isAdmin} />
           )}
 
           {activeTab === "requests" && isAdmin && (

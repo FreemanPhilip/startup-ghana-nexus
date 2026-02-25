@@ -135,6 +135,47 @@ export type Database = {
           },
         ]
       }
+      group_files: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_size: number | null
+          file_type: string | null
+          file_url: string
+          group_id: string
+          id: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url: string
+          group_id: string
+          id?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string
+          group_id?: string
+          id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_files_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       group_invitations: {
         Row: {
           created_at: string
@@ -344,33 +385,39 @@ export type Database = {
       }
       groups: {
         Row: {
+          category: string | null
           cover_color: string | null
           created_at: string
           created_by: string
           description: string | null
           icon: string | null
+          icon_url: string | null
           id: string
           is_private: boolean | null
           name: string
           updated_at: string
         }
         Insert: {
+          category?: string | null
           cover_color?: string | null
           created_at?: string
           created_by: string
           description?: string | null
           icon?: string | null
+          icon_url?: string | null
           id?: string
           is_private?: boolean | null
           name: string
           updated_at?: string
         }
         Update: {
+          category?: string | null
           cover_color?: string | null
           created_at?: string
           created_by?: string
           description?: string | null
           icon?: string | null
+          icon_url?: string | null
           id?: string
           is_private?: boolean | null
           name?: string
