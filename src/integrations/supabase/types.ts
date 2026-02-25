@@ -758,6 +758,7 @@ export type Database = {
           availability: string | null
           avatar_url: string | null
           bio: string | null
+          booking_url: string | null
           company_name: string | null
           company_stage: string | null
           created_at: string
@@ -786,6 +787,7 @@ export type Database = {
           availability?: string | null
           avatar_url?: string | null
           bio?: string | null
+          booking_url?: string | null
           company_name?: string | null
           company_stage?: string | null
           created_at?: string
@@ -814,6 +816,7 @@ export type Database = {
           availability?: string | null
           avatar_url?: string | null
           bio?: string | null
+          booking_url?: string | null
           company_name?: string | null
           company_stage?: string | null
           created_at?: string
