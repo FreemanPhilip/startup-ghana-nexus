@@ -15,7 +15,6 @@ interface DashboardSidebarProps {
 
 const navItems = [
   { id: "home", label: "Home", icon: Home },
-  { id: "profile", label: "My Profile", icon: User },
   { id: "network", label: "My Network", icon: Users },
   { id: "groups", label: "Groups", icon: UserPlus },
   { id: "messages", label: "Messages", icon: MessageSquare },
