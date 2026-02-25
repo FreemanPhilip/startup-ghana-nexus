@@ -1,0 +1,1 @@
+ALTER TABLE public.group_posts ADD COLUMN video_url text DEFAULT NULL;

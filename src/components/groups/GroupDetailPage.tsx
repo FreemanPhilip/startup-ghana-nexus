@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft, Users, Lock, Send, Heart, MessageCircle, Loader2, Globe, Calendar, Shield, MoreHorizontal, UserMinus, ChevronUp, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -13,6 +12,7 @@ import JoinRequestsPanel from "./JoinRequestsPanel";
 import CreateEventDialog from "./CreateEventDialog";
 import GroupEventsTab from "./GroupEventsTab";
 import GroupFilesTab from "./GroupFilesTab";
+import GroupCreatePostCard from "./GroupCreatePostCard";
 import { formatDistanceToNow } from "date-fns";
 
 interface GroupDetailPageProps {
@@ -24,17 +24,14 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
   const { group, posts, members, loading, createPost, toggleLike, addComment, refetch } = useGroupDetail(groupId);
   const admin = useGroupAdmin(groupId);
   const eventsHook = useGroupEvents(groupId);
-  const [newPost, setNewPost] = useState("");
   const [posting, setPosting] = useState(false);
   const [activeTab, setActiveTab] = useState<"feed" | "members" | "events" | "files" | "requests">("feed");
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
 
-  const handlePost = async () => {
-    if (!newPost.trim()) return;
+  const handlePost = async (content: string, imageUrl?: string, videoUrl?: string) => {
     setPosting(true);
-    await createPost(newPost.trim());
-    setNewPost("");
+    await createPost(content, imageUrl, videoUrl);
     setPosting(false);
   };
 
@@ -188,27 +185,7 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
             <>
               {/* Create Post */}
               {group.is_member && (
-                <div className="rounded-xl border border-border bg-card p-4 space-y-3">
-                  <div className="flex items-start gap-3">
-                    <Avatar className="h-9 w-9">
-                      <AvatarFallback className="bg-muted text-xs">You</AvatarFallback>
-                    </Avatar>
-                    <Textarea
-                      placeholder="Start a post in this group..."
-                      value={newPost}
-                      onChange={e => setNewPost(e.target.value)}
-                      rows={2}
-                      className="resize-none flex-1"
-                    />
-                  </div>
-                  {newPost.trim() && (
-                    <div className="flex justify-end">
-                      <Button size="sm" className="gap-1.5 text-xs" onClick={handlePost} disabled={posting}>
-                        <Send className="h-3.5 w-3.5" /> {posting ? "Posting..." : "Post"}
-                      </Button>
-                    </div>
-                  )}
-                </div>
+                <GroupCreatePostCard onSubmit={handlePost} />
               )}
 
               {/* Posts */}
@@ -235,6 +212,12 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
                       </div>
                     </div>
                     <p className="text-sm whitespace-pre-wrap leading-relaxed">{post.content}</p>
+                    {post.image_url && (
+                      <img src={post.image_url} alt="Post image" className="w-full max-h-96 object-cover rounded-lg" />
+                    )}
+                    {(post as any).video_url && (
+                      <video src={(post as any).video_url} controls className="w-full max-h-96 rounded-lg" />
+                    )}
                     <div className="flex items-center gap-4 pt-2 border-t border-border">
                       <button onClick={() => toggleLike(post.id)} className={`flex items-center gap-1.5 text-xs transition-colors ${post.is_liked ? "text-destructive" : "text-muted-foreground hover:text-foreground"}`}>
                         <Heart className={`h-3.5 w-3.5 ${post.is_liked ? "fill-current" : ""}`} /> {post.like_count}
