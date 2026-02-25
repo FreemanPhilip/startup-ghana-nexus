@@ -1,8 +1,9 @@
-import { Bell, Settings, CheckCircle, Menu } from "lucide-react";
+import { Settings, CheckCircle, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import AISearchChat from "./AISearchChat";
+import NotificationDropdown from "./NotificationDropdown";
 
 interface DashboardHeaderProps {
   onMenuToggle?: () => void;
@@ -27,9 +28,7 @@ const DashboardHeader = ({ onMenuToggle }: DashboardHeaderProps) => {
             PREMIUM VERIFIED
           </Badge>
         )}
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-        </Button>
+        <NotificationDropdown />
         <Button variant="ghost" size="icon">
           <Settings className="h-5 w-5" />
         </Button>
