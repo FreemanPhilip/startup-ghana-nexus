@@ -175,9 +175,10 @@ export function useMessages() {
   }, [user, fetchConversations]);
 
   // Select conversation
-  const selectConversation = useCallback((id: string) => {
+  const selectConversation = useCallback((id: string | null) => {
     setActiveConversation(id);
-    fetchMessages(id);
+    if (id) fetchMessages(id);
+    else setMessages([]);
   }, [fetchMessages]);
 
   // Initial load
