@@ -25,6 +25,7 @@ export interface InvestorData {
 interface InvestorCardProps {
   investor: InvestorData;
   onConnect?: (id: string) => void;
+  onView?: () => void;
 }
 
 const getMatchColor = (pct: number) => {
@@ -34,11 +35,14 @@ const getMatchColor = (pct: number) => {
   return "bg-muted text-muted-foreground border-border";
 };
 
-const InvestorCard = ({ investor, onConnect }: InvestorCardProps) => {
+const InvestorCard = ({ investor, onConnect, onView }: InvestorCardProps) => {
   const Icon = iconMap[investor.icon] || Building2;
 
   return (
-    <div className="group flex flex-col justify-between rounded-xl border border-border bg-card p-5 transition-shadow hover:shadow-md">
+    <div
+      className="group flex flex-col justify-between rounded-xl border border-border bg-card p-5 transition-shadow hover:shadow-md cursor-pointer"
+      onClick={() => onView?.()}
+    >
       {/* Header */}
       <div>
         <div className="flex items-start justify-between">
@@ -77,7 +81,7 @@ const InvestorCard = ({ investor, onConnect }: InvestorCardProps) => {
         <Button
           size="sm"
           className="font-semibold text-xs px-5"
-          onClick={() => onConnect?.(investor.id)}
+          onClick={(e) => { e.stopPropagation(); onConnect?.(investor.id); }}
         >
           Connect
         </Button>
