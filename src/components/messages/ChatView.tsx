@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, Smile, Plus, MoreVertical, Video, ArrowLeft } from "lucide-react";
+import { Send, Smile, Plus, MoreVertical, Video, ArrowLeft, Check, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -23,7 +23,6 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Scroll to bottom on new messages
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages]);
@@ -164,8 +163,12 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
                             <span className="text-[10px] text-muted-foreground">
                               {format(new Date(msg.created_at), "h:mm a")}
                             </span>
-                            {isMe && msg.read_at && (
-                              <span className="text-[10px] text-primary">✓✓</span>
+                            {isMe && (
+                              msg.read_at ? (
+                                <CheckCheck className="h-3 w-3 text-primary" />
+                              ) : (
+                                <Check className="h-3 w-3 text-muted-foreground" />
+                              )
                             )}
                           </div>
                         </div>

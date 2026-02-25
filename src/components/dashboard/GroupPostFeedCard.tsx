@@ -7,23 +7,27 @@ import { formatDistanceToNow } from "date-fns";
 interface GroupPostFeedCardProps {
   item: FeedItem;
   onToggleLike?: (postId: string) => void;
+  onViewGroup?: (groupId: string) => void;
 }
 
-const GroupPostFeedCard = ({ item, onToggleLike }: GroupPostFeedCardProps) => {
+const GroupPostFeedCard = ({ item, onToggleLike, onViewGroup }: GroupPostFeedCardProps) => {
   const initials = (item.author_name || "U").split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
   const timeAgo = formatDistanceToNow(new Date(item.created_at), { addSuffix: false });
 
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
-      {/* Group badge header */}
-      <div className="flex items-center gap-2 px-5 pt-3 pb-1">
+      {/* Group badge header - clickable */}
+      <button
+        onClick={() => item.group_id && onViewGroup?.(item.group_id)}
+        className="flex items-center gap-2 px-5 pt-3 pb-1 w-full text-left hover:bg-muted/50 transition-colors"
+      >
         <div className={`h-6 w-6 rounded bg-gradient-to-br ${item.group_cover_color || "from-blue-600 to-indigo-700"} flex items-center justify-center`}>
           <Users className="h-3 w-3 text-white" />
         </div>
         <span className="text-xs font-semibold text-muted-foreground">
-          Posted in <span className="text-foreground">{item.group_name}</span>
+          Posted in <span className="text-foreground hover:underline">{item.group_name}</span>
         </span>
-      </div>
+      </button>
 
       {/* Author */}
       <div className="flex items-start gap-3 px-5 pt-2 pb-0">

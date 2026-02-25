@@ -18,9 +18,10 @@ const tabs = [
 
 interface EcosystemFeedProps {
   onViewOpportunity?: (id: string) => void;
+  onViewGroup?: (groupId: string) => void;
 }
 
-const EcosystemFeed = ({ onViewOpportunity }: EcosystemFeedProps) => {
+const EcosystemFeed = ({ onViewOpportunity, onViewGroup }: EcosystemFeedProps) => {
   const [activeTab, setActiveTab] = useState("all");
   const { items, loading } = useHomeFeed();
   const { createPost, toggleLike, fetchComments, addComment } = usePosts();
@@ -100,7 +101,7 @@ const EcosystemFeed = ({ onViewOpportunity }: EcosystemFeedProps) => {
               )}
 
               {item.type === "group_post" && (
-                <GroupPostFeedCard item={item} />
+                <GroupPostFeedCard item={item} onViewGroup={onViewGroup} />
               )}
 
               {item.type === "opportunity" && (

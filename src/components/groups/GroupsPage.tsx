@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, TrendingUp, Bookmark, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import GroupCard from "./GroupCard";
@@ -6,10 +6,22 @@ import CreateGroupDialog from "./CreateGroupDialog";
 import GroupDetailPage from "./GroupDetailPage";
 import { useGroups } from "@/hooks/useGroups";
 
-const GroupsPage = () => {
+interface GroupsPageProps {
+  initialGroupId?: string | null;
+  onDeepLinkConsumed?: () => void;
+}
+
+const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => {
   const { groups, myGroups, loading, createGroup, joinGroup, leaveGroup } = useGroups();
   const [search, setSearch] = useState("");
-  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(initialGroupId ?? null);
+
+  useEffect(() => {
+    if (initialGroupId) {
+      setSelectedGroupId(initialGroupId);
+      onDeepLinkConsumed?.();
+    }
+  }, [initialGroupId, onDeepLinkConsumed]);
 
   const filtered = groups.filter(g =>
     g.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -40,7 +52,6 @@ const GroupsPage = () => {
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Left sidebar */}
         <div className="lg:w-64 shrink-0 space-y-4">
-          {/* My Groups */}
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center gap-2 mb-3">
               <Bookmark className="h-4 w-4 text-primary" />
@@ -66,7 +77,6 @@ const GroupsPage = () => {
             )}
           </div>
 
-          {/* Trending */}
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center gap-2 mb-3">
               <TrendingUp className="h-4 w-4 text-primary" />
