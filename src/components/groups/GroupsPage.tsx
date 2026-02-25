@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Search, TrendingUp, Bookmark, Loader2 } from "lucide-react";
+import { Search, TrendingUp, Bookmark, Loader2, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import GroupCard from "./GroupCard";
 import CreateGroupDialog from "./CreateGroupDialog";
 import GroupDetailPage from "./GroupDetailPage";
 import { useGroups } from "@/hooks/useGroups";
+import { categoryOptions } from "./groupConstants";
 
 interface GroupsPageProps {
   initialGroupId?: string | null;
@@ -14,6 +15,7 @@ interface GroupsPageProps {
 const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => {
   const { groups, myGroups, loading, createGroup, joinGroup, leaveGroup } = useGroups();
   const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(initialGroupId ?? null);
 
   useEffect(() => {
@@ -23,10 +25,12 @@ const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => 
     }
   }, [initialGroupId, onDeepLinkConsumed]);
 
-  const filtered = groups.filter(g =>
-    g.name.toLowerCase().includes(search.toLowerCase()) ||
-    (g.description || "").toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = groups.filter(g => {
+    const matchesSearch = g.name.toLowerCase().includes(search.toLowerCase()) ||
+      (g.description || "").toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || g.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   if (selectedGroupId) {
     return <GroupDetailPage groupId={selectedGroupId} onBack={() => setSelectedGroupId(null)} />;
@@ -47,6 +51,33 @@ const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => 
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input placeholder="Search groups or communities..." className="pl-10" value={search} onChange={e => setSearch(e.target.value)} />
+      </div>
+
+      {/* Category filter chips */}
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={() => setSelectedCategory("all")}
+          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+            selectedCategory === "all"
+              ? "bg-primary text-primary-foreground"
+              : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          }`}
+        >
+          All Categories
+        </button>
+        {categoryOptions.map(c => (
+          <button
+            key={c.value}
+            onClick={() => setSelectedCategory(c.value)}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              selectedCategory === c.value
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            }`}
+          >
+            {c.label}
+          </button>
+        ))}
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">

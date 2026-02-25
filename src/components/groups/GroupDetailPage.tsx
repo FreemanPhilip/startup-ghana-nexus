@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Users, Lock, Send, Heart, MessageCircle, Loader2, Globe, Calendar, Shield, MoreHorizontal, UserMinus, ChevronUp, FileText } from "lucide-react";
+import { ArrowLeft, Users, Lock, Send, Heart, MessageCircle, Loader2, Globe, Calendar, Shield, MoreHorizontal, UserMinus, ChevronUp, FileText, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -7,12 +7,15 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useGroupDetail } from "@/hooks/useGroups";
 import { useGroupAdmin } from "@/hooks/useGroupAdmin";
 import { useGroupEvents } from "@/hooks/useGroupEvents";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 import InviteMembersDialog from "./InviteMembersDialog";
 import JoinRequestsPanel from "./JoinRequestsPanel";
 import CreateEventDialog from "./CreateEventDialog";
 import GroupEventsTab from "./GroupEventsTab";
 import GroupFilesTab from "./GroupFilesTab";
 import GroupCreatePostCard from "./GroupCreatePostCard";
+import EditGroupDialog from "./EditGroupDialog";
 import { formatDistanceToNow } from "date-fns";
 
 interface GroupDetailPageProps {
@@ -28,6 +31,7 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
   const [activeTab, setActiveTab] = useState<"feed" | "members" | "events" | "files" | "requests">("feed");
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
+  const [editOpen, setEditOpen] = useState(false);
 
   const handlePost = async (content: string, imageUrl?: string, videoUrl?: string) => {
     setPosting(true);
@@ -44,6 +48,23 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
 
   const handleRequestToJoin = async () => {
     await admin.requestToJoin();
+  };
+
+  const handleUpdateGroup = async (updates: { name: string; description: string; is_private: boolean; cover_color: string; category: string; icon_url: string | null }) => {
+    const { error } = await supabase.from("groups").update({
+      name: updates.name,
+      description: updates.description,
+      is_private: updates.is_private,
+      cover_color: updates.cover_color,
+      category: updates.category,
+      icon_url: updates.icon_url,
+    } as any).eq("id", groupId);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Group updated!" });
+      refetch();
+    }
   };
 
   if (loading || !group) {
@@ -104,11 +125,16 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
             {group.is_member ? (
               <>
                 {isAdmin && (
-                  <InviteMembersDialog
-                    groupId={groupId}
-                    existingMemberIds={members.map(m => m.user_id)}
-                    onInvite={admin.inviteUser}
-                  />
+                  <>
+                    <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => setEditOpen(true)}>
+                      <Settings className="h-3.5 w-3.5" /> Edit
+                    </Button>
+                    <InviteMembersDialog
+                      groupId={groupId}
+                      existingMemberIds={members.map(m => m.user_id)}
+                      onInvite={admin.inviteUser}
+                    />
+                  </>
                 )}
                 <Button size="sm" className="gap-1.5 text-xs" onClick={() => setActiveTab("feed")}>
                   <Send className="h-3.5 w-3.5" /> Post Update
@@ -394,6 +420,15 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
           </div>
         </div>
       </div>
+
+      {isAdmin && (
+        <EditGroupDialog
+          group={group}
+          open={editOpen}
+          onOpenChange={setEditOpen}
+          onSave={handleUpdateGroup}
+        />
+      )}
     </div>
   );
 };

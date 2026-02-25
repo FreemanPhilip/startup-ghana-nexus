@@ -127,7 +127,22 @@ export function useGroups() {
     fetchGroups();
   };
 
-  return { groups, myGroups, loading, createGroup, joinGroup, leaveGroup, refetch: fetchGroups };
+  const updateGroup = async (groupId: string, updates: { name: string; description: string; is_private: boolean; cover_color: string; category: string; icon_url: string | null }) => {
+    if (!user) return;
+    const { error } = await supabase.from("groups").update({
+      name: updates.name,
+      description: updates.description,
+      is_private: updates.is_private,
+      cover_color: updates.cover_color,
+      category: updates.category,
+      icon_url: updates.icon_url,
+    } as any).eq("id", groupId);
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    toast({ title: "Group updated!" });
+    fetchGroups();
+  };
+
+  return { groups, myGroups, loading, createGroup, joinGroup, leaveGroup, updateGroup, refetch: fetchGroups };
 }
 
 export function useGroupDetail(groupId: string | null) {
