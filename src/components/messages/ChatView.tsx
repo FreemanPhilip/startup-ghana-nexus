@@ -70,19 +70,42 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
     }
   };
 
+  const ALLOWED_TYPES = [
+    "image/", "video/", "application/pdf",
+    "application/msword", "application/vnd.openxmlformats-officedocument",
+    "application/vnd.ms-excel", "application/vnd.ms-powerpoint",
+    "text/plain", "text/csv",
+  ];
+
+  const isAllowedFile = (type: string) => ALLOWED_TYPES.some(t => type.startsWith(t));
+
+  const getFileIcon = (type: string) => {
+    if (type.startsWith("image/")) return "🖼️";
+    if (type.startsWith("video/")) return "🎬";
+    if (type === "application/pdf") return "📄";
+    if (type.startsWith("application/vnd.ms-excel") || type.includes("spreadsheet")) return "📊";
+    if (type.startsWith("application/vnd.ms-powerpoint") || type.includes("presentation")) return "📽️";
+    if (type.startsWith("application/msword") || type.includes("document")) return "📝";
+    return "📎";
+  };
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      toast({ title: "Only images supported", description: "Please select an image file (JPG, PNG, GIF, etc.)", variant: "destructive" });
+    if (!isAllowedFile(file.type)) {
+      toast({ title: "Unsupported file type", description: "Supported: images, videos, PDFs, Word, Excel, PowerPoint, text files.", variant: "destructive" });
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-      toast({ title: "File too large", description: "Maximum file size is 10MB", variant: "destructive" });
+    if (file.size > 25 * 1024 * 1024) {
+      toast({ title: "File too large", description: "Maximum file size is 25MB", variant: "destructive" });
       return;
     }
     setPendingFile(file);
-    setPreviewImage(URL.createObjectURL(file));
+    if (file.type.startsWith("image/")) {
+      setPreviewImage(URL.createObjectURL(file));
+    } else {
+      setPreviewImage(null);
+    }
     setShowAttachMenu(false);
   };
 
@@ -222,15 +245,26 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
                                 : "bg-card border border-border text-foreground rounded-bl-md"
                             }`}
                           >
-                            {/* Image attachment */}
-                            {msg.image_url && (
-                              <img
-                                src={msg.image_url}
-                                alt="Attachment"
-                                className="rounded-lg max-w-full max-h-48 object-cover mb-1.5 cursor-pointer"
-                                onClick={() => window.open(msg.image_url!, "_blank")}
-                              />
-                            )}
+                            {/* File attachment */}
+                            {msg.image_url && (() => {
+                              const url = msg.image_url!;
+                              const ext = url.split('.').pop()?.toLowerCase() || '';
+                              const isImage = ['jpg','jpeg','png','gif','webp','svg'].includes(ext);
+                              const isVideo = ['mp4','webm','mov','avi'].includes(ext);
+                              if (isImage) return (
+                                <img src={url} alt="Attachment" className="rounded-lg max-w-full max-h-48 object-cover mb-1.5 cursor-pointer" onClick={() => window.open(url, "_blank")} />
+                              );
+                              if (isVideo) return (
+                                <video src={url} controls className="rounded-lg max-w-full max-h-48 mb-1.5" />
+                              );
+                              const fileName = decodeURIComponent(url.split('/').pop() || 'File');
+                              return (
+                                <button onClick={() => window.open(url, "_blank")} className={`flex items-center gap-2 rounded-lg px-3 py-2 mb-1.5 text-xs font-medium ${isMe ? 'bg-primary-foreground/10 hover:bg-primary-foreground/20' : 'bg-muted hover:bg-muted/80'} transition-colors`}>
+                                  <Paperclip className="h-3.5 w-3.5 shrink-0" />
+                                  <span className="truncate max-w-[180px]">{fileName}</span>
+                                </button>
+                              );
+                            })()}
                             {msg.content && msg.content !== "📎 Attachment" && msg.content}
                           </div>
                           <div className={`flex items-center gap-1 mt-1 ${isMe ? "flex-row-reverse" : ""}`}>
@@ -263,11 +297,21 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
         )}
       </ScrollArea>
 
-      {/* Image preview */}
-      {previewImage && (
-        <div className="border-t border-border bg-card px-3 pt-2">
+      {/* File preview */}
+      {pendingFile && (
+        <div className="border-t border-border bg-card px-3 pt-2 pb-1">
           <div className="relative inline-block">
-            <img src={previewImage} alt="Preview" className="h-20 rounded-lg border border-border object-cover" />
+            {previewImage ? (
+              <img src={previewImage} alt="Preview" className="h-20 rounded-lg border border-border object-cover" />
+            ) : (
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2 text-xs">
+                <span className="text-lg">{getFileIcon(pendingFile.type)}</span>
+                <div className="flex flex-col">
+                  <span className="font-medium truncate max-w-[200px]">{pendingFile.name}</span>
+                  <span className="text-muted-foreground">{(pendingFile.size / 1024 / 1024).toFixed(1)} MB</span>
+                </div>
+              </div>
+            )}
             <button
               onClick={clearPendingFile}
               className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center"
@@ -296,7 +340,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
                   onClick={() => { fileRef.current?.click(); }}
                   className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground hover:bg-muted rounded-md transition-colors"
                 >
-                  <Image className="h-3.5 w-3.5" /> Send Image
+                  <Paperclip className="h-3.5 w-3.5" /> Send File
                 </button>
                 <button
                   onClick={() => { setScheduleOpen(true); setShowAttachMenu(false); }}
@@ -307,7 +351,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
               </div>
             )}
           </div>
-          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
+          <input ref={fileRef} type="file" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" className="hidden" onChange={handleFileSelect} />
           <Input
             placeholder="Type a message..."
             value={input}
