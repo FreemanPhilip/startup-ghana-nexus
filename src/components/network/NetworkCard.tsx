@@ -9,6 +9,7 @@ interface NetworkCardProps {
   isFollowing: boolean;
   onToggleFollow: (userId: string) => void;
   onMessage?: (userId: string) => void;
+  onViewProfile?: (userId: string) => void;
 }
 
 const roleLabelMap: Record<string, string> = {
@@ -21,7 +22,7 @@ const roleLabelMap: Record<string, string> = {
   member: "Member",
 };
 
-const NetworkCard = ({ profile, isFollowing, onToggleFollow, onMessage }: NetworkCardProps) => {
+const NetworkCard = ({ profile, isFollowing, onToggleFollow, onMessage, onViewProfile }: NetworkCardProps) => {
   const initials = profile.full_name
     ?.split(" ")
     .map((n) => n[0])
@@ -30,7 +31,7 @@ const NetworkCard = ({ profile, isFollowing, onToggleFollow, onMessage }: Networ
     .slice(0, 2) || "?";
 
   return (
-    <div className="flex flex-col items-center rounded-xl border border-border bg-card p-5 text-center transition-shadow hover:shadow-md">
+    <div className="flex flex-col items-center rounded-xl border border-border bg-card p-5 text-center transition-shadow hover:shadow-md cursor-pointer" onClick={() => onViewProfile?.(profile.user_id)}>
       {/* Avatar */}
       <Avatar className="h-16 w-16">
         <AvatarImage src={profile.avatar_url || undefined} />
@@ -87,7 +88,7 @@ const NetworkCard = ({ profile, isFollowing, onToggleFollow, onMessage }: Networ
       )}
 
       {/* Action buttons */}
-      <div className="mt-4 flex w-full gap-2">
+      <div className="mt-4 flex w-full gap-2" onClick={e => e.stopPropagation()}>
         <Button
           size="sm"
           variant={isFollowing ? "outline" : "default"}
