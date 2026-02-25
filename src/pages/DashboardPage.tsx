@@ -17,6 +17,7 @@ import ProfilePage from "@/components/profile/ProfilePage";
 import MyStartupsPage from "@/components/startups/MyStartupsPage";
 import StartupProfilePage from "@/components/startups/StartupProfilePage";
 import FirstTimeFounderModal from "@/components/startups/FirstTimeFounderModal";
+import MySessionsPage from "@/components/mentorship/MySessionsPage";
 import CreateStartupWizard from "@/components/startups/CreateStartupWizard";
 import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
 import { useStartups } from "@/hooks/useStartups";
@@ -99,7 +100,7 @@ const DashboardPage = () => {
 
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto">
-            <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
+            <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile", "my-sessions"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
               {activeTab === "messages" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <MessagesPage />
@@ -127,6 +128,12 @@ const DashboardPage = () => {
               {activeTab === "mentors" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <MentorsPage onOpenMessages={handleOpenMessages} />
+                </motion.div>
+              )}
+
+              {activeTab === "my-sessions" && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                  <MySessionsPage />
                 </motion.div>
               )}
 
@@ -172,7 +179,7 @@ const DashboardPage = () => {
                 </motion.div>
               )}
 
-              {!["home", "network", "mentors", "investors", "opportunities", "messages", "groups", "profile", "my-startups", "startup-profile"].includes(activeTab) && (
+              {!["home", "network", "mentors", "investors", "opportunities", "messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions"].includes(activeTab) && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -189,7 +196,7 @@ const DashboardPage = () => {
             </div>
           </main>
 
-          {!["messages", "groups", "profile", "my-startups", "startup-profile"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />)}
+          {!["messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />)}
         </div>
       </div>
 

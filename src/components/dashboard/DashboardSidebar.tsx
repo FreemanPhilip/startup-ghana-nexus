@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star, Home, MessageSquare, Users, TrendingUp, Briefcase, UserPlus, LogOut, Upload, Menu, X } from "lucide-react";
+import { Star, Home, MessageSquare, Users, TrendingUp, Briefcase, UserPlus, LogOut, Upload, Menu, X, CalendarCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,6 +19,7 @@ const navItems = [
   { id: "groups", label: "Groups", icon: UserPlus },
   { id: "messages", label: "Messages", icon: MessageSquare },
   { id: "mentors", label: "Mentors", icon: Star },
+  { id: "my-sessions", label: "My Sessions", icon: CalendarCheck },
   { id: "investors", label: "Investors", icon: TrendingUp },
   { id: "opportunities", label: "Opportunities", icon: Briefcase },
 ];
