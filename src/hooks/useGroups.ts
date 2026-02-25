@@ -222,9 +222,13 @@ export function useGroupDetail(groupId: string | null) {
     return () => { supabase.removeChannel(channel); };
   }, [groupId, fetchGroup]);
 
-  const createPost = async (content: string) => {
+  const createPost = async (content: string, imageUrl?: string, videoUrl?: string) => {
     if (!user || !groupId) return;
-    const { error } = await supabase.from("group_posts").insert({ group_id: groupId, author_id: user.id, content });
+    const { error } = await supabase.from("group_posts").insert({
+      group_id: groupId, author_id: user.id, content,
+      image_url: imageUrl ?? null,
+      video_url: videoUrl ?? null,
+    } as any);
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
   };
 
