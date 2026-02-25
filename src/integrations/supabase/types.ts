@@ -710,6 +710,7 @@ export type Database = {
           created_at: string
           id: string
           image_url: string | null
+          startup_id: string | null
           updated_at: string
           video_url: string | null
         }
@@ -720,6 +721,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          startup_id?: string | null
           updated_at?: string
           video_url?: string | null
         }
@@ -730,6 +732,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          startup_id?: string | null
           updated_at?: string
           video_url?: string | null
         }
@@ -740,6 +743,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "posts_startup_id_fkey"
+            columns: ["startup_id"]
+            isOneToOne: false
+            referencedRelation: "startups"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -830,6 +840,133 @@ export type Database = {
         }
         Relationships: []
       }
+      startup_invitations: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          invited_by: string
+          role: string
+          startup_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          invited_by: string
+          role?: string
+          startup_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          invited_by?: string
+          role?: string
+          startup_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "startup_invitations_startup_id_fkey"
+            columns: ["startup_id"]
+            isOneToOne: false
+            referencedRelation: "startups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      startup_members: {
+        Row: {
+          confirmed: boolean
+          created_at: string
+          id: string
+          role: string
+          startup_id: string
+          user_id: string
+        }
+        Insert: {
+          confirmed?: boolean
+          created_at?: string
+          id?: string
+          role?: string
+          startup_id: string
+          user_id: string
+        }
+        Update: {
+          confirmed?: boolean
+          created_at?: string
+          id?: string
+          role?: string
+          startup_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "startup_members_startup_id_fkey"
+            columns: ["startup_id"]
+            isOneToOne: false
+            referencedRelation: "startups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      startups: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          industry: string | null
+          linkedin_url: string | null
+          location: string | null
+          logo_url: string | null
+          name: string
+          registration_doc_url: string | null
+          short_description: string | null
+          slug: string | null
+          stage: string | null
+          updated_at: string
+          verification_status: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          industry?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          logo_url?: string | null
+          name: string
+          registration_doc_url?: string | null
+          short_description?: string | null
+          slug?: string | null
+          stage?: string | null
+          updated_at?: string
+          verification_status?: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          industry?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          logo_url?: string | null
+          name?: string
+          registration_doc_url?: string | null
+          short_description?: string | null
+          slug?: string | null
+          stage?: string | null
+          updated_at?: string
+          verification_status?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -869,6 +1006,18 @@ export type Database = {
         Returns: boolean
       }
       is_group_public: { Args: { _group_id: string }; Returns: boolean }
+      is_startup_admin: {
+        Args: { _startup_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_startup_member: {
+        Args: { _startup_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_startup_role: {
+        Args: { _role: string; _startup_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role:

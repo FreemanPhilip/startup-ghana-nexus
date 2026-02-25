@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Send, Image as ImageIcon, Video, CalendarDays, FileText, X, MapPin, Clock } from "lucide-react";
+import { Send, Image as ImageIcon, Video, CalendarDays, FileText, X, MapPin, Clock, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -7,12 +7,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { PostingIdentity } from "./AvatarDropdown";
+import { useStartups } from "@/hooks/useStartups";
 
 interface CreatePostCardProps {
-  onSubmit: (content: string, category: string, imageUrl?: string, videoUrl?: string) => Promise<void>;
+  onSubmit: (content: string, category: string, imageUrl?: string, videoUrl?: string, startupId?: string) => Promise<void>;
+  activeIdentity: PostingIdentity;
+  onIdentityChange: (identity: PostingIdentity) => void;
 }
 
 const categories = [
@@ -26,8 +31,9 @@ const categories = [
 
 type PostMode = "default" | "photo" | "video" | "event" | "article";
 
-const CreatePostCard = ({ onSubmit }: CreatePostCardProps) => {
+const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePostCardProps) => {
   const { user, profile } = useAuth();
+  const { myStartups } = useStartups();
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("general");
   const [submitting, setSubmitting] = useState(false);
@@ -52,7 +58,12 @@ const CreatePostCard = ({ onSubmit }: CreatePostCardProps) => {
   // Article state
   const [articleTitle, setArticleTitle] = useState("");
 
-  const initials = profile?.full_name?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "U";
+  const isStartup = activeIdentity.type === "startup";
+  const displayName = isStartup ? activeIdentity.startup?.name : profile?.full_name;
+  const displayAvatar = isStartup ? activeIdentity.startup?.logo_url : profile?.avatar_url;
+  const initials = isStartup
+    ? (activeIdentity.startup?.name?.charAt(0) || "S")
+    : profile?.full_name?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "U";
 
   const resetAll = () => {
     setContent("");
@@ -109,7 +120,6 @@ const CreatePostCard = ({ onSubmit }: CreatePostCardProps) => {
       let imageUrl: string | undefined;
       let videoUrl: string | undefined;
 
-      // Upload media
       if (imageFile) {
         const url = await uploadFile(imageFile, "images");
         if (!url) { setSubmitting(false); return; }
@@ -121,14 +131,12 @@ const CreatePostCard = ({ onSubmit }: CreatePostCardProps) => {
         videoUrl = url;
       }
 
-      // Event mode
       if (mode === "event") {
         if (!eventTitle || !eventDate) { toast.error("Event title and date are required"); setSubmitting(false); return; }
         finalCategory = "event";
         finalContent = `📅 ${eventTitle}\n🗓 ${eventDate}${eventTime ? ` at ${eventTime}` : ""}\n${eventIsVirtual ? "💻 Virtual Event" : `📍 ${eventLocation || "TBD"}`}${finalContent ? `\n\n${finalContent}` : ""}`;
       }
 
-      // Article mode
       if (mode === "article") {
         if (!articleTitle) { toast.error("Article title is required"); setSubmitting(false); return; }
         finalCategory = "article";
@@ -137,7 +145,8 @@ const CreatePostCard = ({ onSubmit }: CreatePostCardProps) => {
 
       if (!finalContent) { toast.error("Please add some content"); setSubmitting(false); return; }
 
-      await onSubmit(finalContent, finalCategory, imageUrl, videoUrl);
+      const startupId = isStartup ? activeIdentity.startup?.id : undefined;
+      await onSubmit(finalContent, finalCategory, imageUrl, videoUrl, startupId);
       resetAll();
       toast.success("Post published!");
     } catch {
@@ -154,22 +163,60 @@ const CreatePostCard = ({ onSubmit }: CreatePostCardProps) => {
     else if (m === "article") setCategory("article");
   };
 
+  const eligibleStartups = myStartups.filter(s => ["owner", "admin", "editor"].includes(s.my_role));
+
   return (
     <div className="rounded-xl border border-border bg-card">
       <input ref={imageInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={handleImageSelect} />
       <input ref={videoInputRef} type="file" accept="video/mp4,video/webm" className="hidden" onChange={handleVideoSelect} />
 
+      {/* Identity selector */}
+      {eligibleStartups.length > 0 && (
+        <div className="px-4 pt-3 pb-0">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-2 rounded-full border border-border bg-muted/50 px-3 py-1.5 text-xs font-medium hover:bg-muted transition-colors">
+                <Avatar className={`h-5 w-5 ${isStartup ? "rounded" : ""}`}>
+                  <AvatarImage src={displayAvatar || undefined} />
+                  <AvatarFallback className={`text-[9px] font-bold ${isStartup ? "rounded" : ""}`}>{initials}</AvatarFallback>
+                </Avatar>
+                <span>Posting as <span className="font-semibold">{displayName || "You"}</span></span>
+                <ChevronDown className="h-3 w-3 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem onClick={() => onIdentityChange({ type: "personal" })} className="gap-2 cursor-pointer">
+                <Avatar className="h-5 w-5">
+                  <AvatarImage src={profile?.avatar_url || undefined} />
+                  <AvatarFallback className="text-[9px] font-bold">{profile?.full_name?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "U"}</AvatarFallback>
+                </Avatar>
+                {profile?.full_name || "Personal Profile"}
+              </DropdownMenuItem>
+              {eligibleStartups.map(s => (
+                <DropdownMenuItem key={s.id} onClick={() => onIdentityChange({ type: "startup", startup: s })} className="gap-2 cursor-pointer">
+                  <Avatar className="h-5 w-5 rounded">
+                    <AvatarImage src={s.logo_url || undefined} />
+                    <AvatarFallback className="text-[9px] font-bold rounded">{s.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  {s.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )}
+
       {/* Compact input row */}
       <div className="flex items-center gap-3 p-4">
-        <Avatar className="h-10 w-10 shrink-0">
-          <AvatarImage src={profile?.avatar_url || undefined} />
-          <AvatarFallback className="bg-muted text-xs font-bold">{initials}</AvatarFallback>
+        <Avatar className={`h-10 w-10 shrink-0 ${isStartup ? "rounded-lg" : ""}`}>
+          <AvatarImage src={displayAvatar || undefined} />
+          <AvatarFallback className={`bg-muted text-xs font-bold ${isStartup ? "rounded-lg" : ""}`}>{initials}</AvatarFallback>
         </Avatar>
         <button
           onClick={() => { setExpanded(true); setMode("default"); }}
           className="flex-1 rounded-full border border-border bg-muted/50 px-4 py-2.5 text-left text-sm text-muted-foreground hover:bg-muted transition-colors"
         >
-          Start a post
+          Start a post{isStartup ? ` as ${activeIdentity.startup?.name}` : ""}
         </button>
       </div>
 
@@ -196,7 +243,6 @@ const CreatePostCard = ({ onSubmit }: CreatePostCardProps) => {
       {/* Expanded editor */}
       {expanded && (
         <div className="border-t border-border p-4 space-y-3">
-          {/* Event form fields */}
           {mode === "event" && (
             <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-3">
               <p className="text-xs font-semibold text-foreground">Create Event Post</p>
@@ -217,7 +263,6 @@ const CreatePostCard = ({ onSubmit }: CreatePostCardProps) => {
             </div>
           )}
 
-          {/* Article title */}
           {mode === "article" && (
             <Input
               autoFocus
@@ -228,7 +273,6 @@ const CreatePostCard = ({ onSubmit }: CreatePostCardProps) => {
             />
           )}
 
-          {/* Media preview */}
           {imagePreview && (
             <div className="relative">
               <img src={imagePreview} alt="Preview" className="w-full max-h-64 object-cover rounded-lg" />

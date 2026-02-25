@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -14,9 +14,14 @@ import OpportunitiesPage from "@/components/opportunities/OpportunitiesPage";
 import MessagesPage from "@/components/messages/MessagesPage";
 import GroupsPage from "@/components/groups/GroupsPage";
 import ProfilePage from "@/components/profile/ProfilePage";
+import MyStartupsPage from "@/components/startups/MyStartupsPage";
+import FirstTimeFounderModal from "@/components/startups/FirstTimeFounderModal";
+import CreateStartupWizard from "@/components/startups/CreateStartupWizard";
+import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
+import { useStartups } from "@/hooks/useStartups";
 
 const DashboardPage = () => {
-  const { profile, signOut } = useAuth();
+  const { profile, roles, signOut } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,8 +29,23 @@ const DashboardPage = () => {
   const [deepLinkGroupId, setDeepLinkGroupId] = useState<string | null>(null);
   const [deepLinkMessageUserId, setDeepLinkMessageUserId] = useState<string | null>(null);
 
+  // Identity switching
+  const [activeIdentity, setActiveIdentity] = useState<PostingIdentity>({ type: "personal" });
+
+  // First-time founder modal
+  const { myStartups, loading: startupsLoading, refetch: refetchStartups } = useStartups();
+  const [showFounderModal, setShowFounderModal] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
+  const [founderModalShown, setFounderModalShown] = useState(false);
+
+  useEffect(() => {
+    if (!startupsLoading && !founderModalShown && roles.includes("startup_founder") && myStartups.length === 0) {
+      setShowFounderModal(true);
+      setFounderModalShown(true);
+    }
+  }, [startupsLoading, roles, myStartups.length, founderModalShown]);
+
   const handleViewOpportunity = useCallback((opportunityId: string) => {
-    // Strip opp- prefix if present
     const cleanId = opportunityId.startsWith("opp-") ? opportunityId.slice(4) : opportunityId;
     setDeepLinkOpportunityId(cleanId);
     setActiveTab("opportunities");
@@ -61,11 +81,17 @@ const DashboardPage = () => {
       />
 
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
-        <DashboardHeader onMenuToggle={() => setSidebarOpen(true)} />
+        <DashboardHeader
+          onMenuToggle={() => setSidebarOpen(true)}
+          onNavigate={handleTabChange}
+          onSignOut={handleSignOut}
+          activeIdentity={activeIdentity}
+          onIdentityChange={setActiveIdentity}
+        />
 
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto">
-            <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "network", "opportunities", "groups", "profile"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
+            <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "network", "opportunities", "groups", "profile", "my-startups"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
               {activeTab === "messages" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <MessagesPage />
@@ -77,6 +103,8 @@ const DashboardPage = () => {
                   <EcosystemFeed
                     onViewOpportunity={handleViewOpportunity}
                     onViewGroup={handleViewGroup}
+                    activeIdentity={activeIdentity}
+                    onIdentityChange={setActiveIdentity}
                   />
                 </motion.div>
               )}
@@ -123,7 +151,13 @@ const DashboardPage = () => {
                 </motion.div>
               )}
 
-              {!["home", "network", "mentors", "investors", "opportunities", "messages", "groups", "profile"].includes(activeTab) && (
+              {activeTab === "my-startups" && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                  <MyStartupsPage />
+                </motion.div>
+              )}
+
+              {!["home", "network", "mentors", "investors", "opportunities", "messages", "groups", "profile", "my-startups"].includes(activeTab) && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -140,9 +174,21 @@ const DashboardPage = () => {
             </div>
           </main>
 
-          {!["messages", "groups", "profile"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />)}
+          {!["messages", "groups", "profile", "my-startups"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />)}
         </div>
       </div>
+
+      {/* First-time founder modal */}
+      <FirstTimeFounderModal
+        open={showFounderModal}
+        onOpenChange={setShowFounderModal}
+        onCreateStartup={() => setShowWizard(true)}
+      />
+      <CreateStartupWizard
+        open={showWizard}
+        onOpenChange={setShowWizard}
+        onCreated={refetchStartups}
+      />
     </div>
   );
 };

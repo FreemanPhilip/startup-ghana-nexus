@@ -100,7 +100,7 @@ export function usePosts(category?: string) {
     return () => { supabase.removeChannel(channel); };
   }, [fetchPosts]);
 
-  const createPost = async (content: string, category: string = "general", imageUrl?: string, videoUrl?: string) => {
+  const createPost = async (content: string, category: string = "general", imageUrl?: string, videoUrl?: string, startupId?: string) => {
     if (!user) return;
     await supabase.from("posts").insert({
       author_id: user.id,
@@ -108,6 +108,7 @@ export function usePosts(category?: string) {
       category,
       image_url: imageUrl ?? null,
       video_url: videoUrl ?? null,
+      startup_id: startupId ?? null,
     } as any);
   };
 

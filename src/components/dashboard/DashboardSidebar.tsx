@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star, Home, MessageSquare, Users, TrendingUp, Briefcase, UserPlus, LogOut, Upload, Menu, X, User } from "lucide-react";
+import { Star, Home, MessageSquare, Users, TrendingUp, Briefcase, UserPlus, LogOut, Upload, Menu, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
