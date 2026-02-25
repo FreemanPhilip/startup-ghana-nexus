@@ -11,6 +11,7 @@ import InvestorRightSidebar from "@/components/investors/InvestorRightSidebar";
 import NetworkPage from "@/components/network/NetworkPage";
 import OpportunitiesPage from "@/components/opportunities/OpportunitiesPage";
 import MessagesPage from "@/components/messages/MessagesPage";
+import GroupsPage from "@/components/groups/GroupsPage";
 
 const DashboardPage = () => {
   const { profile } = useAuth();
@@ -34,7 +35,7 @@ const DashboardPage = () => {
         <div className="flex flex-1 overflow-hidden">
           {/* Center content */}
           <main className="flex-1 overflow-y-auto">
-            <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "network", "opportunities"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
+            <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "network", "opportunities", "groups"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
               {activeTab === "messages" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <MessagesPage />
@@ -71,7 +72,13 @@ const DashboardPage = () => {
                 </motion.div>
               )}
 
-              {!["home", "network", "mentors", "investors", "opportunities", "messages"].includes(activeTab) && (
+              {activeTab === "groups" && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                  <GroupsPage />
+                </motion.div>
+              )}
+
+              {!["home", "network", "mentors", "investors", "opportunities", "messages", "groups"].includes(activeTab) && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
