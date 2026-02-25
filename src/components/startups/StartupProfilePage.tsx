@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { ArrowLeft, Building2, Globe, MapPin, Users, ExternalLink, ShieldCheck, ShieldAlert, Shield, Calendar, Linkedin, FileText, CheckCircle2, Loader2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { ArrowLeft, Building2, Globe, MapPin, Users, ExternalLink, ShieldCheck, ShieldAlert, Shield, Calendar, Linkedin, FileText, CheckCircle2, Loader2, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import PostCard from "@/components/dashboard/PostCard";
+import StartupTeamManagement from "./StartupTeamManagement";
 import type { PostWithDetails, Comment } from "@/hooks/usePosts";
 import { formatDistanceToNow } from "date-fns";
 
@@ -72,26 +73,30 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("about");
 
+  const fetchTeam = useCallback(async () => {
+    const { data: members } = await supabase
+      .from("startup_members")
+      .select("id, user_id, role, confirmed, startup_id")
+      .eq("startup_id", startupId);
+
+    if (members?.length) {
+      const userIds = members.map(m => m.user_id);
+      const { data: profiles } = await supabase.from("profiles").select("user_id, full_name, avatar_url, headline").in("user_id", userIds);
+      const profileMap = new Map(profiles?.map(p => [p.user_id, p]) ?? []);
+      setTeam(members.map(m => ({ ...m, profile: profileMap.get(m.user_id) ?? null })));
+    } else {
+      setTeam([]);
+    }
+  }, [startupId]);
+
   useEffect(() => {
     const fetchAll = async () => {
       setLoading(true);
 
-      // Fetch startup
       const { data: s } = await supabase.from("startups").select("*").eq("id", startupId).single();
       setStartup(s);
 
-      // Fetch team members with profiles
-      const { data: members } = await supabase
-        .from("startup_members")
-        .select("id, user_id, role, confirmed, startup_id")
-        .eq("startup_id", startupId);
-
-      if (members?.length) {
-        const userIds = members.map(m => m.user_id);
-        const { data: profiles } = await supabase.from("profiles").select("user_id, full_name, avatar_url, headline").in("user_id", userIds);
-        const profileMap = new Map(profiles?.map(p => [p.user_id, p]) ?? []);
-        setTeam(members.map(m => ({ ...m, profile: profileMap.get(m.user_id) ?? null })));
-      }
+      await fetchTeam();
 
       // Fetch startup posts
       const { data: postsData } = await supabase
@@ -136,7 +141,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
       setLoading(false);
     };
     fetchAll();
-  }, [startupId, user]);
+  }, [startupId, user, fetchTeam]);
 
   const handleToggleLike = async (postId: string, isLiked: boolean) => {
     if (!user) return;
@@ -186,6 +191,8 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
 
   const confirmedTeam = team.filter(m => m.confirmed);
   const teamVerified = confirmedTeam.length >= 2;
+  const myMembership = team.find(m => m.user_id === user?.id);
+  const isAdmin = myMembership?.role === "owner" || myMembership?.role === "admin";
 
   return (
     <div className="space-y-6">
@@ -251,6 +258,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
           <TabsTrigger value="about" className="text-xs">About</TabsTrigger>
           <TabsTrigger value="team" className="text-xs">Team ({confirmedTeam.length})</TabsTrigger>
           <TabsTrigger value="posts" className="text-xs">Posts ({posts.length})</TabsTrigger>
+          {isAdmin && <TabsTrigger value="manage" className="text-xs gap-1"><Settings className="h-3 w-3" /> Manage</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="about" className="mt-4 space-y-5">
@@ -359,6 +367,15 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
             ))
           )}
         </TabsContent>
+        {isAdmin && (
+          <TabsContent value="manage" className="mt-4">
+            <StartupTeamManagement
+              startupId={startupId}
+              team={team}
+              onTeamUpdated={fetchTeam}
+            />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
