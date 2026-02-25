@@ -126,7 +126,7 @@ const DashboardPage = () => {
             </div>
           </main>
 
-          {activeTab !== "messages" && (activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />)}
+          {!["messages", "groups"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />)}
         </div>
       </div>
     </div>
