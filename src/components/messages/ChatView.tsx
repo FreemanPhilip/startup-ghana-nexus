@@ -350,12 +350,6 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
                 >
                   <Paperclip className="h-3.5 w-3.5" /> Document
                 </button>
-                <button
-                  onClick={() => { setScheduleOpen(true); setShowAttachMenu(false); }}
-                  className="flex items-center gap-2.5 w-full px-3 py-2 text-xs text-foreground hover:bg-muted rounded-md transition-colors"
-                >
-                  <Calendar className="h-3.5 w-3.5" /> Schedule Meeting
-                </button>
               </div>
             )}
           </div>
