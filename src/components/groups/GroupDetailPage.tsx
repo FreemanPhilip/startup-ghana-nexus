@@ -7,8 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useGroupDetail } from "@/hooks/useGroups";
 import { useGroupAdmin } from "@/hooks/useGroupAdmin";
+import { useGroupEvents } from "@/hooks/useGroupEvents";
 import InviteMembersDialog from "./InviteMembersDialog";
 import JoinRequestsPanel from "./JoinRequestsPanel";
+import CreateEventDialog from "./CreateEventDialog";
+import GroupEventsTab from "./GroupEventsTab";
 import { formatDistanceToNow } from "date-fns";
 
 interface GroupDetailPageProps {
@@ -19,9 +22,10 @@ interface GroupDetailPageProps {
 const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
   const { group, posts, members, loading, createPost, toggleLike, addComment, refetch } = useGroupDetail(groupId);
   const admin = useGroupAdmin(groupId);
+  const eventsHook = useGroupEvents(groupId);
   const [newPost, setNewPost] = useState("");
   const [posting, setPosting] = useState(false);
-  const [activeTab, setActiveTab] = useState<"feed" | "members" | "requests">("feed");
+  const [activeTab, setActiveTab] = useState<"feed" | "members" | "events" | "requests">("feed");
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
 
@@ -57,6 +61,7 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
   const tabs = [
     { key: "feed" as const, label: "Feed" },
     { key: "members" as const, label: "Members" },
+    { key: "events" as const, label: "Events" },
     ...(isAdmin && group.is_private ? [{ key: "requests" as const, label: `Requests (${admin.joinRequests.length})` }] : []),
   ];
 
@@ -293,6 +298,24 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
             </div>
           )}
 
+          {activeTab === "events" && (
+            <div className="space-y-4">
+              {isAdmin && (
+                <div className="flex justify-end">
+                  <CreateEventDialog onCreate={eventsHook.createEvent} />
+                </div>
+              )}
+              <GroupEventsTab
+                events={eventsHook.events}
+                loading={eventsHook.loading}
+                isMember={group.is_member}
+                isAdmin={isAdmin}
+                onRsvp={eventsHook.toggleRsvp}
+                onDelete={eventsHook.deleteEvent}
+              />
+            </div>
+          )}
+
           {activeTab === "requests" && isAdmin && (
             <JoinRequestsPanel
               requests={admin.joinRequests}
@@ -329,6 +352,34 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
               </button>
             )}
           </div>
+
+          {/* Upcoming Events widget */}
+          {eventsHook.events.filter(e => new Date(e.event_date) >= new Date()).length > 0 && (
+            <div className="rounded-xl border border-border bg-card p-4">
+              <h3 className="font-display font-bold text-sm mb-3">Upcoming Events</h3>
+              <div className="space-y-3">
+                {eventsHook.events
+                  .filter(e => new Date(e.event_date) >= new Date())
+                  .slice(0, 3)
+                  .map(e => {
+                    const d = new Date(e.event_date);
+                    return (
+                      <div key={e.id} className="flex gap-2.5">
+                        <div className="flex flex-col items-center rounded bg-primary/10 text-primary w-10 h-10 shrink-0 justify-center">
+                          <span className="text-[8px] font-bold uppercase leading-none">{d.toLocaleDateString("en", { month: "short" })}</span>
+                          <span className="text-sm font-bold leading-none">{d.getDate()}</span>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-medium truncate">{e.title}</p>
+                          <p className="text-[10px] text-muted-foreground">{d.toLocaleTimeString("en", { hour: "numeric", minute: "2-digit" })} · {e.is_virtual ? "Virtual" : e.location || "TBD"}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+              <button onClick={() => setActiveTab("events")} className="text-xs text-primary font-medium mt-3 hover:underline">View Calendar</button>
+            </div>
+          )}
 
           {/* Quick stats */}
           <div className="rounded-xl border border-border bg-card p-4">
