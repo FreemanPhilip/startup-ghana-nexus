@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNetwork } from "@/hooks/useNetwork";
 import { useMessages } from "@/hooks/useMessages";
-import { toast } from "@/hooks/use-toast";
 import NetworkCard from "./NetworkCard";
+import QuickChatDialog from "@/components/messages/QuickChatDialog";
 
 const roleFilters = [
   { id: "all", label: "All", icon: Layers },
@@ -16,15 +16,27 @@ const roleFilters = [
   { id: "ecosystem_partner", label: "Partners", icon: Users },
 ];
 
-const NetworkPage = () => {
+interface NetworkPageProps {
+  onOpenMessages?: () => void;
+}
+
+const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
   const { profiles, loading, isFollowing, toggleFollow, followerCount, followingCount } = useNetwork();
-  const { startConversation } = useMessages();
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [chatTarget, setChatTarget] = useState<{
+    userId: string;
+    name: string;
+    avatar: string | null;
+  } | null>(null);
 
-  const handleMessage = async (userId: string) => {
-    await startConversation(userId);
-    toast({ title: "Conversation started!", description: "Switch to the Messages tab to chat." });
+  const handleMessage = (userId: string) => {
+    const profile = profiles.find(p => p.user_id === userId);
+    setChatTarget({
+      userId,
+      name: profile?.full_name || "User",
+      avatar: profile?.avatar_url || null,
+    });
   };
 
   const filtered = useMemo(() => {
@@ -126,6 +138,18 @@ const NetworkPage = () => {
               : "No other members in the ecosystem yet. Invite someone!"}
           </p>
         </div>
+      )}
+
+      {/* Quick Chat Dialog */}
+      {chatTarget && (
+        <QuickChatDialog
+          open={!!chatTarget}
+          onClose={() => setChatTarget(null)}
+          targetUserId={chatTarget.userId}
+          targetUserName={chatTarget.name}
+          targetUserAvatar={chatTarget.avatar}
+          onOpenFullChat={onOpenMessages}
+        />
       )}
     </div>
   );

@@ -18,17 +18,28 @@ const DashboardPage = () => {
   const [activeTab, setActiveTab] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [deepLinkOpportunityId, setDeepLinkOpportunityId] = useState<string | null>(null);
+  const [deepLinkGroupId, setDeepLinkGroupId] = useState<string | null>(null);
+  const [deepLinkMessageUserId, setDeepLinkMessageUserId] = useState<string | null>(null);
 
   const handleViewOpportunity = useCallback((opportunityId: string) => {
-    setDeepLinkOpportunityId(opportunityId);
+    // Strip opp- prefix if present
+    const cleanId = opportunityId.startsWith("opp-") ? opportunityId.slice(4) : opportunityId;
+    setDeepLinkOpportunityId(cleanId);
     setActiveTab("opportunities");
   }, []);
 
+  const handleViewGroup = useCallback((groupId: string) => {
+    setDeepLinkGroupId(groupId);
+    setActiveTab("groups");
+  }, []);
+
+  const handleOpenMessages = useCallback(() => {
+    setActiveTab("messages");
+  }, []);
+
   const handleTabChange = useCallback((tab: string) => {
-    // Clear deep link when manually switching tabs
-    if (tab !== "opportunities") {
-      setDeepLinkOpportunityId(null);
-    }
+    if (tab !== "opportunities") setDeepLinkOpportunityId(null);
+    if (tab !== "groups") setDeepLinkGroupId(null);
     setActiveTab(tab);
   }, []);
 
@@ -55,13 +66,16 @@ const DashboardPage = () => {
 
               {activeTab === "home" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <EcosystemFeed onViewOpportunity={handleViewOpportunity} />
+                  <EcosystemFeed
+                    onViewOpportunity={handleViewOpportunity}
+                    onViewGroup={handleViewGroup}
+                  />
                 </motion.div>
               )}
 
               {activeTab === "network" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <NetworkPage />
+                  <NetworkPage onOpenMessages={handleOpenMessages} />
                 </motion.div>
               )}
 
@@ -88,7 +102,10 @@ const DashboardPage = () => {
 
               {activeTab === "groups" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <GroupsPage />
+                  <GroupsPage
+                    initialGroupId={deepLinkGroupId}
+                    onDeepLinkConsumed={() => setDeepLinkGroupId(null)}
+                  />
                 </motion.div>
               )}
 
