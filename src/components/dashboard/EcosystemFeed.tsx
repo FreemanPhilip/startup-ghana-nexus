@@ -82,6 +82,7 @@ const EcosystemFeed = ({ onViewOpportunity, onViewGroup }: EcosystemFeedProps) =
                     author_id: item.author_id!,
                     content: item.content!,
                     image_url: item.image_url ?? null,
+                    video_url: (item as any).video_url ?? null,
                     category: item.category || "general",
                     created_at: item.created_at,
                     author_name: item.author_name || "Anonymous",

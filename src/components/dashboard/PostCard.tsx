@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MessageCircle, Share2, CheckCircle, MoreHorizontal, Globe } from "lucide-react";
+import { Heart, MessageCircle, Share2, CheckCircle, MoreHorizontal, Globe, ChevronDown, ChevronUp } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +23,7 @@ const categoryLabels: Record<string, string> = {
   success_story: "Success Story",
   funding: "Funding",
   event: "Event",
+  article: "Article",
 };
 
 const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleFollow, isFollowing }: PostCardProps) => {
@@ -31,10 +32,21 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loadingComments, setLoadingComments] = useState(false);
+  const [articleExpanded, setArticleExpanded] = useState(false);
 
   const initials = post.author_name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
   const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: false });
   const isOwnPost = user?.id === post.author_id;
+
+  // Article parsing
+  const isArticle = post.category === "article";
+  let articleTitle = "";
+  let articleBody = post.content;
+  if (isArticle && post.content.startsWith("# ")) {
+    const lines = post.content.split("\n");
+    articleTitle = lines[0].replace(/^#\s*/, "");
+    articleBody = lines.slice(1).join("\n").trim();
+  }
 
   const handleToggleComments = async () => {
     if (!showComments) {
@@ -104,12 +116,32 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
 
       {/* Content */}
       <div className="px-5 py-3">
-        <p className="text-sm leading-relaxed whitespace-pre-wrap">{post.content}</p>
+        {isArticle ? (
+          <div>
+            {articleTitle && <h3 className="text-lg font-bold mb-2">{articleTitle}</h3>}
+            <p className={`text-sm leading-relaxed whitespace-pre-wrap ${!articleExpanded && articleBody.length > 300 ? "line-clamp-4" : ""}`}>
+              {articleBody}
+            </p>
+            {articleBody.length > 300 && (
+              <button onClick={() => setArticleExpanded(!articleExpanded)} className="mt-1 flex items-center gap-1 text-xs font-medium text-primary hover:underline">
+                {articleExpanded ? <><ChevronUp className="h-3 w-3" /> Show less</> : <><ChevronDown className="h-3 w-3" /> Read more</>}
+              </button>
+            )}
+          </div>
+        ) : (
+          <p className="text-sm leading-relaxed whitespace-pre-wrap">{post.content}</p>
+        )}
       </div>
 
       {post.image_url && (
         <div>
           <img src={post.image_url} alt="" className="w-full object-cover max-h-96" />
+        </div>
+      )}
+
+      {post.video_url && (
+        <div>
+          <video src={post.video_url} controls className="w-full max-h-96" />
         </div>
       )}
 
