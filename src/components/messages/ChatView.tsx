@@ -30,6 +30,8 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const imageRef = useRef<HTMLInputElement>(null);
+  const docRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -335,22 +337,30 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
               <Plus className="h-5 w-5" />
             </Button>
             {showAttachMenu && (
-              <div className="absolute bottom-full left-0 mb-2 bg-card border border-border rounded-lg shadow-lg p-1 z-50 min-w-[140px]">
+              <div className="absolute bottom-full left-0 mb-2 bg-card border border-border rounded-lg shadow-xl p-1.5 z-[60] min-w-[170px]">
                 <button
-                  onClick={() => { fileRef.current?.click(); }}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground hover:bg-muted rounded-md transition-colors"
+                  onClick={() => { imageRef.current?.click(); setShowAttachMenu(false); }}
+                  className="flex items-center gap-2.5 w-full px-3 py-2 text-xs text-foreground hover:bg-muted rounded-md transition-colors"
                 >
-                  <Paperclip className="h-3.5 w-3.5" /> Send File
+                  <Image className="h-3.5 w-3.5" /> Photo / Video
+                </button>
+                <button
+                  onClick={() => { docRef.current?.click(); setShowAttachMenu(false); }}
+                  className="flex items-center gap-2.5 w-full px-3 py-2 text-xs text-foreground hover:bg-muted rounded-md transition-colors"
+                >
+                  <Paperclip className="h-3.5 w-3.5" /> Document
                 </button>
                 <button
                   onClick={() => { setScheduleOpen(true); setShowAttachMenu(false); }}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground hover:bg-muted rounded-md transition-colors"
+                  className="flex items-center gap-2.5 w-full px-3 py-2 text-xs text-foreground hover:bg-muted rounded-md transition-colors"
                 >
                   <Calendar className="h-3.5 w-3.5" /> Schedule Meeting
                 </button>
               </div>
             )}
           </div>
+          <input ref={imageRef} type="file" accept="image/*,video/*" className="hidden" onChange={handleFileSelect} />
+          <input ref={docRef} type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" className="hidden" onChange={handleFileSelect} />
           <input ref={fileRef} type="file" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" className="hidden" onChange={handleFileSelect} />
           <Input
             placeholder="Type a message..."
