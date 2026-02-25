@@ -1,31 +1,46 @@
-import { useState, useRef } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { useState, useRef, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Camera, Loader2 } from "lucide-react";
+import { Camera, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { colorOptions, categoryOptions } from "./groupConstants";
+import { categoryOptions, colorOptions } from "./groupConstants";
+import type { Group } from "@/hooks/useGroups";
 
-interface CreateGroupDialogProps {
-  onCreate: (name: string, description: string, isPrivate: boolean, coverColor: string, category?: string, iconUrl?: string) => Promise<void>;
+interface EditGroupDialogProps {
+  group: Group;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSave: (updates: { name: string; description: string; is_private: boolean; cover_color: string; category: string; icon_url: string | null }) => Promise<void>;
 }
 
-const CreateGroupDialog = ({ onCreate }: CreateGroupDialogProps) => {
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [isPrivate, setIsPrivate] = useState(false);
-  const [coverColor, setCoverColor] = useState(colorOptions[0].value);
-  const [category, setCategory] = useState("general");
-  const [creating, setCreating] = useState(false);
-  const [iconUrl, setIconUrl] = useState<string | null>(null);
-  const [iconPreview, setIconPreview] = useState<string | null>(null);
+const EditGroupDialog = ({ group, open, onOpenChange, onSave }: EditGroupDialogProps) => {
+  const [name, setName] = useState(group.name);
+  const [description, setDescription] = useState(group.description || "");
+  const [isPrivate, setIsPrivate] = useState(group.is_private || false);
+  const [coverColor, setCoverColor] = useState(group.cover_color || colorOptions[0].value);
+  const [category, setCategory] = useState(group.category || "general");
+  const [saving, setSaving] = useState(false);
+  const [iconUrl, setIconUrl] = useState<string | null>(group.icon_url || null);
+  const [iconPreview, setIconPreview] = useState<string | null>(group.icon_url || null);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (open) {
+      setName(group.name);
+      setDescription(group.description || "");
+      setIsPrivate(group.is_private || false);
+      setCoverColor(group.cover_color || colorOptions[0].value);
+      setCategory(group.category || "general");
+      setIconUrl(group.icon_url || null);
+      setIconPreview(group.icon_url || null);
+    }
+  }, [open, group]);
 
   const handleIconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -42,27 +57,20 @@ const CreateGroupDialog = ({ onCreate }: CreateGroupDialogProps) => {
     setUploading(false);
   };
 
-  const handleCreate = async () => {
+  const handleSave = async () => {
     if (!name.trim()) return;
-    setCreating(true);
-    await onCreate(name.trim(), description.trim(), isPrivate, coverColor, category, iconUrl || undefined);
-    setCreating(false);
-    setOpen(false);
-    setName(""); setDescription(""); setIsPrivate(false); setCoverColor(colorOptions[0].value);
-    setCategory("general"); setIconUrl(null); setIconPreview(null);
+    setSaving(true);
+    await onSave({ name: name.trim(), description: description.trim(), is_private: isPrivate, cover_color: coverColor, category, icon_url: iconUrl });
+    setSaving(false);
+    onOpenChange(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2 font-semibold">
-          <Plus className="h-4 w-4" /> Create Group
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create New Group</DialogTitle>
-          <DialogDescription>Set up your group with a profile image, category, and details.</DialogDescription>
+          <DialogTitle>Edit Group</DialogTitle>
+          <DialogDescription>Update your group's profile and settings.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 mt-2">
           <div className={`h-24 rounded-lg bg-gradient-to-br ${coverColor} relative`}>
@@ -78,7 +86,7 @@ const CreateGroupDialog = ({ onCreate }: CreateGroupDialogProps) => {
               ) : (
                 <div className="flex flex-col items-center gap-0.5">
                   <Camera className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-[8px] text-muted-foreground">Add Photo</span>
+                  <span className="text-[8px] text-muted-foreground">Change</span>
                 </div>
               )}
             </button>
@@ -97,7 +105,7 @@ const CreateGroupDialog = ({ onCreate }: CreateGroupDialogProps) => {
 
           <div className="space-y-2">
             <Label>Group Name</Label>
-            <Input placeholder="e.g. FinTech Ghana" value={name} onChange={e => setName(e.target.value)} />
+            <Input value={name} onChange={e => setName(e.target.value)} />
           </div>
 
           <div className="space-y-2">
@@ -114,7 +122,7 @@ const CreateGroupDialog = ({ onCreate }: CreateGroupDialogProps) => {
 
           <div className="space-y-2">
             <Label>Description</Label>
-            <Textarea placeholder="What's this group about?" value={description} onChange={e => setDescription(e.target.value)} rows={3} />
+            <Textarea value={description} onChange={e => setDescription(e.target.value)} rows={3} />
           </div>
 
           <div className="flex items-center justify-between">
@@ -122,8 +130,8 @@ const CreateGroupDialog = ({ onCreate }: CreateGroupDialogProps) => {
             <Switch checked={isPrivate} onCheckedChange={setIsPrivate} />
           </div>
 
-          <Button className="w-full" onClick={handleCreate} disabled={!name.trim() || creating || uploading}>
-            {creating ? "Creating..." : "Create Group"}
+          <Button className="w-full" onClick={handleSave} disabled={!name.trim() || saving || uploading}>
+            {saving ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </DialogContent>
@@ -131,4 +139,4 @@ const CreateGroupDialog = ({ onCreate }: CreateGroupDialogProps) => {
   );
 };
 
-export default CreateGroupDialog;
+export default EditGroupDialog;
