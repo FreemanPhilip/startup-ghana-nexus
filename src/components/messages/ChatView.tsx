@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, Smile, Plus, MoreVertical, Video, ArrowLeft, Check, CheckCheck } from "lucide-react";
+import { Send, Smile, Plus, MoreVertical, Video, ArrowLeft, Check, CheckCheck, Image, Paperclip, X, Calendar, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,29 +8,59 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Message, Conversation } from "@/hooks/useMessages";
 import { format, isToday, isYesterday } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
+import ChatScheduleMeetingDialog from "./ChatScheduleMeetingDialog";
 
 interface ChatViewProps {
   conversation: Conversation | undefined;
   messages: Message[];
   loading: boolean;
-  onSendMessage: (content: string) => void;
+  onSendMessage: (content: string, imageUrl?: string | null) => void;
   onBack?: () => void;
 }
 
 const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: ChatViewProps) => {
   const { user } = useAuth();
   const [input, setInput] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [showAttachMenu, setShowAttachMenu] = useState(false);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages]);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    onSendMessage(input);
+  const handleSend = async () => {
+    if (!input.trim() && !pendingFile) return;
+
+    let imageUrl: string | null = null;
+
+    if (pendingFile && user) {
+      setUploading(true);
+      const ext = pendingFile.name.split(".").pop();
+      const path = `${user.id}/chat-${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("post-media").upload(path, pendingFile);
+      if (!error) {
+        const { data: urlData } = supabase.storage.from("post-media").getPublicUrl(path);
+        imageUrl = urlData.publicUrl;
+      } else {
+        toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+        setUploading(false);
+        return;
+      }
+      setUploading(false);
+    }
+
+    onSendMessage(input, imageUrl);
     setInput("");
+    setPendingFile(null);
+    setPreviewImage(null);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -38,6 +68,28 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
       e.preventDefault();
       handleSend();
     }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Only images supported", description: "Please select an image file (JPG, PNG, GIF, etc.)", variant: "destructive" });
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast({ title: "File too large", description: "Maximum file size is 10MB", variant: "destructive" });
+      return;
+    }
+    setPendingFile(file);
+    setPreviewImage(URL.createObjectURL(file));
+    setShowAttachMenu(false);
+  };
+
+  const clearPendingFile = () => {
+    setPendingFile(null);
+    if (previewImage) URL.revokeObjectURL(previewImage);
+    setPreviewImage(null);
   };
 
   const getInitials = (name: string | null) =>
@@ -97,9 +149,22 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <Button variant="outline" size="sm" className="gap-1.5 text-xs hidden sm:flex">
-            <Video className="h-3.5 w-3.5" />
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5 text-xs hidden sm:flex"
+            onClick={() => setScheduleOpen(true)}
+          >
+            <Calendar className="h-3.5 w-3.5" />
             Schedule Meeting
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 sm:hidden"
+            onClick={() => setScheduleOpen(true)}
+          >
+            <Calendar className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <MoreVertical className="h-4 w-4" />
@@ -157,7 +222,16 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
                                 : "bg-card border border-border text-foreground rounded-bl-md"
                             }`}
                           >
-                            {msg.content}
+                            {/* Image attachment */}
+                            {msg.image_url && (
+                              <img
+                                src={msg.image_url}
+                                alt="Attachment"
+                                className="rounded-lg max-w-full max-h-48 object-cover mb-1.5 cursor-pointer"
+                                onClick={() => window.open(msg.image_url!, "_blank")}
+                              />
+                            )}
+                            {msg.content && msg.content !== "📎 Attachment" && msg.content}
                           </div>
                           <div className={`flex items-center gap-1 mt-1 ${isMe ? "flex-row-reverse" : ""}`}>
                             <span className="text-[10px] text-muted-foreground">
@@ -189,12 +263,51 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
         )}
       </ScrollArea>
 
+      {/* Image preview */}
+      {previewImage && (
+        <div className="border-t border-border bg-card px-3 pt-2">
+          <div className="relative inline-block">
+            <img src={previewImage} alt="Preview" className="h-20 rounded-lg border border-border object-cover" />
+            <button
+              onClick={clearPendingFile}
+              className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Message input */}
       <div className="border-t border-border bg-card p-3">
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 text-muted-foreground">
-            <Plus className="h-5 w-5" />
-          </Button>
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 shrink-0 text-muted-foreground"
+              onClick={() => setShowAttachMenu(!showAttachMenu)}
+            >
+              <Plus className="h-5 w-5" />
+            </Button>
+            {showAttachMenu && (
+              <div className="absolute bottom-full left-0 mb-2 bg-card border border-border rounded-lg shadow-lg p-1 z-50 min-w-[140px]">
+                <button
+                  onClick={() => { fileRef.current?.click(); }}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground hover:bg-muted rounded-md transition-colors"
+                >
+                  <Image className="h-3.5 w-3.5" /> Send Image
+                </button>
+                <button
+                  onClick={() => { setScheduleOpen(true); setShowAttachMenu(false); }}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground hover:bg-muted rounded-md transition-colors"
+                >
+                  <Calendar className="h-3.5 w-3.5" /> Schedule Meeting
+                </button>
+              </div>
+            )}
+          </div>
+          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
           <Input
             placeholder="Type a message..."
             value={input}
@@ -209,12 +322,21 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
             size="icon"
             className="h-9 w-9 shrink-0 rounded-full"
             onClick={handleSend}
-            disabled={!input.trim()}
+            disabled={(!input.trim() && !pendingFile) || uploading}
           >
-            <Send className="h-4 w-4" />
+            {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </Button>
         </div>
       </div>
+
+      {/* Schedule Meeting Dialog */}
+      <ChatScheduleMeetingDialog
+        open={scheduleOpen}
+        onClose={() => setScheduleOpen(false)}
+        otherUserName={otherUser?.full_name || "User"}
+        otherUserId={otherUser?.user_id || ""}
+        onSendMessage={onSendMessage}
+      />
     </div>
   );
 };
