@@ -19,6 +19,10 @@ export interface FeedItem {
   likes_count?: number;
   comments_count?: number;
   is_liked?: boolean;
+  // Startup identity fields
+  startup_id?: string | null;
+  startup_name?: string | null;
+  startup_logo?: string | null;
   // Group post fields
   group_id?: string;
   group_name?: string;
@@ -67,6 +71,11 @@ export function useHomeFeed() {
       groupsRes.data?.forEach(g => groupsMap.set(g.id, { name: g.name, cover_color: g.cover_color }));
     }
 
+    // Collect startup IDs for lookup
+    const startupIds = new Set<string>();
+    postsRes.data?.forEach(p => { if ((p as any).startup_id) startupIds.add((p as any).startup_id); });
+    const startupIdsArr = [...startupIds];
+
     // Collect all author IDs for profile lookup
     const allAuthorIds = new Set<string>();
     postsRes.data?.forEach(p => allAuthorIds.add(p.author_id));
@@ -77,8 +86,9 @@ export function useHomeFeed() {
     const postIds = (postsRes.data || []).map(p => p.id);
     const gpIds = groupPostsData.map(p => p.id);
 
-    const [profilesRes, likesRes, commentsRes, userLikesRes, gpLikesRes, gpCommentsRes, gpUserLikesRes] = await Promise.all([
+    const [profilesRes, startupsRes, likesRes, commentsRes, userLikesRes, gpLikesRes, gpCommentsRes, gpUserLikesRes] = await Promise.all([
       authorIdsArr.length > 0 ? supabase.from("profiles").select("user_id, full_name, headline, avatar_url, verification").in("user_id", authorIdsArr) : Promise.resolve({ data: [] }),
+      startupIdsArr.length > 0 ? supabase.from("startups").select("id, name, logo_url").in("id", startupIdsArr) : Promise.resolve({ data: [] }),
       postIds.length > 0 ? supabase.from("post_likes").select("post_id").in("post_id", postIds) : Promise.resolve({ data: [] }),
       postIds.length > 0 ? supabase.from("post_comments").select("post_id").in("post_id", postIds) : Promise.resolve({ data: [] }),
       user && postIds.length > 0 ? supabase.from("post_likes").select("post_id").eq("user_id", user.id).in("post_id", postIds) : Promise.resolve({ data: [] }),
@@ -88,6 +98,7 @@ export function useHomeFeed() {
     ]);
 
     const profileMap = new Map((profilesRes.data || []).map(p => [p.user_id, p]));
+    const startupMap = new Map((startupsRes.data || []).map((s: any) => [s.id, s]));
 
     // Count maps for regular posts
     const likeCounts = new Map<string, number>();
@@ -108,6 +119,8 @@ export function useHomeFeed() {
     // Regular posts
     (postsRes.data || []).forEach(p => {
       const profile = profileMap.get(p.author_id);
+      const sId = (p as any).startup_id;
+      const startup = sId ? startupMap.get(sId) : null;
       feedItems.push({
         id: p.id,
         type: "post",
@@ -124,6 +137,9 @@ export function useHomeFeed() {
         likes_count: likeCounts.get(p.id) ?? 0,
         comments_count: commentCounts.get(p.id) ?? 0,
         is_liked: userLikedSet.has(p.id),
+        startup_id: sId ?? null,
+        startup_name: startup?.name ?? null,
+        startup_logo: startup?.logo_url ?? null,
       });
     });
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MessageCircle, Share2, CheckCircle, MoreHorizontal, Globe, ChevronDown, ChevronUp } from "lucide-react";
+import { Heart, MessageCircle, Share2, CheckCircle, MoreHorizontal, Globe, ChevronDown, ChevronUp, Building2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,7 @@ interface PostCardProps {
   onAddComment: (postId: string, content: string) => Promise<void>;
   onToggleFollow?: (userId: string) => Promise<void>;
   isFollowing?: boolean;
+  onViewStartup?: (startupId: string) => void;
 }
 
 const categoryLabels: Record<string, string> = {
@@ -26,7 +27,7 @@ const categoryLabels: Record<string, string> = {
   article: "Article",
 };
 
-const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleFollow, isFollowing }: PostCardProps) => {
+const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleFollow, isFollowing, onViewStartup }: PostCardProps) => {
   const { user } = useAuth();
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -34,7 +35,14 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
   const [loadingComments, setLoadingComments] = useState(false);
   const [articleExpanded, setArticleExpanded] = useState(false);
 
-  const initials = post.author_name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+  const isStartupPost = !!(post as any).startup_id;
+  const startupId = (post as any).startup_id as string | undefined;
+  const startupName = (post as any).startup_name as string | undefined;
+  const startupLogo = (post as any).startup_logo as string | undefined;
+
+  const displayName = isStartupPost && startupName ? startupName : post.author_name;
+  const displayAvatar = isStartupPost && startupLogo ? startupLogo : post.author_avatar;
+  const initials = displayName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
   const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: false });
   const isOwnPost = user?.id === post.author_id;
 
@@ -66,24 +74,43 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
     setComments(data);
   };
 
+  const handleAuthorClick = () => {
+    if (isStartupPost && startupId && onViewStartup) {
+      onViewStartup(startupId);
+    }
+  };
+
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
       {/* Author header */}
       <div className="flex items-start justify-between p-5 pb-0">
         <div className="flex gap-3">
-          <Avatar className="h-11 w-11">
-            <AvatarImage src={post.author_avatar || undefined} />
-            <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">{initials}</AvatarFallback>
+          <Avatar
+            className={`h-11 w-11 ${isStartupPost && onViewStartup ? "cursor-pointer" : ""} ${isStartupPost ? "rounded-lg" : ""}`}
+            onClick={handleAuthorClick}
+          >
+            <AvatarImage src={displayAvatar || undefined} />
+            <AvatarFallback className={`bg-primary/10 text-xs font-bold text-primary ${isStartupPost ? "rounded-lg" : ""}`}>{initials}</AvatarFallback>
           </Avatar>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-sm font-semibold">{post.author_name}</span>
-              {post.author_verification === "verified" && (
+              <span
+                className={`text-sm font-semibold ${isStartupPost && onViewStartup ? "cursor-pointer hover:underline" : ""}`}
+                onClick={handleAuthorClick}
+              >
+                {displayName}
+              </span>
+              {isStartupPost && (
+                <Badge variant="secondary" className="text-[10px] gap-0.5 h-4 px-1.5">
+                  <Building2 className="h-2.5 w-2.5" /> Company
+                </Badge>
+              )}
+              {!isStartupPost && post.author_verification === "verified" && (
                 <CheckCircle className="h-4 w-4 text-primary fill-primary/20" />
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              {post.likes_count > 0 ? `${post.likes_count.toLocaleString()} followers` : "Member"}
+              {isStartupPost ? "Company Page" : post.likes_count > 0 ? `${post.likes_count.toLocaleString()} followers` : "Member"}
             </p>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <span>{timeAgo}</span>
@@ -98,7 +125,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
               {categoryLabels[post.category] || post.category}
             </Badge>
           )}
-          {!isOwnPost && onToggleFollow && (
+          {!isOwnPost && !isStartupPost && onToggleFollow && (
             <Button
               size="sm"
               variant={isFollowing ? "outline" : "default"}

@@ -20,11 +20,12 @@ const tabs = [
 interface EcosystemFeedProps {
   onViewOpportunity?: (id: string) => void;
   onViewGroup?: (groupId: string) => void;
+  onViewStartup?: (startupId: string) => void;
   activeIdentity: PostingIdentity;
   onIdentityChange: (identity: PostingIdentity) => void;
 }
 
-const EcosystemFeed = ({ onViewOpportunity, onViewGroup, activeIdentity, onIdentityChange }: EcosystemFeedProps) => {
+const EcosystemFeed = ({ onViewOpportunity, onViewGroup, onViewStartup, activeIdentity, onIdentityChange }: EcosystemFeedProps) => {
   const [activeTab, setActiveTab] = useState("all");
   const { items, loading } = useHomeFeed();
   const { createPost, toggleLike, fetchComments, addComment } = usePosts();
@@ -103,12 +104,16 @@ const EcosystemFeed = ({ onViewOpportunity, onViewGroup, activeIdentity, onIdent
                     likes_count: item.likes_count || 0,
                     comments_count: item.comments_count || 0,
                     is_liked: item.is_liked || false,
-                  }}
+                    startup_id: item.startup_id,
+                    startup_name: item.startup_name,
+                    startup_logo: item.startup_logo,
+                  } as any}
                   onToggleLike={toggleLike}
                   onFetchComments={fetchComments}
                   onAddComment={addComment}
                   onToggleFollow={toggleFollow}
                   isFollowing={isFollowing(item.author_id!)}
+                  onViewStartup={onViewStartup}
                 />
               )}
 
