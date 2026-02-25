@@ -4,6 +4,8 @@ import { Search, Users, TrendingUp, Star, Briefcase, Layers } from "lucide-react
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNetwork } from "@/hooks/useNetwork";
+import { useMessages } from "@/hooks/useMessages";
+import { toast } from "@/hooks/use-toast";
 import NetworkCard from "./NetworkCard";
 
 const roleFilters = [
@@ -16,8 +18,14 @@ const roleFilters = [
 
 const NetworkPage = () => {
   const { profiles, loading, isFollowing, toggleFollow, followerCount, followingCount } = useNetwork();
+  const { startConversation } = useMessages();
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
+
+  const handleMessage = async (userId: string) => {
+    await startConversation(userId);
+    toast({ title: "Conversation started!", description: "Switch to the Messages tab to chat." });
+  };
 
   const filtered = useMemo(() => {
     return profiles.filter((p) => {
@@ -105,6 +113,7 @@ const NetworkPage = () => {
                 profile={p}
                 isFollowing={isFollowing(p.user_id)}
                 onToggleFollow={toggleFollow}
+                onMessage={handleMessage}
               />
             </motion.div>
           ))}
