@@ -267,7 +267,27 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
                                 </button>
                               );
                             })()}
-                            {msg.content && msg.content !== "📎 Attachment" && msg.content}
+                            {msg.content && msg.content !== "📎 Attachment" && (
+                              <span>
+                                {msg.content.split(/(https?:\/\/[^\s]+)/g).map((part, i) =>
+                                  /^https?:\/\//.test(part) ? (
+                                    <a
+                                      key={i}
+                                      href={part}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className={`underline break-all font-medium ${
+                                        isMe ? "text-primary-foreground/90 hover:text-primary-foreground" : "text-primary hover:text-primary/80"
+                                      }`}
+                                    >
+                                      {part.length > 50 ? part.slice(0, 50) + "…" : part}
+                                    </a>
+                                  ) : (
+                                    <span key={i}>{part}</span>
+                                  )
+                                )}
+                              </span>
+                            )}
                           </div>
                           <div className={`flex items-center gap-1 mt-1 ${isMe ? "flex-row-reverse" : ""}`}>
                             <span className="text-[10px] text-muted-foreground">
