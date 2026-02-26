@@ -37,6 +37,8 @@ const OutreachHistoryTab = () => {
     if (!user) return;
     const fetchOutreach = async () => {
       setLoading(true);
+
+      // Get all connection requests sent by the current user
       const { data } = await supabase
         .from("connection_requests")
         .select("*")
@@ -50,17 +52,32 @@ const OutreachHistoryTab = () => {
       }
 
       const receiverIds = [...new Set(data.map(r => r.receiver_id))];
+
+      // Get profiles of receivers
       const { data: profiles } = await supabase
         .from("profiles")
         .select("user_id, full_name, avatar_url, headline, company_name")
         .in("user_id", receiverIds);
 
+      // Get user_roles to find which receivers are investors
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("user_id, role")
+        .in("user_id", receiverIds)
+        .eq("role", "investor");
+
+      const investorIds = new Set(roles?.map(r => r.user_id) ?? []);
       const profileMap = new Map(profiles?.map(p => [p.user_id, p]) ?? []);
 
-      setRequests(data.map(r => ({
-        ...r,
-        receiver_profile: profileMap.get(r.receiver_id),
-      })));
+      // Only keep requests sent to investors
+      const investorRequests = data
+        .filter(r => investorIds.has(r.receiver_id))
+        .map(r => ({
+          ...r,
+          receiver_profile: profileMap.get(r.receiver_id),
+        }));
+
+      setRequests(investorRequests);
       setLoading(false);
     };
 
@@ -84,7 +101,7 @@ const OutreachHistoryTab = () => {
     return (
       <Card className="p-8 text-center">
         <Send className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
-        <h3 className="font-display text-lg font-bold">No Outreach Yet</h3>
+        <h3 className="font-display text-lg font-bold">No Investor Outreach Yet</h3>
         <p className="mt-2 text-sm text-muted-foreground">
           Connection requests you send to investors will appear here with their status.
         </p>
@@ -108,7 +125,7 @@ const OutreachHistoryTab = () => {
             </Avatar>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold truncate">{profile?.full_name || "Unknown User"}</p>
-              <p className="text-xs text-muted-foreground truncate">{profile?.headline || profile?.company_name || "Ecosystem Member"}</p>
+              <p className="text-xs text-muted-foreground truncate">{profile?.headline || profile?.company_name || "Investor"}</p>
               {req.message && <p className="text-xs mt-1 text-foreground/70 italic line-clamp-1">"{req.message}"</p>}
             </div>
             <div className="flex flex-col items-end gap-1 shrink-0">
