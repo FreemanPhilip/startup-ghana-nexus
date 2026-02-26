@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
-import { Calendar, Clock, X, RefreshCw, RotateCcw } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Calendar as CalendarIcon, Clock, X, RefreshCw, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Calendar } from "@/components/ui/calendar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,7 +20,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
-import { format, isPast, parseISO } from "date-fns";
+import { format, isPast, parseISO, isSameDay } from "date-fns";
 import { getGoogleCalendarUrl, downloadICSFile, type CalendarEvent } from "./calendarUtils";
 import RescheduleSessionDialog from "./RescheduleSessionDialog";
 
@@ -47,6 +48,7 @@ const MySessionsPage = () => {
   const [cancelId, setCancelId] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
   const [rescheduleBooking, setRescheduleBooking] = useState<Booking | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   const fetchBookings = async () => {
     if (!user) return;
@@ -87,7 +89,6 @@ const MySessionsPage = () => {
     if (!cancelId) return;
     setCancelling(true);
 
-    // Find booking to get other user info for notification
     const booking = bookings.find(b => b.id === cancelId);
 
     const { error } = await supabase
@@ -98,7 +99,6 @@ const MySessionsPage = () => {
     if (error) {
       toast({ title: "Error", description: "Could not cancel session.", variant: "destructive" });
     } else {
-      // Send cancellation notification to the other party
       if (booking && user) {
         const otherUserId = booking.mentor_id === user.id ? booking.mentee_id : booking.mentor_id;
         const cancellerName = user.user_metadata?.full_name || "Someone";
@@ -117,6 +117,19 @@ const MySessionsPage = () => {
     setCancelling(false);
     setCancelId(null);
   };
+
+  // Dates that have sessions (for calendar highlighting)
+  const sessionDates = useMemo(() => {
+    return bookings
+      .filter(b => b.status === "confirmed")
+      .map(b => parseISO(b.booking_date));
+  }, [bookings]);
+
+  // Sessions for the selected calendar date
+  const sessionsForSelectedDate = useMemo(() => {
+    if (!selectedDate) return [];
+    return bookings.filter(b => isSameDay(parseISO(b.booking_date), selectedDate));
+  }, [bookings, selectedDate]);
 
   const upcoming = bookings.filter(b => b.status === "confirmed" && !isPast(parseISO(b.booking_date)));
   const past = bookings.filter(b => b.status !== "confirmed" || isPast(parseISO(b.booking_date)));
@@ -168,7 +181,7 @@ const MySessionsPage = () => {
             </p>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
+                <CalendarIcon className="h-3 w-3" />
                 {format(parseISO(booking.booking_date), "MMM d, yyyy")}
               </span>
               <span className="flex items-center gap-1">
@@ -187,9 +200,9 @@ const MySessionsPage = () => {
                   className="h-7 text-[10px] sm:text-xs gap-1 px-2 sm:px-3"
                   onClick={() => window.open(getGoogleCalendarUrl(calEvent), "_blank")}
                 >
-                  <Calendar className="h-3 w-3" />
+                  <CalendarIcon className="h-3 w-3" />
                   <span className="hidden sm:inline">Google Calendar</span>
-                  <span className="sm:hidden">Calendar</span>
+                  <span className="sm:hidden">Cal</span>
                 </Button>
                 <Button
                   size="sm"
@@ -226,6 +239,17 @@ const MySessionsPage = () => {
     );
   };
 
+  // Custom day renderer for the calendar to show dots on session dates
+  const modifiers = {
+    hasSession: sessionDates,
+  };
+
+  const modifiersStyles = {
+    hasSession: {
+      fontWeight: 700,
+    } as React.CSSProperties,
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6">
       <div>
@@ -233,52 +257,131 @@ const MySessionsPage = () => {
         <p className="text-xs sm:text-sm text-muted-foreground">View and manage your mentorship sessions.</p>
       </div>
 
-      <Tabs defaultValue="upcoming" className="w-full">
-        <TabsList className="grid w-full max-w-xs grid-cols-2">
-          <TabsTrigger value="upcoming" className="text-xs sm:text-sm">Upcoming ({upcoming.length})</TabsTrigger>
-          <TabsTrigger value="past" className="text-xs sm:text-sm">Past ({past.length})</TabsTrigger>
-        </TabsList>
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Left: Calendar sidebar */}
+        <div className="lg:w-[320px] shrink-0 space-y-4">
+          <Card className="p-3">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              className="pointer-events-auto"
+              modifiers={modifiers}
+              modifiersStyles={modifiersStyles}
+              components={{
+                DayContent: ({ date, ...props }) => {
+                  const hasSession = sessionDates.some(d => isSameDay(d, date));
+                  return (
+                    <div className="relative flex items-center justify-center w-full h-full">
+                      <span>{date.getDate()}</span>
+                      {hasSession && (
+                        <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-primary" />
+                      )}
+                    </div>
+                  );
+                },
+              }}
+            />
+          </Card>
 
-        <TabsContent value="upcoming" className="mt-4">
-          {loading ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map(i => <Skeleton key={i} className="h-28 rounded-xl" />)}
-            </div>
-          ) : upcoming.length === 0 ? (
-            <Card className="p-6 sm:p-8 text-center">
-              <Calendar className="h-8 w-8 sm:h-10 sm:w-10 mx-auto text-muted-foreground mb-3" />
-              <h3 className="font-semibold text-sm">No upcoming sessions</h3>
-              <p className="text-xs text-muted-foreground mt-1">
-                Book a session with a mentor from the Mentors tab.
-              </p>
+          {/* Sessions for selected date */}
+          {selectedDate && (
+            <Card className="p-4">
+              <h3 className="text-sm font-bold flex items-center gap-2 mb-3">
+                <CalendarIcon className="h-4 w-4 text-primary" />
+                {format(selectedDate, "MMMM d, yyyy")}
+              </h3>
+              {sessionsForSelectedDate.length === 0 ? (
+                <p className="text-xs text-muted-foreground text-center py-3">No sessions on this date.</p>
+              ) : (
+                <div className="space-y-2">
+                  {sessionsForSelectedDate.map(b => (
+                    <div key={b.id} className="flex items-center gap-2 rounded-lg border border-border p-2.5">
+                      <Avatar className="h-7 w-7 shrink-0">
+                        <AvatarImage src={b.other_user?.avatar_url || undefined} />
+                        <AvatarFallback className="bg-muted text-[10px] font-bold">
+                          {getInitials(b.other_user?.full_name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold truncate">{b.other_user?.full_name || "User"}</p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {b.start_time.slice(0, 5)} – {b.end_time.slice(0, 5)} · 
+                          <Badge variant={b.status === "confirmed" ? "default" : "secondary"} className="ml-1 text-[9px] px-1 py-0">
+                            {b.status}
+                          </Badge>
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </Card>
-          ) : (
-            <div className="space-y-3">
-              {upcoming.map(b => <SessionCard key={b.id} booking={b} />)}
-            </div>
           )}
-        </TabsContent>
 
-        <TabsContent value="past" className="mt-4">
-          {loading ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map(i => <Skeleton key={i} className="h-28 rounded-xl" />)}
+          {/* Legend */}
+          <div className="flex items-center gap-3 px-1">
+            <div className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-primary" />
+              <span className="text-[10px] text-muted-foreground">Has session</span>
             </div>
-          ) : past.length === 0 ? (
-            <Card className="p-6 sm:p-8 text-center">
-              <Clock className="h-8 w-8 sm:h-10 sm:w-10 mx-auto text-muted-foreground mb-3" />
-              <h3 className="font-semibold text-sm">No past sessions</h3>
-              <p className="text-xs text-muted-foreground mt-1">
-                Your completed and cancelled sessions will appear here.
-              </p>
-            </Card>
-          ) : (
-            <div className="space-y-3">
-              {past.map(b => <SessionCard key={b.id} booking={b} />)}
+            <div className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-accent" />
+              <span className="text-[10px] text-muted-foreground">Today</span>
             </div>
-          )}
-        </TabsContent>
-      </Tabs>
+          </div>
+        </div>
+
+        {/* Right: Session list */}
+        <div className="flex-1 min-w-0">
+          <Tabs defaultValue="upcoming" className="w-full">
+            <TabsList className="grid w-full max-w-xs grid-cols-2">
+              <TabsTrigger value="upcoming" className="text-xs sm:text-sm">Upcoming ({upcoming.length})</TabsTrigger>
+              <TabsTrigger value="past" className="text-xs sm:text-sm">Past ({past.length})</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="upcoming" className="mt-4">
+              {loading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-28 rounded-xl" />)}
+                </div>
+              ) : upcoming.length === 0 ? (
+                <Card className="p-6 sm:p-8 text-center">
+                  <CalendarIcon className="h-8 w-8 sm:h-10 sm:w-10 mx-auto text-muted-foreground mb-3" />
+                  <h3 className="font-semibold text-sm">No upcoming sessions</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Book a session with a mentor from the Mentors tab.
+                  </p>
+                </Card>
+              ) : (
+                <div className="space-y-3">
+                  {upcoming.map(b => <SessionCard key={b.id} booking={b} />)}
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="past" className="mt-4">
+              {loading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-28 rounded-xl" />)}
+                </div>
+              ) : past.length === 0 ? (
+                <Card className="p-6 sm:p-8 text-center">
+                  <Clock className="h-8 w-8 sm:h-10 sm:w-10 mx-auto text-muted-foreground mb-3" />
+                  <h3 className="font-semibold text-sm">No past sessions</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Your completed and cancelled sessions will appear here.
+                  </p>
+                </Card>
+              ) : (
+                <div className="space-y-3">
+                  {past.map(b => <SessionCard key={b.id} booking={b} />)}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
 
       {/* Cancel Confirmation Dialog */}
       <AlertDialog open={!!cancelId} onOpenChange={(o) => !o && setCancelId(null)}>
