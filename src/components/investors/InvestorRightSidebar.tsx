@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { useInvestorTracking } from "@/hooks/useInvestorTracking";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import AIInvestorMatchDialog from "./AIInvestorMatchDialog";
 
 const iconMap: Record<string, React.ElementType> = {
   building: Building2,
@@ -16,11 +17,15 @@ const iconMap: Record<string, React.ElementType> = {
   dollar: DollarSign,
 };
 
-const InvestorRightSidebar = () => {
-  const { user, profile } = useAuth();
-  const { recentViews, shortlisted, clearHistory, loading } = useInvestorTracking();
+interface InvestorRightSidebarProps {
+  onViewInvestor?: (investorId: string) => void;
+}
 
-  // Ecosystem insights - real data
+const InvestorRightSidebar = ({ onViewInvestor }: InvestorRightSidebarProps) => {
+  const { profile } = useAuth();
+  const { recentViews, shortlisted, clearHistory, loading } = useInvestorTracking();
+  const [aiMatchOpen, setAiMatchOpen] = useState(false);
+
   const [ecosystemStats, setEcosystemStats] = useState({
     activeInvestors: 0,
     totalStartups: 0,
@@ -29,18 +34,15 @@ const InvestorRightSidebar = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
-      // Count investors (users with investor role)
       const { count: investorCount } = await supabase
         .from("user_roles")
         .select("*", { count: "exact", head: true })
         .eq("role", "investor");
 
-      // Count startups
       const { count: startupCount } = await supabase
         .from("startups")
         .select("*", { count: "exact", head: true });
 
-      // Calculate profile completeness
       let completeness = 0;
       if (profile) {
         const fields = [
@@ -59,7 +61,6 @@ const InvestorRightSidebar = () => {
         profileCompleteness: completeness,
       });
     };
-
     fetchStats();
   }, [profile]);
 
@@ -109,7 +110,7 @@ const InvestorRightSidebar = () => {
         )}
       </Card>
 
-      {/* AI Matching / Shortlist Status */}
+      {/* AI Matching */}
       <Card className="p-5 bg-primary text-primary-foreground border-0">
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5" />
@@ -122,15 +123,21 @@ const InvestorRightSidebar = () => {
         </div>
         <p className="mt-3 text-xs leading-relaxed opacity-90">
           {matchCount > 0
-            ? `You've shortlisted ${matchCount} investor${matchCount !== 1 ? "s" : ""}. View and manage your shortlist in the Shortlisted tab.`
-            : "Browse investors and shortlist the ones that match your startup's needs."}
+            ? `You've shortlisted ${matchCount} investor${matchCount !== 1 ? "s" : ""}. Run AI matching to find more.`
+            : "Our AI analyzes your startup profile to find the best matching investors."}
         </p>
-        <Button variant="secondary" size="sm" className="mt-3 w-full text-xs font-semibold">
-          {matchCount > 0 ? "View Shortlisted" : "Start Matching"}
+        <Button
+          variant="secondary"
+          size="sm"
+          className="mt-3 w-full text-xs font-semibold"
+          onClick={() => setAiMatchOpen(true)}
+        >
+          <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+          {matchCount > 0 ? "View Recommendations" : "Get AI Recommendations"}
         </Button>
       </Card>
 
-      {/* Ecosystem Insights - Real Data */}
+      {/* Ecosystem Insights */}
       <Card className="p-5">
         <h3 className="text-sm font-bold">Ecosystem Insights</h3>
         <div className="mt-3 space-y-3">
@@ -150,10 +157,17 @@ const InvestorRightSidebar = () => {
         <div className="mt-3">
           <Progress value={ecosystemStats.profileCompleteness} className="h-1.5" />
           <p className="mt-2 text-[10px] text-muted-foreground leading-relaxed">
-            Your profile completeness is {ecosystemStats.profileCompleteness}% — complete your profile to improve investor matching.
+            Profile completeness: {ecosystemStats.profileCompleteness}% — complete your profile to improve investor matching.
           </p>
         </div>
       </Card>
+
+      {/* AI Match Dialog */}
+      <AIInvestorMatchDialog
+        open={aiMatchOpen}
+        onOpenChange={setAiMatchOpen}
+        onViewInvestor={onViewInvestor}
+      />
     </aside>
   );
 };
