@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
+import { usePresenceTracker } from "@/hooks/usePresence";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
@@ -26,6 +27,7 @@ import { useStartups } from "@/hooks/useStartups";
 const DashboardPage = () => {
   const { profile, roles, signOut } = useAuth();
   const navigate = useNavigate();
+  usePresenceTracker();
   const [activeTab, setActiveTab] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [deepLinkOpportunityId, setDeepLinkOpportunityId] = useState<string | null>(null);

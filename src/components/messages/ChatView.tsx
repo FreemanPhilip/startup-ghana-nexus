@@ -11,6 +11,8 @@ import { format, isToday, isYesterday } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import ChatScheduleMeetingDialog from "./ChatScheduleMeetingDialog";
+import LinkPreviewCard from "./LinkPreviewCard";
+import { formatLastSeen } from "@/hooks/usePresence";
 
 interface ChatViewProps {
   conversation: Conversation | undefined;
@@ -28,10 +30,42 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [showAttachMenu, setShowAttachMenu] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [otherUserPresence, setOtherUserPresence] = useState<{ is_online: boolean; last_seen: string | null }>({ is_online: false, last_seen: null });
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
   const docRef = useRef<HTMLInputElement>(null);
+
+  // Fetch and subscribe to other user's presence
+  useEffect(() => {
+    const otherUserId = conversation?.other_user?.user_id;
+    if (!otherUserId) return;
+
+    const fetchPresence = async () => {
+      const { data } = await supabase
+        .from("user_presence")
+        .select("is_online, last_seen")
+        .eq("user_id", otherUserId)
+        .maybeSingle();
+      if (data) setOtherUserPresence({ is_online: data.is_online, last_seen: data.last_seen });
+    };
+    fetchPresence();
+
+    const channel = supabase
+      .channel(`presence-${otherUserId}`)
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "user_presence",
+        filter: `user_id=eq.${otherUserId}`,
+      }, (payload: any) => {
+        const row = payload.new;
+        if (row) setOtherUserPresence({ is_online: row.is_online, last_seen: row.last_seen });
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [conversation?.other_user?.user_id]);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -162,15 +196,22 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
               <ArrowLeft className="h-4 w-4" />
             </Button>
           )}
-          <Avatar className="h-9 w-9">
-            <AvatarImage src={otherUser?.avatar_url || undefined} />
-            <AvatarFallback className="bg-muted text-xs font-bold">
-              {getInitials(otherUser?.full_name)}
-            </AvatarFallback>
-          </Avatar>
+          <div className="relative">
+            <Avatar className="h-9 w-9">
+              <AvatarImage src={otherUser?.avatar_url || undefined} />
+              <AvatarFallback className="bg-muted text-xs font-bold">
+                {getInitials(otherUser?.full_name)}
+              </AvatarFallback>
+            </Avatar>
+            {otherUserPresence.is_online && (
+              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-card" />
+            )}
+          </div>
           <div>
             <p className="text-sm font-semibold">{otherUser?.full_name || "User"}</p>
-            <p className="text-xs text-primary font-medium">Online</p>
+            <p className={`text-xs font-medium ${otherUserPresence.is_online ? "text-green-500" : "text-muted-foreground"}`}>
+              {formatLastSeen(otherUserPresence.last_seen, otherUserPresence.is_online)}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -288,6 +329,14 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
                                 )}
                               </span>
                             )}
+                            {/* Link preview cards */}
+                            {msg.content && (() => {
+                              const urls = msg.content.match(/https?:\/\/[^\s]+/g);
+                              if (!urls || urls.length === 0) return null;
+                              return urls.map((url, i) => (
+                                <LinkPreviewCard key={`lp-${i}`} url={url} isMe={isMe} />
+                              ));
+                            })()}
                           </div>
                           <div className={`flex items-center gap-1 mt-1 ${isMe ? "flex-row-reverse" : ""}`}>
                             <span className="text-[10px] text-muted-foreground">
