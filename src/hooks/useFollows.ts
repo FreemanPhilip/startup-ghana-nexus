@@ -21,21 +21,86 @@ export function useFollows() {
 
   useEffect(() => { fetchFollowData(); }, [fetchFollowData]);
 
-  const toggleFollow = async (targetUserId: string) => {
+  // Real-time subscription for follower updates
+  useEffect(() => {
     if (!user) return;
-    const isFollowing = following.has(targetUserId);
-    if (isFollowing) {
-      await supabase.from("follows").delete().eq("follower_id", user.id).eq("following_id", targetUserId);
+
+    const channel = supabase
+      .channel(`follows-realtime-${user.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "follows",
+          filter: `following_id=eq.${user.id}`,
+        },
+        (payload) => {
+          if (payload.eventType === "INSERT") {
+            setFollowerCount(c => c + 1);
+          } else if (payload.eventType === "DELETE") {
+            setFollowerCount(c => Math.max(0, c - 1));
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "follows",
+          filter: `follower_id=eq.${user.id}`,
+        },
+        (payload) => {
+          if (payload.eventType === "INSERT") {
+            const newRow = payload.new as any;
+            setFollowing(prev => new Set(prev).add(newRow.following_id));
+            setFollowingCount(c => c + 1);
+          } else if (payload.eventType === "DELETE") {
+            const oldRow = payload.old as any;
+            setFollowing(prev => {
+              const n = new Set(prev);
+              n.delete(oldRow.following_id);
+              return n;
+            });
+            setFollowingCount(c => Math.max(0, c - 1));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
+  const toggleFollow = useCallback(async (targetUserId: string) => {
+    if (!user) return;
+    const currentlyFollowing = following.has(targetUserId);
+    if (currentlyFollowing) {
+      // Optimistic update
       setFollowing(prev => { const n = new Set(prev); n.delete(targetUserId); return n; });
-      setFollowingCount(c => c - 1);
+      setFollowingCount(c => Math.max(0, c - 1));
+      const { error } = await supabase.from("follows").delete().eq("follower_id", user.id).eq("following_id", targetUserId);
+      if (error) {
+        // Revert
+        setFollowing(prev => new Set(prev).add(targetUserId));
+        setFollowingCount(c => c + 1);
+      }
     } else {
-      await supabase.from("follows").insert({ follower_id: user.id, following_id: targetUserId });
+      // Optimistic update
       setFollowing(prev => new Set(prev).add(targetUserId));
       setFollowingCount(c => c + 1);
+      const { error } = await supabase.from("follows").insert({ follower_id: user.id, following_id: targetUserId });
+      if (error) {
+        // Revert
+        setFollowing(prev => { const n = new Set(prev); n.delete(targetUserId); return n; });
+        setFollowingCount(c => Math.max(0, c - 1));
+      }
     }
-  };
+  }, [user, following]);
 
-  const isFollowing = (userId: string) => following.has(userId);
+  const isFollowing = useCallback((userId: string) => following.has(userId), [following]);
 
-  return { following, followerCount, followingCount, toggleFollow, isFollowing };
+  return { following, followerCount, followingCount, toggleFollow, isFollowing, refetch: fetchFollowData };
 }
