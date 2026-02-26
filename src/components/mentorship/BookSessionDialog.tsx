@@ -123,7 +123,7 @@ const BookSessionDialog = ({ open, onClose, mentor }: BookSessionDialogProps) =>
           end: `${endH}:${endM}`,
           duration: dur,
           price: (avail as any).session_price || 0,
-          currency: (avail as any).currency || "USD",
+          currency: (avail as any).currency || "GHS",
         });
       }
     }
@@ -292,7 +292,7 @@ const BookSessionDialog = ({ open, onClose, mentor }: BookSessionDialogProps) =>
                         {formatTime(slot.start)}
                         <span className="block text-[10px] text-muted-foreground">{slot.duration} min</span>
                         <span className={`block text-[10px] font-semibold ${slot.price > 0 ? "text-primary" : "text-secondary"}`}>
-                          {slot.price > 0 ? `$${slot.price}` : "Free"}
+                          {slot.price > 0 ? `GH₵${slot.price}` : "Free"}
                         </span>
                       </button>
                     ))}
@@ -325,7 +325,7 @@ const BookSessionDialog = ({ open, onClose, mentor }: BookSessionDialogProps) =>
                 </div>
                 <Button className="w-full text-sm font-semibold gap-1.5" onClick={handleBook} disabled={booking}>
                   {booking ? <Loader2 className="h-4 w-4 animate-spin" /> : <CalendarIcon className="h-4 w-4" />}
-                  {selectedSlot?.price > 0 ? `Pay $${selectedSlot.price} & Book` : "Confirm Booking"}
+                  {selectedSlot?.price > 0 ? `Pay GH₵${selectedSlot.price} & Book` : "Confirm Booking"}
                 </Button>
               </div>
             )}

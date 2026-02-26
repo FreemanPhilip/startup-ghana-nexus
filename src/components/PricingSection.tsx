@@ -19,7 +19,7 @@ const plans = [
   },
   {
     name: "Premium",
-    price: "$29",
+    price: "GH₵149",
     period: "/month",
     description: "Unlock the full power of AGS.",
     features: [

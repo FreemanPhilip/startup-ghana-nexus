@@ -87,7 +87,7 @@ const PremiumUpgradeDialog = ({ open, onOpenChange }: PremiumUpgradeDialogProps)
           ) : (
             <div className="text-center">
               <div className="inline-flex items-baseline gap-1 mb-2">
-                <span className="text-3xl font-display font-bold">${STRIPE_CONFIG.premium.price}</span>
+                <span className="text-3xl font-display font-bold">GH₵{STRIPE_CONFIG.premium.price}</span>
                 <span className="text-sm text-muted-foreground">/month</span>
               </div>
               <p className="text-xs text-muted-foreground">Unlock the full potential of the ecosystem</p>
@@ -127,7 +127,7 @@ const PremiumUpgradeDialog = ({ open, onOpenChange }: PremiumUpgradeDialogProps)
           ) : (
             <Button className="w-full text-sm font-semibold gap-1.5 bg-gradient-gold hover:opacity-90 border-0" onClick={handleUpgrade} disabled={loading}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Crown className="h-4 w-4" />}
-              Upgrade to Premium — ${STRIPE_CONFIG.premium.price}/mo
+              Upgrade to Premium — GH₵{STRIPE_CONFIG.premium.price}/mo
             </Button>
           )}
         </div>
