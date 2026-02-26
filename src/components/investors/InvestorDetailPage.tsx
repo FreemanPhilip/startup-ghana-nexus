@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { ArrowLeft, Building2, DollarSign, Landmark, Users2, Briefcase, Globe, MapPin, Mail, Phone, ExternalLink, CheckCircle2, TrendingUp, Target, Calendar, Star, MessageCircle, Bookmark, BookmarkCheck, BarChart3, Sparkles } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { ArrowLeft, Building2, DollarSign, Landmark, Users2, Briefcase, Globe, MapPin, Mail, Phone, ExternalLink, CheckCircle2, TrendingUp, Target, Calendar, Star, MessageCircle, Bookmark, BookmarkCheck, BarChart3, Sparkles, ChevronRight, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
+import { supabase } from "@/integrations/supabase/client";
 import type { InvestorData } from "./InvestorCard";
 
 const iconMap: Record<string, React.ElementType> = {
@@ -97,7 +98,6 @@ const investorDetails: Record<string, {
   },
 };
 
-// Fallback detail generator for investors without explicit data
 const getDefaultDetail = (investor: InvestorData) => ({
   founded: "2020",
   location: "Accra, Ghana",
@@ -121,15 +121,82 @@ const getMatchColor = (pct: number) => {
   return "bg-muted text-muted-foreground border-border";
 };
 
+interface MatchedStartup {
+  id: string;
+  name: string;
+  logo_url: string | null;
+  industry: string | null;
+  stage: string | null;
+  location: string | null;
+  short_description: string | null;
+}
+
 interface InvestorDetailPageProps {
   investor: InvestorData;
   onBack: () => void;
+  onViewStartup?: (startupId: string) => void;
 }
 
-const InvestorDetailPage = ({ investor, onBack }: InvestorDetailPageProps) => {
+const INITIAL_PORTFOLIO_COUNT = 4;
+
+const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailPageProps) => {
   const [shortlisted, setShortlisted] = useState(false);
+  const [showAllPortfolio, setShowAllPortfolio] = useState(false);
+  const [platformStartups, setPlatformStartups] = useState<MatchedStartup[]>([]);
+
   const detail = investorDetails[investor.id] || getDefaultDetail(investor);
   const Icon = iconMap[investor.icon] || Building2;
+
+  // Fetch real startups from the platform that match portfolio names
+  useEffect(() => {
+    if (detail.portfolio.length === 0) return;
+
+    const fetchStartups = async () => {
+      const { data } = await supabase
+        .from("startups")
+        .select("id, name, logo_url, industry, stage, location, short_description")
+        .limit(50);
+
+      if (data) {
+        setPlatformStartups(data);
+      }
+    };
+
+    fetchStartups();
+  }, [detail.portfolio.length]);
+
+  // Match portfolio entries to real startups by fuzzy name matching
+  const portfolioWithMatches = useMemo(() => {
+    return detail.portfolio.map(co => {
+      const matched = platformStartups.find(s =>
+        s.name.toLowerCase().includes(co.name.toLowerCase()) ||
+        co.name.toLowerCase().includes(s.name.toLowerCase())
+      );
+      return { ...co, matchedStartup: matched || null };
+    });
+  }, [detail.portfolio, platformStartups]);
+
+  // Also show platform startups not in the static list (as "also on platform")
+  const additionalPlatformStartups = useMemo(() => {
+    const matchedIds = new Set(portfolioWithMatches.filter(p => p.matchedStartup).map(p => p.matchedStartup!.id));
+    return platformStartups.filter(s => !matchedIds.has(s.id));
+  }, [platformStartups, portfolioWithMatches]);
+
+  const allPortfolioItems = [
+    ...portfolioWithMatches,
+    ...additionalPlatformStartups.map(s => ({
+      name: s.name,
+      stage: s.stage || "—",
+      year: "On Platform",
+      matchedStartup: s,
+    })),
+  ];
+
+  const visiblePortfolio = showAllPortfolio
+    ? allPortfolioItems
+    : allPortfolioItems.slice(0, INITIAL_PORTFOLIO_COUNT);
+
+  const hasMore = allPortfolioItems.length > INITIAL_PORTFOLIO_COUNT;
 
   return (
     <div className="space-y-6">
@@ -210,27 +277,115 @@ const InvestorDetailPage = ({ investor, onBack }: InvestorDetailPageProps) => {
             </ul>
           </div>
 
-          {/* Portfolio Companies */}
+          {/* Portfolio Companies — Enhanced */}
           <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-primary" /> Portfolio ({detail.portfolio.length})
-            </h3>
-            {detail.portfolio.length === 0 ? (
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-display font-bold text-sm flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-primary" /> Portfolio ({allPortfolioItems.length})
+              </h3>
+              {platformStartups.length > 0 && (
+                <Badge variant="outline" className="text-[10px] font-medium gap-1 border-primary/20 text-primary">
+                  <Building2 className="h-3 w-3" />
+                  {platformStartups.length} on platform
+                </Badge>
+              )}
+            </div>
+
+            {allPortfolioItems.length === 0 ? (
               <p className="text-sm text-muted-foreground">Portfolio information not publicly available.</p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {detail.portfolio.map((co, i) => (
-                  <div key={i} className="flex items-center gap-3 rounded-lg border border-border p-3 hover:bg-muted/50 transition-colors">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                      <Building2 className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold truncate">{co.name}</p>
-                      <p className="text-[10px] text-muted-foreground">{co.stage} · {co.year}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {visiblePortfolio.map((co, i) => {
+                    const startup = co.matchedStartup;
+                    const isOnPlatform = !!startup;
+
+                    return (
+                      <div
+                        key={i}
+                        className={`flex items-center gap-3 rounded-lg border p-3 transition-all ${
+                          isOnPlatform
+                            ? "border-primary/20 bg-primary/5 hover:bg-primary/10 cursor-pointer group"
+                            : "border-border hover:bg-muted/50"
+                        }`}
+                        onClick={() => {
+                          if (isOnPlatform && onViewStartup) {
+                            onViewStartup(startup.id);
+                          }
+                        }}
+                      >
+                        {/* Logo / Icon */}
+                        {startup?.logo_url ? (
+                          <Avatar className="h-10 w-10 rounded-lg shrink-0">
+                            <AvatarImage src={startup.logo_url} className="object-cover" />
+                            <AvatarFallback className="rounded-lg bg-primary/10 text-primary text-xs font-bold">
+                              {co.name.slice(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        ) : (
+                          <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                            <Building2 className="h-5 w-5 text-primary" />
+                          </div>
+                        )}
+
+                        {/* Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-sm font-semibold truncate">{startup?.name || co.name}</p>
+                            {isOnPlatform && (
+                              <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" />
+                            )}
+                          </div>
+                          <p className="text-[10px] text-muted-foreground">
+                            {startup?.industry ? `${startup.industry} · ` : ""}
+                            {co.stage} · {co.year}
+                          </p>
+                          {startup?.short_description && (
+                            <p className="text-[10px] text-muted-foreground line-clamp-1 mt-0.5">
+                              {startup.short_description}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* View button for on-platform startups */}
+                        {isOnPlatform && onViewStartup && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 px-2 text-xs gap-1 text-primary opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onViewStartup(startup.id);
+                            }}
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                            View
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* View More / View Less */}
+                {hasMore && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full mt-3 gap-1.5 text-xs text-primary font-semibold hover:bg-primary/5"
+                    onClick={() => setShowAllPortfolio(!showAllPortfolio)}
+                  >
+                    {showAllPortfolio ? (
+                      <>Show Less</>
+                    ) : (
+                      <>
+                        View All {allPortfolioItems.length} Companies
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      </>
+                    )}
+                  </Button>
+                )}
+              </>
             )}
           </div>
 
@@ -274,7 +429,7 @@ const InvestorDetailPage = ({ investor, onBack }: InvestorDetailPageProps) => {
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Portfolio</span>
-                  <span className="text-sm font-bold text-foreground">{detail.portfolio.length} companies</span>
+                  <span className="text-sm font-bold text-foreground">{allPortfolioItems.length} companies</span>
                 </div>
               </div>
               <div>

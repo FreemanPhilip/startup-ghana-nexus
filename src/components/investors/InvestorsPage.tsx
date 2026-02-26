@@ -36,7 +36,11 @@ function useInvestorUserMap() {
   return investorProfiles;
 }
 
-const InvestorsPage = () => {
+interface InvestorsPageProps {
+  onViewStartup?: (startupId: string) => void;
+}
+
+const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [industry, setIndustry] = useState("all");
   const [ticketSize, setTicketSize] = useState("all");
@@ -94,7 +98,7 @@ const InvestorsPage = () => {
   const shortlistedInvestors = demoInvestors.filter(inv => isShortlisted(inv.id));
 
   if (selectedInvestor) {
-    return <InvestorDetailPage investor={selectedInvestor} onBack={() => setSelectedInvestor(null)} />;
+    return <InvestorDetailPage investor={selectedInvestor} onBack={() => setSelectedInvestor(null)} onViewStartup={onViewStartup} />;
   }
 
   return (
