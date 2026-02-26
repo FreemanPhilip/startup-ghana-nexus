@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
-import { Moon, Sun, Monitor, Bell, BellOff, Globe, Lock, Video, Calendar, Users, ExternalLink, Shield, LogOut, Loader2, ChevronRight } from "lucide-react";
+import { Moon, Sun, Monitor, Bell, Lock, Video, Calendar, Users, Globe, Shield, LogOut, Loader2, Crown, CheckCircle, ExternalLink, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import VerificationRequestDialog from "@/components/profile/VerificationRequestDialog";
+import PremiumUpgradeDialog from "@/components/profile/PremiumUpgradeDialog";
 
 interface SettingsPageProps {
   onSignOut: () => void;
@@ -22,7 +24,8 @@ const integrations = [
     description: "Video conferencing for mentor sessions and meetings",
     icon: Video,
     color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-    connectUrl: "https://zoom.us/oauth/authorize",
+    connectUrl: "https://zoom.us/signin",
+    helpText: "Sign in to Zoom to enable video sessions",
   },
   {
     id: "google-calendar",
@@ -31,6 +34,7 @@ const integrations = [
     icon: Calendar,
     color: "bg-red-500/10 text-red-600 dark:text-red-400",
     connectUrl: "https://calendar.google.com",
+    helpText: "Open Google Calendar to manage your schedule",
   },
   {
     id: "google-meet",
@@ -39,6 +43,7 @@ const integrations = [
     icon: Users,
     color: "bg-green-500/10 text-green-600 dark:text-green-400",
     connectUrl: "https://meet.google.com",
+    helpText: "Launch Google Meet for video calls",
   },
   {
     id: "slack",
@@ -46,13 +51,19 @@ const integrations = [
     description: "Get notifications and updates in your workspace",
     icon: Globe,
     color: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
-    connectUrl: "https://slack.com",
+    connectUrl: "https://slack.com/signin",
+    helpText: "Connect Slack to receive platform notifications",
   },
 ];
 
 const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
-  const { user, profile } = useAuth();
+  const { user, profile, roles, isPremium, refreshProfile } = useAuth();
   const [activeSection, setActiveSection] = useState("appearance");
+  const [verifyOpen, setVerifyOpen] = useState(false);
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [bookingUrl, setBookingUrl] = useState(profile?.booking_url || "");
+  const [savingBooking, setSavingBooking] = useState(false);
+
   const [theme, setTheme] = useState<ThemeMode>(() => {
     const stored = localStorage.getItem("theme") as ThemeMode | null;
     return stored || "system";
@@ -63,7 +74,6 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
     } catch { return {}; }
   });
 
-  // Notification preferences (stored in localStorage for now)
   const [notifPrefs, setNotifPrefs] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("notification_prefs") || '{"email":true,"push":true,"messages":true,"mentions":true,"updates":false}');
@@ -72,7 +82,6 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
     }
   });
 
-  // Privacy preferences
   const [privacyPrefs, setPrivacyPrefs] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("privacy_prefs") || '{"profileVisible":true,"showOnline":true,"showActivity":true}');
@@ -80,6 +89,11 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
       return { profileVisible: true, showOnline: true, showActivity: true };
     }
   });
+
+  // Sync booking URL when profile loads
+  useEffect(() => {
+    if (profile?.booking_url) setBookingUrl(profile.booking_url);
+  }, [profile]);
 
   // Apply theme
   useEffect(() => {
@@ -89,27 +103,17 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
     } else if (theme === "light") {
       root.classList.remove("dark");
     } else {
-      // system
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      if (prefersDark) {
-        root.classList.add("dark");
-      } else {
-        root.classList.remove("dark");
-      }
+      root.classList.toggle("dark", prefersDark);
     }
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Listen for system theme changes when in system mode
   useEffect(() => {
     if (theme !== "system") return;
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = (e: MediaQueryListEvent) => {
-      if (e.matches) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+      document.documentElement.classList.toggle("dark", e.matches);
     };
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
@@ -130,19 +134,42 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
   };
 
   const toggleIntegration = (id: string) => {
+    const app = integrations.find(i => i.id === id);
     const isConnected = connectedApps[id];
+
     if (isConnected) {
+      // Disconnect
       const updated = { ...connectedApps, [id]: false };
       setConnectedApps(updated);
       localStorage.setItem("connected_integrations", JSON.stringify(updated));
-      toast({ title: `Disconnected from ${integrations.find(i => i.id === id)?.name}` });
+      toast({ title: `Disconnected from ${app?.name}` });
     } else {
-      // Simulate OAuth flow — in production this would redirect
+      // Open OAuth/service URL in new tab, then mark connected
+      window.open(app?.connectUrl, "_blank", "noopener,noreferrer");
       const updated = { ...connectedApps, [id]: true };
       setConnectedApps(updated);
       localStorage.setItem("connected_integrations", JSON.stringify(updated));
-      toast({ title: `Connected to ${integrations.find(i => i.id === id)?.name}`, description: "Integration is now active." });
+      toast({
+        title: `Connecting to ${app?.name}...`,
+        description: "Complete the sign-in in the new tab. The integration will be active once authorized.",
+      });
     }
+  };
+
+  const handleSaveBookingUrl = async () => {
+    if (!user) return;
+    setSavingBooking(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ booking_url: bookingUrl.trim() || null })
+      .eq("user_id", user.id);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Booking link saved!" });
+      await refreshProfile();
+    }
+    setSavingBooking(false);
   };
 
   const sections = [
@@ -154,6 +181,7 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
   ];
 
   const verificationLabel = profile?.verification === "verified" ? "Verified" : profile?.verification === "pending" ? "Pending" : "Unverified";
+  const isFounder = roles.includes("startup_founder");
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -316,14 +344,26 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5">{app.description}</p>
                       </div>
-                      <Button
-                        size="sm"
-                        variant={connectedApps[app.id] ? "outline" : "default"}
-                        className="text-xs shrink-0"
-                        onClick={() => toggleIntegration(app.id)}
-                      >
-                        {connectedApps[app.id] ? "Disconnect" : "Connect"}
-                      </Button>
+                      <div className="flex items-center gap-2 shrink-0">
+                        {connectedApps[app.id] && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-xs gap-1"
+                            onClick={() => window.open(app.connectUrl, "_blank", "noopener,noreferrer")}
+                          >
+                            <ExternalLink className="h-3 w-3" /> Open
+                          </Button>
+                        )}
+                        <Button
+                          size="sm"
+                          variant={connectedApps[app.id] ? "outline" : "default"}
+                          className="text-xs"
+                          onClick={() => toggleIntegration(app.id)}
+                        >
+                          {connectedApps[app.id] ? "Disconnect" : "Connect"}
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -337,10 +377,19 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
                     <Label className="text-xs">Booking URL (Calendly, Cal.com, etc.)</Label>
                     <Input
                       placeholder="https://calendly.com/your-link"
-                      defaultValue={profile?.booking_url || ""}
+                      value={bookingUrl}
+                      onChange={e => setBookingUrl(e.target.value)}
                     />
                   </div>
-                  <Button size="sm" className="text-xs">Save Booking Link</Button>
+                  <Button
+                    size="sm"
+                    className="text-xs gap-1.5"
+                    onClick={handleSaveBookingUrl}
+                    disabled={savingBooking}
+                  >
+                    {savingBooking ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                    Save Booking Link
+                  </Button>
                 </div>
               </div>
             </>
@@ -359,24 +408,76 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
                       <p className="text-xs text-muted-foreground">{user?.email}</p>
                     </div>
                   </div>
+
+                  {/* Verification — functional */}
                   <div className="flex items-center justify-between py-2 border-b border-border">
                     <div>
                       <p className="text-sm font-medium">Verification Status</p>
-                      <p className="text-xs text-muted-foreground capitalize">{verificationLabel}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className={`text-[10px] capitalize ${
+                          profile?.verification === "verified" ? "border-secondary text-secondary" :
+                          profile?.verification === "pending" ? "border-primary text-primary" : ""
+                        }`}>
+                          {profile?.verification === "verified" && <CheckCircle className="h-3 w-3 mr-1" />}
+                          {verificationLabel}
+                        </Badge>
+                        {profile?.verification === "pending" && (
+                          <span className="text-[10px] text-muted-foreground">Under review — we'll notify you</span>
+                        )}
+                      </div>
                     </div>
                     {profile?.verification === "unverified" && (
-                      <Button size="sm" variant="outline" className="text-xs">Request Verification</Button>
+                      <Button size="sm" variant="outline" className="text-xs gap-1.5" onClick={() => setVerifyOpen(true)}>
+                        <Shield className="h-3.5 w-3.5" /> Request Verification
+                      </Button>
                     )}
                   </div>
+
+                  {/* Membership — functional, founder-only upgrade */}
                   <div className="flex items-center justify-between py-2 border-b border-border">
                     <div>
                       <p className="text-sm font-medium">Membership</p>
-                      <p className="text-xs text-muted-foreground capitalize">{profile?.membership || "standard"}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge className={`text-[10px] ${isPremium ? "bg-gradient-gold text-primary-foreground border-0" : ""}`}>
+                          {isPremium ? "Premium" : "Standard"}
+                        </Badge>
+                        {isPremium && (
+                          <span className="text-[10px] text-muted-foreground">All features unlocked</span>
+                        )}
+                      </div>
                     </div>
-                    {profile?.membership !== "premium" && (
-                      <Button size="sm" className="text-xs bg-gradient-gold border-0">Upgrade to Premium</Button>
+                    {isFounder && (
+                      <Button
+                        size="sm"
+                        className={`text-xs gap-1.5 ${isPremium ? "" : "bg-gradient-gold border-0"}`}
+                        variant={isPremium ? "outline" : "default"}
+                        onClick={() => setUpgradeOpen(true)}
+                      >
+                        <Crown className="h-3.5 w-3.5" />
+                        {isPremium ? "Manage Subscription" : "Upgrade to Premium"}
+                      </Button>
+                    )}
+                    {!isFounder && !isPremium && (
+                      <span className="text-[10px] text-muted-foreground">Premium available for startup founders</span>
                     )}
                   </div>
+
+                  {/* Roles */}
+                  <div className="flex items-center justify-between py-2 border-b border-border">
+                    <div>
+                      <p className="text-sm font-medium">Roles</p>
+                      <div className="flex flex-wrap gap-1.5 mt-1">
+                        {roles.length === 0 ? (
+                          <span className="text-xs text-muted-foreground">No roles assigned</span>
+                        ) : (
+                          roles.map(r => (
+                            <Badge key={r} variant="outline" className="text-[10px] capitalize">{r.replace("_", " ")}</Badge>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="flex items-center justify-between py-2">
                     <div>
                       <p className="text-sm font-medium">Member Since</p>
@@ -401,6 +502,10 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
           )}
         </div>
       </div>
+
+      {/* Dialogs */}
+      <VerificationRequestDialog open={verifyOpen} onOpenChange={setVerifyOpen} />
+      <PremiumUpgradeDialog open={upgradeOpen} onOpenChange={setUpgradeOpen} />
     </div>
   );
 };
