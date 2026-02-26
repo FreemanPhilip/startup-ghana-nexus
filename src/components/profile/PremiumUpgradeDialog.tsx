@@ -34,15 +34,30 @@ const PremiumUpgradeDialog = ({ open, onOpenChange }: PremiumUpgradeDialogProps)
         body: {
           price_id: STRIPE_CONFIG.premium.price_id,
           mode: "subscription",
-          success_path: "/dashboard",
+          success_path: "/dashboard?upgraded=true",
           cancel_path: "/dashboard",
         },
       });
       if (error) throw error;
-      if (data?.url) {
+      if (data?.error) {
+        // Handle Stripe configuration errors gracefully
+        if (data.error.includes("account or business name")) {
+          toast({
+            title: "Payment Setup Required",
+            description: "The payment system is being configured. Please try again shortly or contact support.",
+            variant: "destructive",
+          });
+        } else {
+          throw new Error(data.error);
+        }
+      } else if (data?.url) {
         window.open(data.url, "_blank");
-        // Check subscription after a delay to catch the update
-        setTimeout(() => checkSubscription(), 10000);
+        toast({ title: "Checkout opened", description: "Complete your payment in the new tab. Your membership will update automatically." });
+        // Poll for subscription update
+        const pollInterval = setInterval(async () => {
+          await checkSubscription();
+        }, 5000);
+        setTimeout(() => clearInterval(pollInterval), 120000); // Stop after 2 min
       }
     } catch (err: any) {
       toast({ title: "Error", description: err.message || "Failed to create checkout session", variant: "destructive" });

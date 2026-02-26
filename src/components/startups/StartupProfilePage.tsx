@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, Building2, Globe, MapPin, Users, ExternalLink, ShieldCheck, ShieldAlert, Shield, Calendar, Linkedin, FileText, CheckCircle2, Loader2, Settings, Pencil, BarChart3 } from "lucide-react";
+import { ArrowLeft, Building2, Globe, MapPin, Users, ExternalLink, ShieldCheck, ShieldAlert, Shield, Calendar, Linkedin, FileText, CheckCircle2, Loader2, Settings, Pencil, BarChart3, Target, Eye, Twitter, Instagram, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -33,6 +33,11 @@ interface StartupDetail {
   verification_status: string;
   created_by: string;
   created_at: string;
+  mission: string | null;
+  vision: string | null;
+  twitter_url: string | null;
+  instagram_url: string | null;
+  facebook_url: string | null;
 }
 
 interface TeamMember {
@@ -66,18 +71,19 @@ const roleBadgeColor = (role: string) => {
   }
 };
 
+const TEAM_TITLES = [
+  "CTO", "CEO", "COO", "CFO", "CMO",
+  "Product Designer", "UI/UX Designer", "Frontend Developer", "Backend Developer", "Full Stack Developer",
+  "Mobile Developer", "DevOps Engineer", "Data Scientist", "Data Analyst",
+  "Product Manager", "Project Manager", "Scrum Master",
+  "Marketing Lead", "Growth Hacker", "Content Creator", "Community Manager",
+  "Sales Lead", "Business Development", "Customer Success",
+  "HR Manager", "Operations Lead", "Legal Advisor",
+  "Mentor", "Advisor", "Board Member", "Investor",
+  "Intern", "Volunteer", "Contributor", "Editor", "Employee",
+];
+
 const formatRoleDisplay = (role: string) => {
-  const TEAM_TITLES = [
-    "CTO", "CEO", "COO", "CFO", "CMO",
-    "Product Designer", "UI/UX Designer", "Frontend Developer", "Backend Developer", "Full Stack Developer",
-    "Mobile Developer", "DevOps Engineer", "Data Scientist", "Data Analyst",
-    "Product Manager", "Project Manager", "Scrum Master",
-    "Marketing Lead", "Growth Hacker", "Content Creator", "Community Manager",
-    "Sales Lead", "Business Development", "Customer Success",
-    "HR Manager", "Operations Lead", "Legal Advisor",
-    "Mentor", "Advisor", "Board Member", "Investor",
-    "Intern", "Volunteer", "Contributor", "Editor", "Employee",
-  ];
   const found = TEAM_TITLES.find(t => t.toLowerCase() === role.toLowerCase());
   if (found) return found;
   return role.charAt(0).toUpperCase() + role.slice(1);
@@ -91,6 +97,11 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("about");
   const [showEditDialog, setShowEditDialog] = useState(false);
+
+  const fetchStartup = useCallback(async () => {
+    const { data } = await supabase.from("startups").select("*").eq("id", startupId).single();
+    if (data) setStartup(data as any);
+  }, [startupId]);
 
   const fetchTeam = useCallback(async () => {
     const { data: members } = await supabase
@@ -111,10 +122,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
   useEffect(() => {
     const fetchAll = async () => {
       setLoading(true);
-
-      const { data: s } = await supabase.from("startups").select("*").eq("id", startupId).single();
-      setStartup(s);
-
+      await fetchStartup();
       await fetchTeam();
 
       // Fetch startup posts
@@ -140,6 +148,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
         commentsRes.data?.forEach(c => commentCounts.set(c.post_id, (commentCounts.get(c.post_id) ?? 0) + 1));
         const userLikedSet = new Set(userLikesRes.data?.map(l => l.post_id) ?? []);
 
+        const s = startup;
         setPosts(postsData.map(p => {
           const profile = profileMap.get(p.author_id);
           return {
@@ -160,7 +169,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
       setLoading(false);
     };
     fetchAll();
-  }, [startupId, user, fetchTeam]);
+  }, [startupId, user, fetchTeam, fetchStartup]);
 
   const handleToggleLike = async (postId: string, isLiked: boolean) => {
     if (!user) return;
@@ -212,6 +221,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
   const teamVerified = confirmedTeam.length >= 2;
   const myMembership = team.find(m => m.user_id === user?.id);
   const isAdmin = myMembership?.role === "owner" || myMembership?.role === "admin";
+  const hasSocials = startup.twitter_url || startup.instagram_url || startup.facebook_url || startup.linkedin_url;
 
   return (
     <div className="space-y-6">
@@ -249,7 +259,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
                     {[startup.industry, startup.stage, startup.location].filter(Boolean).join(" · ")}
                   </p>
                 </div>
-                <div className="flex gap-2 shrink-0">
+                <div className="flex gap-2 shrink-0 flex-wrap">
                   {isAdmin && (
                     <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setShowEditDialog(true)}>
                       <Pencil className="h-3.5 w-3.5" /> Edit
@@ -263,10 +273,23 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
                     </Button>
                   )}
                   {startup.linkedin_url && (
-                    <Button variant="outline" size="sm" className="gap-1.5 text-xs" asChild>
-                      <a href={startup.linkedin_url} target="_blank" rel="noopener noreferrer">
-                        <Linkedin className="h-3.5 w-3.5" /> LinkedIn
-                      </a>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                      <a href={startup.linkedin_url} target="_blank" rel="noopener noreferrer"><Linkedin className="h-4 w-4" /></a>
+                    </Button>
+                  )}
+                  {startup.twitter_url && (
+                    <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                      <a href={startup.twitter_url} target="_blank" rel="noopener noreferrer"><Twitter className="h-4 w-4" /></a>
+                    </Button>
+                  )}
+                  {startup.instagram_url && (
+                    <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                      <a href={startup.instagram_url} target="_blank" rel="noopener noreferrer"><Instagram className="h-4 w-4" /></a>
+                    </Button>
+                  )}
+                  {startup.facebook_url && (
+                    <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                      <a href={startup.facebook_url} target="_blank" rel="noopener noreferrer"><Facebook className="h-4 w-4" /></a>
                     </Button>
                   )}
                 </div>
@@ -296,6 +319,28 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
               {startup.short_description || "No description provided yet."}
             </p>
           </div>
+
+          {/* Mission & Vision */}
+          {(startup.mission || startup.vision) && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {startup.mission && (
+                <div className="rounded-xl border border-border bg-card p-5">
+                  <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+                    <Target className="h-4 w-4 text-primary" /> Our Mission
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{startup.mission}</p>
+                </div>
+              )}
+              {startup.vision && (
+                <div className="rounded-xl border border-border bg-card p-5">
+                  <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+                    <Eye className="h-4 w-4 text-primary" /> Our Vision
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{startup.vision}</p>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Details Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -341,6 +386,52 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
               </div>
             </div>
           </div>
+
+          {/* Social Links card */}
+          {hasSocials && (
+            <div className="rounded-xl border border-border bg-card p-5">
+              <h3 className="font-display font-bold text-sm mb-3">Connect With Us</h3>
+              <div className="flex flex-wrap gap-2">
+                {startup.website_url && (
+                  <Button variant="outline" size="sm" className="text-xs gap-1.5" asChild>
+                    <a href={startup.website_url} target="_blank" rel="noopener noreferrer"><Globe className="h-3.5 w-3.5" /> Website</a>
+                  </Button>
+                )}
+                {startup.linkedin_url && (
+                  <Button variant="outline" size="sm" className="text-xs gap-1.5" asChild>
+                    <a href={startup.linkedin_url} target="_blank" rel="noopener noreferrer"><Linkedin className="h-3.5 w-3.5" /> LinkedIn</a>
+                  </Button>
+                )}
+                {startup.twitter_url && (
+                  <Button variant="outline" size="sm" className="text-xs gap-1.5" asChild>
+                    <a href={startup.twitter_url} target="_blank" rel="noopener noreferrer"><Twitter className="h-3.5 w-3.5" /> Twitter / X</a>
+                  </Button>
+                )}
+                {startup.instagram_url && (
+                  <Button variant="outline" size="sm" className="text-xs gap-1.5" asChild>
+                    <a href={startup.instagram_url} target="_blank" rel="noopener noreferrer"><Instagram className="h-3.5 w-3.5" /> Instagram</a>
+                  </Button>
+                )}
+                {startup.facebook_url && (
+                  <Button variant="outline" size="sm" className="text-xs gap-1.5" asChild>
+                    <a href={startup.facebook_url} target="_blank" rel="noopener noreferrer"><Facebook className="h-3.5 w-3.5" /> Facebook</a>
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Empty state for admin - prompt to add mission/vision */}
+          {isAdmin && !startup.mission && !startup.vision && (
+            <div className="rounded-xl border border-dashed border-border bg-card/50 p-6 text-center">
+              <Target className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+              <p className="text-sm font-medium">Add your Mission & Vision</p>
+              <p className="text-xs text-muted-foreground mt-1 mb-3">Tell the ecosystem what drives your startup</p>
+              <Button variant="outline" size="sm" className="text-xs gap-1.5" onClick={() => setShowEditDialog(true)}>
+                <Pencil className="h-3 w-3" /> Edit Profile
+              </Button>
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="team" className="mt-4">
@@ -392,6 +483,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
             ))
           )}
         </TabsContent>
+
         {isAdmin && (
           <TabsContent value="analytics" className="mt-4">
             <StartupAnalytics startupId={startupId} />
@@ -413,12 +505,9 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
         <EditStartupDialog
           open={showEditDialog}
           onOpenChange={setShowEditDialog}
-          startup={startup}
+          startup={startup as any}
           onUpdated={() => {
-            // Re-fetch startup data
-            supabase.from("startups").select("*").eq("id", startupId).single().then(({ data }) => {
-              if (data) setStartup(data);
-            });
+            fetchStartup();
           }}
         />
       )}
