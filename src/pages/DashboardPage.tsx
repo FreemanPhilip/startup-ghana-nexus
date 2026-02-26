@@ -11,6 +11,7 @@ import EcosystemFeed from "@/components/dashboard/EcosystemFeed";
 import MentorsPage from "@/components/mentorship/MentorsPage";
 import InvestorsPage from "@/components/investors/InvestorsPage";
 import InvestorRightSidebar from "@/components/investors/InvestorRightSidebar";
+import InvestorDashboardPage from "@/components/investors/InvestorDashboardPage";
 import NetworkPage from "@/components/network/NetworkPage";
 import OpportunitiesPage from "@/components/opportunities/OpportunitiesPage";
 import MessagesPage from "@/components/messages/MessagesPage";
@@ -112,7 +113,7 @@ const DashboardPage = () => {
 
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto">
-              <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
+              <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "investor-dashboard", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
               {activeTab === "messages" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <MessagesPage onViewProfile={handleViewProfile} />
@@ -152,6 +153,12 @@ const DashboardPage = () => {
               {activeTab === "investors" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <InvestorsPage onViewStartup={handleViewStartup} />
+                </motion.div>
+              )}
+
+              {activeTab === "investor-dashboard" && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                  <InvestorDashboardPage />
                 </motion.div>
               )}
 
