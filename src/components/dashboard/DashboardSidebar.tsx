@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Star, Home, MessageSquare, Users, TrendingUp, Briefcase, UserPlus, LogOut, Upload, Menu, X, CalendarCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
 import PitchDeckUploadDialog from "./PitchDeckUploadDialog";
 
 interface DashboardSidebarProps {
@@ -25,9 +27,41 @@ const navItems = [
 ];
 
 const DashboardSidebar = ({ activeTab, onTabChange, open, onClose }: DashboardSidebarProps) => {
-  const { profile, roles, signOut } = useAuth();
+  const { profile, roles, signOut, user } = useAuth();
   const [pitchDeckOpen, setPitchDeckOpen] = useState(false);
+  const [totalUnread, setTotalUnread] = useState(0);
   const navigate = useNavigate();
+
+  const fetchUnreadCount = useCallback(async () => {
+    if (!user) return;
+    const { data: convos } = await supabase
+      .from("conversations")
+      .select("id")
+      .or(`participant_one.eq.${user.id},participant_two.eq.${user.id}`);
+    if (!convos || convos.length === 0) { setTotalUnread(0); return; }
+    const ids = convos.map(c => c.id);
+    const { count } = await supabase
+      .from("messages")
+      .select("*", { count: "exact", head: true })
+      .in("conversation_id", ids)
+      .neq("sender_id", user.id)
+      .is("read_at", null);
+    setTotalUnread(count ?? 0);
+  }, [user]);
+
+  useEffect(() => { fetchUnreadCount(); }, [fetchUnreadCount]);
+
+  // Realtime refresh on new messages
+  useEffect(() => {
+    if (!user) return;
+    const channel = supabase
+      .channel("sidebar-unread")
+      .on("postgres_changes", { event: "*", schema: "public", table: "messages" }, () => {
+        fetchUnreadCount();
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user, fetchUnreadCount]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -95,7 +129,12 @@ const DashboardSidebar = ({ activeTab, onTabChange, open, onClose }: DashboardSi
             }`}
           >
             <item.icon className="h-4 w-4" />
-            {item.label}
+            <span className="flex-1 text-left">{item.label}</span>
+            {item.id === "messages" && totalUnread > 0 && (
+              <Badge className="h-5 min-w-5 rounded-full px-1.5 py-0 flex items-center justify-center text-[10px] bg-destructive text-destructive-foreground border-0">
+                {totalUnread > 99 ? "99+" : totalUnread}
+              </Badge>
+            )}
           </button>
         ))}
       </nav>
