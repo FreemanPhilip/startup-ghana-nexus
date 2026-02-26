@@ -36,15 +36,34 @@ interface StartupTeamManagementProps {
   onTeamUpdated: () => void;
 }
 
-const ROLES = ["owner", "admin", "editor", "employee"] as const;
+const SYSTEM_ROLES = ["owner", "admin"] as const;
+const TEAM_TITLES = [
+  "CTO", "CEO", "COO", "CFO", "CMO",
+  "Product Designer", "UI/UX Designer", "Frontend Developer", "Backend Developer", "Full Stack Developer",
+  "Mobile Developer", "DevOps Engineer", "Data Scientist", "Data Analyst",
+  "Product Manager", "Project Manager", "Scrum Master",
+  "Marketing Lead", "Growth Hacker", "Content Creator", "Community Manager",
+  "Sales Lead", "Business Development", "Customer Success",
+  "HR Manager", "Operations Lead", "Legal Advisor",
+  "Mentor", "Advisor", "Board Member", "Investor",
+  "Intern", "Volunteer", "Contributor",
+  "Editor", "Employee",
+] as const;
+const ALL_ROLES = [...SYSTEM_ROLES, ...TEAM_TITLES.map(t => t.toLowerCase())] as const;
 
 const roleBadgeColor = (role: string) => {
   switch (role) {
     case "owner": return "bg-primary/10 text-primary border-0";
     case "admin": return "bg-secondary/10 text-secondary border-0";
-    case "editor": return "bg-accent/10 text-accent-foreground border-0";
-    default: return "";
+    default: return "bg-muted text-foreground border-0";
   }
+};
+
+const formatRoleDisplay = (role: string) => {
+  // Check if it matches a known team title (case insensitive)
+  const found = TEAM_TITLES.find(t => t.toLowerCase() === role.toLowerCase());
+  if (found) return found;
+  return role.charAt(0).toUpperCase() + role.slice(1);
 };
 
 const StartupTeamManagement = ({ startupId, team, onTeamUpdated }: StartupTeamManagementProps) => {
@@ -175,13 +194,14 @@ const StartupTeamManagement = ({ startupId, team, onTeamUpdated }: StartupTeamMa
               type="email"
             />
             <Select value={inviteRole} onValueChange={setInviteRole}>
-              <SelectTrigger className="h-9 w-full sm:w-32 text-xs">
+              <SelectTrigger className="h-9 w-full sm:w-44 text-xs">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="editor">Editor</SelectItem>
-                <SelectItem value="employee">Employee</SelectItem>
+              <SelectContent className="max-h-60">
+                <SelectItem value="admin" className="text-xs">Admin</SelectItem>
+                {TEAM_TITLES.map(t => (
+                  <SelectItem key={t} value={t.toLowerCase()} className="text-xs">{t}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <Button
@@ -231,18 +251,21 @@ const StartupTeamManagement = ({ startupId, team, onTeamUpdated }: StartupTeamMa
                         value={m.role}
                         onValueChange={(val) => handleChangeRole(m.id, val, m.user_id)}
                       >
-                        <SelectTrigger className="h-7 w-24 text-[10px]">
-                          <SelectValue />
+                        <SelectTrigger className="h-7 w-32 text-[10px]">
+                          <SelectValue>{formatRoleDisplay(m.role)}</SelectValue>
                         </SelectTrigger>
-                        <SelectContent>
-                          {ROLES.map(r => (
+                        <SelectContent className="max-h-60">
+                          {SYSTEM_ROLES.map(r => (
                             <SelectItem key={r} value={r} className="text-xs capitalize">{r}</SelectItem>
+                          ))}
+                          {TEAM_TITLES.map(t => (
+                            <SelectItem key={t} value={t.toLowerCase()} className="text-xs">{t}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     ) : (
-                      <Badge variant="outline" className={`text-[10px] capitalize ${roleBadgeColor(m.role)}`}>
-                        {m.role}
+                      <Badge variant="outline" className={`text-[10px] ${roleBadgeColor(m.role)}`}>
+                        {formatRoleDisplay(m.role)}
                       </Badge>
                     )}
                     {canManage && (
@@ -267,7 +290,7 @@ const StartupTeamManagement = ({ startupId, team, onTeamUpdated }: StartupTeamMa
       {pendingMembers.length > 0 && (
         <div className="rounded-xl border border-border bg-card p-5">
           <h3 className="font-display font-bold text-sm mb-4 flex items-center gap-2">
-            <Clock className="h-4 w-4 text-amber-500" /> Pending Confirmation ({pendingMembers.length})
+            <Clock className="h-4 w-4 text-destructive/70" /> Pending Confirmation ({pendingMembers.length})
           </h3>
           <div className="space-y-2">
             {pendingMembers.map(m => {
@@ -282,7 +305,7 @@ const StartupTeamManagement = ({ startupId, team, onTeamUpdated }: StartupTeamMa
                     <p className="text-sm font-medium truncate text-muted-foreground">{m.profile?.full_name || "Unknown"}</p>
                     <p className="text-[10px] text-muted-foreground">Awaiting confirmation</p>
                   </div>
-                  <Badge variant="outline" className="text-[10px] capitalize">{m.role}</Badge>
+                  <Badge variant="outline" className="text-[10px]">{formatRoleDisplay(m.role)}</Badge>
                   {isAdmin && (
                     <Button
                       variant="ghost"
