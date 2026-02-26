@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Search, Star, StarOff } from "lucide-react";
+import { Search, Star } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { toast } from "@/hooks/use-toast";
 import InvestorCard, { type InvestorData } from "./InvestorCard";
 import InvestorFilters from "./InvestorFilters";
 import InvestorDetailPage from "./InvestorDetailPage";
 import { useInvestorTracking } from "@/hooks/useInvestorTracking";
+import { useFollows } from "@/hooks/useFollows";
+import { useNetwork } from "@/hooks/useNetwork";
 
 const demoInvestors: InvestorData[] = [
   { id: "1", name: "Accra Venture Partners", description: "Early-stage VC focusing on FinTech and e-commerce startups across West Africa with hands-on mentorship and strategic connections.", tags: ["FinTech", "Seed", "B2B"], avgTicket: "$150k", matchPercent: 98, status: "Active Now", icon: "building" },
@@ -20,6 +22,17 @@ const demoInvestors: InvestorData[] = [
   { id: "6", name: "Retail West Africa Fund", description: "Specialized fund for retail supply chain optimization and last-mile logistics solutions across West Africa.", tags: ["Logistics", "SME", "Seed"], avgTicket: "$125k", matchPercent: 65, status: "Low Activity", icon: "dollar" },
 ];
 
+// Map investor IDs to potential real user IDs from the network (investors)
+function useInvestorUserMap() {
+  const { profiles } = useNetwork();
+  // Find profiles with investor role to map demo investors to real users
+  const investorProfiles = useMemo(
+    () => profiles.filter(p => p.roles.includes("investor")),
+    [profiles]
+  );
+  return investorProfiles;
+}
+
 const InvestorsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [industry, setIndustry] = useState("all");
@@ -28,6 +41,38 @@ const InvestorsPage = () => {
   const [selectedInvestor, setSelectedInvestor] = useState<InvestorData | null>(null);
 
   const { trackView, toggleShortlist, isShortlisted, shortlisted } = useInvestorTracking();
+  const { toggleFollow, isFollowing } = useFollows();
+  const investorProfiles = useInvestorUserMap();
+
+  // Map demo investor IDs to real user IDs when possible
+  const getInvestorUserId = (investorId: string): string | null => {
+    const idx = parseInt(investorId) - 1;
+    return investorProfiles[idx]?.user_id ?? null;
+  };
+
+  const handleConnect = (investorId: string) => {
+    const realUserId = getInvestorUserId(investorId);
+    if (realUserId) {
+      toggleFollow(realUserId);
+      const inv = demoInvestors.find(i => i.id === investorId);
+      if (inv && !isFollowing(realUserId)) {
+        toast({ title: "Connected!", description: `You're now connected with ${inv.name}.` });
+      }
+    } else {
+      // For demo investors without real user mapping, track as shortlist
+      const inv = demoInvestors.find(i => i.id === investorId);
+      if (inv) {
+        toggleShortlist(inv.id, inv.name, inv);
+        toast({ title: "Shortlisted!", description: `${inv.name} added to your shortlist.` });
+      }
+    }
+  };
+
+  const isConnected = (investorId: string): boolean => {
+    const realUserId = getInvestorUserId(investorId);
+    if (realUserId) return isFollowing(realUserId);
+    return isShortlisted(investorId);
+  };
 
   const clearFilters = () => { setIndustry("all"); setTicketSize("all"); setRegion("all"); };
 
@@ -109,7 +154,12 @@ const InvestorsPage = () => {
                     <Star className="h-4 w-4 text-muted-foreground" />
                   )}
                 </button>
-                <InvestorCard investor={inv} onView={() => handleViewInvestor(inv)} />
+                <InvestorCard
+                  investor={inv}
+                  onView={() => handleViewInvestor(inv)}
+                  onConnect={() => handleConnect(inv.id)}
+                  isConnected={isConnected(inv.id)}
+                />
               </motion.div>
             ))}
             {filtered.length === 0 && (
@@ -149,7 +199,12 @@ const InvestorsPage = () => {
                   >
                     <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                   </button>
-                  <InvestorCard investor={inv} onView={() => handleViewInvestor(inv)} />
+                  <InvestorCard
+                    investor={inv}
+                    onView={() => handleViewInvestor(inv)}
+                    onConnect={() => handleConnect(inv.id)}
+                    isConnected={isConnected(inv.id)}
+                  />
                 </motion.div>
               ))}
             </div>

@@ -1,4 +1,4 @@
-import { Building2, DollarSign, Landmark, Users2, Briefcase, Globe } from "lucide-react";
+import { Building2, DollarSign, Landmark, Users2, Briefcase, Globe, UserPlus, UserCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -26,6 +26,7 @@ interface InvestorCardProps {
   investor: InvestorData;
   onConnect?: (id: string) => void;
   onView?: () => void;
+  isConnected?: boolean;
 }
 
 const getMatchColor = (pct: number) => {
@@ -35,7 +36,7 @@ const getMatchColor = (pct: number) => {
   return "bg-muted text-muted-foreground border-border";
 };
 
-const InvestorCard = ({ investor, onConnect, onView }: InvestorCardProps) => {
+const InvestorCard = ({ investor, onConnect, onView, isConnected }: InvestorCardProps) => {
   const Icon = iconMap[investor.icon] || Building2;
 
   return (
@@ -80,10 +81,21 @@ const InvestorCard = ({ investor, onConnect, onView }: InvestorCardProps) => {
         </div>
         <Button
           size="sm"
-          className="font-semibold text-xs px-5"
+          variant={isConnected ? "outline" : "default"}
+          className="font-semibold text-xs px-4 gap-1.5"
           onClick={(e) => { e.stopPropagation(); onConnect?.(investor.id); }}
         >
-          Connect
+          {isConnected ? (
+            <>
+              <UserCheck className="h-3.5 w-3.5" />
+              Connected
+            </>
+          ) : (
+            <>
+              <UserPlus className="h-3.5 w-3.5" />
+              Connect
+            </>
+          )}
         </Button>
       </div>
     </div>
