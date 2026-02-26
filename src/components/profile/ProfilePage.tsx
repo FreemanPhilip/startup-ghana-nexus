@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Camera, MapPin, Globe, Linkedin, Phone, Mail, Briefcase, Users, Building2, Edit3, Save, X, Loader2, Heart, MessageCircle, CheckCircle, Calendar, Award, TrendingUp, LogOut, Shield, Clock } from "lucide-react";
+import { Camera, MapPin, Globe, Linkedin, Phone, Mail, Briefcase, Users, Building2, Edit3, Save, X, Loader2, Heart, MessageCircle, CheckCircle, Calendar, Award, TrendingUp, LogOut, Shield, Clock, Crown } from "lucide-react";
 import MentorAvailabilityManager from "@/components/mentorship/MentorAvailabilityManager";
+import VerificationRequestDialog from "@/components/profile/VerificationRequestDialog";
+import PremiumUpgradeDialog from "@/components/profile/PremiumUpgradeDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,7 +31,9 @@ interface UserPost {
 }
 
 const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
-  const { user, profile, roles, refreshProfile } = useAuth();
+  const { user, profile, roles, refreshProfile, isPremium } = useAuth();
+  const [verifyOpen, setVerifyOpen] = useState(false);
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -552,9 +556,65 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
 
         {activeTab === "settings" && (
           <div className="flex-1 space-y-5">
+            {/* Verification */}
+            <div className="rounded-xl border border-border bg-card p-5">
+              <h3 className="font-display font-bold text-sm mb-2 flex items-center gap-2">
+                <Shield className="h-4 w-4 text-primary" /> Verification
+              </h3>
+              <p className="text-xs text-muted-foreground mb-4">Get verified to increase trust and visibility in the ecosystem.</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className={`text-[10px] capitalize ${
+                    profile?.verification === "verified" ? "border-secondary text-secondary" :
+                    profile?.verification === "pending" ? "border-primary text-primary" :
+                    ""
+                  }`}>
+                    {profile?.verification === "verified" && <CheckCircle className="h-3 w-3 mr-1" />}
+                    {verificationLabel}
+                  </Badge>
+                </div>
+                {profile?.verification === "unverified" && (
+                  <Button size="sm" variant="outline" className="text-xs gap-1.5" onClick={() => setVerifyOpen(true)}>
+                    <Shield className="h-3.5 w-3.5" /> Request Verification
+                  </Button>
+                )}
+                {profile?.verification === "pending" && (
+                  <p className="text-xs text-muted-foreground">Under review — we'll notify you</p>
+                )}
+              </div>
+            </div>
+
+            {/* Membership Upgrade — only for startup founders */}
+            {roles.includes("startup_founder") && (
+              <div className={`rounded-xl border ${isPremium ? "border-primary" : "border-border"} bg-card p-5`}>
+                <h3 className="font-display font-bold text-sm mb-2 flex items-center gap-2">
+                  <Crown className="h-4 w-4 text-primary" /> Membership
+                </h3>
+                <p className="text-xs text-muted-foreground mb-4">
+                  {isPremium
+                    ? "You're a Premium member. Enjoy unlimited access to all features."
+                    : "Upgrade to Premium for unlimited connections, messaging, advanced search, and more."}
+                </p>
+                <div className="flex items-center justify-between">
+                  <Badge className={`text-[10px] ${isPremium ? "bg-gradient-gold text-primary-foreground border-0" : ""}`}>
+                    {isPremium ? "Premium" : "Standard"}
+                  </Badge>
+                  <Button
+                    size="sm"
+                    className={`text-xs gap-1.5 ${isPremium ? "" : "bg-gradient-gold border-0"}`}
+                    variant={isPremium ? "outline" : "default"}
+                    onClick={() => setUpgradeOpen(true)}
+                  >
+                    <Crown className="h-3.5 w-3.5" />
+                    {isPremium ? "Manage Subscription" : "Upgrade to Premium"}
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Account */}
             <div className="rounded-xl border border-border bg-card p-5">
               <h3 className="font-display font-bold text-sm mb-2">Account</h3>
-              <p className="text-xs text-muted-foreground mb-4">Manage your account settings and preferences.</p>
               <div className="space-y-3">
                 <div className="flex items-center justify-between py-2 border-b border-border">
                   <div>
@@ -562,30 +622,20 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
                     <p className="text-xs text-muted-foreground">{user?.email}</p>
                   </div>
                 </div>
-                <div className="flex items-center justify-between py-2 border-b border-border">
-                  <div>
-                    <p className="text-sm font-medium">Verification Status</p>
-                    <p className="text-xs text-muted-foreground capitalize">{profile?.verification || "unverified"}</p>
-                  </div>
-                  {profile?.verification === "unverified" && (
-                    <Button size="sm" variant="outline" className="text-xs">Request Verification</Button>
-                  )}
-                </div>
                 <div className="flex items-center justify-between py-2">
                   <div>
-                    <p className="text-sm font-medium">Membership</p>
-                    <p className="text-xs text-muted-foreground capitalize">{profile?.membership || "standard"}</p>
+                    <p className="text-sm font-medium">Member Since</p>
+                    <p className="text-xs text-muted-foreground">
+                      {profile ? new Date(profile.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "—"}
+                    </p>
                   </div>
-                  {profile?.membership !== "premium" && (
-                    <Button size="sm" className="text-xs bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">Upgrade</Button>
-                  )}
                 </div>
               </div>
             </div>
 
             <div className="rounded-xl border border-destructive/30 bg-card p-5">
               <h3 className="font-display font-bold text-sm mb-2 text-destructive">Danger Zone</h3>
-              <p className="text-xs text-muted-foreground mb-4">These actions are irreversible. Proceed with caution.</p>
+              <p className="text-xs text-muted-foreground mb-4">These actions are irreversible.</p>
               <Button variant="outline" className="text-xs text-destructive border-destructive/30 hover:bg-destructive/10 gap-1.5" onClick={onSignOut}>
                 <LogOut className="h-3.5 w-3.5" /> Sign Out
               </Button>
@@ -593,6 +643,10 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
           </div>
         )}
       </div>
+
+      {/* Dialogs */}
+      <VerificationRequestDialog open={verifyOpen} onOpenChange={setVerifyOpen} />
+      <PremiumUpgradeDialog open={upgradeOpen} onOpenChange={setUpgradeOpen} />
     </div>
   );
 };

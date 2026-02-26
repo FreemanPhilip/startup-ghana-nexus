@@ -536,34 +536,40 @@ export type Database = {
       mentor_availability: {
         Row: {
           created_at: string
+          currency: string | null
           day_of_week: number
           end_time: string
           id: string
           is_active: boolean
           mentor_id: string
           session_duration: number
+          session_price: number | null
           start_time: string
           updated_at: string
         }
         Insert: {
           created_at?: string
+          currency?: string | null
           day_of_week: number
           end_time: string
           id?: string
           is_active?: boolean
           mentor_id: string
           session_duration?: number
+          session_price?: number | null
           start_time: string
           updated_at?: string
         }
         Update: {
           created_at?: string
+          currency?: string | null
           day_of_week?: number
           end_time?: string
           id?: string
           is_active?: boolean
           mentor_id?: string
           session_duration?: number
+          session_price?: number | null
           start_time?: string
           updated_at?: string
         }
@@ -607,6 +613,50 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      mentor_payments: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string
+          currency: string
+          id: string
+          mentee_id: string
+          mentor_id: string
+          status: string
+          stripe_session_id: string | null
+        }
+        Insert: {
+          amount?: number
+          booking_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          mentee_id: string
+          mentor_id: string
+          status?: string
+          stripe_session_id?: string | null
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          mentee_id?: string
+          mentor_id?: string
+          status?: string
+          stripe_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mentor_payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "mentor_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       messages: {
         Row: {
@@ -1209,6 +1259,45 @@ export type Database = {
         Update: {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      verification_requests: {
+        Row: {
+          additional_info: string | null
+          created_at: string
+          document_url: string | null
+          id: string
+          linkedin_url: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          additional_info?: string | null
+          created_at?: string
+          document_url?: string | null
+          id?: string
+          linkedin_url?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          additional_info?: string | null
+          created_at?: string
+          document_url?: string | null
+          id?: string
+          linkedin_url?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
