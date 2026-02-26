@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import ChatScheduleMeetingDialog from "./ChatScheduleMeetingDialog";
 import LinkPreviewCard from "./LinkPreviewCard";
+import EmojiPicker from "./EmojiPicker";
 import { formatLastSeen } from "@/hooks/usePresence";
 
 interface ChatViewProps {
@@ -30,6 +31,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [showAttachMenu, setShowAttachMenu] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [otherUserPresence, setOtherUserPresence] = useState<{ is_online: boolean; last_seen: string | null }>({ is_online: false, last_seen: null });
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -432,9 +434,25 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
             onKeyDown={handleKeyDown}
             className="flex-1 h-9"
           />
-          <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 text-muted-foreground hidden sm:flex">
-            <Smile className="h-5 w-5" />
-          </Button>
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 shrink-0 text-muted-foreground"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            >
+              <Smile className="h-5 w-5" />
+            </Button>
+            {showEmojiPicker && (
+              <EmojiPicker
+                onSelect={(emoji) => {
+                  setInput(prev => prev + emoji);
+                  setShowEmojiPicker(false);
+                }}
+                onClose={() => setShowEmojiPicker(false)}
+              />
+            )}
+          </div>
           <Button
             size="icon"
             className="h-9 w-9 shrink-0 rounded-full"
