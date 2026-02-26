@@ -23,6 +23,7 @@ import FirstTimeFounderModal from "@/components/startups/FirstTimeFounderModal";
 import MySessionsPage from "@/components/mentorship/MySessionsPage";
 import PublicProfilePage from "@/components/profile/PublicProfilePage";
 import CreateStartupWizard from "@/components/startups/CreateStartupWizard";
+import SettingsPage from "@/components/settings/SettingsPage";
 import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
 import { useStartups } from "@/hooks/useStartups";
 
@@ -122,7 +123,7 @@ const DashboardPage = () => {
     setActiveTab(tab);
   }, []);
 
-  const isWideTab = ["mentors", "investors", "investor-dashboard", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile"].includes(activeTab);
+  const isWideTab = ["mentors", "investors", "investor-dashboard", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile", "settings"].includes(activeTab);
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -239,7 +240,13 @@ const DashboardPage = () => {
                 </motion.div>
               )}
 
-              {!["home", "network", "mentors", "investors", "opportunities", "messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile", "investor-dashboard"].includes(activeTab) && (
+              {activeTab === "settings" && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                  <SettingsPage onSignOut={handleSignOut} />
+                </motion.div>
+              )}
+
+              {!["home", "network", "mentors", "investors", "opportunities", "messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile", "investor-dashboard", "settings"].includes(activeTab) && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -256,7 +263,7 @@ const DashboardPage = () => {
             </div>
           </main>
 
-          {!["messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar onViewInvestor={(id) => {/* handled within InvestorsPage */}} /> : <DashboardRightSidebar onNavigate={handleTabChange} />)}
+          {!["messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile", "settings"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar onViewInvestor={(id) => {/* handled within InvestorsPage */}} /> : <DashboardRightSidebar onNavigate={handleTabChange} />)}
         </div>
       </div>
 
