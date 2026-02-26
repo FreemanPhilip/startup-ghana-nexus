@@ -35,6 +35,36 @@ export type Database = {
         }
         Relationships: []
       }
+      connection_requests: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          receiver_id: string
+          responded_at: string | null
+          sender_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          receiver_id: string
+          responded_at?: string | null
+          sender_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          receiver_id?: string
+          responded_at?: string | null
+          sender_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           created_at: string
