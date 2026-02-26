@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Smile, Plus, MoreVertical, Video, ArrowLeft, Check, CheckCheck, Image, Paperclip, X, Calendar, Loader2 } from "lucide-react";
+import { Send, Smile, Plus, MoreVertical, Video, ArrowLeft, Check, CheckCheck, Image, Paperclip, X, Calendar, Loader2, Trash2, MessageSquareX, Eraser } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -21,9 +21,12 @@ interface ChatViewProps {
   loading: boolean;
   onSendMessage: (content: string, imageUrl?: string | null) => void;
   onBack?: () => void;
+  onDeleteMessage?: (messageId: string) => Promise<boolean>;
+  onClearChat?: () => Promise<boolean>;
+  onDeleteConversation?: (conversationId: string) => Promise<boolean>;
 }
 
-const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: ChatViewProps) => {
+const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDeleteMessage, onClearChat, onDeleteConversation }: ChatViewProps) => {
   const { user } = useAuth();
   const [input, setInput] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -32,6 +35,10 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
   const [showAttachMenu, setShowAttachMenu] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showChatMenu, setShowChatMenu] = useState(false);
+  const [confirmClear, setConfirmClear] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
   const [otherUserPresence, setOtherUserPresence] = useState<{ is_online: boolean; last_seen: string | null }>({ is_online: false, last_seen: null });
   const [isOtherTyping, setIsOtherTyping] = useState(false);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
@@ -270,9 +277,27 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
           >
             <Calendar className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <MoreVertical className="h-4 w-4" />
-          </Button>
+          <div className="relative">
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowChatMenu(!showChatMenu)}>
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+            {showChatMenu && (
+              <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-xl p-1 z-[60] min-w-[180px]">
+                <button
+                  onClick={() => { setConfirmClear(true); setShowChatMenu(false); }}
+                  className="flex items-center gap-2.5 w-full px-3 py-2 text-xs text-foreground hover:bg-muted rounded-md transition-colors"
+                >
+                  <Eraser className="h-3.5 w-3.5" /> Clear My Messages
+                </button>
+                <button
+                  onClick={() => { setConfirmDelete(true); setShowChatMenu(false); }}
+                  className="flex items-center gap-2.5 w-full px-3 py-2 text-xs text-destructive hover:bg-destructive/10 rounded-md transition-colors"
+                >
+                  <Trash2 className="h-3.5 w-3.5" /> Delete Conversation
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -309,7 +334,24 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
                   {group.msgs.map((msg) => {
                     const isMe = msg.sender_id === user?.id;
                     return (
-                      <div key={msg.id} className={`flex gap-2 ${isMe ? "justify-end" : ""}`}>
+                      <div
+                        key={msg.id}
+                        className={`flex gap-2 ${isMe ? "justify-end" : ""} group/msg relative`}
+                        onMouseEnter={() => setHoveredMessageId(msg.id)}
+                        onMouseLeave={() => setHoveredMessageId(null)}
+                      >
+                        {isMe && hoveredMessageId === msg.id && onDeleteMessage && (
+                          <button
+                            onClick={async () => {
+                              await onDeleteMessage(msg.id);
+                              toast({ title: "Message deleted" });
+                            }}
+                            className="self-center opacity-0 group-hover/msg:opacity-100 transition-opacity p-1 rounded hover:bg-destructive/10"
+                            title="Delete message"
+                          >
+                            <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                          </button>
+                        )}
                         {!isMe && (
                           <Avatar className="h-8 w-8 shrink-0 mt-1">
                             <AvatarImage src={otherUser?.avatar_url || undefined} />
@@ -526,6 +568,50 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
         otherUserId={otherUser?.user_id || ""}
         onSendMessage={onSendMessage}
       />
+
+      {/* Clear Chat Confirmation */}
+      {confirmClear && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-card border border-border rounded-xl p-6 max-w-sm mx-4 shadow-2xl">
+            <h3 className="font-semibold text-sm">Clear your messages?</h3>
+            <p className="text-xs text-muted-foreground mt-2">
+              This will delete all messages you sent in this conversation. The other person's messages will remain.
+            </p>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="outline" size="sm" onClick={() => setConfirmClear(false)}>Cancel</Button>
+              <Button variant="destructive" size="sm" onClick={async () => {
+                if (onClearChat) {
+                  const ok = await onClearChat();
+                  if (ok) toast({ title: "Your messages cleared" });
+                }
+                setConfirmClear(false);
+              }}>Clear Messages</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Conversation Confirmation */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-card border border-border rounded-xl p-6 max-w-sm mx-4 shadow-2xl">
+            <h3 className="font-semibold text-sm">Delete this conversation?</h3>
+            <p className="text-xs text-muted-foreground mt-2">
+              This will permanently delete this conversation and all your messages in it. This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="outline" size="sm" onClick={() => setConfirmDelete(false)}>Cancel</Button>
+              <Button variant="destructive" size="sm" onClick={async () => {
+                if (onDeleteConversation && conversation) {
+                  const ok = await onDeleteConversation(conversation.id);
+                  if (ok) toast({ title: "Conversation deleted" });
+                }
+                setConfirmDelete(false);
+              }}>Delete</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
