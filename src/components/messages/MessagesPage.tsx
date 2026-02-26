@@ -23,8 +23,12 @@ const MessagesPage = ({ onViewProfile }: MessagesPageProps) => {
     sendMessage,
     startConversation,
     deleteMessage,
+    deleteMessages,
     clearChat,
     deleteConversation,
+    blockUser,
+    unblockUser,
+    isUserBlocked,
   } = useMessages();
 
   const [newConvoOpen, setNewConvoOpen] = useState(false);
@@ -73,8 +77,12 @@ const MessagesPage = ({ onViewProfile }: MessagesPageProps) => {
           onSendMessage={sendMessage}
           onBack={handleBack}
           onDeleteMessage={deleteMessage}
+          onDeleteMessages={deleteMessages}
           onClearChat={clearChat}
           onDeleteConversation={deleteConversation}
+          onBlockUser={blockUser}
+          onUnblockUser={unblockUser}
+          isUserBlocked={isUserBlocked}
         />
       </div>
 
