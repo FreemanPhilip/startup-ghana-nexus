@@ -4,8 +4,8 @@ export const STRIPE_CONFIG = {
     product_id: "prod_U2zuh1PJoNbQUs",
     price_id: "price_1T4tuXHHxjvxNyz0U3MFhoue",
     name: "Premium Membership",
-    price: 49.99,
-    currency: "USD",
+    price: 249.99,
+    currency: "GHS",
     interval: "month",
   },
 } as const;

@@ -63,10 +63,10 @@ const InvestorFilters = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Any Size</SelectItem>
-              <SelectItem value="0-50k">$0 - $50k</SelectItem>
-              <SelectItem value="50k-250k">$50k - $250k</SelectItem>
-              <SelectItem value="250k-1m">$250k - $1M</SelectItem>
-              <SelectItem value="1m+">$1M+</SelectItem>
+              <SelectItem value="0-50k">GH₵0 - GH₵500k</SelectItem>
+              <SelectItem value="50k-250k">GH₵500k - GH₵2.5M</SelectItem>
+              <SelectItem value="250k-1m">GH₵2.5M - GH₵10M</SelectItem>
+              <SelectItem value="1m+">GH₵10M+</SelectItem>
             </SelectContent>
           </Select>
         </div>

@@ -110,7 +110,7 @@ const CreateOpportunityDialog = ({ onCreated, trigger }: CreateOpportunityDialog
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-xs">Amount</Label>
-              <Input value={amount} onChange={e => setAmount(e.target.value)} placeholder="e.g. $50,000" />
+              <Input value={amount} onChange={e => setAmount(e.target.value)} placeholder="e.g. GH₵500,000" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Deadline</Label>

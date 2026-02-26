@@ -43,7 +43,7 @@ serve(async (req) => {
       customer_email: customerId ? undefined : user.email,
       line_items: [{
         price_data: {
-          currency: currency || "usd",
+          currency: currency || "ghs",
           product_data: {
             name: `Mentorship Session with ${mentor_name}`,
             description: `${booking_date} at ${start_time}`,

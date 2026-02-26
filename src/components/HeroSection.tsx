@@ -74,7 +74,7 @@ const HeroSection = () => {
         >
           {[
             { icon: Rocket, value: "500+", label: "Startups" },
-            { icon: TrendingUp, value: "$25M+", label: "Funding Raised" },
+            { icon: TrendingUp, value: "GH₵25M+", label: "Funding Raised" },
             { icon: Users, value: "200+", label: "Investors" },
           ].map((stat) => (
             <div key={stat.label} className="flex flex-col items-center gap-1">

@@ -42,7 +42,7 @@ const investorDetails: Record<string, {
     website: "https://accravp.com",
     email: "deals@accravp.com",
     phone: "+233 30 277 5500",
-    fundSize: "$12M",
+    fundSize: "GH₵120M",
     investmentStage: ["Pre-Seed", "Seed"],
     sectors: ["FinTech", "E-Commerce", "B2B SaaS", "Payments"],
     portfolio: [
@@ -57,17 +57,17 @@ const investorDetails: Record<string, {
       { name: "Yaw Mensah", role: "Portfolio Manager", initials: "YM" },
     ],
     recentActivity: [
-      { text: "Led $250k seed round for MediTrack", date: "2 weeks ago" },
+      { text: "Led GH₵2.5M seed round for MediTrack", date: "2 weeks ago" },
       { text: "Participated in Accra Startup Week panel", date: "1 month ago" },
       { text: "Published: 'State of FinTech in Ghana 2025'", date: "2 months ago" },
     ],
     thesis: "We invest in bold founders building category-defining FinTech and commerce solutions for West Africa. We look for strong product-market fit signals, a clear path to unit economics, and founders with deep domain expertise.",
     criteria: [
       "Ghana-based or Ghana-focused startups",
-      "Post-MVP with early traction (MRR > $2k)",
+      "Post-MVP with early traction (MRR > GH₵20k)",
       "Founding team with relevant industry experience",
       "Clear monetization strategy",
-      "Addressable market > $100M",
+      "Addressable market > GH₵1B",
     ],
   },
   "2": {
@@ -76,7 +76,7 @@ const investorDetails: Record<string, {
     website: "https://gcfimpact.org",
     email: "apply@gcfimpact.org",
     phone: "+233 32 202 4400",
-    fundSize: "$45M",
+    fundSize: "GH₵450M",
     investmentStage: ["Series A", "Series B"],
     sectors: ["CleanTech", "Renewable Energy", "AgriTech", "Impact"],
     portfolio: [
@@ -89,12 +89,12 @@ const investorDetails: Record<string, {
       { name: "Efua Mensah", role: "Climate Lead", initials: "EM" },
     ],
     recentActivity: [
-      { text: "Closed $8M Series A for AquaClean Tech", date: "3 weeks ago" },
+      { text: "Closed GH₵80M Series A for AquaClean Tech", date: "3 weeks ago" },
       { text: "Launched Climate Innovation Challenge", date: "1 month ago" },
     ],
     thesis: "We back scalable climate and sustainability solutions across West Africa. Our capital supports ventures that demonstrate measurable environmental impact alongside strong financial returns.",
     criteria: [
-      "Revenue-generating companies ($50k+ ARR)",
+      "Revenue-generating companies (GH₵500k+ ARR)",
       "Measurable climate/social impact metrics",
       "Scalable technology-driven solutions",
       "Strong governance and reporting capabilities",

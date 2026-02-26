@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, Trash2, Clock, Loader2, DollarSign } from "lucide-react";
+import { Plus, Trash2, Clock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -73,7 +73,7 @@ const MentorAvailabilityManager = () => {
       end_time: newEnd,
       session_duration: parseInt(newDuration),
       session_price: parseFloat(newPrice) || 0,
-      currency: "USD",
+      currency: "GHS",
     } as any);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -164,7 +164,7 @@ const MentorAvailabilityManager = () => {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs flex items-center gap-1"><DollarSign className="h-3 w-3" /> Price (USD)</Label>
+            <Label className="text-xs flex items-center gap-1">Price (GH₵)</Label>
             <Input
               type="number"
               min="0"
@@ -206,7 +206,7 @@ const MentorAvailabilityManager = () => {
                           </span>
                           <Badge variant="outline" className="text-[10px]">{slot.session_duration} min</Badge>
                           <Badge className={`text-[10px] border-0 ${slot.session_price > 0 ? "bg-primary/10 text-primary" : "bg-secondary/10 text-secondary"}`}>
-                            {slot.session_price > 0 ? `$${slot.session_price}` : "Free"}
+                            {slot.session_price > 0 ? `GH₵${slot.session_price}` : "Free"}
                           </Badge>
                         </div>
                         <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => deleteSlot(slot.id)}>
