@@ -203,7 +203,7 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
     findInvestor();
   }, [investor.name]);
 
-  const handleSendIntro = async (message: string, startupId?: string) => {
+  const handleSendIntro = async (message: string, startupId?: string, pitchDeckUrl?: string) => {
     if (!investorUserId) {
       toast({ title: "Investor not on platform", description: "This investor doesn't have a platform profile yet. Your request has been noted.", variant: "destructive" });
       return false;
@@ -217,9 +217,12 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
       toast({ title: "Request already sent", description: "You already have a pending intro request." });
       return false;
     }
-    const fullMessage = startupId
-      ? `[Intro Request via ${userStartups.find(s => s.id === startupId)?.name || "startup"}] ${message}`
-      : `[Intro Request] ${message}`;
+    const parts = ["[Intro Request"];
+    if (startupId) parts[0] += ` via ${userStartups.find(s => s.id === startupId)?.name || "startup"}`;
+    parts[0] += "]";
+    if (pitchDeckUrl) parts.push(`[Pitch Deck: ${pitchDeckUrl}]`);
+    parts.push(message);
+    const fullMessage = parts.join(" ");
     const ok = await sendRequest(investorUserId, fullMessage);
     if (ok) toast({ title: "Intro request sent!", description: `Your request has been sent to ${investor.name}.` });
     return ok;
