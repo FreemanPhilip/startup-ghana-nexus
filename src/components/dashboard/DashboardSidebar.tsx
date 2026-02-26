@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Star, Home, MessageSquare, Users, TrendingUp, Briefcase, UserPlus, LogOut, Upload, Menu, X, CalendarCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -147,6 +147,24 @@ const DashboardSidebar = ({ activeTab, onTabChange, open, onClose }: DashboardSi
             )}
           </button>
         ))}
+
+        {/* Investor-only nav item */}
+        {roles.includes("investor") && (
+          <>
+            <div className="my-2 border-t border-border" />
+            <button
+              onClick={() => handleTabChange("investor-dashboard")}
+              className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                activeTab === "investor-dashboard"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <TrendingUp className="h-4 w-4" />
+              <span className="flex-1 text-left">Investor Dashboard</span>
+            </button>
+          </>
+        )}
       </nav>
 
       {/* Bottom actions */}

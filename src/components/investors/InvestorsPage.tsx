@@ -10,11 +10,9 @@ import InvestorCard, { type InvestorData } from "./InvestorCard";
 import InvestorFilters from "./InvestorFilters";
 import InvestorDetailPage from "./InvestorDetailPage";
 import OutreachHistoryTab from "./OutreachHistoryTab";
-import IncomingRequestsTab from "./IncomingRequestsTab";
 import { useInvestorTracking } from "@/hooks/useInvestorTracking";
 import { useFollows } from "@/hooks/useFollows";
 import { useNetwork } from "@/hooks/useNetwork";
-import { useConnections } from "@/hooks/useConnections";
 
 const demoInvestors: InvestorData[] = [
   { id: "1", name: "Accra Venture Partners", description: "Early-stage VC focusing on FinTech and e-commerce startups across West Africa with hands-on mentorship and strategic connections.", tags: ["FinTech", "Seed", "B2B"], avgTicket: "$150k", matchPercent: 98, status: "Active Now", icon: "building" },
@@ -49,7 +47,6 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
 
   const { trackView, toggleShortlist, isShortlisted, shortlisted } = useInvestorTracking();
   const { toggleFollow, isFollowing } = useFollows();
-  const { pendingReceived } = useConnections();
   const investorProfiles = useInvestorUserMap();
 
   // Map demo investor IDs to real user IDs when possible
@@ -125,13 +122,6 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
           </TabsTrigger>
           <TabsTrigger value="outreach" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-0 pb-3 text-sm font-semibold">
             Outreach History
-          </TabsTrigger>
-          <TabsTrigger value="incoming" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-0 pb-3 text-sm font-semibold">
-            Incoming Requests {pendingReceived.length > 0 && (
-              <span className="ml-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                {pendingReceived.length}
-              </span>
-            )}
           </TabsTrigger>
         </TabsList>
 
@@ -230,9 +220,6 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
           <OutreachHistoryTab />
         </TabsContent>
 
-        <TabsContent value="incoming" className="mt-5">
-          <IncomingRequestsTab />
-        </TabsContent>
       </Tabs>
     </div>
   );
