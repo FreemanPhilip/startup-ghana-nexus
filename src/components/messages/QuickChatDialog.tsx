@@ -79,7 +79,7 @@ const QuickChatDialog = ({
   // Group messages by date
   const groupedMessages: { label: string; msgs: Message[] }[] = [];
   let currentLabel = "";
-  const convMessages = conversationId ? messages.filter(m => m.conversation_id === conversationId || activeConversation === conversationId) : [];
+  const convMessages = conversationId && activeConversation === conversationId ? messages : [];
   
   convMessages.forEach((msg) => {
     const date = new Date(msg.created_at);

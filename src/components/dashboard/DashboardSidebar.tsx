@@ -15,6 +15,7 @@ interface DashboardSidebarProps {
   onClose?: () => void;
 }
 
+
 const navItems = [
   { id: "home", label: "Home", icon: Home },
   { id: "network", label: "My Network", icon: Users },
@@ -50,6 +51,15 @@ const DashboardSidebar = ({ activeTab, onTabChange, open, onClose }: DashboardSi
   }, [user]);
 
   useEffect(() => { fetchUnreadCount(); }, [fetchUnreadCount]);
+
+  // Auto-clear badge when Messages tab is active
+  useEffect(() => {
+    if (activeTab === "messages") {
+      // Small delay to let read_at updates propagate
+      const timer = setTimeout(() => fetchUnreadCount(), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab, fetchUnreadCount]);
 
   // Realtime refresh on new messages
   useEffect(() => {
