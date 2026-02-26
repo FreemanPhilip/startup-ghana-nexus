@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useStartups } from "@/hooks/useStartups";
 import CreateStartupWizard from "./CreateStartupWizard";
+import EditStartupDialog from "./EditStartupDialog";
 
 const verificationBadge = (status: string) => {
   switch (status) {
@@ -24,6 +25,7 @@ interface MyStartupsPageProps {
 const MyStartupsPage = ({ onViewStartup }: MyStartupsPageProps) => {
   const { myStartups, loading, refetch } = useStartups();
   const [wizardOpen, setWizardOpen] = useState(false);
+  const [editStartup, setEditStartup] = useState<typeof myStartups[0] | null>(null);
 
   return (
     <div className="space-y-6">
@@ -79,8 +81,14 @@ const MyStartupsPage = ({ onViewStartup }: MyStartupsPageProps) => {
                   <Badge variant="outline" className="text-xs capitalize">{startup.my_role}</Badge>
                 </div>
                 <div className="flex gap-1">
-                  <Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onViewStartup?.(startup.id)}><ExternalLink className="h-4 w-4" /></Button>
+                  {(startup.my_role === "owner" || startup.my_role === "admin") && (
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditStartup(startup)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  )}
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onViewStartup?.(startup.id)}>
+                    <ExternalLink className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             </div>
@@ -89,6 +97,15 @@ const MyStartupsPage = ({ onViewStartup }: MyStartupsPageProps) => {
       )}
 
       <CreateStartupWizard open={wizardOpen} onOpenChange={setWizardOpen} onCreated={refetch} />
+
+      {editStartup && (
+        <EditStartupDialog
+          open={!!editStartup}
+          onOpenChange={(open) => { if (!open) setEditStartup(null); }}
+          startup={editStartup}
+          onUpdated={() => { setEditStartup(null); refetch(); }}
+        />
+      )}
     </div>
   );
 };

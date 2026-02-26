@@ -62,9 +62,25 @@ const roleBadgeColor = (role: string) => {
   switch (role) {
     case "owner": return "bg-primary/10 text-primary border-0";
     case "admin": return "bg-secondary/10 text-secondary border-0";
-    case "editor": return "bg-accent/10 text-accent-foreground border-0";
-    default: return "";
+    default: return "bg-muted text-foreground border-0";
   }
+};
+
+const formatRoleDisplay = (role: string) => {
+  const TEAM_TITLES = [
+    "CTO", "CEO", "COO", "CFO", "CMO",
+    "Product Designer", "UI/UX Designer", "Frontend Developer", "Backend Developer", "Full Stack Developer",
+    "Mobile Developer", "DevOps Engineer", "Data Scientist", "Data Analyst",
+    "Product Manager", "Project Manager", "Scrum Master",
+    "Marketing Lead", "Growth Hacker", "Content Creator", "Community Manager",
+    "Sales Lead", "Business Development", "Customer Success",
+    "HR Manager", "Operations Lead", "Legal Advisor",
+    "Mentor", "Advisor", "Board Member", "Investor",
+    "Intern", "Volunteer", "Contributor", "Editor", "Employee",
+  ];
+  const found = TEAM_TITLES.find(t => t.toLowerCase() === role.toLowerCase());
+  if (found) return found;
+  return role.charAt(0).toUpperCase() + role.slice(1);
 };
 
 const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
@@ -348,8 +364,8 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
                         <p className="text-sm font-semibold truncate">{m.profile?.full_name || "Unknown"}</p>
                         <p className="text-[10px] text-muted-foreground truncate">{m.profile?.headline || ""}</p>
                       </div>
-                      <Badge variant="outline" className={`text-[10px] capitalize ${roleBadgeColor(m.role)}`}>
-                        {m.role}
+                      <Badge variant="outline" className={`text-[10px] ${roleBadgeColor(m.role)}`}>
+                        {formatRoleDisplay(m.role)}
                       </Badge>
                     </div>
                   );
