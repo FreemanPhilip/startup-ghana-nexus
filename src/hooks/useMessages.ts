@@ -246,7 +246,7 @@ export function useMessages() {
   const activeConvoData = conversations.find(c => c.id === activeConversation);
 
   const deleteMessage = useCallback(async (messageId: string) => {
-    if (!user) return;
+    if (!user) return false;
     const { error } = await supabase
       .from("messages")
       .delete()
@@ -258,9 +258,21 @@ export function useMessages() {
     return !error;
   }, [user]);
 
+  const deleteMessages = useCallback(async (messageIds: string[]) => {
+    if (!user || messageIds.length === 0) return false;
+    const { error } = await supabase
+      .from("messages")
+      .delete()
+      .in("id", messageIds)
+      .eq("sender_id", user.id);
+    if (!error) {
+      setMessages(prev => prev.filter(m => !messageIds.includes(m.id)));
+    }
+    return !error;
+  }, [user]);
+
   const clearChat = useCallback(async () => {
     if (!user || !activeConversation) return false;
-    // Delete only messages sent by current user in this conversation
     const { error } = await supabase
       .from("messages")
       .delete()
@@ -274,7 +286,6 @@ export function useMessages() {
 
   const deleteConversation = useCallback(async (conversationId: string) => {
     if (!user) return false;
-    // Delete all user's messages first, then the conversation
     await supabase
       .from("messages")
       .delete()
@@ -296,6 +307,35 @@ export function useMessages() {
     return !error;
   }, [user, activeConversation]);
 
+  const blockUser = useCallback(async (blockedUserId: string) => {
+    if (!user) return false;
+    const { error } = await supabase
+      .from("blocked_users")
+      .insert({ blocker_id: user.id, blocked_id: blockedUserId } as any);
+    return !error;
+  }, [user]);
+
+  const unblockUser = useCallback(async (blockedUserId: string) => {
+    if (!user) return false;
+    const { error } = await supabase
+      .from("blocked_users")
+      .delete()
+      .eq("blocker_id", user.id)
+      .eq("blocked_id", blockedUserId);
+    return !error;
+  }, [user]);
+
+  const isUserBlocked = useCallback(async (otherUserId: string) => {
+    if (!user) return false;
+    const { data } = await supabase
+      .from("blocked_users")
+      .select("id")
+      .eq("blocker_id", user.id)
+      .eq("blocked_id", otherUserId)
+      .maybeSingle();
+    return !!data;
+  }, [user]);
+
   return {
     conversations: filteredConversations,
     activeConversation,
@@ -310,7 +350,11 @@ export function useMessages() {
     startConversation,
     fetchConversations,
     deleteMessage,
+    deleteMessages,
     clearChat,
     deleteConversation,
+    blockUser,
+    unblockUser,
+    isUserBlocked,
   };
 }

@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Smile, Plus, MoreVertical, Video, ArrowLeft, Check, CheckCheck, Image, Paperclip, X, Calendar, Loader2, Trash2, MessageSquareX, Eraser } from "lucide-react";
+import { Send, Smile, Plus, MoreVertical, Video, ArrowLeft, Check, CheckCheck, Image, Paperclip, X, Calendar, Loader2, Trash2, Eraser, Ban, CheckSquare, Square, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Message, Conversation } from "@/hooks/useMessages";
@@ -22,11 +23,15 @@ interface ChatViewProps {
   onSendMessage: (content: string, imageUrl?: string | null) => void;
   onBack?: () => void;
   onDeleteMessage?: (messageId: string) => Promise<boolean>;
+  onDeleteMessages?: (messageIds: string[]) => Promise<boolean>;
   onClearChat?: () => Promise<boolean>;
   onDeleteConversation?: (conversationId: string) => Promise<boolean>;
+  onBlockUser?: (userId: string) => Promise<boolean>;
+  onUnblockUser?: (userId: string) => Promise<boolean>;
+  isUserBlocked?: (userId: string) => Promise<boolean>;
 }
 
-const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDeleteMessage, onClearChat, onDeleteConversation }: ChatViewProps) => {
+const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDeleteMessage, onDeleteMessages, onClearChat, onDeleteConversation, onBlockUser, onUnblockUser, isUserBlocked }: ChatViewProps) => {
   const { user } = useAuth();
   const [input, setInput] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -38,7 +43,12 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
   const [showChatMenu, setShowChatMenu] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmBlock, setConfirmBlock] = useState(false);
+  const [confirmBulkDelete, setConfirmBulkDelete] = useState(false);
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
+  const [selectMode, setSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [blocked, setBlocked] = useState(false);
   const [otherUserPresence, setOtherUserPresence] = useState<{ is_online: boolean; last_seen: string | null }>({ is_online: false, last_seen: null });
   const [isOtherTyping, setIsOtherTyping] = useState(false);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
@@ -47,6 +57,35 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
   const fileRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
   const docRef = useRef<HTMLInputElement>(null);
+
+  // Check block status
+  useEffect(() => {
+    const checkBlocked = async () => {
+      if (!conversation?.other_user?.user_id || !isUserBlocked) return;
+      const b = await isUserBlocked(conversation.other_user.user_id);
+      setBlocked(b);
+    };
+    checkBlocked();
+  }, [conversation?.other_user?.user_id, isUserBlocked]);
+
+  // Reset select mode when conversation changes
+  useEffect(() => {
+    setSelectMode(false);
+    setSelectedIds(new Set());
+  }, [conversation?.id]);
+
+  const toggleSelect = (msgId: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(msgId)) next.delete(msgId);
+      else next.add(msgId);
+      return next;
+    });
+  };
+
+  const myMessages = messages.filter(m => m.sender_id === user?.id);
+  const selectAllMine = () => setSelectedIds(new Set(myMessages.map(m => m.id)));
+  const deselectAll = () => setSelectedIds(new Set());
 
   // Fetch and subscribe to other user's presence
   useEffect(() => {
@@ -284,11 +323,24 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
             {showChatMenu && (
               <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-xl p-1 z-[60] min-w-[180px]">
                 <button
+                  onClick={() => { setSelectMode(true); setShowChatMenu(false); }}
+                  className="flex items-center gap-2.5 w-full px-3 py-2 text-xs text-foreground hover:bg-muted rounded-md transition-colors"
+                >
+                  <CheckSquare className="h-3.5 w-3.5" /> Select Messages
+                </button>
+                <button
                   onClick={() => { setConfirmClear(true); setShowChatMenu(false); }}
                   className="flex items-center gap-2.5 w-full px-3 py-2 text-xs text-foreground hover:bg-muted rounded-md transition-colors"
                 >
                   <Eraser className="h-3.5 w-3.5" /> Clear My Messages
                 </button>
+                <button
+                  onClick={() => { setConfirmBlock(true); setShowChatMenu(false); }}
+                  className="flex items-center gap-2.5 w-full px-3 py-2 text-xs text-foreground hover:bg-muted rounded-md transition-colors"
+                >
+                  <Ban className="h-3.5 w-3.5" /> {blocked ? "Unblock User" : "Block User"}
+                </button>
+                <div className="my-1 border-t border-border" />
                 <button
                   onClick={() => { setConfirmDelete(true); setShowChatMenu(false); }}
                   className="flex items-center gap-2.5 w-full px-3 py-2 text-xs text-destructive hover:bg-destructive/10 rounded-md transition-colors"
@@ -300,6 +352,35 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
           </div>
         </div>
       </div>
+
+      {/* Select mode toolbar */}
+      {selectMode && (
+        <div className="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-2">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="h-7 text-xs gap-1" onClick={() => { setSelectMode(false); deselectAll(); }}>
+              <X className="h-3.5 w-3.5" /> Cancel
+            </Button>
+            <span className="text-xs text-muted-foreground">{selectedIds.size} selected</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={selectAllMine}>
+              <CheckSquare className="h-3.5 w-3.5" /> Select All Mine
+            </Button>
+            <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={deselectAll} disabled={selectedIds.size === 0}>
+              <Square className="h-3.5 w-3.5" /> Deselect All
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              className="h-7 text-xs gap-1"
+              disabled={selectedIds.size === 0}
+              onClick={() => setConfirmBulkDelete(true)}
+            >
+              <Trash2 className="h-3.5 w-3.5" /> Delete ({selectedIds.size})
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Messages area */}
       <ScrollArea className="flex-1 px-4 py-4" ref={scrollRef}>
@@ -333,14 +414,23 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
                 <div className="space-y-3">
                   {group.msgs.map((msg) => {
                     const isMe = msg.sender_id === user?.id;
+                    const isSelected = selectedIds.has(msg.id);
                     return (
                       <div
                         key={msg.id}
-                        className={`flex gap-2 ${isMe ? "justify-end" : ""} group/msg relative`}
-                        onMouseEnter={() => setHoveredMessageId(msg.id)}
-                        onMouseLeave={() => setHoveredMessageId(null)}
+                        className={`flex gap-2 ${isMe ? "justify-end" : ""} group/msg relative ${isSelected ? "bg-primary/5 rounded-lg" : ""}`}
+                        onMouseEnter={() => !selectMode && setHoveredMessageId(msg.id)}
+                        onMouseLeave={() => !selectMode && setHoveredMessageId(null)}
+                        onClick={selectMode && isMe ? () => toggleSelect(msg.id) : undefined}
                       >
-                        {isMe && hoveredMessageId === msg.id && onDeleteMessage && (
+                        {/* Selection checkbox */}
+                        {selectMode && isMe && (
+                          <div className="self-center shrink-0">
+                            <Checkbox checked={isSelected} onCheckedChange={() => toggleSelect(msg.id)} className="h-4 w-4" />
+                          </div>
+                        )}
+                        {selectMode && !isMe && <div className="w-4 shrink-0" />}
+                        {!selectMode && isMe && hoveredMessageId === msg.id && onDeleteMessage && (
                           <button
                             onClick={async () => {
                               await onDeleteMessage(msg.id);
@@ -492,6 +582,14 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
       )}
 
       {/* Message input */}
+      {blocked ? (
+        <div className="border-t border-border bg-muted/50 p-4 text-center">
+          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+            <Ban className="h-4 w-4" />
+            <span>You have blocked this user. <button className="text-primary underline" onClick={() => setConfirmBlock(true)}>Unblock</button> to send messages.</span>
+          </div>
+        </div>
+      ) : (
       <div className="border-t border-border bg-card p-3">
         <div className="flex items-center gap-2">
           <div className="relative">
@@ -559,6 +657,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
           </Button>
         </div>
       </div>
+      )}
 
       {/* Schedule Meeting Dialog */}
       <ChatScheduleMeetingDialog
@@ -607,6 +706,62 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
                   if (ok) toast({ title: "Conversation deleted" });
                 }
                 setConfirmDelete(false);
+              }}>Delete</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Block User Confirmation */}
+      {confirmBlock && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-card border border-border rounded-xl p-6 max-w-sm mx-4 shadow-2xl">
+            <div className="flex items-center gap-2 mb-2">
+              <Ban className="h-5 w-5 text-destructive" />
+              <h3 className="font-semibold text-sm">{blocked ? "Unblock" : "Block"} {otherUser?.full_name || "this user"}?</h3>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              {blocked
+                ? "You will be able to send and receive messages from this user again."
+                : "They won't be able to send you messages, and you won't be able to message them. You can unblock them later."}
+            </p>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="outline" size="sm" onClick={() => setConfirmBlock(false)}>Cancel</Button>
+              <Button variant={blocked ? "default" : "destructive"} size="sm" onClick={async () => {
+                if (blocked && onUnblockUser && otherUser) {
+                  const ok = await onUnblockUser(otherUser.user_id);
+                  if (ok) { setBlocked(false); toast({ title: "User unblocked" }); }
+                } else if (!blocked && onBlockUser && otherUser) {
+                  const ok = await onBlockUser(otherUser.user_id);
+                  if (ok) { setBlocked(true); toast({ title: "User blocked", description: "They can no longer message you." }); }
+                }
+                setConfirmBlock(false);
+              }}>{blocked ? "Unblock" : "Block"}</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Delete Confirmation */}
+      {confirmBulkDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-card border border-border rounded-xl p-6 max-w-sm mx-4 shadow-2xl">
+            <h3 className="font-semibold text-sm">Delete {selectedIds.size} message{selectedIds.size > 1 ? "s" : ""}?</h3>
+            <p className="text-xs text-muted-foreground mt-2">
+              This will permanently delete the selected messages. This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="outline" size="sm" onClick={() => setConfirmBulkDelete(false)}>Cancel</Button>
+              <Button variant="destructive" size="sm" onClick={async () => {
+                if (onDeleteMessages) {
+                  const ok = await onDeleteMessages(Array.from(selectedIds));
+                  if (ok) {
+                    toast({ title: `${selectedIds.size} message${selectedIds.size > 1 ? "s" : ""} deleted` });
+                    deselectAll();
+                    setSelectMode(false);
+                  }
+                }
+                setConfirmBulkDelete(false);
               }}>Delete</Button>
             </div>
           </div>
