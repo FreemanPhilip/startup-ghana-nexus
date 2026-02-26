@@ -1,7 +1,6 @@
 import { Search, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -64,7 +63,7 @@ const ConversationList = ({
       </div>
 
       {/* Conversations */}
-      <ScrollArea className="flex-1">
+      <div className="flex-1 overflow-y-auto">
         {loading ? (
           <div className="space-y-1 p-2">
             {[1, 2, 3].map((i) => (
@@ -128,7 +127,7 @@ const ConversationList = ({
             ))}
           </div>
         )}
-      </ScrollArea>
+      </div>
     </div>
   );
 };
