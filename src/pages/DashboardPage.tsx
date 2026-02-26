@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { usePresenceTracker } from "@/hooks/usePresence";
 import { useSessionReminders } from "@/hooks/useSessionReminders";
@@ -39,6 +39,9 @@ const DashboardPage = () => {
   const [viewStartupId, setViewStartupId] = useState<string | null>(null);
   const [viewProfileUserId, setViewProfileUserId] = useState<string | null>(null);
 
+  // Navigation history stack for proper back button behavior
+  const navHistoryRef = useRef<string[]>(["home"]);
+
   // Identity switching
   const [activeIdentity, setActiveIdentity] = useState<PostingIdentity>({ type: "personal" });
 
@@ -55,29 +58,46 @@ const DashboardPage = () => {
     }
   }, [startupsLoading, roles, myStartups.length, founderModalShown]);
 
+  // Go back to the previous tab in history
+  const goBack = useCallback(() => {
+    const history = navHistoryRef.current;
+    if (history.length > 1) {
+      history.pop(); // remove current
+      const prev = history[history.length - 1];
+      setActiveTab(prev);
+      // Clear detail view states when going back
+      if (prev !== "startup-profile") setViewStartupId(null);
+      if (prev !== "public-profile") setViewProfileUserId(null);
+    } else {
+      setActiveTab("home");
+    }
+  }, []);
+
   const handleViewOpportunity = useCallback((opportunityId: string) => {
     const cleanId = opportunityId.startsWith("opp-") ? opportunityId.slice(4) : opportunityId;
     setDeepLinkOpportunityId(cleanId);
-    setActiveTab("opportunities");
+    handleTabChange("opportunities");
   }, []);
 
   const handleViewGroup = useCallback((groupId: string) => {
     setDeepLinkGroupId(groupId);
-    setActiveTab("groups");
+    handleTabChange("groups");
   }, []);
 
   const handleViewStartup = useCallback((startupId: string) => {
     setViewStartupId(startupId);
+    navHistoryRef.current.push("startup-profile");
     setActiveTab("startup-profile");
   }, []);
 
   const handleViewProfile = useCallback((userId: string) => {
     setViewProfileUserId(userId);
+    navHistoryRef.current.push("public-profile");
     setActiveTab("public-profile");
   }, []);
 
   const handleOpenMessages = useCallback(() => {
-    setActiveTab("messages");
+    handleTabChange("messages");
   }, []);
 
   const handleSignOut = useCallback(async () => {
@@ -90,8 +110,19 @@ const DashboardPage = () => {
     if (tab !== "groups") setDeepLinkGroupId(null);
     if (tab !== "startup-profile") setViewStartupId(null);
     if (tab !== "public-profile") setViewProfileUserId(null);
+    
+    // Push to history (avoid duplicate consecutive entries)
+    const history = navHistoryRef.current;
+    if (history[history.length - 1] !== tab) {
+      history.push(tab);
+      // Keep history manageable
+      if (history.length > 20) history.splice(0, history.length - 20);
+    }
+    
     setActiveTab(tab);
   }, []);
+
+  const isWideTab = ["mentors", "investors", "investor-dashboard", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile"].includes(activeTab);
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -113,7 +144,7 @@ const DashboardPage = () => {
 
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto">
-              <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "investor-dashboard", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
+              <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : isWideTab ? "max-w-5xl" : "max-w-3xl"}`}>
               {activeTab === "messages" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <MessagesPage onViewProfile={handleViewProfile} />
@@ -188,13 +219,13 @@ const DashboardPage = () => {
 
               {activeTab === "my-startups" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <MyStartupsPage onViewStartup={(id) => { setViewStartupId(id); setActiveTab("startup-profile"); }} />
+                  <MyStartupsPage onViewStartup={handleViewStartup} />
                 </motion.div>
               )}
 
               {activeTab === "startup-profile" && viewStartupId && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <StartupProfilePage startupId={viewStartupId} onBack={() => setActiveTab("home")} />
+                  <StartupProfilePage startupId={viewStartupId} onBack={goBack} />
                 </motion.div>
               )}
 
@@ -202,13 +233,13 @@ const DashboardPage = () => {
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <PublicProfilePage
                     userId={viewProfileUserId}
-                    onBack={() => setActiveTab("messages")}
+                    onBack={goBack}
                     onMessage={(userId) => { handleOpenMessages(); }}
                   />
                 </motion.div>
               )}
 
-              {!["home", "network", "mentors", "investors", "opportunities", "messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile"].includes(activeTab) && (
+              {!["home", "network", "mentors", "investors", "opportunities", "messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile", "investor-dashboard"].includes(activeTab) && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}

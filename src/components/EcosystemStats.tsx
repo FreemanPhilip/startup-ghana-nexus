@@ -1,16 +1,59 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, Building2, Users, DollarSign, Globe, Briefcase } from "lucide-react";
-
-const stats = [
-  { icon: Building2, value: "500+", label: "Registered Startups", change: "+12% this quarter" },
-  { icon: DollarSign, value: "$25M+", label: "Total Funding Raised", change: "+$3.2M this month" },
-  { icon: Users, value: "200+", label: "Active Investors", change: "18 new this month" },
-  { icon: TrendingUp, value: "85%", label: "Match Success Rate", change: "+5% improvement" },
-  { icon: Globe, value: "12", label: "Regions Covered", change: "Across Ghana" },
-  { icon: Briefcase, value: "150+", label: "Opportunities Posted", change: "34 active now" },
-];
+import { supabase } from "@/integrations/supabase/client";
 
 const EcosystemStats = () => {
+  const [counts, setCounts] = useState({
+    startups: 0,
+    investors: 0,
+    members: 0,
+    opportunities: 0,
+    groups: 0,
+    mentors: 0,
+  });
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      const [
+        { count: startupCount },
+        { count: investorCount },
+        { count: memberCount },
+        { count: oppCount },
+        { count: groupCount },
+        { count: mentorCount },
+      ] = await Promise.all([
+        supabase.from("startups").select("*", { count: "exact", head: true }),
+        supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "investor"),
+        supabase.from("profiles").select("*", { count: "exact", head: true }),
+        supabase.from("opportunities").select("*", { count: "exact", head: true }),
+        supabase.from("groups").select("*", { count: "exact", head: true }),
+        supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "mentor"),
+      ]);
+
+      setCounts({
+        startups: startupCount ?? 0,
+        investors: investorCount ?? 0,
+        members: memberCount ?? 0,
+        opportunities: oppCount ?? 0,
+        groups: groupCount ?? 0,
+        mentors: mentorCount ?? 0,
+      });
+      setLoaded(true);
+    };
+    fetchCounts();
+  }, []);
+
+  const stats = [
+    { icon: Building2, value: counts.startups, label: "Registered Startups", suffix: "" },
+    { icon: Users, value: counts.members, label: "Ecosystem Members", suffix: "" },
+    { icon: TrendingUp, value: counts.investors, label: "Active Investors", suffix: "" },
+    { icon: Briefcase, value: counts.opportunities, label: "Opportunities Posted", suffix: "" },
+    { icon: Globe, value: counts.groups, label: "Active Groups", suffix: "" },
+    { icon: DollarSign, value: counts.mentors, label: "Mentors Available", suffix: "" },
+  ];
+
   return (
     <section id="ecosystem" className="dark bg-gradient-hero py-24">
       <div className="container">
@@ -46,12 +89,9 @@ const EcosystemStats = () => {
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gold/10">
                   <stat.icon className="h-5 w-5 text-gold" />
                 </div>
-                <span className="text-xs font-medium text-emerald-light">
-                  {stat.change}
-                </span>
               </div>
               <p className="font-display text-3xl font-bold text-foreground">
-                {stat.value}
+                {loaded ? stat.value.toLocaleString() : "—"}
               </p>
               <p className="mt-1 text-sm text-muted-foreground">
                 {stat.label}
