@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { Star, Home, MessageSquare, Users, TrendingUp, Briefcase, UserPlus, LogOut, Upload, Menu, X, CalendarCheck } from "lucide-react";
+import { Star, Home, MessageSquare, Users, TrendingUp, Briefcase, UserPlus, LogOut, Upload, Menu, X, CalendarCheck, Settings } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -25,6 +25,7 @@ const navItems = [
   { id: "my-sessions", label: "My Sessions", icon: CalendarCheck },
   { id: "investors", label: "Investors", icon: TrendingUp },
   { id: "opportunities", label: "Opportunities", icon: Briefcase },
+  { id: "settings", label: "Settings", icon: Settings },
 ];
 
 const DashboardSidebar = ({ activeTab, onTabChange, open, onClose }: DashboardSidebarProps) => {
