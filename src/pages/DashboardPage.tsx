@@ -216,7 +216,7 @@ const DashboardPage = () => {
             </div>
           </main>
 
-          {!["messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />)}
+          {!["messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar onNavigate={handleTabChange} />)}
         </div>
       </div>
 
