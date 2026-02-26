@@ -1,1 +1,7 @@
 project_id = "puxxgqevbtmqsgtqdsdb"
+
+[functions.ecosystem-chat]
+verify_jwt = false
+
+[functions.mentor-match]
+verify_jwt = false
