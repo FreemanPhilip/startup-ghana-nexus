@@ -1177,52 +1177,67 @@ export type Database = {
         Row: {
           created_at: string
           created_by: string
+          facebook_url: string | null
           id: string
           industry: string | null
+          instagram_url: string | null
           linkedin_url: string | null
           location: string | null
           logo_url: string | null
+          mission: string | null
           name: string
           registration_doc_url: string | null
           short_description: string | null
           slug: string | null
           stage: string | null
+          twitter_url: string | null
           updated_at: string
           verification_status: string
+          vision: string | null
           website_url: string | null
         }
         Insert: {
           created_at?: string
           created_by: string
+          facebook_url?: string | null
           id?: string
           industry?: string | null
+          instagram_url?: string | null
           linkedin_url?: string | null
           location?: string | null
           logo_url?: string | null
+          mission?: string | null
           name: string
           registration_doc_url?: string | null
           short_description?: string | null
           slug?: string | null
           stage?: string | null
+          twitter_url?: string | null
           updated_at?: string
           verification_status?: string
+          vision?: string | null
           website_url?: string | null
         }
         Update: {
           created_at?: string
           created_by?: string
+          facebook_url?: string | null
           id?: string
           industry?: string | null
+          instagram_url?: string | null
           linkedin_url?: string | null
           location?: string | null
           logo_url?: string | null
+          mission?: string | null
           name?: string
           registration_doc_url?: string | null
           short_description?: string | null
           slug?: string | null
           stage?: string | null
+          twitter_url?: string | null
           updated_at?: string
           verification_status?: string
+          vision?: string | null
           website_url?: string | null
         }
         Relationships: []

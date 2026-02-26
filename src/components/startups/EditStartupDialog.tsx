@@ -23,6 +23,11 @@ interface EditStartupDialogProps {
     logo_url: string | null;
     website_url: string | null;
     linkedin_url: string | null;
+    mission?: string | null;
+    vision?: string | null;
+    twitter_url?: string | null;
+    instagram_url?: string | null;
+    facebook_url?: string | null;
   };
   onUpdated: () => void;
 }
@@ -39,6 +44,11 @@ const EditStartupDialog = ({ open, onOpenChange, startup, onUpdated }: EditStart
   const [websiteUrl, setWebsiteUrl] = useState(startup.website_url ?? "");
   const [linkedinUrl, setLinkedinUrl] = useState(startup.linkedin_url ?? "");
   const [logoUrl, setLogoUrl] = useState(startup.logo_url ?? "");
+  const [mission, setMission] = useState(startup.mission ?? "");
+  const [vision, setVision] = useState(startup.vision ?? "");
+  const [twitterUrl, setTwitterUrl] = useState(startup.twitter_url ?? "");
+  const [instagramUrl, setInstagramUrl] = useState(startup.instagram_url ?? "");
+  const [facebookUrl, setFacebookUrl] = useState(startup.facebook_url ?? "");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -53,6 +63,11 @@ const EditStartupDialog = ({ open, onOpenChange, startup, onUpdated }: EditStart
       setWebsiteUrl(startup.website_url ?? "");
       setLinkedinUrl(startup.linkedin_url ?? "");
       setLogoUrl(startup.logo_url ?? "");
+      setMission(startup.mission ?? "");
+      setVision(startup.vision ?? "");
+      setTwitterUrl(startup.twitter_url ?? "");
+      setInstagramUrl(startup.instagram_url ?? "");
+      setFacebookUrl(startup.facebook_url ?? "");
     }
   }, [open, startup]);
 
@@ -87,7 +102,12 @@ const EditStartupDialog = ({ open, onOpenChange, startup, onUpdated }: EditStart
         logo_url: logoUrl || null,
         website_url: websiteUrl.trim() || null,
         linkedin_url: linkedinUrl.trim() || null,
-      }).eq("id", startup.id);
+        mission: mission.trim() || null,
+        vision: vision.trim() || null,
+        twitter_url: twitterUrl.trim() || null,
+        instagram_url: instagramUrl.trim() || null,
+        facebook_url: facebookUrl.trim() || null,
+      } as any).eq("id", startup.id);
       if (error) throw error;
       toast.success("Startup profile updated");
       onUpdated();
@@ -140,14 +160,24 @@ const EditStartupDialog = ({ open, onOpenChange, startup, onUpdated }: EditStart
             <Textarea value={description} onChange={e => setDescription(e.target.value)} className="text-sm min-h-[80px]" placeholder="What does your startup do?" />
           </div>
 
+          {/* Mission */}
+          <div className="space-y-1.5">
+            <Label className="text-xs">Mission Statement</Label>
+            <Textarea value={mission} onChange={e => setMission(e.target.value)} className="text-sm min-h-[60px]" placeholder="What problem are you solving?" />
+          </div>
+
+          {/* Vision */}
+          <div className="space-y-1.5">
+            <Label className="text-xs">Vision Statement</Label>
+            <Textarea value={vision} onChange={e => setVision(e.target.value)} className="text-sm min-h-[60px]" placeholder="Where do you see your company in 5 years?" />
+          </div>
+
           {/* Industry & Stage */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-xs">Industry</Label>
               <Select value={industry} onValueChange={setIndustry}>
-                <SelectTrigger className="h-9 text-sm">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
+                <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
                 <SelectContent>
                   {INDUSTRIES.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}
                 </SelectContent>
@@ -156,9 +186,7 @@ const EditStartupDialog = ({ open, onOpenChange, startup, onUpdated }: EditStart
             <div className="space-y-1.5">
               <Label className="text-xs">Stage</Label>
               <Select value={stage} onValueChange={setStage}>
-                <SelectTrigger className="h-9 text-sm">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
+                <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
                 <SelectContent>
                   {STAGES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                 </SelectContent>
@@ -180,6 +208,25 @@ const EditStartupDialog = ({ open, onOpenChange, startup, onUpdated }: EditStart
           <div className="space-y-1.5">
             <Label className="text-xs">LinkedIn URL</Label>
             <Input value={linkedinUrl} onChange={e => setLinkedinUrl(e.target.value)} className="h-9 text-sm" placeholder="https://linkedin.com/company/..." />
+          </div>
+
+          {/* Social Media */}
+          <div className="border-t border-border pt-4 mt-2">
+            <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wide">Social Media</p>
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs">Twitter / X URL</Label>
+                <Input value={twitterUrl} onChange={e => setTwitterUrl(e.target.value)} className="h-9 text-sm" placeholder="https://x.com/yourstartup" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Instagram URL</Label>
+                <Input value={instagramUrl} onChange={e => setInstagramUrl(e.target.value)} className="h-9 text-sm" placeholder="https://instagram.com/yourstartup" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Facebook URL</Label>
+                <Input value={facebookUrl} onChange={e => setFacebookUrl(e.target.value)} className="h-9 text-sm" placeholder="https://facebook.com/yourstartup" />
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
