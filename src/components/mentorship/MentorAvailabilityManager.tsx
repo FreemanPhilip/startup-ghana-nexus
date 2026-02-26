@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Plus, Trash2, Clock, Loader2 } from "lucide-react";
+import { Plus, Trash2, Clock, Loader2, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -17,6 +18,8 @@ interface AvailabilitySlot {
   end_time: string;
   session_duration: number;
   is_active: boolean;
+  session_price: number;
+  currency: string;
 }
 
 const TIME_OPTIONS = Array.from({ length: 28 }, (_, i) => {
@@ -37,6 +40,7 @@ const MentorAvailabilityManager = () => {
   const [newStart, setNewStart] = useState("09:00:00");
   const [newEnd, setNewEnd] = useState("10:00:00");
   const [newDuration, setNewDuration] = useState("30");
+  const [newPrice, setNewPrice] = useState("0");
 
   useEffect(() => {
     if (!user) return;
@@ -68,6 +72,8 @@ const MentorAvailabilityManager = () => {
       start_time: newStart,
       end_time: newEnd,
       session_duration: parseInt(newDuration),
+      session_price: parseFloat(newPrice) || 0,
+      currency: "USD",
     } as any);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -157,6 +163,19 @@ const MentorAvailabilityManager = () => {
               </SelectContent>
             </Select>
           </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs flex items-center gap-1"><DollarSign className="h-3 w-3" /> Price (USD)</Label>
+            <Input
+              type="number"
+              min="0"
+              step="5"
+              placeholder="0 = Free"
+              value={newPrice}
+              onChange={e => setNewPrice(e.target.value)}
+              className="text-xs"
+            />
+            <p className="text-[10px] text-muted-foreground">Set to 0 for free sessions</p>
+          </div>
         </div>
         <Button size="sm" className="mt-3 gap-1.5 text-xs" onClick={addSlot} disabled={saving}>
           {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
@@ -186,6 +205,9 @@ const MentorAvailabilityManager = () => {
                             {formatTime(slot.start_time)} – {formatTime(slot.end_time)}
                           </span>
                           <Badge variant="outline" className="text-[10px]">{slot.session_duration} min</Badge>
+                          <Badge className={`text-[10px] border-0 ${slot.session_price > 0 ? "bg-primary/10 text-primary" : "bg-secondary/10 text-secondary"}`}>
+                            {slot.session_price > 0 ? `$${slot.session_price}` : "Free"}
+                          </Badge>
                         </div>
                         <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => deleteSlot(slot.id)}>
                           <Trash2 className="h-3.5 w-3.5" />

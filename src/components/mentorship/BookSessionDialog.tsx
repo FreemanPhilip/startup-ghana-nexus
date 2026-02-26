@@ -24,12 +24,16 @@ interface AvailSlot {
   start_time: string;
   end_time: string;
   session_duration: number;
+  session_price: number;
+  currency: string;
 }
 
 interface TimeSlot {
-  start: string; // HH:mm
+  start: string;
   end: string;
   duration: number;
+  price: number;
+  currency: string;
 }
 
 const BookSessionDialog = ({ open, onClose, mentor }: BookSessionDialogProps) => {
@@ -118,6 +122,8 @@ const BookSessionDialog = ({ open, onClose, mentor }: BookSessionDialogProps) =>
           start: `${startH}:${startM}`,
           end: `${endH}:${endM}`,
           duration: dur,
+          price: (avail as any).session_price || 0,
+          currency: (avail as any).currency || "USD",
         });
       }
     }
@@ -134,12 +140,45 @@ const BookSessionDialog = ({ open, onClose, mentor }: BookSessionDialogProps) =>
     if (!user || !selectedDate || !selectedSlot) return;
     setBooking(true);
 
+    const bookingDate = format(selectedDate, "yyyy-MM-dd");
+    const startTime = `${selectedSlot.start}:00`;
+    const endTime = `${selectedSlot.end}:00`;
+
+    // If paid session, redirect to Stripe checkout first
+    if (selectedSlot.price > 0) {
+      try {
+        const { data, error } = await supabase.functions.invoke("create-mentor-payment", {
+          body: {
+            mentor_id: mentor.id,
+            mentor_name: mentor.full_name,
+            amount: selectedSlot.price,
+            currency: selectedSlot.currency,
+            booking_date: bookingDate,
+            start_time: startTime,
+            end_time: endTime,
+            notes: notes.trim(),
+          },
+        });
+        if (error) throw error;
+        if (data?.url) {
+          window.open(data.url, "_blank");
+          toast({ title: "Redirecting to payment...", description: "Complete payment to confirm your booking." });
+          onClose();
+        }
+      } catch (err: any) {
+        toast({ title: "Payment error", description: err.message, variant: "destructive" });
+      }
+      setBooking(false);
+      return;
+    }
+
+    // Free session — book directly
     const { error } = await supabase.from("mentor_bookings").insert({
       mentor_id: mentor.id,
       mentee_id: user.id,
-      booking_date: format(selectedDate, "yyyy-MM-dd"),
-      start_time: `${selectedSlot.start}:00`,
-      end_time: `${selectedSlot.end}:00`,
+      booking_date: bookingDate,
+      start_time: startTime,
+      end_time: endTime,
       notes: notes.trim() || null,
     } as any);
 
@@ -148,14 +187,13 @@ const BookSessionDialog = ({ open, onClose, mentor }: BookSessionDialogProps) =>
     } else {
       const [sh, sm] = selectedSlot.start.split(":").map(Number);
       const [eh, em] = selectedSlot.end.split(":").map(Number);
-      const startDate = setMinutes(setHours(selectedDate, sh), sm);
-      const endDate = setMinutes(setHours(selectedDate, eh), em);
-
+      const startDateObj = setMinutes(setHours(selectedDate, sh), sm);
+      const endDateObj = setMinutes(setHours(selectedDate, eh), em);
       const event: CalendarEvent = {
         title: `Mentorship: ${mentor.full_name}`,
         description: `Mentorship session with ${mentor.full_name}.\n${notes ? `Notes: ${notes}` : ""}`,
-        startDate,
-        endDate,
+        startDate: startDateObj,
+        endDate: endDateObj,
       };
       setBooked(event);
       toast({ title: "Session booked!", description: `${format(selectedDate, "EEEE, MMMM d")} at ${formatTime(selectedSlot.start)}` });
@@ -253,6 +291,9 @@ const BookSessionDialog = ({ open, onClose, mentor }: BookSessionDialogProps) =>
                       >
                         {formatTime(slot.start)}
                         <span className="block text-[10px] text-muted-foreground">{slot.duration} min</span>
+                        <span className={`block text-[10px] font-semibold ${slot.price > 0 ? "text-primary" : "text-secondary"}`}>
+                          {slot.price > 0 ? `$${slot.price}` : "Free"}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -284,7 +325,7 @@ const BookSessionDialog = ({ open, onClose, mentor }: BookSessionDialogProps) =>
                 </div>
                 <Button className="w-full text-sm font-semibold gap-1.5" onClick={handleBook} disabled={booking}>
                   {booking ? <Loader2 className="h-4 w-4 animate-spin" /> : <CalendarIcon className="h-4 w-4" />}
-                  Confirm Booking
+                  {selectedSlot?.price > 0 ? `Pay $${selectedSlot.price} & Book` : "Confirm Booking"}
                 </Button>
               </div>
             )}
