@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Search, MapPin, Building2, BadgeCheck, MessageSquare } from "lucide-react";
+import { Search, MapPin, Building2, BadgeCheck, MessageSquare, Lock } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -35,28 +35,46 @@ const NewConversationDialog = ({ open, onOpenChange, onStartConversation }: NewC
   const [search, setSearch] = useState("");
   const [starting, setStarting] = useState<string | null>(null);
 
-  const fetchNetworkContacts = useCallback(async () => {
+  const fetchConnectedContacts = useCallback(async () => {
     if (!user) return;
     setLoading(true);
 
-    // Get users the current user follows
-    const { data: follows } = await supabase
-      .from("follows")
-      .select("following_id")
-      .eq("follower_id", user.id);
+    // Get accepted connections (mutual follows via connection_requests)
+    const { data: connections } = await supabase
+      .from("connection_requests")
+      .select("sender_id, receiver_id")
+      .eq("status", "accepted")
+      .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`);
 
-    if (!follows || follows.length === 0) {
-      setContacts([]);
+    if (!connections || connections.length === 0) {
+      // Fallback: also show people user follows (backwards compat)
+      const { data: follows } = await supabase
+        .from("follows")
+        .select("following_id")
+        .eq("follower_id", user.id);
+
+      if (follows && follows.length > 0) {
+        const followingIds = follows.map(f => f.following_id);
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, full_name, avatar_url, headline, company_name, location, industry, expertise, verification")
+          .in("user_id", followingIds);
+        setContacts(profiles ?? []);
+      } else {
+        setContacts([]);
+      }
       setLoading(false);
       return;
     }
 
-    const followingIds = follows.map(f => f.following_id);
+    const connectedIds = connections.map(c =>
+      c.sender_id === user.id ? c.receiver_id : c.sender_id
+    );
 
     const { data: profiles } = await supabase
       .from("profiles")
       .select("user_id, full_name, avatar_url, headline, company_name, location, industry, expertise, verification")
-      .in("user_id", followingIds);
+      .in("user_id", connectedIds);
 
     setContacts(profiles ?? []);
     setLoading(false);
@@ -64,10 +82,10 @@ const NewConversationDialog = ({ open, onOpenChange, onStartConversation }: NewC
 
   useEffect(() => {
     if (open) {
-      fetchNetworkContacts();
+      fetchConnectedContacts();
       setSearch("");
     }
-  }, [open, fetchNetworkContacts]);
+  }, [open, fetchConnectedContacts]);
 
   const filtered = contacts.filter(c => {
     if (!search) return true;
@@ -100,7 +118,7 @@ const NewConversationDialog = ({ open, onOpenChange, onStartConversation }: NewC
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search your network..."
+              placeholder="Search your connections..."
               className="pl-9 h-9 text-sm"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -123,10 +141,12 @@ const NewConversationDialog = ({ open, onOpenChange, onStartConversation }: NewC
             </div>
           ) : filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
-              <p className="text-sm text-muted-foreground">
+              <Lock className="h-8 w-8 text-muted-foreground mb-2" />
+              <p className="text-sm font-semibold">No connections yet</p>
+              <p className="text-xs text-muted-foreground mt-1">
                 {search
-                  ? "No contacts match your search"
-                  : "Follow people from the Network tab to start conversations"}
+                  ? "No connections match your search"
+                  : "Connect with people from the Network tab to start conversations"}
               </p>
             </div>
           ) : (
@@ -171,15 +191,6 @@ const NewConversationDialog = ({ open, onOpenChange, onStartConversation }: NewC
                         </span>
                       )}
                     </div>
-                    {contact.expertise && contact.expertise.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-1.5">
-                        {contact.expertise.slice(0, 3).map(tag => (
-                          <Badge key={tag} variant="outline" className="text-[9px] px-1.5 py-0">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
                   </div>
 
                   <Button

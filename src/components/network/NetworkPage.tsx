@@ -5,7 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNetwork } from "@/hooks/useNetwork";
 import { useMessages } from "@/hooks/useMessages";
+import { useConnections } from "@/hooks/useConnections";
+import { toast } from "@/hooks/use-toast";
 import NetworkCard from "./NetworkCard";
+import ConnectionRequestDialog from "./ConnectionRequestDialog";
+import PendingRequestsPanel from "./PendingRequestsPanel";
 import QuickChatDialog from "@/components/messages/QuickChatDialog";
 import PublicProfilePage from "@/components/profile/PublicProfilePage";
 
@@ -23,9 +27,11 @@ interface NetworkPageProps {
 
 const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
   const { profiles, loading, isFollowing, toggleFollow, followerCount, followingCount } = useNetwork();
+  const { pendingReceived, sendRequest, acceptRequest, rejectRequest, getRequestStatus, loading: connectionsLoading } = useConnections();
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [connectTarget, setConnectTarget] = useState<{ userId: string; name: string } | null>(null);
   const [chatTarget, setChatTarget] = useState<{
     userId: string;
     name: string;
@@ -34,11 +40,36 @@ const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
 
   const handleMessage = (userId: string) => {
     const profile = profiles.find(p => p.user_id === userId);
+    const status = getRequestStatus(userId);
+    if (status !== "connected") {
+      toast({ title: "Not connected", description: "You need to be connected to message this person.", variant: "destructive" });
+      return;
+    }
     setChatTarget({
       userId,
       name: profile?.full_name || "User",
       avatar: profile?.avatar_url || null,
     });
+  };
+
+  const handleConnect = (userId: string) => {
+    const profile = profiles.find(p => p.user_id === userId);
+    setConnectTarget({ userId, name: profile?.full_name || "User" });
+  };
+
+  const handleAcceptFromCard = async (userId: string) => {
+    const req = pendingReceived.find(r => r.sender_id === userId);
+    if (req) {
+      const ok = await acceptRequest(req.id);
+      if (ok) toast({ title: "Connected!", description: `You're now connected.` });
+    }
+  };
+
+  const handleSendRequest = async (message?: string) => {
+    if (!connectTarget) return false;
+    const ok = await sendRequest(connectTarget.userId, message);
+    if (ok) toast({ title: "Request sent!", description: `Connection request sent to ${connectTarget.name}.` });
+    return ok;
   };
 
   const filtered = useMemo(() => {
@@ -83,6 +114,14 @@ const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">In Network</p>
         </div>
       </div>
+
+      {/* Pending connection requests */}
+      <PendingRequestsPanel
+        requests={pendingReceived}
+        loading={connectionsLoading}
+        onAccept={acceptRequest}
+        onReject={rejectRequest}
+      />
 
       {/* Search */}
       <div className="relative">
@@ -136,7 +175,10 @@ const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
               <NetworkCard
                 profile={p}
                 isFollowing={isFollowing(p.user_id)}
+                connectionStatus={getRequestStatus(p.user_id)}
                 onToggleFollow={toggleFollow}
+                onConnect={handleConnect}
+                onAcceptRequest={handleAcceptFromCard}
                 onMessage={handleMessage}
                 onViewProfile={setSelectedUserId}
               />
@@ -151,6 +193,16 @@ const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
               : "No other members in the ecosystem yet. Invite someone!"}
           </p>
         </div>
+      )}
+
+      {/* Connection Request Dialog */}
+      {connectTarget && (
+        <ConnectionRequestDialog
+          open={!!connectTarget}
+          onOpenChange={(open) => { if (!open) setConnectTarget(null); }}
+          targetName={connectTarget.name}
+          onSend={handleSendRequest}
+        />
       )}
 
       {/* Quick Chat Dialog */}
