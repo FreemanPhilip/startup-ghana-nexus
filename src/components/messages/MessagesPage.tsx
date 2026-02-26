@@ -5,8 +5,11 @@ import ChatView from "./ChatView";
 import ChatRightSidebar from "./ChatRightSidebar";
 import NewConversationDialog from "./NewConversationDialog";
 import { useMessages } from "@/hooks/useMessages";
+interface MessagesPageProps {
+  onViewProfile?: (userId: string) => void;
+}
 
-const MessagesPage = () => {
+const MessagesPage = ({ onViewProfile }: MessagesPageProps) => {
   const {
     conversations,
     activeConversation,
@@ -73,7 +76,7 @@ const MessagesPage = () => {
       <ChatRightSidebar
         conversation={activeConvoData}
         messages={messages}
-        onViewProfile={(userId) => window.open(`/profile/${userId}`, "_blank")}
+        onViewProfile={(userId) => onViewProfile?.(userId)}
       />
 
       {/* New conversation dialog */}

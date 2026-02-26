@@ -18,6 +18,7 @@ import MyStartupsPage from "@/components/startups/MyStartupsPage";
 import StartupProfilePage from "@/components/startups/StartupProfilePage";
 import FirstTimeFounderModal from "@/components/startups/FirstTimeFounderModal";
 import MySessionsPage from "@/components/mentorship/MySessionsPage";
+import PublicProfilePage from "@/components/profile/PublicProfilePage";
 import CreateStartupWizard from "@/components/startups/CreateStartupWizard";
 import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
 import { useStartups } from "@/hooks/useStartups";
@@ -31,6 +32,7 @@ const DashboardPage = () => {
   const [deepLinkGroupId, setDeepLinkGroupId] = useState<string | null>(null);
   const [deepLinkMessageUserId, setDeepLinkMessageUserId] = useState<string | null>(null);
   const [viewStartupId, setViewStartupId] = useState<string | null>(null);
+  const [viewProfileUserId, setViewProfileUserId] = useState<string | null>(null);
 
   // Identity switching
   const [activeIdentity, setActiveIdentity] = useState<PostingIdentity>({ type: "personal" });
@@ -64,6 +66,11 @@ const DashboardPage = () => {
     setActiveTab("startup-profile");
   }, []);
 
+  const handleViewProfile = useCallback((userId: string) => {
+    setViewProfileUserId(userId);
+    setActiveTab("public-profile");
+  }, []);
+
   const handleOpenMessages = useCallback(() => {
     setActiveTab("messages");
   }, []);
@@ -77,6 +84,7 @@ const DashboardPage = () => {
     if (tab !== "opportunities") setDeepLinkOpportunityId(null);
     if (tab !== "groups") setDeepLinkGroupId(null);
     if (tab !== "startup-profile") setViewStartupId(null);
+    if (tab !== "public-profile") setViewProfileUserId(null);
     setActiveTab(tab);
   }, []);
 
@@ -100,10 +108,10 @@ const DashboardPage = () => {
 
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto">
-            <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile", "my-sessions"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
+              <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : ["mentors", "investors", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile"].includes(activeTab) ? "max-w-5xl" : "max-w-3xl"}`}>
               {activeTab === "messages" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <MessagesPage />
+                  <MessagesPage onViewProfile={handleViewProfile} />
                 </motion.div>
               )}
 
@@ -179,7 +187,17 @@ const DashboardPage = () => {
                 </motion.div>
               )}
 
-              {!["home", "network", "mentors", "investors", "opportunities", "messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions"].includes(activeTab) && (
+              {activeTab === "public-profile" && viewProfileUserId && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                  <PublicProfilePage
+                    userId={viewProfileUserId}
+                    onBack={() => setActiveTab("messages")}
+                    onMessage={(userId) => { handleOpenMessages(); }}
+                  />
+                </motion.div>
+              )}
+
+              {!["home", "network", "mentors", "investors", "opportunities", "messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile"].includes(activeTab) && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -196,7 +214,7 @@ const DashboardPage = () => {
             </div>
           </main>
 
-          {!["messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />)}
+          {!["messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar /> : <DashboardRightSidebar />)}
         </div>
       </div>
 
