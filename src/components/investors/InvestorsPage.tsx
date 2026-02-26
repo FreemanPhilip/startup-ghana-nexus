@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search } from "lucide-react";
+import { Search, Star, StarOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import InvestorCard, { type InvestorData } from "./InvestorCard";
 import InvestorFilters from "./InvestorFilters";
 import InvestorDetailPage from "./InvestorDetailPage";
+import { useInvestorTracking } from "@/hooks/useInvestorTracking";
 
 const demoInvestors: InvestorData[] = [
   { id: "1", name: "Accra Venture Partners", description: "Early-stage VC focusing on FinTech and e-commerce startups across West Africa with hands-on mentorship and strategic connections.", tags: ["FinTech", "Seed", "B2B"], avgTicket: "$150k", matchPercent: 98, status: "Active Now", icon: "building" },
@@ -23,6 +27,8 @@ const InvestorsPage = () => {
   const [region, setRegion] = useState("all");
   const [selectedInvestor, setSelectedInvestor] = useState<InvestorData | null>(null);
 
+  const { trackView, toggleShortlist, isShortlisted, shortlisted } = useInvestorTracking();
+
   const clearFilters = () => { setIndustry("all"); setTicketSize("all"); setRegion("all"); };
 
   const filtered = demoInvestors.filter((inv) => {
@@ -30,6 +36,13 @@ const InvestorsPage = () => {
     if (industry !== "all" && !inv.tags.some(t => t.toLowerCase().includes(industry))) return false;
     return true;
   });
+
+  const handleViewInvestor = (inv: InvestorData) => {
+    trackView(inv.id, inv.name, inv.icon);
+    setSelectedInvestor(inv);
+  };
+
+  const shortlistedInvestors = demoInvestors.filter(inv => isShortlisted(inv.id));
 
   if (selectedInvestor) {
     return <InvestorDetailPage investor={selectedInvestor} onBack={() => setSelectedInvestor(null)} />;
@@ -55,7 +68,7 @@ const InvestorsPage = () => {
             Investor Matching Engine
           </TabsTrigger>
           <TabsTrigger value="shortlisted" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-0 pb-3 text-sm font-semibold">
-            Shortlisted (12)
+            Shortlisted ({shortlistedInvestors.length})
           </TabsTrigger>
           <TabsTrigger value="outreach" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-0 pb-3 text-sm font-semibold">
             Outreach History
@@ -80,8 +93,23 @@ const InvestorsPage = () => {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
+                className="relative"
               >
-                <InvestorCard investor={inv} onView={() => setSelectedInvestor(inv)} />
+                <button
+                  className="absolute top-3 right-3 z-10 p-1 rounded-full hover:bg-muted/80 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleShortlist(inv.id, inv.name, inv);
+                  }}
+                  title={isShortlisted(inv.id) ? "Remove from shortlist" : "Add to shortlist"}
+                >
+                  {isShortlisted(inv.id) ? (
+                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                  ) : (
+                    <Star className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </button>
+                <InvestorCard investor={inv} onView={() => handleViewInvestor(inv)} />
               </motion.div>
             ))}
             {filtered.length === 0 && (
@@ -93,17 +121,46 @@ const InvestorsPage = () => {
         </TabsContent>
 
         <TabsContent value="shortlisted" className="mt-5">
-          <div className="rounded-xl border border-border bg-card p-12 text-center">
-            <h3 className="font-display text-lg font-bold">Shortlisted Investors</h3>
-            <p className="mt-2 text-sm text-muted-foreground">Track investors you're interested in connecting with.</p>
-          </div>
+          {shortlistedInvestors.length === 0 ? (
+            <Card className="p-8 text-center">
+              <Star className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+              <h3 className="font-display text-lg font-bold">No Shortlisted Investors</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Click the ⭐ icon on any investor card to add them to your shortlist.
+              </p>
+            </Card>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {shortlistedInvestors.map((inv, i) => (
+                <motion.div
+                  key={inv.id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="relative"
+                >
+                  <button
+                    className="absolute top-3 right-3 z-10 p-1 rounded-full hover:bg-muted/80 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleShortlist(inv.id, inv.name, inv);
+                    }}
+                    title="Remove from shortlist"
+                  >
+                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                  </button>
+                  <InvestorCard investor={inv} onView={() => handleViewInvestor(inv)} />
+                </motion.div>
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="outreach" className="mt-5">
-          <div className="rounded-xl border border-border bg-card p-12 text-center">
+          <Card className="p-8 text-center">
             <h3 className="font-display text-lg font-bold">Outreach History</h3>
             <p className="mt-2 text-sm text-muted-foreground">View your past investor communications and connection requests.</p>
-          </div>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

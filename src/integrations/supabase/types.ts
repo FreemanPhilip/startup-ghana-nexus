@@ -449,6 +449,60 @@ export type Database = {
         }
         Relationships: []
       }
+      investor_shortlists: {
+        Row: {
+          created_at: string
+          id: string
+          investor_data: Json | null
+          investor_id: string
+          investor_name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          investor_data?: Json | null
+          investor_id: string
+          investor_name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          investor_data?: Json | null
+          investor_id?: string
+          investor_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      investor_views: {
+        Row: {
+          id: string
+          investor_icon: string | null
+          investor_id: string
+          investor_name: string
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          investor_icon?: string | null
+          investor_id: string
+          investor_name: string
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          investor_icon?: string | null
+          investor_id?: string
+          investor_name?: string
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: []
+      }
       mentor_availability: {
         Row: {
           created_at: string
@@ -939,6 +993,30 @@ export type Database = {
           verification?: Database["public"]["Enums"]["verification_status"]
           website_url?: string | null
           years_experience?: number | null
+        }
+        Relationships: []
+      }
+      session_reminders: {
+        Row: {
+          booking_id: string
+          id: string
+          reminder_type: string
+          sent_at: string
+          user_id: string
+        }
+        Insert: {
+          booking_id: string
+          id?: string
+          reminder_type?: string
+          sent_at?: string
+          user_id: string
+        }
+        Update: {
+          booking_id?: string
+          id?: string
+          reminder_type?: string
+          sent_at?: string
+          user_id?: string
         }
         Relationships: []
       }
