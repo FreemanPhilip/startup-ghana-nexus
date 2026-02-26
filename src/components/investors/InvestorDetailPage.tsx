@@ -5,7 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useConnections } from "@/hooks/useConnections";
+import { toast } from "@/hooks/use-toast";
 import type { InvestorData } from "./InvestorCard";
+import RequestIntroDialog from "./RequestIntroDialog";
 
 const iconMap: Record<string, React.ElementType> = {
   building: Building2,
@@ -140,9 +144,14 @@ interface InvestorDetailPageProps {
 const INITIAL_PORTFOLIO_COUNT = 4;
 
 const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailPageProps) => {
+  const { user } = useAuth();
+  const { sendRequest, getRequestStatus } = useConnections();
   const [shortlisted, setShortlisted] = useState(false);
   const [showAllPortfolio, setShowAllPortfolio] = useState(false);
   const [platformStartups, setPlatformStartups] = useState<MatchedStartup[]>([]);
+  const [showIntroDialog, setShowIntroDialog] = useState(false);
+  const [userStartups, setUserStartups] = useState<{ id: string; name: string }[]>([]);
+  const [investorUserId, setInvestorUserId] = useState<string | null>(null);
 
   const detail = investorDetails[investor.id] || getDefaultDetail(investor);
   const Icon = iconMap[investor.icon] || Building2;
@@ -150,20 +159,71 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
   // Fetch real startups from the platform that match portfolio names
   useEffect(() => {
     if (detail.portfolio.length === 0) return;
-
     const fetchStartups = async () => {
       const { data } = await supabase
         .from("startups")
         .select("id, name, logo_url, industry, stage, location, short_description")
         .limit(50);
-
-      if (data) {
-        setPlatformStartups(data);
-      }
+      if (data) setPlatformStartups(data);
     };
-
     fetchStartups();
   }, [detail.portfolio.length]);
+
+  // Fetch user's own startups for the intro dialog
+  useEffect(() => {
+    if (!user) return;
+    const fetchUserStartups = async () => {
+      const { data } = await supabase
+        .from("startup_members")
+        .select("startup_id, startups(id, name)")
+        .eq("user_id", user.id)
+        .eq("confirmed", true);
+      if (data) {
+        setUserStartups(data.filter(d => d.startups).map(d => ({
+          id: (d.startups as any).id,
+          name: (d.startups as any).name,
+        })));
+      }
+    };
+    fetchUserStartups();
+  }, [user]);
+
+  // Try to find investor's user_id on the platform by matching name
+  useEffect(() => {
+    const findInvestor = async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("user_id, company_name, full_name")
+        .or(`company_name.ilike.%${investor.name}%,full_name.ilike.%${investor.name}%`)
+        .limit(1);
+      if (data && data.length > 0) {
+        setInvestorUserId(data[0].user_id);
+      }
+    };
+    findInvestor();
+  }, [investor.name]);
+
+  const handleSendIntro = async (message: string, startupId?: string) => {
+    if (!investorUserId) {
+      toast({ title: "Investor not on platform", description: "This investor doesn't have a platform profile yet. Your request has been noted.", variant: "destructive" });
+      return false;
+    }
+    const status = getRequestStatus(investorUserId);
+    if (status === "connected") {
+      toast({ title: "Already connected", description: "You're already connected with this investor." });
+      return false;
+    }
+    if (status === "pending_sent") {
+      toast({ title: "Request already sent", description: "You already have a pending intro request." });
+      return false;
+    }
+    const fullMessage = startupId
+      ? `[Intro Request via ${userStartups.find(s => s.id === startupId)?.name || "startup"}] ${message}`
+      : `[Intro Request] ${message}`;
+    const ok = await sendRequest(investorUserId, fullMessage);
+    if (ok) toast({ title: "Intro request sent!", description: `Your request has been sent to ${investor.name}.` });
+    return ok;
+  };
 
   // Match portfolio entries to real startups by fuzzy name matching
   const portfolioWithMatches = useMemo(() => {
@@ -240,7 +300,7 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
                     {shortlisted ? <BookmarkCheck className="h-3.5 w-3.5 text-primary" /> : <Bookmark className="h-3.5 w-3.5" />}
                     {shortlisted ? "Shortlisted" : "Shortlist"}
                   </Button>
-                  <Button size="sm" className="gap-1.5 text-xs font-semibold">
+                  <Button size="sm" className="gap-1.5 text-xs font-semibold" onClick={() => setShowIntroDialog(true)}>
                     <MessageCircle className="h-3.5 w-3.5" /> Request Intro
                   </Button>
                 </div>
@@ -518,6 +578,15 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
           </div>
         </div>
       </div>
+
+      {/* Request Intro Dialog */}
+      <RequestIntroDialog
+        open={showIntroDialog}
+        onOpenChange={setShowIntroDialog}
+        investorName={investor.name}
+        onSend={handleSendIntro}
+        startups={userStartups}
+      />
     </div>
   );
 };
