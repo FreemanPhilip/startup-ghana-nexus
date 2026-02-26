@@ -146,7 +146,7 @@ const DashboardRightSidebar = ({ onNavigate }: DashboardRightSidebarProps) => {
                       {session.notes?.slice(0, 30) || "Mentorship Session"}
                     </p>
                     <p className="text-[10px] text-muted-foreground">
-                      with {session.other_user?.full_name || "User"} · {timeStr}
+                      {session.mentor_id === user?.id ? "Mentee" : "Mentor"}: {session.other_user?.full_name || "User"} · {timeStr}
                     </p>
                   </div>
                   <Video className="h-4 w-4 shrink-0 text-primary" />

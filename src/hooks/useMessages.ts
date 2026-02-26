@@ -245,6 +245,57 @@ export function useMessages() {
 
   const activeConvoData = conversations.find(c => c.id === activeConversation);
 
+  const deleteMessage = useCallback(async (messageId: string) => {
+    if (!user) return;
+    const { error } = await supabase
+      .from("messages")
+      .delete()
+      .eq("id", messageId)
+      .eq("sender_id", user.id);
+    if (!error) {
+      setMessages(prev => prev.filter(m => m.id !== messageId));
+    }
+    return !error;
+  }, [user]);
+
+  const clearChat = useCallback(async () => {
+    if (!user || !activeConversation) return false;
+    // Delete only messages sent by current user in this conversation
+    const { error } = await supabase
+      .from("messages")
+      .delete()
+      .eq("conversation_id", activeConversation)
+      .eq("sender_id", user.id);
+    if (!error) {
+      setMessages(prev => prev.filter(m => m.sender_id !== user.id));
+    }
+    return !error;
+  }, [user, activeConversation]);
+
+  const deleteConversation = useCallback(async (conversationId: string) => {
+    if (!user) return false;
+    // Delete all user's messages first, then the conversation
+    await supabase
+      .from("messages")
+      .delete()
+      .eq("conversation_id", conversationId)
+      .eq("sender_id", user.id);
+    
+    const { error } = await supabase
+      .from("conversations")
+      .delete()
+      .eq("id", conversationId);
+    
+    if (!error) {
+      setConversations(prev => prev.filter(c => c.id !== conversationId));
+      if (activeConversation === conversationId) {
+        setActiveConversation(null);
+        setMessages([]);
+      }
+    }
+    return !error;
+  }, [user, activeConversation]);
+
   return {
     conversations: filteredConversations,
     activeConversation,
@@ -258,5 +309,8 @@ export function useMessages() {
     sendMessage,
     startConversation,
     fetchConversations,
+    deleteMessage,
+    clearChat,
+    deleteConversation,
   };
 }
