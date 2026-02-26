@@ -56,7 +56,7 @@ const MentorCard = ({ mentor, onBookSession, onViewProfile }: MentorCardProps) =
   };
 
   return (
-    <div className="group rounded-xl border border-border bg-card overflow-hidden transition-shadow hover:shadow-lg hover:border-primary/30 cursor-pointer" onClick={onViewProfile}>
+    <div className="group flex flex-col rounded-xl border border-border bg-card overflow-hidden transition-shadow hover:shadow-lg hover:border-primary/30 cursor-pointer h-full" onClick={onViewProfile}>
       {/* Avatar / Image area */}
       <div className="relative aspect-[4/3] bg-muted overflow-hidden">
         {mentor.avatar_url ? (
@@ -74,7 +74,7 @@ const MentorCard = ({ mentor, onBookSession, onViewProfile }: MentorCardProps) =
       </div>
 
       {/* Info */}
-      <div className="p-4 space-y-3">
+      <div className="p-4 space-y-3 flex-1 flex flex-col">
         <div>
           <h3 className="font-display font-bold text-sm text-foreground truncate">
             {mentor.full_name}
@@ -108,7 +108,7 @@ const MentorCard = ({ mentor, onBookSession, onViewProfile }: MentorCardProps) =
         {/* Book button */}
         <Button
           size="sm"
-          className="w-full text-xs font-semibold"
+          className="w-full text-xs font-semibold mt-auto"
           onClick={(e) => {
             e.stopPropagation();
             onBookSession?.(mentor.id);
