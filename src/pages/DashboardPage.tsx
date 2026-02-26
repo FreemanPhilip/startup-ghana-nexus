@@ -151,7 +151,7 @@ const DashboardPage = () => {
 
               {activeTab === "investors" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <InvestorsPage />
+                  <InvestorsPage onViewStartup={handleViewStartup} />
                 </motion.div>
               )}
 
