@@ -7,7 +7,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Check, X, Loader2, Inbox, Clock, CheckCircle2, XCircle,
-  MessageSquare, UserPlus, Users, Filter, Shield
+  MessageSquare, UserPlus, Users, Filter, Shield, FileText, Download
 } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
@@ -235,12 +235,39 @@ const IncomingRequestsTab = () => {
                       {[profile?.headline, profile?.company_name, profile?.industry, profile?.location]
                         .filter(Boolean).join(" · ") || "Ecosystem Member"}
                     </p>
-                    {req.message && (
-                      <div className="flex items-start gap-1.5 mt-1">
-                        <MessageSquare className="h-3 w-3 text-muted-foreground shrink-0 mt-0.5" />
-                        <p className="text-xs text-foreground/80 italic line-clamp-2">"{req.message}"</p>
-                      </div>
-                    )}
+                    {req.message && (() => {
+                      // Extract pitch deck URL and clean message
+                      const deckMatch = req.message.match(/\[Pitch Deck:\s*(https?:\/\/[^\]]+)\]/);
+                      const pitchDeckUrl = deckMatch?.[1] || null;
+                      const cleanMessage = req.message
+                        .replace(/\[Pitch Deck:\s*https?:\/\/[^\]]+\]\s*/g, "")
+                        .replace(/\[Intro Request[^\]]*\]\s*/g, "")
+                        .trim();
+
+                      return (
+                        <>
+                          {cleanMessage && (
+                            <div className="flex items-start gap-1.5 mt-1">
+                              <MessageSquare className="h-3 w-3 text-muted-foreground shrink-0 mt-0.5" />
+                              <p className="text-xs text-foreground/80 italic line-clamp-2">"{cleanMessage}"</p>
+                            </div>
+                          )}
+                          {pitchDeckUrl && (
+                            <a
+                              href={pitchDeckUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 mt-1.5 px-2.5 py-1.5 rounded-lg border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors group"
+                              onClick={e => e.stopPropagation()}
+                            >
+                              <FileText className="h-3.5 w-3.5 text-primary" />
+                              <span className="text-xs font-medium text-primary">View Pitch Deck</span>
+                              <Download className="h-3 w-3 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </a>
+                          )}
+                        </>
+                      );
+                    })()}
                     <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
                       <span>Received {formatDistanceToNow(new Date(req.created_at), { addSuffix: true })}</span>
                       {req.responded_at && (
