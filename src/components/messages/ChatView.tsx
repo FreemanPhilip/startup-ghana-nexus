@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Smile, Plus, MoreVertical, Video, ArrowLeft, Check, CheckCheck, Image, Paperclip, X, Calendar, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +33,9 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [otherUserPresence, setOtherUserPresence] = useState<{ is_online: boolean; last_seen: string | null }>({ is_online: false, last_seen: null });
+  const [isOtherTyping, setIsOtherTyping] = useState(false);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const lastTypingBroadcast = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
@@ -68,6 +71,39 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
 
     return () => { supabase.removeChannel(channel); };
   }, [conversation?.other_user?.user_id]);
+
+  // Typing indicator channel
+  useEffect(() => {
+    if (!conversation?.id || !user) return;
+    const channelName = `typing-${conversation.id}`;
+    const channel = supabase.channel(channelName)
+      .on("broadcast", { event: "typing" }, (payload: any) => {
+        if (payload.payload?.user_id !== user.id) {
+          setIsOtherTyping(true);
+          clearTimeout(typingTimeoutRef.current);
+          typingTimeoutRef.current = setTimeout(() => setIsOtherTyping(false), 3000);
+        }
+      })
+      .subscribe();
+
+    return () => {
+      clearTimeout(typingTimeoutRef.current);
+      setIsOtherTyping(false);
+      supabase.removeChannel(channel);
+    };
+  }, [conversation?.id, user]);
+
+  const broadcastTyping = useCallback(() => {
+    if (!conversation?.id || !user) return;
+    const now = Date.now();
+    if (now - lastTypingBroadcast.current < 2000) return; // throttle to 2s
+    lastTypingBroadcast.current = now;
+    supabase.channel(`typing-${conversation.id}`).send({
+      type: "broadcast",
+      event: "typing",
+      payload: { user_id: user.id },
+    });
+  }, [conversation?.id, user]);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -368,6 +404,24 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
             ))}
           </div>
         )}
+
+        {/* Typing indicator */}
+        {isOtherTyping && (
+          <div className="px-4 pb-2 flex items-center gap-2">
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={otherUser?.avatar_url || undefined} />
+              <AvatarFallback className="bg-muted text-[8px] font-bold">
+                {getInitials(otherUser?.full_name)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="bg-muted border border-border rounded-2xl rounded-bl-md px-4 py-2.5 flex items-center gap-1">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:0ms]" />
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:150ms]" />
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:300ms]" />
+            </div>
+            <span className="text-[10px] text-muted-foreground">typing...</span>
+          </div>
+        )}
       </ScrollArea>
 
       {/* File preview */}
@@ -430,7 +484,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack }: Ch
           <Input
             placeholder="Type a message..."
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => { setInput(e.target.value); broadcastTyping(); }}
             onKeyDown={handleKeyDown}
             className="flex-1 h-9"
           />
