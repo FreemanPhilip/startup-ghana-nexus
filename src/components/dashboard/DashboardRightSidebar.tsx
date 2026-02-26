@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Calendar, Video, CheckSquare, BarChart3, Sparkles, Loader2 } from "lucide-react";
+import BrowseMentorsDialog from "./BrowseMentorsDialog";
+import AIMatchDialog from "./AIMatchDialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card } from "@/components/ui/card";
@@ -31,6 +33,8 @@ const DashboardRightSidebar = ({ onNavigate }: DashboardRightSidebarProps) => {
   const { user } = useAuth();
   const [sessions, setSessions] = useState<SessionData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [browseMentorsOpen, setBrowseMentorsOpen] = useState(false);
+  const [aiMatchOpen, setAiMatchOpen] = useState(false);
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -156,7 +160,7 @@ const DashboardRightSidebar = ({ onNavigate }: DashboardRightSidebarProps) => {
           variant="outline"
           size="sm"
           className="mt-3 w-full text-xs border-dashed"
-          onClick={() => onNavigate?.("mentors")}
+          onClick={() => setBrowseMentorsOpen(true)}
         >
           Browse All Mentors
         </Button>
@@ -221,12 +225,24 @@ const DashboardRightSidebar = ({ onNavigate }: DashboardRightSidebarProps) => {
         </p>
         <Button
           className="mt-4 w-full bg-amber-500 hover:bg-amber-600 text-foreground font-semibold text-xs"
-          onClick={() => onNavigate?.("mentors")}
+          onClick={() => setAiMatchOpen(true)}
         >
           <Sparkles className="h-3.5 w-3.5 mr-1.5" />
           Get AI Matching
         </Button>
       </Card>
+
+      {/* Dialogs */}
+      <BrowseMentorsDialog
+        open={browseMentorsOpen}
+        onOpenChange={setBrowseMentorsOpen}
+        onSelectMentor={(id) => onNavigate?.("mentors")}
+      />
+      <AIMatchDialog
+        open={aiMatchOpen}
+        onOpenChange={setAiMatchOpen}
+        onSelectMentor={(id) => onNavigate?.("mentors")}
+      />
     </aside>
   );
 };
