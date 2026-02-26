@@ -44,7 +44,7 @@ const OpportunityCard = ({ opportunity, onApply }: OpportunityCardProps) => {
   const daysLeft = opportunity.deadline ? differenceInDays(new Date(opportunity.deadline), new Date()) : null;
 
   return (
-    <div className={`rounded-xl border bg-card p-5 transition-shadow hover:shadow-md ${opportunity.is_featured ? "border-primary/30 ring-1 ring-primary/10" : "border-border"}`}>
+    <div className={`flex flex-col rounded-xl border bg-card p-5 transition-shadow hover:shadow-md h-full ${opportunity.is_featured ? "border-primary/30 ring-1 ring-primary/10" : "border-border"}`}>
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
@@ -115,7 +115,7 @@ const OpportunityCard = ({ opportunity, onApply }: OpportunityCardProps) => {
       )}
 
       {/* Action */}
-      <div className="mt-4 flex items-center gap-2">
+      <div className="mt-auto pt-4 flex items-center gap-2">
         {opportunity.has_applied ? (
           <Button size="sm" variant="outline" className="flex-1 gap-1.5 text-xs font-semibold" onClick={() => onApply(opportunity.id)}>
             <CheckCircle2 className="h-3.5 w-3.5 text-primary" />

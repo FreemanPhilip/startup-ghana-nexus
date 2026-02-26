@@ -141,7 +141,7 @@ const PublicProfilePage = ({ userId, onBack, onMessage }: PublicProfilePageProps
     <div className="space-y-0 max-w-4xl mx-auto">
       {/* Back button */}
       <Button variant="ghost" size="sm" className="gap-1.5 text-xs mb-3" onClick={onBack}>
-        <ArrowLeft className="h-4 w-4" /> Back to Network
+        <ArrowLeft className="h-4 w-4" /> Back
       </Button>
 
       {/* Cover banner */}

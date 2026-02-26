@@ -41,7 +41,7 @@ const InvestorCard = ({ investor, onConnect, onView, isConnected }: InvestorCard
 
   return (
     <div
-      className="group flex flex-col justify-between rounded-xl border border-border bg-card p-5 transition-shadow hover:shadow-md cursor-pointer"
+      className="group flex flex-col justify-between rounded-xl border border-border bg-card p-5 transition-shadow hover:shadow-md cursor-pointer h-full"
       onClick={() => onView?.()}
     >
       {/* Header */}

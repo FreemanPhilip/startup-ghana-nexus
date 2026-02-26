@@ -32,11 +32,13 @@ interface GroupCardProps {
 
 const GroupCard = ({ group, onJoin, onLeave, onView }: GroupCardProps) => {
   const Icon = iconMap[group.icon || "users"] || Users;
-  const gradient = group.cover_color || colorPresets[Math.floor(Math.random() * colorPresets.length)];
+  // Stable gradient based on group id hash instead of Math.random()
+  const hash = group.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+  const gradient = group.cover_color || colorPresets[hash % colorPresets.length];
   const activity = getActivityLabel(group.post_count_today);
 
   return (
-    <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => onView(group.id)}>
+    <div className="flex flex-col rounded-xl border border-border bg-card overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer h-full" onClick={() => onView(group.id)}>
       {/* Cover */}
       <div className={`h-24 bg-gradient-to-br ${gradient} relative`}>
         <div className="absolute -bottom-5 left-4 flex h-10 w-10 items-center justify-center rounded-xl bg-card border border-border shadow-sm overflow-hidden">
@@ -54,7 +56,7 @@ const GroupCard = ({ group, onJoin, onLeave, onView }: GroupCardProps) => {
       </div>
 
       {/* Content */}
-      <div className="px-4 pt-7 pb-4 space-y-3">
+      <div className="px-4 pt-7 pb-4 space-y-3 flex-1 flex flex-col">
         <div>
           <h3 className="font-display font-bold text-sm truncate">{group.name}</h3>
           <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{group.description || "No description"}</p>
@@ -72,7 +74,7 @@ const GroupCard = ({ group, onJoin, onLeave, onView }: GroupCardProps) => {
         </div>
 
         <Button
-          variant={group.is_member ? "outline" : "outline"}
+          variant="outline"
           size="sm"
           className={`w-full text-xs ${group.is_member ? "text-muted-foreground" : "text-primary border-primary hover:bg-primary hover:text-primary-foreground"}`}
           onClick={(e) => { e.stopPropagation(); group.is_member ? onLeave(group.id) : onJoin(group.id); }}

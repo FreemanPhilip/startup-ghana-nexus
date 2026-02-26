@@ -77,7 +77,7 @@ const NetworkCard = ({ profile, isFollowing, connectionStatus, onToggleFollow, o
   };
 
   return (
-    <div className="flex flex-col items-center rounded-xl border border-border bg-card p-5 text-center transition-shadow hover:shadow-md cursor-pointer" onClick={() => onViewProfile?.(profile.user_id)}>
+    <div className="flex flex-col items-center rounded-xl border border-border bg-card p-5 text-center transition-shadow hover:shadow-md cursor-pointer h-full" onClick={() => onViewProfile?.(profile.user_id)}>
       <Avatar className="h-16 w-16">
         <AvatarImage src={profile.avatar_url || undefined} />
         <AvatarFallback className="bg-primary/10 text-primary text-lg font-bold">{initials}</AvatarFallback>
@@ -127,7 +127,7 @@ const NetworkCard = ({ profile, isFollowing, connectionStatus, onToggleFollow, o
         </div>
       )}
 
-      <div className="mt-4 flex w-full gap-2" onClick={e => e.stopPropagation()}>
+      <div className="mt-auto pt-4 flex w-full gap-2" onClick={e => e.stopPropagation()}>
         {renderConnectButton()}
         {(connectionStatus === "connected") && onMessage && (
           <Button

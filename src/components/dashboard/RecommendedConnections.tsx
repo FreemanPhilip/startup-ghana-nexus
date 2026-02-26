@@ -61,7 +61,7 @@ const RecommendedConnections = () => {
               <p className="mt-2 text-xs font-semibold leading-tight truncate w-full">{s.full_name || "Unknown"}</p>
               <p className="mt-0.5 text-[10px] text-muted-foreground truncate w-full">{s.headline || "Member"}</p>
               <Button
-                variant={following ? "outline" : "outline"}
+                variant="outline"
                 size="sm"
                 className={`mt-3 h-7 w-full text-xs ${following ? "" : "text-primary border-primary hover:bg-primary/5"}`}
                 onClick={() => toggleFollow(s.user_id)}
