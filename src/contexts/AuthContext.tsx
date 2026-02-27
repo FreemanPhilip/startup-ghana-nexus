@@ -17,6 +17,7 @@ interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   roles: AppRole[];
+  primaryRole: AppRole | null;
   loading: boolean;
   subscription: SubscriptionInfo;
   isPremium: boolean;
@@ -135,6 +136,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [user, checkSubscription]);
 
   const isPremium = profile?.membership === "premium" || subscription.subscribed;
+  const primaryRole: AppRole | null = roles.length > 0 ? roles[0] : null;
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -144,7 +146,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, profile, roles, loading, subscription, isPremium, signOut, refreshProfile, checkSubscription }}>
+    <AuthContext.Provider value={{ session, user, profile, roles, primaryRole, loading, subscription, isPremium, signOut, refreshProfile, checkSubscription }}>
       {children}
     </AuthContext.Provider>
   );

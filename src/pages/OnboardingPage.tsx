@@ -1,86 +1,103 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { Star, Rocket, TrendingUp, BookOpen, Building2, Wrench, Users, ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { motion } from "framer-motion";
+import { Star, MapPin, Type, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import type { Database } from "@/integrations/supabase/types";
-
-type AppRole = Database["public"]["Enums"]["app_role"];
-
-const roleOptions: { value: AppRole; label: string; description: string; icon: any }[] = [
-  { value: "startup_founder", label: "Startup Founder", description: "Build, fundraise, and scale your startup", icon: Rocket },
-  { value: "investor", label: "Investor", description: "Discover and invest in promising startups", icon: TrendingUp },
-  { value: "mentor", label: "Mentor", description: "Guide founders with your expertise", icon: BookOpen },
-  { value: "ecosystem_partner", label: "Ecosystem Partner", description: "Accelerators, incubators, and VCs", icon: Building2 },
-  { value: "service_provider", label: "Service Provider", description: "Offer services to the ecosystem", icon: Wrench },
-  { value: "member", label: "Community Member", description: "Explore and engage with the ecosystem", icon: Users },
-];
-
-const membershipOptions = [
-  { value: "standard" as const, label: "Standard", price: "Free", features: ["Basic profile", "Browse opportunities", "Community access"] },
-  { value: "premium" as const, label: "Premium", price: "$29/mo", features: ["Verified badge", "Unlimited bookings", "Direct messaging", "Featured listing", "Priority support"] },
-];
+import { getRoleDashboardPath } from "@/lib/roleRouting";
 
 const OnboardingPage = () => {
-  const { user, profile, refreshProfile } = useAuth();
+  const { user, profile, roles, refreshProfile } = useAuth();
   const navigate = useNavigate();
-  const [step, setStep] = useState(0); // 0: role, 1: membership, 2: profile details
-  const [selectedRole, setSelectedRole] = useState<AppRole | null>(null);
-  const [selectedMembership, setSelectedMembership] = useState<"standard" | "premium">("standard");
-  const [profileData, setProfileData] = useState({
-    headline: "",
-    bio: "",
-    location: "",
-    linkedin_url: "",
-    company_name: "",
-    industry: "",
-  });
   const [saving, setSaving] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    full_name: "",
+    headline: "",
+    location: "",
+  });
 
-  const handleNext = async () => {
-    if (step === 0 && !selectedRole) {
-      toast.error("Please select a role");
-      return;
+  // Pre-fill from profile if available (e.g. Google OAuth sets full_name)
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        full_name: profile.full_name || "",
+        headline: profile.headline || "",
+        location: profile.location || "",
+      });
+      if (profile.avatar_url) setAvatarPreview(profile.avatar_url);
     }
-    if (step < 2) {
-      setStep(step + 1);
-      return;
+  }, [profile]);
+
+  // Handle Google OAuth role assignment (stored in localStorage)
+  useEffect(() => {
+    const pendingRole = localStorage.getItem("pending_role");
+    if (pendingRole && user && roles.length === 0) {
+      supabase
+        .from("user_roles")
+        .insert({ user_id: user.id, role: pendingRole as any })
+        .then(({ error }) => {
+          if (!error) {
+            localStorage.removeItem("pending_role");
+            refreshProfile();
+          }
+        });
     }
-    // Final step - save everything
+  }, [user, roles.length]);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
+  };
+
+  const handleSubmit = async () => {
     if (!user) return;
+    if (!formData.full_name.trim()) {
+      toast.error("Full name is required");
+      return;
+    }
     setSaving(true);
     try {
-      // Save role
-      const { error: roleError } = await supabase
-        .from("user_roles")
-        .insert({ user_id: user.id, role: selectedRole! });
-      if (roleError) throw roleError;
+      let avatar_url = profile?.avatar_url || null;
 
-      // Update profile
-      const { error: profileError } = await supabase
+      // Upload avatar if selected
+      if (avatarFile) {
+        const ext = avatarFile.name.split(".").pop();
+        const path = `${user.id}/avatar.${ext}`;
+        const { error: uploadError } = await supabase.storage
+          .from("startup-assets")
+          .upload(path, avatarFile, { upsert: true });
+        if (uploadError) throw uploadError;
+        const { data: urlData } = supabase.storage.from("startup-assets").getPublicUrl(path);
+        avatar_url = urlData.publicUrl;
+      }
+
+      const { error } = await supabase
         .from("profiles")
         .update({
-          headline: profileData.headline || null,
-          bio: profileData.bio || null,
-          location: profileData.location || null,
-          linkedin_url: profileData.linkedin_url || null,
-          company_name: profileData.company_name || null,
-          industry: profileData.industry || null,
-          membership: selectedMembership,
+          full_name: formData.full_name.trim(),
+          headline: formData.headline.trim() || null,
+          location: formData.location.trim() || null,
+          avatar_url,
           onboarding_step: "completed",
         })
         .eq("user_id", user.id);
-      if (profileError) throw profileError;
+      if (error) throw error;
 
       await refreshProfile();
-      toast.success("Welcome to AGS! 🎉");
-      navigate("/dashboard");
+      toast.success("Welcome to GSE! 🎉");
+
+      // Redirect based on role
+      const primaryRole = roles[0];
+      navigate(getRoleDashboardPath(primaryRole), { replace: true });
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -88,184 +105,105 @@ const OnboardingPage = () => {
     }
   };
 
-  const steps = ["Select Role", "Membership", "Your Profile"];
+  const initials = formData.full_name
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2) || "U";
 
   return (
     <div className="flex min-h-screen bg-gradient-hero">
       <div className="container flex flex-col items-center justify-center py-12">
-        {/* Header */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-gold">
             <Star className="h-5 w-5 text-navy" fill="currentColor" />
           </div>
-          <span className="font-display text-xl font-bold text-primary-foreground">AGS</span>
+          <span className="font-display text-xl font-bold text-primary-foreground">GSE Portal</span>
         </motion.div>
 
-        {/* Step indicator */}
-        <div className="mb-8 flex items-center gap-2">
-          {steps.map((s, i) => (
-            <div key={s} className="flex items-center gap-2">
-              <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${
-                i <= step ? "bg-gradient-gold text-navy" : "bg-primary-foreground/10 text-primary-foreground/40"
-              }`}>
-                {i < step ? <Check className="h-4 w-4" /> : i + 1}
-              </div>
-              <span className={`hidden text-sm sm:inline ${i <= step ? "text-primary-foreground" : "text-primary-foreground/40"}`}>{s}</span>
-              {i < steps.length - 1 && <div className="mx-2 h-px w-8 bg-primary-foreground/20" />}
-            </div>
-          ))}
-        </div>
-
-        {/* Content */}
         <motion.div
-          className="w-full max-w-2xl rounded-2xl border border-border/20 bg-card p-8 shadow-2xl"
-          layout
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md rounded-2xl border border-border/20 bg-card p-8 shadow-2xl"
         >
-          <AnimatePresence mode="wait">
-            {step === 0 && (
-              <motion.div key="role" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <h2 className="font-display text-2xl font-bold">What describes you best?</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Choose your primary role in the ecosystem</p>
-                <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  {roleOptions.map((role) => (
-                    <button
-                      key={role.value}
-                      onClick={() => setSelectedRole(role.value)}
-                      className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-all ${
-                        selectedRole === role.value
-                          ? "border-gold bg-gold/5 ring-2 ring-gold/30"
-                          : "border-border hover:border-gold/30"
-                      }`}
-                    >
-                      <div className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
-                        selectedRole === role.value ? "bg-gold/20 text-gold" : "bg-muted text-muted-foreground"
-                      }`}>
-                        <role.icon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="font-display text-sm font-bold">{role.label}</p>
-                        <p className="text-xs text-muted-foreground">{role.description}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
+          <h2 className="font-display text-2xl font-bold">Complete your profile</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Just a few details to get you started
+          </p>
 
-            {step === 1 && (
-              <motion.div key="membership" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <h2 className="font-display text-2xl font-bold">Choose your membership</h2>
-                <p className="mt-1 text-sm text-muted-foreground">You can always upgrade later</p>
-                <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  {membershipOptions.map((plan) => (
-                    <button
-                      key={plan.value}
-                      onClick={() => setSelectedMembership(plan.value)}
-                      className={`rounded-xl border p-6 text-left transition-all ${
-                        selectedMembership === plan.value
-                          ? "border-gold bg-gold/5 ring-2 ring-gold/30"
-                          : "border-border hover:border-gold/30"
-                      }`}
-                    >
-                      <p className="font-display text-lg font-bold">{plan.label}</p>
-                      <p className="mt-1 font-display text-2xl font-bold text-gold">{plan.price}</p>
-                      <ul className="mt-4 space-y-2">
-                        {plan.features.map((f) => (
-                          <li key={f} className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <Check className="h-3 w-3 text-emerald" /> {f}
-                          </li>
-                        ))}
-                      </ul>
-                    </button>
-                  ))}
+          <div className="mt-6 space-y-5">
+            {/* Avatar upload */}
+            <div className="flex flex-col items-center gap-3">
+              <label htmlFor="avatar-upload" className="cursor-pointer group relative">
+                <Avatar className="h-20 w-20">
+                  <AvatarImage src={avatarPreview || undefined} />
+                  <AvatarFallback className="bg-muted text-lg font-bold">{initials}</AvatarFallback>
+                </Avatar>
+                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Camera className="h-5 w-5 text-white" />
                 </div>
-              </motion.div>
-            )}
+              </label>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarChange}
+              />
+              <span className="text-xs text-muted-foreground">Click to upload photo</span>
+            </div>
 
-            {step === 2 && (
-              <motion.div key="profile" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <h2 className="font-display text-2xl font-bold">Complete your profile</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Tell the community about yourself</p>
-                <div className="mt-6 space-y-4">
-                  <div className="space-y-2">
-                    <Label>Headline</Label>
-                    <Input
-                      placeholder="e.g. CEO at TechNova | Building the future of fintech"
-                      value={profileData.headline}
-                      onChange={(e) => setProfileData({ ...profileData, headline: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Bio</Label>
-                    <Textarea
-                      placeholder="Tell us about yourself..."
-                      value={profileData.bio}
-                      onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
-                      rows={3}
-                    />
-                  </div>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label>Location</Label>
-                      <Input
-                        placeholder="Accra, Ghana"
-                        value={profileData.location}
-                        onChange={(e) => setProfileData({ ...profileData, location: e.target.value })}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>LinkedIn URL</Label>
-                      <Input
-                        placeholder="https://linkedin.com/in/..."
-                        value={profileData.linkedin_url}
-                        onChange={(e) => setProfileData({ ...profileData, linkedin_url: e.target.value })}
-                      />
-                    </div>
-                  </div>
-                  {(selectedRole === "startup_founder" || selectedRole === "ecosystem_partner") && (
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label>Company Name</Label>
-                        <Input
-                          placeholder="Your company"
-                          value={profileData.company_name}
-                          onChange={(e) => setProfileData({ ...profileData, company_name: e.target.value })}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Industry</Label>
-                        <Input
-                          placeholder="e.g. Fintech, AgriTech"
-                          value={profileData.industry}
-                          onChange={(e) => setProfileData({ ...profileData, industry: e.target.value })}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+            {/* Full Name */}
+            <div className="space-y-2">
+              <Label htmlFor="full_name">Full Name *</Label>
+              <div className="relative">
+                <Type className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="full_name"
+                  placeholder="Kwame Asante"
+                  value={formData.full_name}
+                  onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                  className="pl-10"
+                  required
+                />
+              </div>
+            </div>
 
-          {/* Navigation */}
-          <div className="mt-8 flex items-center justify-between">
-            <Button
-              variant="ghost"
-              onClick={() => setStep(Math.max(0, step - 1))}
-              disabled={step === 0}
-              className="text-muted-foreground"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back
-            </Button>
-            <Button
-              onClick={handleNext}
-              disabled={saving}
-              className="bg-gradient-gold font-semibold text-navy hover:opacity-90"
-            >
-              {step === 2 ? (saving ? "Saving..." : "Complete Setup") : "Continue"}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            {/* Headline */}
+            <div className="space-y-2">
+              <Label htmlFor="headline">Headline</Label>
+              <Input
+                id="headline"
+                placeholder="e.g. CEO at TechNova | Fintech Enthusiast"
+                value={formData.headline}
+                onChange={(e) => setFormData({ ...formData, headline: e.target.value })}
+              />
+            </div>
+
+            {/* Location */}
+            <div className="space-y-2">
+              <Label htmlFor="location">Location</Label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="location"
+                  placeholder="Accra, Ghana"
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  className="pl-10"
+                />
+              </div>
+            </div>
           </div>
+
+          <Button
+            onClick={handleSubmit}
+            disabled={saving || !formData.full_name.trim()}
+            className="mt-8 w-full bg-gradient-gold font-semibold text-navy hover:opacity-90"
+          >
+            {saving ? "Saving..." : "Get Started →"}
+          </Button>
         </motion.div>
       </div>
     </div>

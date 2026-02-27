@@ -4,17 +4,27 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { getRoleDashboardPath } from "@/lib/roleRouting";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import OnboardingPage from "./pages/OnboardingPage";
-import DashboardPage from "./pages/DashboardPage";
+import FounderDashboardPage from "./pages/FounderDashboardPage";
+import InvestorDashboardPage from "./pages/InvestorDashboardPage";
+import MentorDashboardPage from "./pages/MentorDashboardPage";
+import PartnerDashboardPage from "./pages/PartnerDashboardPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const LoadingSpinner = () => (
+  <div className="flex min-h-screen items-center justify-center">
+    <div className="h-8 w-8 animate-spin rounded-full border-4 border-gold border-t-transparent" />
+  </div>
+);
+
 const ProtectedRoute = ({ children, requireOnboarding = true }: { children: React.ReactNode; requireOnboarding?: boolean }) => {
   const { session, profile, loading } = useAuth();
-  if (loading) return <div className="flex min-h-screen items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-gold border-t-transparent" /></div>;
+  if (loading) return <LoadingSpinner />;
   if (!session) return <Navigate to="/auth" replace />;
   if (requireOnboarding && profile && profile.onboarding_step !== "completed") {
     return <Navigate to="/onboarding" replace />;
@@ -23,11 +33,34 @@ const ProtectedRoute = ({ children, requireOnboarding = true }: { children: Reac
 };
 
 const OnboardingRoute = ({ children }: { children: React.ReactNode }) => {
-  const { session, profile, loading } = useAuth();
-  if (loading) return <div className="flex min-h-screen items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-gold border-t-transparent" /></div>;
+  const { session, profile, loading, roles } = useAuth();
+  if (loading) return <LoadingSpinner />;
   if (!session) return <Navigate to="/auth" replace />;
-  if (profile && profile.onboarding_step === "completed") return <Navigate to="/dashboard" replace />;
+  if (profile && profile.onboarding_step === "completed") {
+    return <Navigate to={getRoleDashboardPath(roles[0])} replace />;
+  }
   return <>{children}</>;
+};
+
+/** Guard that checks if the user has the correct role for a dashboard */
+const RoleRoute = ({ allowedRole, children }: { allowedRole: string; children: React.ReactNode }) => {
+  const { roles, loading, session, profile } = useAuth();
+  if (loading) return <LoadingSpinner />;
+  if (!session) return <Navigate to="/auth" replace />;
+  if (profile && profile.onboarding_step !== "completed") return <Navigate to="/onboarding" replace />;
+  if (!roles.includes(allowedRole as any)) {
+    return <Navigate to={getRoleDashboardPath(roles[0])} replace />;
+  }
+  return <>{children}</>;
+};
+
+/** Smart redirect from /dashboard to the correct role-based dashboard */
+const DashboardRedirect = () => {
+  const { roles, loading, session, profile } = useAuth();
+  if (loading) return <LoadingSpinner />;
+  if (!session) return <Navigate to="/auth" replace />;
+  if (profile && profile.onboarding_step !== "completed") return <Navigate to="/onboarding" replace />;
+  return <Navigate to={getRoleDashboardPath(roles[0])} replace />;
 };
 
 const App = () => (
@@ -41,7 +74,16 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/onboarding" element={<OnboardingRoute><OnboardingPage /></OnboardingRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+            
+            {/* Smart redirect for backward compat */}
+            <Route path="/dashboard" element={<DashboardRedirect />} />
+            
+            {/* Role-based dashboards */}
+            <Route path="/founder/dashboard" element={<RoleRoute allowedRole="startup_founder"><FounderDashboardPage /></RoleRoute>} />
+            <Route path="/investor/dashboard" element={<RoleRoute allowedRole="investor"><InvestorDashboardPage /></RoleRoute>} />
+            <Route path="/mentor/dashboard" element={<RoleRoute allowedRole="mentor"><MentorDashboardPage /></RoleRoute>} />
+            <Route path="/partner/dashboard" element={<RoleRoute allowedRole="ecosystem_partner"><PartnerDashboardPage /></RoleRoute>} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
