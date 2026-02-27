@@ -1,84 +1,108 @@
 
 
-## Plan: Make Post Creation Fully Functional with Media, Events & Articles — Plus Allow Investors to Post Opportunities
+## Plan: Role-Based Onboarding & Dashboard Routing
 
-This plan covers two major areas: (1) making the CreatePostCard action buttons (Photo, Video, Event, Write Article) fully functional with real uploads and forms, and (2) allowing investors/ecosystem partners to create opportunities directly from the platform.
+This is a large architectural change. I recommend breaking it into **3 phases** to avoid breaking the app.
 
----
+### Phase 1: Revamp Onboarding Flow (3 steps instead of current 3)
 
-### What Changes
+**Current state:** Auth page → Onboarding (role → membership → profile) → single `/dashboard`
 
-**1. Database Migration**
-- Add a `video_url` column to the `posts` table (text, nullable) to support video posts alongside existing `image_url`
-- Create a public `post-media` storage bucket for images and videos attached to posts
-- Add RLS policies on the storage bucket so authenticated users can upload, and anyone can view
-- Update `opportunities` RLS: allow any authenticated user to INSERT (not just admins), so investors and ecosystem partners can post opportunities. The `created_by` field will track ownership
+**New flow:**
+1. Auth page gets role selection BEFORE signup (step 1 on the auth page itself)
+2. After auth, onboarding is simplified to just: Full Name, Profile Picture, Location, Headline
+3. Remove the membership step from onboarding (upgrade happens later from Settings)
 
-**2. Enhanced CreatePostCard** (`src/components/dashboard/CreatePostCard.tsx`)
-- **Photo button**: Opens a file picker for images (jpg/png/webp), uploads to `post-media` bucket, previews the selected image before posting, stores the URL in `image_url`
-- **Video button**: Opens a file picker for video (mp4/webm, max 50MB), uploads to `post-media` bucket, stores in `video_url`
-- **Event button**: Opens a `CreateEventDialog`-style inline form (title, date, time, location, virtual toggle) that creates a post with category "event" and structured event details in the content
-- **Write Article button**: Expands the editor with a title field and a larger rich-text area for long-form content, posted as category "article"
-- The `onSubmit` signature will expand to accept `imageUrl` and `videoUrl` parameters
+**Changes:**
+- **`src/pages/AuthPage.tsx`** — Add role selection screen as the first view. Store selected role in state. Pass it through auth metadata (`raw_user_meta_data.primary_role`). After signup/login, if onboarding incomplete → redirect to `/onboarding`
+- **`src/pages/OnboardingPage.tsx`** — Simplify to single step: Full Name, Avatar upload, Location, Headline. On completion, read the role from `user_roles` table and redirect to the correct role-based route
+- **`src/contexts/AuthContext.tsx`** — Add a `primaryRole` derived field from the first role in `roles[]` for easy routing
+- **DB trigger update** — Modify `handle_new_user()` to also insert into `user_roles` if `raw_user_meta_data.primary_role` is present
 
-**3. Updated PostCard** (`src/components/dashboard/PostCard.tsx`)
-- Render `video_url` as an HTML5 `<video>` player with controls when present
-- Support the "article" category with a distinct visual treatment (larger title, read-more expandable content)
-
-**4. Updated usePosts hook** (`src/hooks/usePosts.ts`)
-- `createPost` accepts optional `imageUrl` and `videoUrl`
-- `PostWithDetails` interface adds `video_url`
-
-**5. Updated useHomeFeed hook** (`src/hooks/useHomeFeed.ts`)
-- Include `video_url` in post fetching and `FeedItem` interface
-
-**6. Create Opportunity Dialog** — New Component
-- Create `src/components/opportunities/CreateOpportunityDialog.tsx`
-- Form fields: title, description, type (grant/funding_call/accelerator/job), organization, amount, deadline, location, eligibility, tags
-- Available from the Opportunities page header AND optionally from the home feed for investors
-- Inserts into `opportunities` table with `created_by = user.id`
-
-**7. OpportunitiesPage Update** (`src/components/opportunities/OpportunitiesPage.tsx`)
-- Add a "Post Opportunity" button in the header visible to all authenticated users
-- Opens the CreateOpportunityDialog
-
-**8. Role-Agnostic Access**
-- All features (photo, video, event, article posting; opportunity creation) work for any authenticated user regardless of role (startup_founder, investor, mentor, ecosystem_partner)
-
----
-
-### Technical Details
-
-**Storage Bucket Migration SQL:**
+**Database migration:**
 ```sql
-INSERT INTO storage.buckets (id, name, public) VALUES ('post-media', 'post-media', true);
-
-CREATE POLICY "Anyone can view post media" ON storage.objects FOR SELECT USING (bucket_id = 'post-media');
-CREATE POLICY "Authenticated users can upload post media" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'post-media' AND auth.role() = 'authenticated');
-CREATE POLICY "Users can delete own post media" ON storage.objects FOR DELETE USING (bucket_id = 'post-media' AND (storage.foldername(name))[1] = auth.uid()::text);
-
-ALTER TABLE public.posts ADD COLUMN video_url text;
-
--- Allow any authenticated user to create opportunities
-DROP POLICY IF EXISTS "Admins can create opportunities" ON public.opportunities;
-CREATE POLICY "Authenticated users can create opportunities" ON public.opportunities FOR INSERT WITH CHECK (auth.uid() = created_by);
-
--- Allow creators to update/delete their own opportunities
-DROP POLICY IF EXISTS "Admins can update opportunities" ON public.opportunities;
-CREATE POLICY "Creators and admins can update opportunities" ON public.opportunities FOR UPDATE USING (auth.uid() = created_by OR has_role(auth.uid(), 'admin'::app_role));
-
-DROP POLICY IF EXISTS "Admins can delete opportunities" ON public.opportunities;
-CREATE POLICY "Creators and admins can delete opportunities" ON public.opportunities FOR DELETE USING (auth.uid() = created_by OR has_role(auth.uid(), 'admin'::app_role));
+-- Update handle_new_user to auto-assign role from signup metadata
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public' AS $$
+BEGIN
+  INSERT INTO public.profiles (user_id, full_name, avatar_url)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.raw_user_meta_data ->> 'full_name', NEW.raw_user_meta_data ->> 'name', ''),
+    COALESCE(NEW.raw_user_meta_data ->> 'avatar_url', '')
+  );
+  -- Auto-assign role if provided during signup
+  IF NEW.raw_user_meta_data ->> 'primary_role' IS NOT NULL THEN
+    INSERT INTO public.user_roles (user_id, role)
+    VALUES (NEW.id, (NEW.raw_user_meta_data ->> 'primary_role')::app_role)
+    ON CONFLICT DO NOTHING;
+  END IF;
+  RETURN NEW;
+END;
+$$;
 ```
 
-**Files to Create:**
-- `src/components/opportunities/CreateOpportunityDialog.tsx`
+### Phase 2: Role-Based Routes & Dashboard Layouts
 
-**Files to Modify:**
-- `src/components/dashboard/CreatePostCard.tsx` — add file upload, event form, article mode
-- `src/components/dashboard/PostCard.tsx` — render video, article layout
-- `src/hooks/usePosts.ts` — add video_url support
-- `src/hooks/useHomeFeed.ts` — add video_url to FeedItem
-- `src/components/dashboard/EcosystemFeed.tsx` — pass video support through
-- `src/components/opportunities/OpportunitiesPage.tsx` — add "Post Opportunity" button
+**New route structure in `App.tsx`:**
+- `/founder/dashboard` → `FounderDashboardPage`
+- `/investor/dashboard` → `InvestorDashboardPage` (new layout)
+- `/mentor/dashboard` → `MentorDashboardPage`
+- `/partner/dashboard` → `PartnerDashboardPage`
+- `/dashboard` → redirect based on role (backward compat)
+
+**New files to create:**
+- `src/pages/FounderDashboardPage.tsx` — Wraps existing `DashboardPage` logic with founder sidebar
+- `src/pages/InvestorDashboardPage.tsx` — New layout with investor-specific sidebar
+- `src/pages/MentorDashboardPage.tsx` — New layout with mentor-specific sidebar
+- `src/pages/PartnerDashboardPage.tsx` — New layout with partner-specific sidebar
+- `src/components/dashboard/RoleBasedSidebar.tsx` — A single sidebar component that renders different nav items based on role prop
+
+**Route guard (`RoleRoute` component):**
+```tsx
+const RoleRoute = ({ allowedRole, children }) => {
+  const { roles } = useAuth();
+  if (!roles.includes(allowedRole)) {
+    // Redirect to correct dashboard
+    return <Navigate to={getRoleDashboardPath(roles[0])} replace />;
+  }
+  return children;
+};
+```
+
+**Each role's sidebar items:**
+
+| Founder | Investor | Mentor | Partner |
+|---------|----------|--------|---------|
+| Home | Home | Home | Home |
+| My Network | Discover Startups | My Sessions | Programs |
+| Groups | Saved Startups | Availability | Opportunities |
+| Messages | Messages | Messages | Startups |
+| Mentors | Portfolio | Reviews | Analytics |
+| My Sessions | Settings | Settings | Settings |
+| Investors | | | |
+| Opportunities | | | |
+| My Startups | | | |
+| Settings | | | |
+
+### Phase 3: Access Control & Polish
+
+- Each role dashboard page only renders role-relevant content tabs
+- `ProtectedRoute` updated to check role and redirect accordingly
+- Old `/dashboard` route becomes a smart redirect
+- Founder dashboard shows "Startup Setup" prompt if no startups exist
+- Remove `service_provider` and `member` from the role selection UI (keep in DB enum for backward compat, map them to nearest role)
+
+### Implementation Order (recommended)
+
+1. DB migration (update `handle_new_user` trigger)
+2. Update `AuthPage.tsx` with role selection pre-auth
+3. Simplify `OnboardingPage.tsx`
+4. Create role-specific sidebar config
+5. Create 4 dashboard page wrappers
+6. Update `App.tsx` routes with role guards
+7. Update `AuthContext` with `primaryRole` helper
+
+### Note on LinkedIn Auth
+LinkedIn OAuth is **not supported** in Lovable Cloud. Only Google and Email+Password will be available. The LinkedIn option from the user's spec will be omitted.
 
