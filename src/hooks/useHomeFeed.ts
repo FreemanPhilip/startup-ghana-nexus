@@ -16,6 +16,7 @@ export interface FeedItem {
   author_headline?: string | null;
   author_avatar?: string | null;
   author_verification?: string;
+  author_role?: string | null;
   likes_count?: number;
   comments_count?: number;
   is_liked?: boolean;
@@ -86,8 +87,10 @@ export function useHomeFeed() {
     const postIds = (postsRes.data || []).map(p => p.id);
     const gpIds = groupPostsData.map(p => p.id);
 
-    const [profilesRes, startupsRes, likesRes, commentsRes, userLikesRes, gpLikesRes, gpCommentsRes, gpUserLikesRes] = await Promise.all([
+    const [profilesRes, startupsRes, rolesRes, likesRes, commentsRes, userLikesRes, gpLikesRes, gpCommentsRes, gpUserLikesRes] = await Promise.all([
       authorIdsArr.length > 0 ? supabase.from("profiles").select("user_id, full_name, headline, avatar_url, verification").in("user_id", authorIdsArr) : Promise.resolve({ data: [] }),
+      startupIdsArr.length > 0 ? supabase.from("startups").select("id, name, logo_url").in("id", startupIdsArr) : Promise.resolve({ data: [] }),
+      authorIdsArr.length > 0 ? supabase.from("user_roles").select("user_id, role").in("user_id", authorIdsArr) : Promise.resolve({ data: [] }),
       startupIdsArr.length > 0 ? supabase.from("startups").select("id, name, logo_url").in("id", startupIdsArr) : Promise.resolve({ data: [] }),
       postIds.length > 0 ? supabase.from("post_likes").select("post_id").in("post_id", postIds) : Promise.resolve({ data: [] }),
       postIds.length > 0 ? supabase.from("post_comments").select("post_id").in("post_id", postIds) : Promise.resolve({ data: [] }),
@@ -99,6 +102,7 @@ export function useHomeFeed() {
 
     const profileMap = new Map((profilesRes.data || []).map(p => [p.user_id, p]));
     const startupMap = new Map((startupsRes.data || []).map((s: any) => [s.id, s]));
+    const roleMap = new Map((rolesRes.data || []).map((r: any) => [r.user_id, r.role]));
 
     // Count maps for regular posts
     const likeCounts = new Map<string, number>();
@@ -134,6 +138,7 @@ export function useHomeFeed() {
         author_headline: profile?.headline ?? null,
         author_avatar: profile?.avatar_url ?? null,
         author_verification: profile?.verification || "unverified",
+        author_role: roleMap.get(p.author_id) ?? null,
         likes_count: likeCounts.get(p.id) ?? 0,
         comments_count: commentCounts.get(p.id) ?? 0,
         is_liked: userLikedSet.has(p.id),
@@ -158,6 +163,7 @@ export function useHomeFeed() {
         author_headline: profile?.headline ?? null,
         author_avatar: profile?.avatar_url ?? null,
         author_verification: profile?.verification || "unverified",
+        author_role: roleMap.get(p.author_id) ?? null,
         likes_count: gpLikeCounts.get(p.id) ?? 0,
         comments_count: gpCommentCounts.get(p.id) ?? 0,
         is_liked: gpUserLikedSet.has(p.id),

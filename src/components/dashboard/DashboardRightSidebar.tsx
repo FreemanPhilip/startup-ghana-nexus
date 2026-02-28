@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Calendar, Video, CheckSquare, BarChart3, Sparkles, Loader2 } from "lucide-react";
 import BrowseMentorsDialog from "./BrowseMentorsDialog";
 import AIMatchDialog from "./AIMatchDialog";
+import ActiveMembers from "./ActiveMembers";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card } from "@/components/ui/card";
@@ -231,6 +232,9 @@ const DashboardRightSidebar = ({ onNavigate }: DashboardRightSidebarProps) => {
           Get AI Matching
         </Button>
       </Card>
+
+      {/* Active Members across ecosystem */}
+      <ActiveMembers />
 
       {/* Dialogs */}
       <BrowseMentorsDialog
