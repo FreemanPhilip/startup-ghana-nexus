@@ -101,6 +101,7 @@ const EcosystemFeed = ({ onViewOpportunity, onViewGroup, onViewStartup, activeId
                     author_headline: item.author_headline ?? null,
                     author_avatar: item.author_avatar ?? null,
                     author_verification: item.author_verification || "unverified",
+                    author_role: item.author_role ?? null,
                     likes_count: item.likes_count || 0,
                     comments_count: item.comments_count || 0,
                     is_liked: item.is_liked || false,
