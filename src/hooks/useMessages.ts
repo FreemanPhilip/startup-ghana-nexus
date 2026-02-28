@@ -115,14 +115,28 @@ export function useMessages() {
     setMessages(data ?? []);
     setLoadingMessages(false);
 
-    // Mark messages as read
+    // Mark messages as read and immediately update unread count in conversation list
     if (user) {
-      await supabase
+      const { count } = await supabase
         .from("messages")
-        .update({ read_at: new Date().toISOString() })
+        .select("*", { count: "exact", head: true })
         .eq("conversation_id", conversationId)
         .neq("sender_id", user.id)
         .is("read_at", null);
+
+      if (count && count > 0) {
+        await supabase
+          .from("messages")
+          .update({ read_at: new Date().toISOString() })
+          .eq("conversation_id", conversationId)
+          .neq("sender_id", user.id)
+          .is("read_at", null);
+
+        // Instantly clear the unread badge for this conversation (no refetch needed)
+        setConversations(prev =>
+          prev.map(c => c.id === conversationId ? { ...c, unread_count: 0 } : c)
+        );
+      }
     }
   }, [user]);
 
@@ -205,12 +219,17 @@ export function useMessages() {
         (payload) => {
           const newMsg = payload.new as Message;
           setMessages(prev => [...prev, newMsg]);
-          // Mark as read if not from us
+          // Immediately mark as read and clear unread badge (WhatsApp-style)
           if (user && newMsg.sender_id !== user.id) {
             supabase
               .from("messages")
               .update({ read_at: new Date().toISOString() })
-              .eq("id", newMsg.id);
+              .eq("id", newMsg.id)
+              .then(() => {
+                setConversations(prev =>
+                  prev.map(c => c.id === activeConversation ? { ...c, unread_count: 0 } : c)
+                );
+              });
           }
         }
       )
@@ -230,6 +249,11 @@ export function useMessages() {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "conversations" },
+        () => { fetchConversations(); }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "messages" },
         () => { fetchConversations(); }
       )
       .subscribe();
