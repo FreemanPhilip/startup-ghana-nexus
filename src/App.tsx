@@ -36,7 +36,7 @@ const OnboardingRoute = ({ children }: { children: React.ReactNode }) => {
   const { session, profile, loading, roles } = useAuth();
   if (loading) return <LoadingSpinner />;
   if (!session) return <Navigate to="/auth" replace />;
-  if (profile && profile.onboarding_step === "completed") {
+  if (profile && profile.onboarding_step === "completed" && roles.length > 0) {
     return <Navigate to={getRoleDashboardPath(roles[0])} replace />;
   }
   return <>{children}</>;
