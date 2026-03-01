@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { getRoleDashboardPath } from "@/lib/roleRouting";
+import OnboardingRoleStep from "@/components/onboarding/OnboardingRoleStep";
 import OnboardingProfileStep from "@/components/onboarding/OnboardingProfileStep";
 import OnboardingKYCStep from "@/components/onboarding/OnboardingKYCStep";
 import OnboardingMembershipStep from "@/components/onboarding/OnboardingMembershipStep";
@@ -13,9 +14,10 @@ import type { Database } from "@/integrations/supabase/types";
 
 type OnboardingStep = Database["public"]["Enums"]["onboarding_step"];
 
-const STEP_ORDER: OnboardingStep[] = ["profile_details", "kyc", "subscription", "completed"];
+const STEP_ORDER: OnboardingStep[] = ["role_selection", "profile_details", "kyc", "subscription", "completed"];
 
 const stepLabels: Record<string, string> = {
+  role_selection: "Role",
   profile_details: "Profile",
   kyc: "Verification",
   subscription: "Membership",
@@ -26,21 +28,20 @@ const OnboardingPage = () => {
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
 
-  // Determine current step from profile
   const currentStep: OnboardingStep = profile?.onboarding_step || "role_selection";
 
-  // If step is role_selection, move to profile_details (role was already selected at signup)
+  // If roles already assigned (e.g. from old signup with primary_role metadata), skip role_selection
   useEffect(() => {
-    if (user && currentStep === "role_selection") {
+    if (user && currentStep === "role_selection" && roles.length > 0) {
       supabase
         .from("profiles")
         .update({ onboarding_step: "profile_details" })
         .eq("user_id", user.id)
         .then(() => refreshProfile());
     }
-  }, [user, currentStep]);
+  }, [user, currentStep, roles.length]);
 
-  // Handle Google OAuth role assignment
+  // Handle Google OAuth role assignment (stored in localStorage from old flow)
   useEffect(() => {
     const pendingRole = localStorage.getItem("pending_role");
     if (pendingRole && user && roles.length === 0) {
@@ -84,7 +85,7 @@ const OnboardingPage = () => {
     }
   };
 
-  const stepIndex = STEP_ORDER.indexOf(currentStep === "role_selection" ? "profile_details" : currentStep);
+  const stepIndex = STEP_ORDER.indexOf(currentStep);
   const displaySteps = STEP_ORDER.filter(s => s !== "completed");
 
   return (
@@ -121,7 +122,12 @@ const OnboardingPage = () => {
 
         {/* Step content */}
         <AnimatePresence mode="wait">
-          {(currentStep === "profile_details" || currentStep === "role_selection") && (
+          {currentStep === "role_selection" && roles.length === 0 && (
+            <motion.div key="role" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+              <OnboardingRoleStep onNext={() => advanceStep("profile_details")} saving={saving} />
+            </motion.div>
+          )}
+          {currentStep === "profile_details" && (
             <motion.div key="profile" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
               <OnboardingProfileStep onNext={() => advanceStep("kyc")} saving={saving} />
             </motion.div>
