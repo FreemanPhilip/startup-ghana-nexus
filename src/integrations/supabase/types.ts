@@ -404,6 +404,7 @@ export type Database = {
           group_id: string
           id: string
           image_url: string | null
+          image_urls: string[] | null
           updated_at: string
           video_url: string | null
         }
@@ -414,6 +415,7 @@ export type Database = {
           group_id: string
           id?: string
           image_url?: string | null
+          image_urls?: string[] | null
           updated_at?: string
           video_url?: string | null
         }
@@ -424,6 +426,7 @@ export type Database = {
           group_id?: string
           id?: string
           image_url?: string | null
+          image_urls?: string[] | null
           updated_at?: string
           video_url?: string | null
         }
@@ -943,6 +946,7 @@ export type Database = {
           created_at: string
           id: string
           image_url: string | null
+          image_urls: string[] | null
           startup_id: string | null
           updated_at: string
           video_url: string | null
@@ -954,6 +958,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          image_urls?: string[] | null
           startup_id?: string | null
           updated_at?: string
           video_url?: string | null
@@ -965,6 +970,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          image_urls?: string[] | null
           startup_id?: string | null
           updated_at?: string
           video_url?: string | null

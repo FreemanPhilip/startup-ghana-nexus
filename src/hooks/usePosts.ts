@@ -7,6 +7,7 @@ export interface PostWithDetails {
   author_id: string;
   content: string;
   image_url: string | null;
+  image_urls: string[];
   video_url: string | null;
   category: string;
   created_at: string;
@@ -72,6 +73,7 @@ export function usePosts(category?: string) {
         author_id: p.author_id,
         content: p.content,
         image_url: p.image_url,
+        image_urls: (p as any).image_urls ?? [],
         video_url: (p as any).video_url ?? null,
         category: p.category,
         created_at: p.created_at,
@@ -100,13 +102,14 @@ export function usePosts(category?: string) {
     return () => { supabase.removeChannel(channel); };
   }, [fetchPosts]);
 
-  const createPost = async (content: string, category: string = "general", imageUrl?: string, videoUrl?: string, startupId?: string) => {
+  const createPost = async (content: string, category: string = "general", imageUrl?: string, videoUrl?: string, startupId?: string, imageUrls?: string[]) => {
     if (!user) return;
     await supabase.from("posts").insert({
       author_id: user.id,
       content,
       category,
       image_url: imageUrl ?? null,
+      image_urls: imageUrls ?? [],
       video_url: videoUrl ?? null,
       startup_id: startupId ?? null,
     } as any);

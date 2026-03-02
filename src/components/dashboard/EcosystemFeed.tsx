@@ -42,8 +42,8 @@ const EcosystemFeed = ({ onViewOpportunity, onViewGroup, onViewStartup, activeId
 
   const showConnectionsAt = 2;
 
-  const handleCreatePost = async (content: string, category: string, imageUrl?: string, videoUrl?: string, startupId?: string) => {
-    await createPost(content, category, imageUrl, videoUrl, startupId);
+  const handleCreatePost = async (content: string, category: string, imageUrl?: string, videoUrl?: string, startupId?: string, imageUrls?: string[]) => {
+    await createPost(content, category, imageUrl, videoUrl, startupId, imageUrls);
   };
 
   return (
@@ -94,6 +94,7 @@ const EcosystemFeed = ({ onViewOpportunity, onViewGroup, onViewStartup, activeId
                     author_id: item.author_id!,
                     content: item.content!,
                     image_url: item.image_url ?? null,
+                    image_urls: item.image_urls ?? [],
                     video_url: (item as any).video_url ?? null,
                     category: item.category || "general",
                     created_at: item.created_at,
