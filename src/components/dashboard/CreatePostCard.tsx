@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Send, Image as ImageIcon, Video, CalendarDays, FileText, X, MapPin, Clock, ChevronDown } from "lucide-react";
+import { Send, Image as ImageIcon, Video, CalendarDays, FileText, X, Plus, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ import type { PostingIdentity } from "./AvatarDropdown";
 import { useStartups } from "@/hooks/useStartups";
 
 interface CreatePostCardProps {
-  onSubmit: (content: string, category: string, imageUrl?: string, videoUrl?: string, startupId?: string) => Promise<void>;
+  onSubmit: (content: string, category: string, imageUrl?: string, videoUrl?: string, startupId?: string, imageUrls?: string[]) => Promise<void>;
   activeIdentity: PostingIdentity;
   onIdentityChange: (identity: PostingIdentity) => void;
 }
@@ -40,9 +40,9 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
   const [expanded, setExpanded] = useState(false);
   const [mode, setMode] = useState<PostMode>("default");
 
-  // Media state
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  // Multi-image state
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -70,8 +70,8 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
     setCategory("general");
     setExpanded(false);
     setMode("default");
-    setImageFile(null);
-    setImagePreview(null);
+    setImageFiles([]);
+    setImagePreviews([]);
     setVideoFile(null);
     setVideoPreview(null);
     setEventTitle("");
@@ -82,10 +82,10 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
     setArticleTitle("");
   };
 
-  const uploadFile = async (file: File, folder: string): Promise<string | null> => {
+  const uploadFile = async (file: File): Promise<string | null> => {
     if (!user) return null;
     const ext = file.name.split(".").pop();
-    const path = `${user.id}/${Date.now()}.${ext}`;
+    const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
     const { error } = await supabase.storage.from("post-media").upload(path, file);
     if (error) { toast.error("Upload failed: " + error.message); return null; }
     const { data } = supabase.storage.from("post-media").getPublicUrl(path);
@@ -93,13 +93,30 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
   };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 10 * 1024 * 1024) { toast.error("Image must be under 10MB"); return; }
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    const maxTotal = 10;
+    const remaining = maxTotal - imageFiles.length;
+    const toAdd = files.slice(0, remaining);
+
+    for (const file of toAdd) {
+      if (file.size > 10 * 1024 * 1024) { toast.error(`${file.name} exceeds 10MB limit`); continue; }
+      setImageFiles(prev => [...prev, file]);
+      setImagePreviews(prev => [...prev, URL.createObjectURL(file)]);
+    }
+    if (files.length > remaining) toast.info(`Max ${maxTotal} images allowed`);
+
+    // Clear video if adding images
     setVideoFile(null);
     setVideoPreview(null);
+    // Reset input value so same file can be re-selected
+    e.target.value = "";
+  };
+
+  const removeImage = (index: number) => {
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,8 +125,8 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
     if (file.size > 50 * 1024 * 1024) { toast.error("Video must be under 50MB"); return; }
     setVideoFile(file);
     setVideoPreview(URL.createObjectURL(file));
-    setImageFile(null);
-    setImagePreview(null);
+    setImageFiles([]);
+    setImagePreviews([]);
   };
 
   const handleSubmit = async () => {
@@ -117,16 +134,19 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
     try {
       let finalContent = content.trim();
       let finalCategory = category;
-      let imageUrl: string | undefined;
       let videoUrl: string | undefined;
+      let uploadedImageUrls: string[] = [];
 
-      if (imageFile) {
-        const url = await uploadFile(imageFile, "images");
-        if (!url) { setSubmitting(false); return; }
-        imageUrl = url;
+      // Upload all images
+      if (imageFiles.length > 0) {
+        const uploads = await Promise.all(imageFiles.map(f => uploadFile(f)));
+        const successfulUploads = uploads.filter(Boolean) as string[];
+        if (successfulUploads.length === 0 && imageFiles.length > 0) { setSubmitting(false); return; }
+        uploadedImageUrls = successfulUploads;
       }
+
       if (videoFile) {
-        const url = await uploadFile(videoFile, "videos");
+        const url = await uploadFile(videoFile);
         if (!url) { setSubmitting(false); return; }
         videoUrl = url;
       }
@@ -143,10 +163,11 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
         finalContent = `# ${articleTitle}\n\n${finalContent}`;
       }
 
-      if (!finalContent) { toast.error("Please add some content"); setSubmitting(false); return; }
+      if (!finalContent && uploadedImageUrls.length === 0 && !videoUrl) { toast.error("Please add some content"); setSubmitting(false); return; }
 
       const startupId = isStartup ? activeIdentity.startup?.id : undefined;
-      await onSubmit(finalContent, finalCategory, imageUrl, videoUrl, startupId);
+      const firstImageUrl = uploadedImageUrls[0];
+      await onSubmit(finalContent, finalCategory, firstImageUrl, videoUrl, startupId, uploadedImageUrls);
       resetAll();
       toast.success("Post published!");
     } catch {
@@ -167,7 +188,7 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
 
   return (
     <div className="rounded-xl border border-border bg-card">
-      <input ref={imageInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={handleImageSelect} />
+      <input ref={imageInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={handleImageSelect} multiple />
       <input ref={videoInputRef} type="file" accept="video/mp4,video/webm" className="hidden" onChange={handleVideoSelect} />
 
       {/* Identity selector */}
@@ -273,14 +294,31 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
             />
           )}
 
-          {imagePreview && (
-            <div className="relative">
-              <img src={imagePreview} alt="Preview" className="w-full max-h-64 object-cover rounded-lg" />
-              <button onClick={() => { setImageFile(null); setImagePreview(null); }} className="absolute top-2 right-2 rounded-full bg-background/80 p-1 hover:bg-background">
-                <X className="h-4 w-4" />
-              </button>
+          {/* Multi-image previews */}
+          {imagePreviews.length > 0 && (
+            <div className="grid grid-cols-3 gap-2">
+              {imagePreviews.map((preview, i) => (
+                <div key={i} className="relative group">
+                  <img src={preview} alt="Preview" className="w-full h-24 object-cover rounded-lg" />
+                  <button
+                    onClick={() => removeImage(i)}
+                    className="absolute top-1 right-1 rounded-full bg-background/80 p-0.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+              {imagePreviews.length < 10 && (
+                <button
+                  onClick={() => imageInputRef.current?.click()}
+                  className="flex items-center justify-center h-24 rounded-lg border-2 border-dashed border-border text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+                >
+                  <Plus className="h-5 w-5" />
+                </button>
+              )}
             </div>
           )}
+
           {videoPreview && (
             <div className="relative">
               <video src={videoPreview} controls className="w-full max-h-64 rounded-lg" />
@@ -292,7 +330,7 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
 
           <Textarea
             autoFocus={mode === "default"}
-            placeholder={mode === "article" ? "Write your article..." : mode === "event" ? "Add event details..." : "Share an update with the ecosystem..."}
+            placeholder={mode === "article" ? "Write your article... Use #hashtags and @mentions" : mode === "event" ? "Add event details..." : "Share an update... Use #hashtags and @mentions"}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={mode === "article" ? 8 : 3}

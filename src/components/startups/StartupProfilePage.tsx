@@ -153,7 +153,8 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
           const profile = profileMap.get(p.author_id);
           return {
             id: p.id, author_id: p.author_id, content: p.content,
-            image_url: p.image_url, video_url: (p as any).video_url ?? null,
+            image_url: p.image_url, image_urls: (p as any).image_urls ?? [],
+            video_url: (p as any).video_url ?? null,
             category: p.category, created_at: p.created_at,
             author_name: (s?.name ?? profile?.full_name) ?? "Anonymous",
             author_headline: profile?.headline ?? null,

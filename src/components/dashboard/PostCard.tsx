@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MessageCircle, Share2, CheckCircle, MoreHorizontal, Globe, ChevronDown, ChevronUp, Building2, Rocket, TrendingUp, GraduationCap, Handshake } from "lucide-react";
+import { Heart, MessageCircle, Share2, CheckCircle, MoreHorizontal, Globe, Building2, Rocket, TrendingUp, GraduationCap, Handshake } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import type { PostWithDetails, Comment } from "@/hooks/usePosts";
 import { formatDistanceToNow } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
+import PostContentRenderer from "./PostContentRenderer";
+import ImageCarousel from "./ImageCarousel";
 
 const roleConfig: Record<string, { label: string; className: string; icon: any }> = {
   startup_founder: { label: "Founder", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400", icon: Rocket },
@@ -52,7 +54,6 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loadingComments, setLoadingComments] = useState(false);
-  const [articleExpanded, setArticleExpanded] = useState(false);
 
   const isStartupPost = !!(post as any).startup_id;
   const startupId = (post as any).startup_id as string | undefined;
@@ -68,12 +69,18 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
   // Article parsing
   const isArticle = post.category === "article";
   let articleTitle = "";
-  let articleBody = post.content;
+  let contentBody = post.content;
   if (isArticle && post.content.startsWith("# ")) {
     const lines = post.content.split("\n");
     articleTitle = lines[0].replace(/^#\s*/, "");
-    articleBody = lines.slice(1).join("\n").trim();
+    contentBody = lines.slice(1).join("\n").trim();
   }
+
+  // Collect all images
+  const allImages: string[] = [
+    ...(post.image_urls || []),
+    ...(!post.image_urls?.length && post.image_url ? [post.image_url] : []),
+  ].filter(Boolean) as string[];
 
   const handleToggleComments = async () => {
     if (!showComments) {
@@ -165,29 +172,21 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
 
       {/* Content */}
       <div className="px-5 py-3">
-        {isArticle ? (
-          <div>
-            {articleTitle && <h3 className="text-lg font-bold mb-2">{articleTitle}</h3>}
-            <p className={`text-sm leading-relaxed whitespace-pre-wrap ${!articleExpanded && articleBody.length > 300 ? "line-clamp-4" : ""}`}>
-              {articleBody}
-            </p>
-            {articleBody.length > 300 && (
-              <button onClick={() => setArticleExpanded(!articleExpanded)} className="mt-1 flex items-center gap-1 text-xs font-medium text-primary hover:underline">
-                {articleExpanded ? <><ChevronUp className="h-3 w-3" /> Show less</> : <><ChevronDown className="h-3 w-3" /> Read more</>}
-              </button>
-            )}
-          </div>
-        ) : (
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">{post.content}</p>
+        {isArticle && articleTitle && (
+          <h3 className="text-lg font-bold mb-2">{articleTitle}</h3>
         )}
+        <PostContentRenderer
+          content={contentBody}
+          maxLines={isArticle ? 4 : 3}
+        />
       </div>
 
-      {post.image_url && (
-        <div>
-          <img src={post.image_url} alt="" className="w-full object-cover max-h-96" />
-        </div>
+      {/* Images carousel */}
+      {allImages.length > 0 && (
+        <ImageCarousel images={allImages} />
       )}
 
+      {/* Video */}
       {post.video_url && (
         <div>
           <video src={post.video_url} controls className="w-full max-h-96" />

@@ -3,6 +3,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import type { FeedItem } from "@/hooks/useHomeFeed";
 import { formatDistanceToNow } from "date-fns";
+import PostContentRenderer from "./PostContentRenderer";
+import ImageCarousel from "./ImageCarousel";
 
 interface GroupPostFeedCardProps {
   item: FeedItem;
@@ -14,9 +16,14 @@ const GroupPostFeedCard = ({ item, onToggleLike, onViewGroup }: GroupPostFeedCar
   const initials = (item.author_name || "U").split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
   const timeAgo = formatDistanceToNow(new Date(item.created_at), { addSuffix: false });
 
+  const allImages: string[] = [
+    ...((item as any).image_urls || []),
+    ...(!((item as any).image_urls?.length) && item.image_url ? [item.image_url] : []),
+  ].filter(Boolean) as string[];
+
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
-      {/* Group badge header - clickable */}
+      {/* Group badge header */}
       <button
         onClick={() => item.group_id && onViewGroup?.(item.group_id)}
         className="flex items-center gap-2 px-5 pt-3 pb-1 w-full text-left hover:bg-muted/50 transition-colors"
@@ -43,11 +50,11 @@ const GroupPostFeedCard = ({ item, onToggleLike, onViewGroup }: GroupPostFeedCar
 
       {/* Content */}
       <div className="px-5 py-3">
-        <p className="text-sm leading-relaxed whitespace-pre-wrap">{item.content}</p>
+        <PostContentRenderer content={item.content || ""} maxLines={3} />
       </div>
 
-      {item.image_url && (
-        <img src={item.image_url} alt="" className="w-full object-cover max-h-96" />
+      {allImages.length > 0 && (
+        <ImageCarousel images={allImages} />
       )}
 
       {/* Actions */}

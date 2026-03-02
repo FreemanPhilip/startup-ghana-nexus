@@ -10,6 +10,7 @@ export interface FeedItem {
   author_id?: string;
   content?: string;
   image_url?: string | null;
+  image_urls?: string[];
   video_url?: string | null;
   category?: string;
   author_name?: string;
@@ -132,6 +133,7 @@ export function useHomeFeed() {
         author_id: p.author_id,
         content: p.content,
         image_url: p.image_url,
+        image_urls: (p as any).image_urls ?? [],
         video_url: (p as any).video_url ?? null,
         category: p.category,
         author_name: profile?.full_name || "Anonymous",
@@ -159,6 +161,7 @@ export function useHomeFeed() {
         author_id: p.author_id,
         content: p.content,
         image_url: p.image_url,
+        image_urls: (p as any).image_urls ?? [],
         author_name: profile?.full_name || "Anonymous",
         author_headline: profile?.headline ?? null,
         author_avatar: profile?.avatar_url ?? null,
