@@ -58,7 +58,7 @@ const AvatarDropdown = ({ onNavigate, onSignOut, activeIdentity, onIdentityChang
         )}
 
         {/* Identity switching */}
-        {myStartups.length > 0 && (
+        {!hideStartups && myStartups.length > 0 && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuLabel className="text-xs text-muted-foreground flex items-center gap-1">
