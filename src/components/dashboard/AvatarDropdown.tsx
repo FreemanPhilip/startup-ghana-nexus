@@ -51,9 +51,11 @@ const AvatarDropdown = ({ onNavigate, onSignOut, activeIdentity, onIdentityChang
         <DropdownMenuItem onClick={() => onNavigate("profile")} className="gap-2 cursor-pointer">
           <User className="h-4 w-4" /> View Profile
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onNavigate("my-startups")} className="gap-2 cursor-pointer">
-          <Building2 className="h-4 w-4" /> My Startups
-        </DropdownMenuItem>
+        {!hideStartups && (
+          <DropdownMenuItem onClick={() => onNavigate("my-startups")} className="gap-2 cursor-pointer">
+            <Building2 className="h-4 w-4" /> My Startups
+          </DropdownMenuItem>
+        )}
 
         {/* Identity switching */}
         {myStartups.length > 0 && (
