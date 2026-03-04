@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MessageCircle, Share2, CheckCircle, MoreHorizontal, Globe, Building2, Rocket, TrendingUp, GraduationCap, Handshake } from "lucide-react";
+import { Heart, MessageCircle, CheckCircle, MoreHorizontal, Globe, Building2, Rocket, TrendingUp, GraduationCap, Handshake } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
 import PostContentRenderer from "./PostContentRenderer";
 import ImageCarousel from "./ImageCarousel";
+import ShareMenu from "./ShareMenu";
 
 const roleConfig: Record<string, { label: string; className: string; icon: any }> = {
   startup_founder: { label: "Founder", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400", icon: Rocket },
@@ -213,10 +214,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
           <MessageCircle className="h-4 w-4" />
           {post.comments_count > 0 && post.comments_count}
         </Button>
-        <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-muted-foreground">
-          <Share2 className="h-4 w-4" />
-          Share
-        </Button>
+        <ShareMenu postId={post.id} postContent={post.content} authorName={displayName} />
       </div>
 
       {/* Comments section */}
