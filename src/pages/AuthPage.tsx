@@ -42,7 +42,7 @@ const AuthPage = () => {
         });
         if (error) throw error;
         if (data.session) {
-          navigate("/onboarding");
+          navigate("/dashboard");
         } else {
           toast.success("Check your email to confirm your account!");
         }
@@ -62,7 +62,7 @@ const AuthPage = () => {
     setLoading(true);
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin + "/onboarding",
+        redirect_uri: window.location.origin + "/dashboard",
       });
       if (result.error) throw result.error;
     } catch (error: any) {
