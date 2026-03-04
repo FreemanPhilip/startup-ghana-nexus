@@ -18,8 +18,9 @@ interface AvatarDropdownProps {
 }
 
 const AvatarDropdown = ({ onNavigate, onSignOut, activeIdentity, onIdentityChange }: AvatarDropdownProps) => {
-  const { profile } = useAuth();
+  const { profile, primaryRole } = useAuth();
   const { myStartups } = useStartups();
+  const hideStartups = primaryRole === "mentor" || primaryRole === "investor";
 
   const initials = profile?.full_name?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "U";
 
@@ -50,12 +51,14 @@ const AvatarDropdown = ({ onNavigate, onSignOut, activeIdentity, onIdentityChang
         <DropdownMenuItem onClick={() => onNavigate("profile")} className="gap-2 cursor-pointer">
           <User className="h-4 w-4" /> View Profile
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onNavigate("my-startups")} className="gap-2 cursor-pointer">
-          <Building2 className="h-4 w-4" /> My Startups
-        </DropdownMenuItem>
+        {!hideStartups && (
+          <DropdownMenuItem onClick={() => onNavigate("my-startups")} className="gap-2 cursor-pointer">
+            <Building2 className="h-4 w-4" /> My Startups
+          </DropdownMenuItem>
+        )}
 
         {/* Identity switching */}
-        {myStartups.length > 0 && (
+        {!hideStartups && myStartups.length > 0 && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuLabel className="text-xs text-muted-foreground flex items-center gap-1">
