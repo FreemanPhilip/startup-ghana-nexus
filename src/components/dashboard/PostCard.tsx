@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MessageCircle, Share2, CheckCircle, MoreHorizontal, Globe, Building2, Rocket, TrendingUp, GraduationCap, Handshake } from "lucide-react";
+import { Heart, MessageCircle, CheckCircle, MoreHorizontal, Globe, Building2, Rocket, TrendingUp, GraduationCap, Handshake } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
