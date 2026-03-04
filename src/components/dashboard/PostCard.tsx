@@ -214,10 +214,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
           <MessageCircle className="h-4 w-4" />
           {post.comments_count > 0 && post.comments_count}
         </Button>
-        <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-muted-foreground">
-          <Share2 className="h-4 w-4" />
-          Share
-        </Button>
+        <ShareMenu postId={post.id} postContent={post.content} authorName={displayName} />
       </div>
 
       {/* Comments section */}
