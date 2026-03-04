@@ -9,6 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
 import PostContentRenderer from "./PostContentRenderer";
 import ImageCarousel from "./ImageCarousel";
+import ShareMenu from "./ShareMenu";
 
 const roleConfig: Record<string, { label: string; className: string; icon: any }> = {
   startup_founder: { label: "Founder", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400", icon: Rocket },
