@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, Mail, Lock, User, Eye, EyeOff, ArrowLeft } from "lucide-react";
@@ -8,8 +8,10 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AuthPage = () => {
+  const { session, profile, loading: authLoading } = useAuth();
   const [isSignUp, setIsSignUp] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,6 +19,13 @@ const AuthPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Redirect authenticated users away from auth page
+  useEffect(() => {
+    if (session && profile) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [session, profile, navigate]);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
