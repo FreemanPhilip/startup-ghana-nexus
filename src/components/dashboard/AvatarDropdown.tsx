@@ -18,8 +18,9 @@ interface AvatarDropdownProps {
 }
 
 const AvatarDropdown = ({ onNavigate, onSignOut, activeIdentity, onIdentityChange }: AvatarDropdownProps) => {
-  const { profile } = useAuth();
+  const { profile, primaryRole } = useAuth();
   const { myStartups } = useStartups();
+  const hideStartups = primaryRole === "mentor" || primaryRole === "investor";
 
   const initials = profile?.full_name?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "U";
 
