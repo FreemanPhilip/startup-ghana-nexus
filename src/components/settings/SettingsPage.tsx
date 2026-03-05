@@ -462,17 +462,15 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
                     )}
                   </div>
 
-                  {/* Roles */}
+                  {/* Role */}
                   <div className="flex items-center justify-between py-2 border-b border-border">
                     <div>
-                      <p className="text-sm font-medium">Roles</p>
+                      <p className="text-sm font-medium">Role</p>
                       <div className="flex flex-wrap gap-1.5 mt-1">
                         {roles.length === 0 ? (
-                          <span className="text-xs text-muted-foreground">No roles assigned</span>
+                          <span className="text-xs text-muted-foreground">No role assigned</span>
                         ) : (
-                          roles.map(r => (
-                            <Badge key={r} variant="outline" className="text-[10px] capitalize">{r.replace("_", " ")}</Badge>
-                          ))
+                          <Badge variant="outline" className="text-[10px] capitalize">{roles[0].replace(/_/g, " ")}</Badge>
                         )}
                       </div>
                     </div>
