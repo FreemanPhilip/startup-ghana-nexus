@@ -1,6 +1,7 @@
 import { Building2, DollarSign, Landmark, Users2, Briefcase, Globe, UserPlus, UserCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const iconMap: Record<string, React.ElementType> = {
   building: Building2,
@@ -20,6 +21,8 @@ export interface InvestorData {
   matchPercent: number;
   status: string;
   icon: string;
+  avatar_url?: string | null;
+  isRealUser?: boolean;
 }
 
 interface InvestorCardProps {
@@ -38,6 +41,12 @@ const getMatchColor = (pct: number) => {
 
 const InvestorCard = ({ investor, onConnect, onView, isConnected }: InvestorCardProps) => {
   const Icon = iconMap[investor.icon] || Building2;
+  const initials = investor.name
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2) || "IN";
 
   return (
     <div
@@ -47,9 +56,16 @@ const InvestorCard = ({ investor, onConnect, onView, isConnected }: InvestorCard
       {/* Header */}
       <div>
         <div className="flex items-start justify-between">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-            <Icon className="h-6 w-6 text-primary" />
-          </div>
+          {investor.isRealUser ? (
+            <Avatar className="h-12 w-12">
+              <AvatarImage src={investor.avatar_url || undefined} />
+              <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold">{initials}</AvatarFallback>
+            </Avatar>
+          ) : (
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+              <Icon className="h-6 w-6 text-primary" />
+            </div>
+          )}
           <div className="text-right">
             <span className={`inline-block rounded-full border px-2.5 py-0.5 text-xs font-bold ${getMatchColor(investor.matchPercent)}`}>
               {investor.matchPercent}% Match
