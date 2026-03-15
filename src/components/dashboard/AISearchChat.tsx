@@ -12,7 +12,7 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ecosystem-ch
 
 const quickPrompts = [
   "Find investors for my FinTech startup",
-  "What accelerators are active in Ghana?",
+  "What accelerators are active in Africa?",
   "Tips for my seed round pitch deck",
   "Show me trending opportunities",
   "How do I connect with mentors?",
