@@ -146,7 +146,7 @@ const AISearchChat = () => {
         className="relative flex w-full max-w-md items-center gap-2 rounded-lg bg-muted/50 px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted"
       >
         <Sparkles className="h-4 w-4 text-primary" />
-        <span className="flex-1 text-left">Ask AGS AI anything...</span>
+        <span className="flex-1 text-left">Ask SparkX AI anything...</span>
         <kbd className="hidden rounded bg-muted px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground sm:inline">⌘K</kbd>
       </button>
 
