@@ -59,7 +59,7 @@ const investorDetails: Record<string, {
     recentActivity: [
       { text: "Led GH₵2.5M seed round for MediTrack", date: "2 weeks ago" },
       { text: "Participated in Accra Startup Week panel", date: "1 month ago" },
-      { text: "Published: 'State of FinTech in Ghana 2025'", date: "2 months ago" },
+      { text: "Published: 'State of FinTech in Africa 2025'", date: "2 months ago" },
     ],
     thesis: "We invest in bold founders building category-defining FinTech and commerce solutions for West Africa. We look for strong product-market fit signals, a clear path to unit economics, and founders with deep domain expertise.",
     criteria: [
