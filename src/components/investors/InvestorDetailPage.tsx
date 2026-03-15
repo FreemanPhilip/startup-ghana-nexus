@@ -46,7 +46,7 @@ const investorDetails: Record<string, {
     investmentStage: ["Pre-Seed", "Seed"],
     sectors: ["FinTech", "E-Commerce", "B2B SaaS", "Payments"],
     portfolio: [
-      { name: "PayStack Ghana", stage: "Seed", year: "2023" },
+      { name: "PayStack Africa", stage: "Seed", year: "2023" },
       { name: "FarmConnect", stage: "Pre-Seed", year: "2024" },
       { name: "MediTrack", stage: "Seed", year: "2024" },
       { name: "ShopLocal", stage: "Pre-Seed", year: "2023" },
@@ -59,11 +59,11 @@ const investorDetails: Record<string, {
     recentActivity: [
       { text: "Led GH₵2.5M seed round for MediTrack", date: "2 weeks ago" },
       { text: "Participated in Accra Startup Week panel", date: "1 month ago" },
-      { text: "Published: 'State of FinTech in Ghana 2025'", date: "2 months ago" },
+      { text: "Published: 'State of FinTech in Africa 2025'", date: "2 months ago" },
     ],
     thesis: "We invest in bold founders building category-defining FinTech and commerce solutions for West Africa. We look for strong product-market fit signals, a clear path to unit economics, and founders with deep domain expertise.",
     criteria: [
-      "Ghana-based or Ghana-focused startups",
+      "Africa-based or Africa-focused startups",
       "Post-MVP with early traction (MRR > GH₵20k)",
       "Founding team with relevant industry experience",
       "Clear monetization strategy",
@@ -80,7 +80,7 @@ const investorDetails: Record<string, {
     investmentStage: ["Series A", "Series B"],
     sectors: ["CleanTech", "Renewable Energy", "AgriTech", "Impact"],
     portfolio: [
-      { name: "SolarGhana", stage: "Series A", year: "2022" },
+      { name: "SolarAfrica", stage: "Series A", year: "2022" },
       { name: "AquaClean Tech", stage: "Series A", year: "2023" },
       { name: "GreenHarvest", stage: "Series B", year: "2024" },
     ],
@@ -104,7 +104,7 @@ const investorDetails: Record<string, {
 
 const getDefaultDetail = (investor: InvestorData) => ({
   founded: "2020",
-  location: "Accra, Ghana",
+  location: "Accra, Africa",
   website: "#",
   email: `info@${investor.name.toLowerCase().replace(/\s+/g, "")}.com`,
   phone: "+233 XX XXX XXXX",

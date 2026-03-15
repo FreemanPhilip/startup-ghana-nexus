@@ -19,9 +19,9 @@ const plans = [
   },
   {
     name: "Premium",
-    price: "GH₵149",
+    price: "$49",
     period: "/month",
-    description: "Unlock the full power of AGS.",
+    description: "Unlock the full power of SparkX Index.",
     features: [
       "Verified profile badge",
       "Advanced search & matching",

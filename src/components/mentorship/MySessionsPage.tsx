@@ -145,7 +145,7 @@ const MySessionsPage = () => {
     const end = new Date(`${dateStr}T${b.end_time}`);
     return {
       title: `Mentorship Session with ${b.other_user?.full_name || "User"}`,
-      description: b.notes || "Mentorship session booked via GSE Portal",
+      description: b.notes || "Mentorship session booked via SparkX Index",
       startDate: start,
       endDate: end,
     };

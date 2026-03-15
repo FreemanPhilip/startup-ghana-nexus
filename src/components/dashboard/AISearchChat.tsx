@@ -12,7 +12,7 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ecosystem-ch
 
 const quickPrompts = [
   "Find investors for my FinTech startup",
-  "What accelerators are active in Ghana?",
+  "What accelerators are active in Africa?",
   "Tips for my seed round pitch deck",
   "Show me trending opportunities",
   "How do I connect with mentors?",
@@ -146,7 +146,7 @@ const AISearchChat = () => {
         className="relative flex w-full max-w-md items-center gap-2 rounded-lg bg-muted/50 px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted"
       >
         <Sparkles className="h-4 w-4 text-primary" />
-        <span className="flex-1 text-left">Ask AGS AI anything...</span>
+        <span className="flex-1 text-left">Ask SparkX AI anything...</span>
         <kbd className="hidden rounded bg-muted px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground sm:inline">⌘K</kbd>
       </button>
 
@@ -178,7 +178,7 @@ const AISearchChat = () => {
                     <Sparkles className="h-3.5 w-3.5 text-navy" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold">AGS AI Assistant</p>
+                    <p className="text-sm font-semibold">SparkX AI Assistant</p>
                     <p className="text-[10px] text-muted-foreground">Your startup ecosystem copilot</p>
                   </div>
                 </div>
@@ -194,7 +194,7 @@ const AISearchChat = () => {
                     <div className="text-center py-4">
                       <Sparkles className="mx-auto h-8 w-8 text-primary/40" />
                       <p className="mt-2 text-sm font-medium">How can I help you today?</p>
-                      <p className="text-xs text-muted-foreground">Ask about investors, mentors, funding, or anything in the Ghana startup ecosystem</p>
+                      <p className="text-xs text-muted-foreground">Ask about investors, mentors, funding, or anything in the African startup ecosystem</p>
                     </div>
                     <div className="flex flex-wrap gap-2 justify-center">
                       {quickPrompts.map(prompt => (

@@ -14,7 +14,7 @@ const roles = [
   },
   {
     title: "Mentors",
-    description: "Share your expertise, book structured sessions, and shape the next generation of Ghanaian founders.",
+    description: "Share your expertise, book structured sessions, and shape the next generation of African founders.",
     badge: "Guide & Impact",
   },
   {
@@ -35,13 +35,13 @@ const HowItWorks = () => {
           className="mb-16 text-center"
         >
           <span className="mb-3 inline-block rounded-full bg-emerald/10 px-4 py-1 text-sm font-semibold text-emerald">
-            Who It's For
+            Who Is This For?
           </span>
           <h2 className="font-display text-3xl font-bold sm:text-4xl md:text-5xl">
             One Platform, Every Stakeholder
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Whether you're building, investing, mentoring, or supporting — AGS has a place for you.
+            Whether you're building, investing, mentoring, or supporting — SparkX Index has a place for you.
           </p>
         </motion.div>
 
@@ -75,13 +75,13 @@ const HowItWorks = () => {
         >
           <Quote className="mx-auto mb-4 h-8 w-8 text-gold/40" />
           <blockquote className="text-lg font-medium italic leading-relaxed text-foreground/80">
-            "AGS connected us with the right investors at exactly the right time.
+            "SparkX Index connected us with the right investors at exactly the right time.
             Within three months, we closed our seed round and found an incredible
             mentor who transformed our go-to-market strategy."
           </blockquote>
           <div className="mt-6">
             <p className="font-display font-bold">Kwame Asante</p>
-            <p className="text-sm text-muted-foreground">Founder, TechNova Ghana</p>
+            <p className="text-sm text-muted-foreground">Founder, TechNova Africa</p>
           </div>
         </motion.div>
       </div>

@@ -30,7 +30,7 @@ const Navbar = () => {
             <Star className="h-5 w-5 text-navy" fill="currentColor" />
           </div>
           <span className="font-display text-xl font-bold tracking-tight">
-            AGS
+            SparkX Index
           </span>
         </a>
 
@@ -51,7 +51,7 @@ const Navbar = () => {
           {session ? (
             <Link to="/dashboard">
               <Button size="sm" className="bg-gradient-gold font-semibold text-navy hover:opacity-90">
-                Dashboard
+                The Index
               </Button>
             </Link>
           ) : (
@@ -61,7 +61,7 @@ const Navbar = () => {
               </Link>
               <Link to="/auth">
                 <Button size="sm" className="bg-gradient-gold font-semibold text-navy hover:opacity-90">
-                  Join AGS
+                  Join The Index
                 </Button>
               </Link>
             </>
@@ -99,7 +99,7 @@ const Navbar = () => {
             <div className="mt-2 flex flex-col gap-2">
               {session ? (
                 <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
-                  <Button size="sm" className="w-full bg-gradient-gold font-semibold text-navy">Dashboard</Button>
+                  <Button size="sm" className="w-full bg-gradient-gold font-semibold text-navy">The Index</Button>
                 </Link>
               ) : (
                 <>
@@ -107,7 +107,7 @@ const Navbar = () => {
                     <Button variant="ghost" size="sm" className="w-full">Sign In</Button>
                   </Link>
                   <Link to="/auth" onClick={() => setMobileOpen(false)}>
-                    <Button size="sm" className="w-full bg-gradient-gold font-semibold text-navy">Join AGS</Button>
+                    <Button size="sm" className="w-full bg-gradient-gold font-semibold text-navy">Join The Index</Button>
                   </Link>
                 </>
               )}

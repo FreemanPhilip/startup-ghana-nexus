@@ -322,7 +322,7 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
                     </div>
                     <div className="space-y-2">
                       <Label>Location</Label>
-                      <Input placeholder="Accra, Ghana" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} />
+                      <Input placeholder="e.g. Lagos, Nigeria" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} />
                     </div>
                     <div className="space-y-2">
                       <Label>Phone</Label>

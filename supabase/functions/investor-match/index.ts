@@ -93,7 +93,7 @@ serve(async (req) => {
         focus: "CleanTech, Impact, Sustainability",
         stage: "Series A",
         avgTicket: "$750k",
-        region: "Ghana, broader region",
+        region: "Ghana",
         description: "Driving sustainable growth through Series A investments in climate-positive ventures.",
       },
       {
@@ -111,7 +111,7 @@ serve(async (req) => {
         focus: "Hardware, SaaS, Tech",
         stage: "Seed",
         avgTicket: "$100k",
-        region: "Ashanti Region, Ghana",
+        region: "Ashanti Region",
         description: "Dedicated to fostering the tech ecosystem in the Ashanti region with seed-stage investments.",
       },
       {
