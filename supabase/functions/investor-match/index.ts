@@ -111,7 +111,7 @@ serve(async (req) => {
         focus: "Hardware, SaaS, Tech",
         stage: "Seed",
         avgTicket: "$100k",
-        region: "Ashanti Region, Ghana",
+        region: "Ashanti Region",
         description: "Dedicated to fostering the tech ecosystem in the Ashanti region with seed-stage investments.",
       },
       {
