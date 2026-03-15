@@ -178,7 +178,7 @@ const AISearchChat = () => {
                     <Sparkles className="h-3.5 w-3.5 text-navy" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold">AGS AI Assistant</p>
+                    <p className="text-sm font-semibold">SparkX AI Assistant</p>
                     <p className="text-[10px] text-muted-foreground">Your startup ecosystem copilot</p>
                   </div>
                 </div>
