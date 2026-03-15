@@ -207,7 +207,7 @@ const CreateStartupWizard = ({ open, onOpenChange, onCreated }: CreateStartupWiz
               </button>
               <div className="flex-1">
                 <Label className="text-xs">Startup Name *</Label>
-                <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. TechStart Ghana" />
+                <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. TechStart Africa" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">

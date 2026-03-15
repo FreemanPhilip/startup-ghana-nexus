@@ -104,7 +104,7 @@ const investorDetails: Record<string, {
 
 const getDefaultDetail = (investor: InvestorData) => ({
   founded: "2020",
-  location: "Accra, Ghana",
+  location: "Accra, Africa",
   website: "#",
   email: `info@${investor.name.toLowerCase().replace(/\s+/g, "")}.com`,
   phone: "+233 XX XXX XXXX",

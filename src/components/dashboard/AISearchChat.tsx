@@ -194,7 +194,7 @@ const AISearchChat = () => {
                     <div className="text-center py-4">
                       <Sparkles className="mx-auto h-8 w-8 text-primary/40" />
                       <p className="mt-2 text-sm font-medium">How can I help you today?</p>
-                      <p className="text-xs text-muted-foreground">Ask about investors, mentors, funding, or anything in the Ghana startup ecosystem</p>
+                      <p className="text-xs text-muted-foreground">Ask about investors, mentors, funding, or anything in the African startup ecosystem</p>
                     </div>
                     <div className="flex flex-wrap gap-2 justify-center">
                       {quickPrompts.map(prompt => (
