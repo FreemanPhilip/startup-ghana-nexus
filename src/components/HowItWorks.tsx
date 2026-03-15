@@ -75,13 +75,13 @@ const HowItWorks = () => {
         >
           <Quote className="mx-auto mb-4 h-8 w-8 text-gold/40" />
           <blockquote className="text-lg font-medium italic leading-relaxed text-foreground/80">
-            "AGS connected us with the right investors at exactly the right time.
+            "SparkX Index connected us with the right investors at exactly the right time.
             Within three months, we closed our seed round and found an incredible
             mentor who transformed our go-to-market strategy."
           </blockquote>
           <div className="mt-6">
             <p className="font-display font-bold">Kwame Asante</p>
-            <p className="text-sm text-muted-foreground">Founder, TechNova Ghana</p>
+            <p className="text-sm text-muted-foreground">Founder, TechNova Africa</p>
           </div>
         </motion.div>
       </div>

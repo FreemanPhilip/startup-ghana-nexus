@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const CTASection = () => {
   return (
@@ -16,27 +17,31 @@ const CTASection = () => {
             <Star className="h-8 w-8 text-navy" fill="currentColor" />
           </div>
           <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl md:text-5xl">
-            Ready to Join Ghana's Startup Movement?
+            Ready to Join Africa's Startup Movement?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Whether you're a founder, investor, or mentor — AGS is your gateway
+            Whether you're a founder, investor, or mentor — SparkX Index is your gateway
             to opportunities, connections, and growth.
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Button
-              size="lg"
-              className="bg-gradient-gold px-8 text-base font-semibold text-navy hover:opacity-90 glow-gold"
-            >
-              Create Your Account
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-foreground/20 px-8 text-base text-foreground hover:bg-foreground/10"
-            >
-              Learn More
-            </Button>
+            <Link to="/auth">
+              <Button
+                size="lg"
+                className="bg-gradient-gold px-8 text-base font-semibold text-navy hover:opacity-90 glow-gold"
+              >
+                Create Your Account
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+            <Link to="/auth">
+              <Button
+                variant="outline"
+                size="lg"
+                className="border-foreground/20 px-8 text-base text-foreground hover:bg-foreground/10"
+              >
+                Learn More
+              </Button>
+            </Link>
           </div>
         </motion.div>
       </div>

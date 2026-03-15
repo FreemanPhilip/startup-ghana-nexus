@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Rocket, TrendingUp, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const HeroSection = () => {
@@ -20,7 +21,7 @@ const HeroSection = () => {
           className="mb-6 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-sm font-medium text-gold"
         >
           <Rocket className="h-4 w-4" />
-          Ghana's Premier Startup Ecosystem Platform
+          Africa's Premier Startup Ecosystem Platform
         </motion.div>
 
         <motion.h1
@@ -39,7 +40,7 @@ const HeroSection = () => {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl"
         >
-          The Association of Ghana Startups brings together founders, investors,
+          SparkX Index brings together founders, investors,
           and mentors to power the next generation of African innovation.
         </motion.p>
 
@@ -49,20 +50,24 @@ const HeroSection = () => {
           transition={{ duration: 0.7, delay: 0.3 }}
           className="mt-10 flex flex-col gap-4 sm:flex-row"
         >
-          <Button
-            size="lg"
-            className="bg-gradient-gold px-8 text-base font-semibold text-navy hover:opacity-90 glow-gold"
-          >
-            Join the Ecosystem
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            className="border-foreground/20 px-8 text-base text-foreground hover:bg-foreground/10"
-          >
-            Explore Startups
-          </Button>
+          <Link to="/auth">
+            <Button
+              size="lg"
+              className="bg-gradient-gold px-8 text-base font-semibold text-navy hover:opacity-90 glow-gold"
+            >
+              Join The Index
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+          <Link to="/auth">
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-foreground/20 px-8 text-base text-foreground hover:bg-foreground/10"
+            >
+              Explore Opportunities
+            </Button>
+          </Link>
         </motion.div>
 
         {/* Mini stats */}
@@ -74,7 +79,7 @@ const HeroSection = () => {
         >
           {[
             { icon: Rocket, value: "500+", label: "Startups" },
-            { icon: TrendingUp, value: "GH₵25M+", label: "Funding Raised" },
+            { icon: TrendingUp, value: "$25M+", label: "Funding Raised" },
             { icon: Users, value: "200+", label: "Investors" },
           ].map((stat) => (
             <div key={stat.label} className="flex flex-col items-center gap-1">

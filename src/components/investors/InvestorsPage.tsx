@@ -58,7 +58,7 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
       return (profiles ?? []).map((p): InvestorData => ({
         id: p.user_id,
         name: p.company_name || p.full_name || "Investor",
-        description: p.bio || p.headline || "Investor on GSE Portal",
+        description: p.bio || p.headline || "Investor on SparkX Index",
         tags: [
           p.investment_focus || p.industry || "General",
           p.investment_range || "Flexible",

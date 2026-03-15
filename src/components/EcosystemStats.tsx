@@ -67,7 +67,7 @@ const EcosystemStats = () => {
             Ecosystem Intelligence
           </span>
           <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl md:text-5xl">
-            Ghana's Startup Ecosystem at a Glance
+            Africa's Startup Ecosystem at a Glance
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
             Real-time data and insights powering smarter decisions for founders,

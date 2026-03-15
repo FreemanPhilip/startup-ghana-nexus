@@ -141,7 +141,7 @@ const RoleBasedSidebar = ({ activeTab, onTabChange, open, onClose, role }: RoleB
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-gold">
             <Star className="h-4 w-4 text-navy" fill="currentColor" />
           </div>
-          <span className="font-display text-lg font-bold">GSE Portal</span>
+          <span className="font-display text-lg font-bold">The Index</span>
         </div>
         <Button variant="ghost" size="icon" className="md:hidden h-8 w-8" onClick={onClose}>
           <X className="h-5 w-5" />

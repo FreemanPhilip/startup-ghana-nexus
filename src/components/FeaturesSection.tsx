@@ -75,8 +75,8 @@ const FeaturesSection = () => {
             Everything Your Startup Needs
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            From finding investors to booking mentors, AGS provides the tools to
-            accelerate your startup journey in Ghana and beyond.
+            From finding investors to booking mentors, SparkX Index provides the tools to
+            accelerate your startup journey across Africa.
           </p>
         </motion.div>
 
