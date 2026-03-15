@@ -46,7 +46,7 @@ const investorDetails: Record<string, {
     investmentStage: ["Pre-Seed", "Seed"],
     sectors: ["FinTech", "E-Commerce", "B2B SaaS", "Payments"],
     portfolio: [
-      { name: "PayStack Ghana", stage: "Seed", year: "2023" },
+      { name: "PayStack Africa", stage: "Seed", year: "2023" },
       { name: "FarmConnect", stage: "Pre-Seed", year: "2024" },
       { name: "MediTrack", stage: "Seed", year: "2024" },
       { name: "ShopLocal", stage: "Pre-Seed", year: "2023" },
