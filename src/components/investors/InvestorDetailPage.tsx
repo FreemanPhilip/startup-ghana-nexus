@@ -80,7 +80,7 @@ const investorDetails: Record<string, {
     investmentStage: ["Series A", "Series B"],
     sectors: ["CleanTech", "Renewable Energy", "AgriTech", "Impact"],
     portfolio: [
-      { name: "SolarGhana", stage: "Series A", year: "2022" },
+      { name: "SolarAfrica", stage: "Series A", year: "2022" },
       { name: "AquaClean Tech", stage: "Series A", year: "2023" },
       { name: "GreenHarvest", stage: "Series B", year: "2024" },
     ],
