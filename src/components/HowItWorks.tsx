@@ -14,7 +14,7 @@ const roles = [
   },
   {
     title: "Mentors",
-    description: "Share your expertise, book structured sessions, and shape the next generation of Ghanaian founders.",
+    description: "Share your expertise, book structured sessions, and shape the next generation of African founders.",
     badge: "Guide & Impact",
   },
   {
