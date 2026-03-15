@@ -63,7 +63,7 @@ const investorDetails: Record<string, {
     ],
     thesis: "We invest in bold founders building category-defining FinTech and commerce solutions for West Africa. We look for strong product-market fit signals, a clear path to unit economics, and founders with deep domain expertise.",
     criteria: [
-      "Ghana-based or Ghana-focused startups",
+      "Africa-based or Africa-focused startups",
       "Post-MVP with early traction (MRR > GH₵20k)",
       "Founding team with relevant industry experience",
       "Clear monetization strategy",
