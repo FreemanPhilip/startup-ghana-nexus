@@ -35,13 +35,13 @@ const HowItWorks = () => {
           className="mb-16 text-center"
         >
           <span className="mb-3 inline-block rounded-full bg-emerald/10 px-4 py-1 text-sm font-semibold text-emerald">
-            Who It's For
+            Who Is This For?
           </span>
           <h2 className="font-display text-3xl font-bold sm:text-4xl md:text-5xl">
             One Platform, Every Stakeholder
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Whether you're building, investing, mentoring, or supporting — AGS has a place for you.
+            Whether you're building, investing, mentoring, or supporting — SparkX Index has a place for you.
           </p>
         </motion.div>
 
