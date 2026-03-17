@@ -120,7 +120,7 @@ const CreateOpportunityDialog = ({ onCreated, trigger }: CreateOpportunityDialog
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-xs">Location</Label>
-              <Input value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g. Accra, Ghana" />
+              <Input value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g. Lagos, Nigeria" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Eligibility</Label>

@@ -42,7 +42,7 @@ const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-bold">Ecosystem Groups</h1>
-          <p className="text-sm text-muted-foreground">Discover and join Ghana's most active startup communities.</p>
+          <p className="text-sm text-muted-foreground">Discover and join Africa's most active startup communities.</p>
         </div>
         <CreateGroupDialog onCreate={createGroup} />
       </div>
@@ -114,7 +114,7 @@ const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => 
               <h3 className="font-display font-bold text-sm">Trending Topics</h3>
             </div>
             <div className="space-y-2">
-              {["#StartupActGhana", "#AIInAccra", "#SeedFunding25"].map(tag => (
+              {["#StartupAfrica", "#AIInAfrica", "#SeedFunding25"].map(tag => (
                 <div key={tag}>
                   <p className="text-xs font-semibold">{tag}</p>
                   <p className="text-[10px] text-muted-foreground">{Math.floor(Math.random() * 100 + 20)} posts today</p>

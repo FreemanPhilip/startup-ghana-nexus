@@ -93,7 +93,7 @@ serve(async (req) => {
         focus: "CleanTech, Impact, Sustainability",
         stage: "Series A",
         avgTicket: "$750k",
-        region: "Ghana",
+        region: "Africa",
         description: "Driving sustainable growth through Series A investments in climate-positive ventures.",
       },
       {
@@ -120,7 +120,7 @@ serve(async (req) => {
         focus: "PropTech, Real Estate, Growth",
         stage: "Growth",
         avgTicket: "$500k",
-        region: "Ghana",
+        region: "Africa",
         description: "Private capital group looking for sustainable real estate and property technology investments.",
       },
       {
@@ -142,7 +142,7 @@ serve(async (req) => {
       });
     }
 
-    const systemPrompt = `You are an AI investor matching engine for the Ghana Startup Ecosystem platform. 
+    const systemPrompt = `You are an AI investor matching engine for the SparkX Index — Africa's Startup Ecosystem platform. 
 Your job is to analyze a founder's profile and their startup(s), then recommend the best matching investors from the available pool.
 
 For each recommended investor, provide:

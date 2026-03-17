@@ -15,7 +15,7 @@ export function generateICSContent(event: CalendarEvent): string {
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Startup Ghana Nexus//Mentorship//EN",
+    "PRODID:-//SparkX Index//Mentorship//EN",
     "BEGIN:VEVENT",
     `DTSTART:${formatDate(event.startDate)}`,
     `DTEND:${formatDate(event.endDate)}`,

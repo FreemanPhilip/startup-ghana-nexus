@@ -33,7 +33,7 @@ const CTASection = () => {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <Link to="/auth">
+            <a href="#pricing">
               <Button
                 variant="outline"
                 size="lg"
@@ -41,7 +41,7 @@ const CTASection = () => {
               >
                 Learn More
               </Button>
-            </Link>
+            </a>
           </div>
         </motion.div>
       </div>

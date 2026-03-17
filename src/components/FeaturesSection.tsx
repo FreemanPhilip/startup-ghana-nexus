@@ -68,15 +68,15 @@ const FeaturesSection = () => {
           viewport={{ once: true }}
           className="mb-16 text-center"
         >
-          <span className="mb-3 inline-block rounded-full bg-gold/10 px-4 py-1 text-sm font-semibold text-gold">
-            Platform Features
+          <span className="mb-3 inline-block rounded-full bg-primary/10 px-4 py-1 text-sm font-semibold text-primary">
+            Explore The Index
           </span>
           <h2 className="font-display text-3xl font-bold sm:text-4xl md:text-5xl">
             Everything Your Startup Needs
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
             From finding investors to booking mentors, SparkX Index provides the tools to
-            accelerate your startup journey across Africa.
+            accelerate your startup journey across Africa and beyond.
           </p>
         </motion.div>
 

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Check, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const plans = [
   {
@@ -39,7 +40,7 @@ const plans = [
 
 const PricingSection = () => {
   return (
-    <section className="py-24">
+    <section id="pricing" className="py-24">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -97,16 +98,18 @@ const PricingSection = () => {
                 ))}
               </ul>
 
-              <Button
-                className={`mt-8 w-full ${
-                  plan.highlighted
-                    ? "bg-gradient-gold font-semibold text-navy hover:opacity-90"
-                    : ""
-                }`}
-                variant={plan.highlighted ? "default" : "outline"}
-              >
-                {plan.cta}
-              </Button>
+              <Link to="/auth">
+                <Button
+                  className={`mt-8 w-full ${
+                    plan.highlighted
+                      ? "bg-gradient-gold font-semibold text-navy hover:opacity-90"
+                      : ""
+                  }`}
+                  variant={plan.highlighted ? "default" : "outline"}
+                >
+                  {plan.cta}
+                </Button>
+              </Link>
             </motion.div>
           ))}
         </div>

@@ -59,7 +59,7 @@ const HeroSection = () => {
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
-          <Link to="/auth">
+          <a href="#pricing">
             <Button
               variant="outline"
               size="lg"
@@ -67,7 +67,7 @@ const HeroSection = () => {
             >
               Explore Opportunities
             </Button>
-          </Link>
+          </a>
         </motion.div>
 
         {/* Mini stats */}

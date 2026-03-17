@@ -61,15 +61,15 @@ const MentorsPage = ({ onOpenMessages }: MentorsPageProps) => {
   const demoMentors: MentorData[] = useMemo(() => [
     {
       id: "demo-1", full_name: "Kwame Asante", avatar_url: null,
-      headline: "CEO & Founder at TechVentures Ghana", industry: "FinTech",
-      location: "Accra, Ghana", years_experience: 16, expertise: ["Fundraising", "Strategy", "FinTech"],
+      headline: "CEO & Founder at TechVentures Africa", industry: "FinTech",
+      location: "Lagos, Nigeria", years_experience: 16, expertise: ["Fundraising", "Strategy", "FinTech"],
       availability: "available_now", bio: "Serial entrepreneur with 3 successful exits.",
       booking_url: "https://calendly.com", sessions_count: 171, reviews_count: 36, rating: 4.8, attendance_rate: 95,
     },
     {
       id: "demo-2", full_name: "Ama Mensah", avatar_url: null,
       headline: "VP of Product at AgriConnect | Ex-Google", industry: "AgriTech",
-      location: "Kumasi, Ghana", years_experience: 12, expertise: ["Product", "AgriTech", "Leadership"],
+      location: "Nairobi, Kenya", years_experience: 12, expertise: ["Product", "AgriTech", "Leadership"],
       availability: "advance", bio: "Building Africa's food systems through technology.",
       booking_url: "https://calendly.com", sessions_count: 269, reviews_count: 48, rating: 4.9, attendance_rate: 88,
     },
@@ -82,8 +82,8 @@ const MentorsPage = ({ onOpenMessages }: MentorsPageProps) => {
     },
     {
       id: "demo-4", full_name: "Efua Owusu", avatar_url: null,
-      headline: "CTO at HealthBridge Ghana", industry: "HealthTech",
-      location: "Takoradi, Ghana", years_experience: 9, expertise: ["Engineering", "HealthTech", "AI"],
+      headline: "CTO at HealthBridge Africa", industry: "HealthTech",
+      location: "Cape Town, South Africa", years_experience: 9, expertise: ["Engineering", "HealthTech", "AI"],
       availability: "advance", bio: "Passionate about health innovation in West Africa.",
       booking_url: "https://calendly.com", sessions_count: 88, reviews_count: 15, rating: 4.6, attendance_rate: 91,
     },

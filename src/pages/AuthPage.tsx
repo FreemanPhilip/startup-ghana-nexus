@@ -85,14 +85,14 @@ const AuthPage = () => {
             <Star className="h-7 w-7 text-navy" fill="currentColor" />
           </div>
           <h1 className="font-display text-4xl font-bold leading-tight text-foreground">
-            Join Ghana's Startup Ecosystem
+            Join Africa's Startup Ecosystem
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">
             Connect with investors, find mentors, and access opportunities that
             accelerate your growth.
           </p>
           <div className="mt-10 space-y-4">
-            {["500+ Startups Connected", "200+ Active Investors", "GH₵25M+ Funding Raised"].map((stat) => (
+            {["500+ Startups Connected", "200+ Active Investors", "$25M+ Funding Raised"].map((stat) => (
               <div key={stat} className="flex items-center gap-3 text-foreground/70">
                 <div className="h-2 w-2 rounded-full bg-gold" />
                 <span className="text-sm">{stat}</span>
@@ -114,14 +114,14 @@ const AuthPage = () => {
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-gold">
                 <Star className="h-5 w-5 text-navy" fill="currentColor" />
               </div>
-              <span className="font-display text-xl font-bold">GSE</span>
+              <span className="font-display text-xl font-bold">SparkX</span>
             </div>
 
             <h2 className="font-display text-2xl font-bold">
               {isSignUp ? "Create your account" : "Welcome back"}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {isSignUp ? "Start your journey in Ghana's startup ecosystem" : "Sign in to continue"}
+              {isSignUp ? "Start your journey in Africa's startup ecosystem" : "Sign in to continue"}
             </p>
 
             {/* Google OAuth */}

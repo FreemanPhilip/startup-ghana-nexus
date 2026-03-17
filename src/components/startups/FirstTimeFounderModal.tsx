@@ -18,7 +18,7 @@ const FirstTimeFounderModal = ({ open, onOpenChange, onCreateStartup }: FirstTim
           </div>
           <DialogTitle className="text-xl">Create Your Startup Page</DialogTitle>
           <DialogDescription className="text-sm">
-            Build your startup's official presence in the Ghana Startup Ecosystem. Showcase your team, attract investors, and connect with mentors.
+            Build your startup's official presence in the SparkX Index ecosystem. Showcase your team, attract investors, and connect with mentors.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-3 mt-4">
