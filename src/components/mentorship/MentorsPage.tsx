@@ -69,7 +69,7 @@ const MentorsPage = ({ onOpenMessages }: MentorsPageProps) => {
     {
       id: "demo-2", full_name: "Ama Mensah", avatar_url: null,
       headline: "VP of Product at AgriConnect | Ex-Google", industry: "AgriTech",
-      location: "Kumasi, Ghana", years_experience: 12, expertise: ["Product", "AgriTech", "Leadership"],
+      location: "Nairobi, Kenya", years_experience: 12, expertise: ["Product", "AgriTech", "Leadership"],
       availability: "advance", bio: "Building Africa's food systems through technology.",
       booking_url: "https://calendly.com", sessions_count: 269, reviews_count: 48, rating: 4.9, attendance_rate: 88,
     },
