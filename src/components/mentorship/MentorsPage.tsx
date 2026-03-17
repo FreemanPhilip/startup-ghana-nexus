@@ -61,8 +61,8 @@ const MentorsPage = ({ onOpenMessages }: MentorsPageProps) => {
   const demoMentors: MentorData[] = useMemo(() => [
     {
       id: "demo-1", full_name: "Kwame Asante", avatar_url: null,
-      headline: "CEO & Founder at TechVentures Ghana", industry: "FinTech",
-      location: "Accra, Ghana", years_experience: 16, expertise: ["Fundraising", "Strategy", "FinTech"],
+      headline: "CEO & Founder at TechVentures Africa", industry: "FinTech",
+      location: "Lagos, Nigeria", years_experience: 16, expertise: ["Fundraising", "Strategy", "FinTech"],
       availability: "available_now", bio: "Serial entrepreneur with 3 successful exits.",
       booking_url: "https://calendly.com", sessions_count: 171, reviews_count: 36, rating: 4.8, attendance_rate: 95,
     },
