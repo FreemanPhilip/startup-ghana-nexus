@@ -93,7 +93,7 @@ serve(async (req) => {
         focus: "CleanTech, Impact, Sustainability",
         stage: "Series A",
         avgTicket: "$750k",
-        region: "Ghana",
+        region: "Africa",
         description: "Driving sustainable growth through Series A investments in climate-positive ventures.",
       },
       {
