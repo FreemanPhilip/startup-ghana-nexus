@@ -85,7 +85,7 @@ const AuthPage = () => {
             <Star className="h-7 w-7 text-navy" fill="currentColor" />
           </div>
           <h1 className="font-display text-4xl font-bold leading-tight text-foreground">
-            Join Ghana's Startup Ecosystem
+            Join Africa's Startup Ecosystem
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">
             Connect with investors, find mentors, and access opportunities that
