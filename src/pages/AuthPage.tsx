@@ -92,7 +92,7 @@ const AuthPage = () => {
             accelerate your growth.
           </p>
           <div className="mt-10 space-y-4">
-            {["500+ Startups Connected", "200+ Active Investors", "GH₵25M+ Funding Raised"].map((stat) => (
+            {["500+ Startups Connected", "200+ Active Investors", "$25M+ Funding Raised"].map((stat) => (
               <div key={stat} className="flex items-center gap-3 text-foreground/70">
                 <div className="h-2 w-2 rounded-full bg-gold" />
                 <span className="text-sm">{stat}</span>
