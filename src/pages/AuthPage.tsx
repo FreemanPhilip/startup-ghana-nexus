@@ -121,7 +121,7 @@ const AuthPage = () => {
               {isSignUp ? "Create your account" : "Welcome back"}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {isSignUp ? "Start your journey in Ghana's startup ecosystem" : "Sign in to continue"}
+              {isSignUp ? "Start your journey in Africa's startup ecosystem" : "Sign in to continue"}
             </p>
 
             {/* Google OAuth */}

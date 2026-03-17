@@ -142,7 +142,7 @@ serve(async (req) => {
       });
     }
 
-    const systemPrompt = `You are an AI investor matching engine for the Ghana Startup Ecosystem platform. 
+    const systemPrompt = `You are an AI investor matching engine for the SparkX Index — Africa's Startup Ecosystem platform. 
 Your job is to analyze a founder's profile and their startup(s), then recommend the best matching investors from the available pool.
 
 For each recommended investor, provide:

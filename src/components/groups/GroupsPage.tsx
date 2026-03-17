@@ -114,7 +114,7 @@ const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => 
               <h3 className="font-display font-bold text-sm">Trending Topics</h3>
             </div>
             <div className="space-y-2">
-              {["#StartupActGhana", "#AIInAccra", "#SeedFunding25"].map(tag => (
+              {["#StartupAfrica", "#AIInAfrica", "#SeedFunding25"].map(tag => (
                 <div key={tag}>
                   <p className="text-xs font-semibold">{tag}</p>
                   <p className="text-[10px] text-muted-foreground">{Math.floor(Math.random() * 100 + 20)} posts today</p>

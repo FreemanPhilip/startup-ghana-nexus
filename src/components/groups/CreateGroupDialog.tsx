@@ -97,7 +97,7 @@ const CreateGroupDialog = ({ onCreate }: CreateGroupDialogProps) => {
 
           <div className="space-y-2">
             <Label>Group Name</Label>
-            <Input placeholder="e.g. FinTech Ghana" value={name} onChange={e => setName(e.target.value)} />
+            <Input placeholder="e.g. FinTech Africa" value={name} onChange={e => setName(e.target.value)} />
           </div>
 
           <div className="space-y-2">

@@ -82,8 +82,8 @@ const MentorsPage = ({ onOpenMessages }: MentorsPageProps) => {
     },
     {
       id: "demo-4", full_name: "Efua Owusu", avatar_url: null,
-      headline: "CTO at HealthBridge Ghana", industry: "HealthTech",
-      location: "Takoradi, Ghana", years_experience: 9, expertise: ["Engineering", "HealthTech", "AI"],
+      headline: "CTO at HealthBridge Africa", industry: "HealthTech",
+      location: "Cape Town, South Africa", years_experience: 9, expertise: ["Engineering", "HealthTech", "AI"],
       availability: "advance", bio: "Passionate about health innovation in West Africa.",
       booking_url: "https://calendly.com", sessions_count: 88, reviews_count: 15, rating: 4.6, attendance_rate: 91,
     },

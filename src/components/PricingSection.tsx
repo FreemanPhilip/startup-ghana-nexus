@@ -97,16 +97,18 @@ const PricingSection = () => {
                 ))}
               </ul>
 
-              <Button
-                className={`mt-8 w-full ${
-                  plan.highlighted
-                    ? "bg-gradient-gold font-semibold text-navy hover:opacity-90"
-                    : ""
-                }`}
-                variant={plan.highlighted ? "default" : "outline"}
-              >
-                {plan.cta}
-              </Button>
+              <Link to="/auth">
+                <Button
+                  className={`mt-8 w-full ${
+                    plan.highlighted
+                      ? "bg-gradient-gold font-semibold text-navy hover:opacity-90"
+                      : ""
+                  }`}
+                  variant={plan.highlighted ? "default" : "outline"}
+                >
+                  {plan.cta}
+                </Button>
+              </Link>
             </motion.div>
           ))}
         </div>

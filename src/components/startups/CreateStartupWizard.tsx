@@ -232,7 +232,7 @@ const CreateStartupWizard = ({ open, onOpenChange, onCreated }: CreateStartupWiz
             </div>
             <div>
               <Label className="text-xs">Location</Label>
-              <Input value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g. Accra, Ghana" />
+              <Input value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g. Lagos, Nigeria" />
             </div>
             <div>
               <Label className="text-xs">Short Description</Label>
