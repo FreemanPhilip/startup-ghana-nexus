@@ -42,7 +42,7 @@ const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-bold">Ecosystem Groups</h1>
-          <p className="text-sm text-muted-foreground">Discover and join Ghana's most active startup communities.</p>
+          <p className="text-sm text-muted-foreground">Discover and join Africa's most active startup communities.</p>
         </div>
         <CreateGroupDialog onCreate={createGroup} />
       </div>
