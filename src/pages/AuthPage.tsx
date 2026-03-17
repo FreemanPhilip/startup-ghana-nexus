@@ -114,7 +114,7 @@ const AuthPage = () => {
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-gold">
                 <Star className="h-5 w-5 text-navy" fill="currentColor" />
               </div>
-              <span className="font-display text-xl font-bold">GSE</span>
+              <span className="font-display text-xl font-bold">SparkX</span>
             </div>
 
             <h2 className="font-display text-2xl font-bold">
