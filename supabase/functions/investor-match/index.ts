@@ -120,7 +120,7 @@ serve(async (req) => {
         focus: "PropTech, Real Estate, Growth",
         stage: "Growth",
         avgTicket: "$500k",
-        region: "Ghana",
+        region: "Africa",
         description: "Private capital group looking for sustainable real estate and property technology investments.",
       },
       {
