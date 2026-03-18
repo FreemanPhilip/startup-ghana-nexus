@@ -73,7 +73,16 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/:slug" element={<ProductPage />} />
+            <Route path="/sparkx-talent" element={<ProductPage />} />
+            <Route path="/sparkx-labs" element={<ProductPage />} />
+            <Route path="/sparkx-advisory" element={<ProductPage />} />
+            <Route path="/sparkx-academy" element={<ProductPage />} />
+            <Route path="/sparkx-global" element={<ProductPage />} />
+            <Route path="/sparkx-summit" element={<ProductPage />} />
+            <Route path="/sparkx-fund" element={<ProductPage />} />
+            <Route path="/sparkx-lounge" element={<ProductPage />} />
+            <Route path="/sparkx-magazine" element={<ProductPage />} />
+            <Route path="/sparkx-podcast" element={<ProductPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/onboarding" element={<OnboardingRoute><OnboardingPage /></OnboardingRoute>} />
             
