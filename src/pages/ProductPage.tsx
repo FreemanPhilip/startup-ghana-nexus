@@ -58,7 +58,8 @@ const productInfo: Record<string, { title: string; tagline: string; description:
 };
 
 const ProductPage = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const location = useLocation();
+  const slug = location.pathname.slice(1); // e.g. "/sparkx-talent" → "sparkx-talent"
   const product = slug ? productInfo[slug] : null;
 
   if (!product) {
