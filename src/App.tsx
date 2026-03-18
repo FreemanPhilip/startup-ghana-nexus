@@ -14,6 +14,7 @@ import MentorDashboardPage from "./pages/MentorDashboardPage";
 import PartnerDashboardPage from "./pages/PartnerDashboardPage";
 import NotFound from "./pages/NotFound";
 import ProductPage from "./pages/ProductPage";
+import AboutPage from "./pages/AboutPage";
 
 const queryClient = new QueryClient();
 
@@ -83,6 +84,7 @@ const App = () => (
             <Route path="/sparkx-lounge" element={<ProductPage />} />
             <Route path="/sparkx-magazine" element={<ProductPage />} />
             <Route path="/sparkx-podcast" element={<ProductPage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/onboarding" element={<OnboardingRoute><OnboardingPage /></OnboardingRoute>} />
             

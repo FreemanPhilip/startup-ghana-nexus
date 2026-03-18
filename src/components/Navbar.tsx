@@ -22,7 +22,7 @@ const navLinks = [
   { label: "Home", href: "/" },
   { label: "Explore The Index", href: "#features" },
   { label: "Pricing", href: "#pricing" },
-  { label: "About", href: "#ecosystem" },
+  { label: "About", href: "/about" },
   { label: "Contact", href: "#contact" },
 ];
 
