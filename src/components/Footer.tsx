@@ -1,7 +1,20 @@
 import { Star } from "lucide-react";
+import { Link } from "react-router-dom";
+
+const sparkxEcosystem = [
+  { label: "SparkX Talent", href: "/sparkx-talent" },
+  { label: "SparkX Labs", href: "/sparkx-labs" },
+  { label: "SparkX Advisory", href: "/sparkx-advisory" },
+  { label: "SparkX Academy", href: "/sparkx-academy" },
+  { label: "SparkX Global", href: "/sparkx-global" },
+  { label: "SparkX Summit", href: "/sparkx-summit" },
+  { label: "SparkX Fund", href: "/sparkx-fund" },
+  { label: "SparkX Lounge", href: "/sparkx-lounge" },
+  { label: "SparkX Magazine", href: "/sparkx-magazine" },
+  { label: "SparkX Podcast", href: "/sparkx-podcast" },
+];
 
 const footerLinks = {
-  Platform: ["For Startups", "For Investors", "For Mentors", "Opportunities", "Pricing"],
   Resources: ["Blog", "Events", "Reports", "API Docs", "Help Center"],
   Company: ["About SparkX Index", "Team", "Careers", "Press", "Contact"],
   Legal: ["Terms of Service", "Privacy Policy", "Cookie Policy"],
@@ -9,21 +22,38 @@ const footerLinks = {
 
 const Footer = () => {
   return (
-    <footer className="border-t border-border bg-card py-16">
+    <footer className="border-t border-border bg-card py-16" id="contact">
       <div className="container">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <a href="/" className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-gold">
                 <Star className="h-5 w-5 text-navy" fill="currentColor" />
               </div>
               <span className="font-display text-xl font-bold">SparkX Index</span>
-            </a>
+            </Link>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               Powering Africa's startup ecosystem through connection, mentorship,
               and data-driven intelligence.
             </p>
+          </div>
+
+          {/* SparkX Ecosystem */}
+          <div>
+            <h4 className="mb-4 font-display text-sm font-bold">SparkX Ecosystem</h4>
+            <ul className="space-y-2.5">
+              {sparkxEcosystem.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    to={item.href}
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Links */}
