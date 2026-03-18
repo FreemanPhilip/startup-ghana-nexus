@@ -13,6 +13,7 @@ import InvestorDashboardPage from "./pages/InvestorDashboardPage";
 import MentorDashboardPage from "./pages/MentorDashboardPage";
 import PartnerDashboardPage from "./pages/PartnerDashboardPage";
 import NotFound from "./pages/NotFound";
+import ProductPage from "./pages/ProductPage";
 
 const queryClient = new QueryClient();
 
