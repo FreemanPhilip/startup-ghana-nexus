@@ -14,6 +14,7 @@ import MentorDashboardPage from "./pages/MentorDashboardPage";
 import PartnerDashboardPage from "./pages/PartnerDashboardPage";
 import NotFound from "./pages/NotFound";
 import ProductPage from "./pages/ProductPage";
+import AboutPage from "./pages/AboutPage";
 
 const queryClient = new QueryClient();
 
