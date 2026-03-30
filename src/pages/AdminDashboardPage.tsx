@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Menu } from "lucide-react";
-import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminStatsCards from "@/components/admin/AdminStatsCards";
