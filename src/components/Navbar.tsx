@@ -5,25 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
-const products = [
-  { label: "SparkX Talent", href: "/sparkx-talent" },
-  { label: "SparkX Labs", href: "/sparkx-labs" },
-  { label: "SparkX Advisory", href: "/sparkx-advisory" },
-  { label: "SparkX Academy", href: "/sparkx-academy" },
-  { label: "SparkX Global", href: "/sparkx-global" },
-  { label: "SparkX Summit", href: "/sparkx-summit" },
-  { label: "SparkX Fund", href: "/sparkx-fund" },
-  { label: "SparkX Lounge", href: "/sparkx-lounge" },
-  { label: "SparkX Magazine", href: "/sparkx-magazine" },
-  { label: "SparkX Podcast", href: "/sparkx-podcast" },
+const solutions = [
+  { label: "SparkX Talent", href: "/sparkx-talent", desc: "Hiring, talent discovery, job matching" },
+  { label: "SparkX Labs", href: "/sparkx-labs", desc: "Innovation, product building, incubation" },
+  { label: "SparkX Advisory", href: "/sparkx-advisory", desc: "Consulting, mentorship, expert guidance" },
+  { label: "SparkX Academy", href: "/sparkx-academy", desc: "Learning, courses, training programs" },
+  { label: "SparkX Fund", href: "/sparkx-fund", desc: "Investment, funding access, capital" },
 ];
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "Explore The Index", href: "#features" },
   { label: "Pricing", href: "#pricing" },
   { label: "About", href: "/about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const Navbar = () => {

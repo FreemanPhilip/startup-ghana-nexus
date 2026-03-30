@@ -1,14 +1,9 @@
 import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const sparkxEcosystem = [
-  { label: "SparkX Talent", href: "/sparkx-talent" },
-  { label: "SparkX Labs", href: "/sparkx-labs" },
-  { label: "SparkX Advisory", href: "/sparkx-advisory" },
-  { label: "SparkX Academy", href: "/sparkx-academy" },
+const sparkxModules = [
   { label: "SparkX Global", href: "/sparkx-global" },
   { label: "SparkX Summit", href: "/sparkx-summit" },
-  { label: "SparkX Fund", href: "/sparkx-fund" },
   { label: "SparkX Lounge", href: "/sparkx-lounge" },
   { label: "SparkX Magazine", href: "/sparkx-magazine" },
   { label: "SparkX Podcast", href: "/sparkx-podcast" },
