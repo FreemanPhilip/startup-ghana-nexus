@@ -10,6 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
+import { useAuth } from "@/contexts/AuthContext";
+import { logAdminAction } from "@/lib/auditLog";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 type AppRole = Database["public"]["Enums"]["app_role"];
@@ -19,6 +21,7 @@ interface UserWithRole extends Profile {
 }
 
 const AdminUsersTable = () => {
+  const { user } = useAuth();
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -54,6 +57,11 @@ const AdminUsersTable = () => {
       setGeneratedPassword(newPwd);
       setPasswordResetDone(true);
       toast.success("Password reset successfully!");
+      if (user) {
+        logAdminAction(user.id, "password_reset", "user", resetPasswordUser.user_id, {
+          target_name: resetPasswordUser.full_name,
+        });
+      }
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -115,6 +123,13 @@ const AdminUsersTable = () => {
       const { error } = await supabase.from("user_roles").insert({ user_id: roleDialogUser.user_id, role: newRole as AppRole });
       if (error) throw error;
       toast.success(`Role updated to ${newRole.replace("_", " ")}`);
+      if (user) {
+        logAdminAction(user.id, "role_change", "user", roleDialogUser.user_id, {
+          target_name: roleDialogUser.full_name,
+          old_role: roleDialogUser.roles[0] || "none",
+          new_role: newRole,
+        });
+      }
       setRoleDialogUser(null);
       setNewRole("");
       fetchUsers();
