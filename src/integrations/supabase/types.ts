@@ -1084,6 +1084,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          admin_level: string | null
           availability: string | null
           avatar_url: string | null
           bio: string | null
@@ -1113,6 +1114,7 @@ export type Database = {
           years_experience: number | null
         }
         Insert: {
+          admin_level?: string | null
           availability?: string | null
           avatar_url?: string | null
           bio?: string | null
@@ -1142,6 +1144,7 @@ export type Database = {
           years_experience?: number | null
         }
         Update: {
+          admin_level?: string | null
           availability?: string | null
           avatar_url?: string | null
           bio?: string | null
@@ -1418,6 +1421,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_admin_level: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
