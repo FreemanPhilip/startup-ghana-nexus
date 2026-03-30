@@ -85,6 +85,11 @@ const AdminAuthPage = () => {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       
+      // Log admin login
+      if (data.user) {
+        logAdminAction(data.user.id, "login", "session", data.user.id, { email });
+      }
+
       // Check if user needs to change password
       if (data.user?.user_metadata?.must_change_password) {
         setMode("change_password");
