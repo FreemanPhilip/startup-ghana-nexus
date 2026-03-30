@@ -256,12 +256,19 @@ const AdminUsersTable = ({ adminLevel }: AdminUsersTableProps) => {
                     <td className="px-4 py-3 text-muted-foreground text-xs">{new Date(user.created_at).toLocaleDateString()}</td>
                     <td className="px-4 py-3">
                       <div className="flex gap-1">
-                        <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => { setRoleDialogUser(user); setNewRole(user.roles[0] || ""); }}>
-                          <UserCog className="h-3 w-3" /> Role
-                        </Button>
-                        {user.roles.includes("admin") && (
+                        {canPerformAction(adminLevel, "change_role") && (
+                          <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => { setRoleDialogUser(user); setNewRole(user.roles[0] || ""); }}>
+                            <UserCog className="h-3 w-3" /> Role
+                          </Button>
+                        )}
+                        {user.roles.includes("admin") && canPerformAction(adminLevel, "reset_password") && (
                           <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => { setResetPasswordUser(user); setPasswordResetDone(false); setGeneratedPassword(""); setCopiedPwd(false); }}>
                             <KeyRound className="h-3 w-3" /> Reset Pwd
+                          </Button>
+                        )}
+                        {canPerformAction(adminLevel, "manage_admin_level") && user.roles.includes("admin") && (
+                          <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => { setAdminLevelUser(user); setSelectedAdminLevel((user as any).admin_level || "viewer"); }}>
+                            <Shield className="h-3 w-3" /> Level
                           </Button>
                         )}
                       </div>

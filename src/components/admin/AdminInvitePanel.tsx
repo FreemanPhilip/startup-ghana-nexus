@@ -149,9 +149,11 @@ const AdminInvitePanel = ({ adminLevel }: AdminInvitePanelProps) => {
               setFullName("");
             }
           }}>
+            {canPerformAction(adminLevel, "invite_admin") && (
             <DialogTrigger asChild>
               <Button size="sm" className="gap-1"><UserPlus className="h-3 w-3" /> Invite Admin</Button>
             </DialogTrigger>
+            )}
             <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>{createdCredentials ? "Admin Account Created" : "Invite New Admin"}</DialogTitle>
