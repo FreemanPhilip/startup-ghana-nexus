@@ -1,4 +1,4 @@
-import { Star, LayoutDashboard, Users, Building2, FileText, Shield, BarChart3, LogOut, Menu, X, Briefcase, MessageSquare } from "lucide-react";
+import { Star, LayoutDashboard, Users, Building2, FileText, Shield, BarChart3, LogOut, Menu, X, Briefcase, MessageSquare, UserPlus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,6 +19,7 @@ const navItems = [
   { id: "posts", label: "Posts", icon: MessageSquare },
   { id: "verification", label: "Verification", icon: Shield },
   { id: "contact", label: "Contact Forms", icon: FileText },
+  { id: "invitations", label: "Admin Invites", icon: UserPlus },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
 ];
 

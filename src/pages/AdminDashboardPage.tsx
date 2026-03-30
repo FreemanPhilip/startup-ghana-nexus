@@ -12,6 +12,7 @@ import AdminRoleDistribution from "@/components/admin/AdminRoleDistribution";
 import AdminVerificationRequests from "@/components/admin/AdminVerificationRequests";
 import AdminPostsTable from "@/components/admin/AdminPostsTable";
 import AdminOpportunitiesTable from "@/components/admin/AdminOpportunitiesTable";
+import AdminInvitePanel from "@/components/admin/AdminInvitePanel";
 
 const tabTitles: Record<string, string> = {
   overview: "Platform Overview",
@@ -21,6 +22,7 @@ const tabTitles: Record<string, string> = {
   posts: "Posts",
   verification: "Verification Requests",
   contact: "Contact Submissions",
+  invitations: "Admin Invitations",
   analytics: "Analytics",
 };
 
@@ -57,6 +59,7 @@ const AdminDashboardPage = () => {
             {activeTab === "posts" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminPostsTable /></motion.div>}
             {activeTab === "verification" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminVerificationRequests /></motion.div>}
             {activeTab === "contact" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminContactSubmissions /></motion.div>}
+            {activeTab === "invitations" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminInvitePanel /></motion.div>}
             {activeTab === "analytics" && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                 <AdminStatsCards />
