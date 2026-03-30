@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminStatsCards from "@/components/admin/AdminStatsCards";
@@ -13,6 +14,7 @@ import AdminVerificationRequests from "@/components/admin/AdminVerificationReque
 import AdminPostsTable from "@/components/admin/AdminPostsTable";
 import AdminOpportunitiesTable from "@/components/admin/AdminOpportunitiesTable";
 import AdminInvitePanel from "@/components/admin/AdminInvitePanel";
+import AdminAnalytics from "@/components/admin/AdminAnalytics";
 
 const tabTitles: Record<string, string> = {
   overview: "Platform Overview",
@@ -61,9 +63,8 @@ const AdminDashboardPage = () => {
             {activeTab === "contact" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminContactSubmissions /></motion.div>}
             {activeTab === "invitations" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminInvitePanel /></motion.div>}
             {activeTab === "analytics" && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                <AdminStatsCards />
-                <AdminRoleDistribution />
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <AdminAnalytics />
               </motion.div>
             )}
           </div>
