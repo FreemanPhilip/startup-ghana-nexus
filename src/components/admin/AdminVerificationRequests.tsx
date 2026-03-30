@@ -103,7 +103,7 @@ const AdminVerificationRequests = ({ adminLevel }: AdminVerificationRequestsProp
                     "bg-destructive/15 text-destructive border-destructive/30"
                   }>{req.status}</Badge>
                   <span className="text-[10px] text-muted-foreground">{new Date(req.created_at).toLocaleDateString()}</span>
-                  {req.status === "pending" && (
+                  {req.status === "pending" && canPerformAction(adminLevel, "approve_verification") && (
                     <div className="flex gap-1">
                       <Button size="sm" variant="outline" className="h-7 text-xs gap-1 text-primary border-primary/30" onClick={() => handleAction(req, "verified")}>
                         <CheckCircle className="h-3 w-3" /> Approve
