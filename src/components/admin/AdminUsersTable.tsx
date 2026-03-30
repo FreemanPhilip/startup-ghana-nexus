@@ -235,9 +235,16 @@ const AdminUsersTable = () => {
                     </td>
                     <td className="px-4 py-3 text-muted-foreground text-xs">{new Date(user.created_at).toLocaleDateString()}</td>
                     <td className="px-4 py-3">
-                      <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => { setRoleDialogUser(user); setNewRole(user.roles[0] || ""); }}>
-                        <UserCog className="h-3 w-3" /> Manage
-                      </Button>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => { setRoleDialogUser(user); setNewRole(user.roles[0] || ""); }}>
+                          <UserCog className="h-3 w-3" /> Role
+                        </Button>
+                        {user.roles.includes("admin") && (
+                          <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => { setResetPasswordUser(user); setPasswordResetDone(false); setGeneratedPassword(""); setCopiedPwd(false); }}>
+                            <KeyRound className="h-3 w-3" /> Reset Pwd
+                          </Button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
