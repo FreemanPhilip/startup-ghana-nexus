@@ -88,6 +88,7 @@ const AdminInvitePanel = ({ adminLevel }: AdminInvitePanelProps) => {
           password: generatedPassword,
           fullName: fullName.trim() || trimmedEmail.split("@")[0],
           inviteToken: inviteData.token,
+          adminLevel: inviteAdminLevel,
         },
       });
 
