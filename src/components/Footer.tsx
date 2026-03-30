@@ -36,9 +36,9 @@ const Footer = () => {
 
           {/* SparkX Ecosystem */}
           <div>
-            <h4 className="mb-4 font-display text-sm font-bold">SparkX Ecosystem</h4>
+            <h4 className="mb-4 font-display text-sm font-bold">SparkX Modules</h4>
             <ul className="space-y-2.5">
-              {sparkxEcosystem.map((item) => (
+              {sparkxModules.map((item) => (
                 <li key={item.label}>
                   <Link
                     to={item.href}
