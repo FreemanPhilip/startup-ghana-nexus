@@ -21,6 +21,7 @@ const AdminAuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [inviteValid, setInviteValid] = useState<boolean | null>(inviteToken ? null : true);
   const [inviteEmail, setInviteEmail] = useState("");
+  const [noAdminsExist, setNoAdminsExist] = useState(false);
   const navigate = useNavigate();
 
   // Redirect if already logged in as admin
@@ -29,6 +30,22 @@ const AdminAuthPage = () => {
       navigate("/admin/dashboard", { replace: true });
     }
   }, [session, roles, navigate]);
+
+  // Check if any admins exist (for first-time setup)
+  useEffect(() => {
+    const checkAdmins = async () => {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("id")
+        .eq("role", "admin")
+        .limit(1);
+      if (!data || data.length === 0) {
+        setNoAdminsExist(true);
+        setMode("signup");
+      }
+    };
+    if (!inviteToken) checkAdmins();
+  }, [inviteToken]);
 
   // Validate invite token
   useEffect(() => {
@@ -68,33 +85,37 @@ const AdminAuthPage = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inviteToken || !inviteValid) {
+    const isFirstSetup = noAdminsExist;
+    if (!isFirstSetup && (!inviteToken || !inviteValid)) {
       toast.error("You need a valid invitation to create an admin account.");
       return;
     }
     setLoading(true);
     try {
+      const signupEmail = isFirstSetup ? email : inviteEmail;
       const { data, error } = await supabase.auth.signUp({
-        email: inviteEmail,
+        email: signupEmail,
         password,
         options: {
-          data: { full_name: fullName, primary_role: "admin" },
+          data: { full_name: fullName || signupEmail.split("@")[0], primary_role: "admin" },
           emailRedirectTo: window.location.origin + "/admin/login",
         },
       });
       if (error) throw error;
 
       if (data.session) {
-        // Mark invitation as accepted
-        await supabase
-          .from("admin_invitations")
-          .update({ status: "accepted", accepted_at: new Date().toISOString() })
-          .eq("token", inviteToken);
+        // Mark invitation as accepted if using invite
+        if (inviteToken) {
+          await supabase
+            .from("admin_invitations")
+            .update({ status: "accepted", accepted_at: new Date().toISOString() })
+            .eq("token", inviteToken);
+        }
         
         // Update profile onboarding to completed (admins skip onboarding)
         await supabase
           .from("profiles")
-          .update({ onboarding_step: "completed", full_name: fullName })
+          .update({ onboarding_step: "completed", full_name: fullName || signupEmail.split("@")[0] })
           .eq("user_id", data.session.user.id);
 
         toast.success("Admin account created successfully!");
@@ -170,11 +191,11 @@ const AdminAuthPage = () => {
                   id="email"
                   type="email"
                   placeholder="admin@sparkxindex.com"
-                  value={mode === "signup" ? inviteEmail : email}
+                  value={mode === "signup" && inviteToken ? inviteEmail : email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10"
                   required
-                  readOnly={mode === "signup"}
+                  readOnly={mode === "signup" && !!inviteToken}
                 />
               </div>
             </div>
@@ -191,13 +212,13 @@ const AdminAuthPage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10 pr-10"
                   required
-                  minLength={8}
+                  minLength={6}
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              {mode === "signup" && <p className="text-xs text-muted-foreground">Minimum 8 characters</p>}
+              {mode === "signup" && <p className="text-xs text-muted-foreground">Minimum 6 characters</p>}
             </div>
 
             <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
@@ -205,15 +226,26 @@ const AdminAuthPage = () => {
             </Button>
           </form>
 
-          {!inviteToken && (
+          {!inviteToken && !noAdminsExist && mode === "login" && (
             <p className="mt-6 text-center text-xs text-muted-foreground">
               Admin accounts are invitation-only. Contact a super admin for access.
             </p>
           )}
 
-          {mode === "signup" && !inviteToken && (
+          {noAdminsExist && mode === "signup" && (
+            <p className="mt-6 text-center text-xs text-muted-foreground">
+              First-time setup — create the super admin account.
+            </p>
+          )}
+
+          {mode === "signup" && !noAdminsExist && (
             <button onClick={() => setMode("login")} className="mt-3 w-full text-center text-sm text-primary hover:underline">
               Already have an admin account? Sign In
+            </button>
+          )}
+          {mode === "login" && (
+            <button onClick={() => setMode("signup")} className="mt-3 w-full text-center text-sm text-primary hover:underline">
+              Have an invitation? Create Account
             </button>
           )}
         </div>
