@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Mail, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Search, Mail, RefreshCw, ChevronDown, ChevronUp, Download } from "lucide-react";
+import { toast } from "sonner";
 
 interface ContactSubmission {
   id: string;
@@ -23,10 +24,7 @@ const AdminContactSubmissions = () => {
 
   const fetchSubmissions = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("contact_submissions")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const { data } = await supabase.from("contact_submissions").select("*").order("created_at", { ascending: false });
     setSubmissions(data || []);
     setLoading(false);
   };
@@ -34,11 +32,22 @@ const AdminContactSubmissions = () => {
   useEffect(() => { fetchSubmissions(); }, []);
 
   const filtered = submissions.filter((s) =>
-    !search ||
-    s.name.toLowerCase().includes(search.toLowerCase()) ||
-    s.email.toLowerCase().includes(search.toLowerCase()) ||
-    s.subject.toLowerCase().includes(search.toLowerCase())
+    !search || s.name.toLowerCase().includes(search.toLowerCase()) || s.email.toLowerCase().includes(search.toLowerCase()) || s.subject.toLowerCase().includes(search.toLowerCase())
   );
+
+  const exportCSV = () => {
+    const headers = ["Name", "Email", "Subject", "Company", "Message", "Date"];
+    const rows = filtered.map((s) => [s.name, s.email, s.subject, s.company || "", s.message.replace(/\n/g, " "), new Date(s.created_at).toLocaleString()]);
+    const csv = [headers, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `contact-submissions-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Contact submissions exported to CSV!");
+  };
 
   return (
     <div className="space-y-4">
@@ -47,9 +56,14 @@ const AdminContactSubmissions = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Search submissions..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Button variant="outline" size="sm" onClick={fetchSubmissions} className="gap-2">
-          <RefreshCw className="h-4 w-4" /> Refresh
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={fetchSubmissions} className="gap-2">
+            <RefreshCw className="h-4 w-4" /> Refresh
+          </Button>
+          <Button variant="outline" size="sm" onClick={exportCSV} className="gap-2">
+            <Download className="h-4 w-4" /> Export CSV
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -61,10 +75,7 @@ const AdminContactSubmissions = () => {
           <div className="divide-y divide-border">
             {filtered.map((sub) => (
               <div key={sub.id} className="hover:bg-muted/30 transition-colors">
-                <button
-                  onClick={() => setExpandedId(expandedId === sub.id ? null : sub.id)}
-                  className="w-full px-4 py-3 flex items-center gap-4 text-left"
-                >
+                <button onClick={() => setExpandedId(expandedId === sub.id ? null : sub.id)} className="w-full px-4 py-3 flex items-center gap-4 text-left">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 shrink-0">
                     <Mail className="h-4 w-4 text-primary" />
                   </div>
