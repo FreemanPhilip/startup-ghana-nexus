@@ -85,33 +85,37 @@ const AdminAuthPage = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inviteToken || !inviteValid) {
+    const isFirstSetup = noAdminsExist;
+    if (!isFirstSetup && (!inviteToken || !inviteValid)) {
       toast.error("You need a valid invitation to create an admin account.");
       return;
     }
     setLoading(true);
     try {
+      const signupEmail = isFirstSetup ? email : inviteEmail;
       const { data, error } = await supabase.auth.signUp({
-        email: inviteEmail,
+        email: signupEmail,
         password,
         options: {
-          data: { full_name: fullName, primary_role: "admin" },
+          data: { full_name: fullName || signupEmail.split("@")[0], primary_role: "admin" },
           emailRedirectTo: window.location.origin + "/admin/login",
         },
       });
       if (error) throw error;
 
       if (data.session) {
-        // Mark invitation as accepted
-        await supabase
-          .from("admin_invitations")
-          .update({ status: "accepted", accepted_at: new Date().toISOString() })
-          .eq("token", inviteToken);
+        // Mark invitation as accepted if using invite
+        if (inviteToken) {
+          await supabase
+            .from("admin_invitations")
+            .update({ status: "accepted", accepted_at: new Date().toISOString() })
+            .eq("token", inviteToken);
+        }
         
         // Update profile onboarding to completed (admins skip onboarding)
         await supabase
           .from("profiles")
-          .update({ onboarding_step: "completed", full_name: fullName })
+          .update({ onboarding_step: "completed", full_name: fullName || signupEmail.split("@")[0] })
           .eq("user_id", data.session.user.id);
 
         toast.success("Admin account created successfully!");
