@@ -45,7 +45,7 @@ const Navbar = () => {
 
         {/* Desktop */}
         <div className="hidden items-center gap-1 md:flex">
-          {navLinks.slice(0, 2).map((link) =>
+          {navLinks.slice(0, 1).map((link) =>
             link.href.startsWith("/") ? (
               <Link
                 key={link.label}
