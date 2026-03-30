@@ -64,9 +64,29 @@ const ContactPage = () => {
     }
 
     setIsSubmitting(true);
-    // Simulate submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
+    try {
+      const { error } = await supabase.from("contact_submissions").insert({
+        name: result.data.name,
+        email: result.data.email,
+        subject: result.data.subject,
+        company: result.data.company || null,
+        message: result.data.message,
+      });
+      if (error) throw error;
+      setForm({ name: "", email: "", subject: "", company: "", message: "" });
+      toast({
+        title: "Message Sent!",
+        description: "Thank you for reaching out. We'll get back to you within 24 hours.",
+      });
+    } catch {
+      toast({
+        title: "Something went wrong",
+        description: "Please try again later or email us directly.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
     setForm({ name: "", email: "", subject: "", company: "", message: "" });
     toast({
       title: "Message Sent!",
