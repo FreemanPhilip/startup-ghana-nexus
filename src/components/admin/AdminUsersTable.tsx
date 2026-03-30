@@ -77,6 +77,28 @@ const AdminUsersTable = ({ adminLevel }: AdminUsersTableProps) => {
     }
   };
 
+  const handleChangeAdminLevel = async () => {
+    if (!adminLevelUser || !selectedAdminLevel) return;
+    setChangingLevel(true);
+    try {
+      await supabase.from("profiles").update({ admin_level: selectedAdminLevel } as any).eq("user_id", adminLevelUser.user_id);
+      if (user) {
+        logAdminAction(user.id, "admin_level_change", "user", adminLevelUser.user_id, {
+          target_name: adminLevelUser.full_name,
+          old_level: (adminLevelUser as any).admin_level || "viewer",
+          new_level: selectedAdminLevel,
+        });
+      }
+      toast.success(`Admin level updated to ${selectedAdminLevel.replace("_", " ")}`);
+      setAdminLevelUser(null);
+      fetchUsers();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setChangingLevel(false);
+    }
+  };
+
   const fetchUsers = async () => {
     const [{ data: profiles }, { data: roles }] = await Promise.all([
       supabase.from("profiles").select("*").order("created_at", { ascending: false }),
