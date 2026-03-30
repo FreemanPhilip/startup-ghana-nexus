@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CheckCircle, XCircle, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { logAdminAction } from "@/lib/auditLog";
 
 interface VerificationRequest {
   id: string;
@@ -20,6 +22,7 @@ interface VerificationRequest {
 const AdminVerificationRequests = () => {
   const [requests, setRequests] = useState<VerificationRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
   const { toast } = useToast();
 
   const fetchRequests = async () => {
@@ -40,12 +43,17 @@ const AdminVerificationRequests = () => {
 
   useEffect(() => { fetchRequests(); }, []);
 
-  const handleAction = async (id: string, userId: string, action: "verified" | "rejected") => {
-    // Update the verification request status
-    await supabase.from("verification_requests").update({ status: action, reviewed_at: new Date().toISOString() }).eq("id", id);
-    // Update user profile verification status
+  const handleAction = async (req: VerificationRequest, action: "verified" | "rejected") => {
+    await supabase.from("verification_requests").update({ status: action, reviewed_at: new Date().toISOString() }).eq("id", req.id);
     if (action === "verified") {
-      await supabase.from("profiles").update({ verification: "verified" }).eq("user_id", userId);
+      await supabase.from("profiles").update({ verification: "verified" }).eq("user_id", req.user_id);
+    }
+    if (user) {
+      logAdminAction(user.id, "verification_update", "user", req.user_id, {
+        target_name: req.profile?.full_name,
+        status: action,
+        request_id: req.id,
+      });
     }
     toast({ title: `Request ${action}`, description: `Verification request has been ${action}.` });
     fetchRequests();
@@ -92,10 +100,10 @@ const AdminVerificationRequests = () => {
                   <span className="text-[10px] text-muted-foreground">{new Date(req.created_at).toLocaleDateString()}</span>
                   {req.status === "pending" && (
                     <div className="flex gap-1">
-                      <Button size="sm" variant="outline" className="h-7 text-xs gap-1 text-primary border-primary/30" onClick={() => handleAction(req.id, req.user_id, "verified")}>
+                      <Button size="sm" variant="outline" className="h-7 text-xs gap-1 text-primary border-primary/30" onClick={() => handleAction(req, "verified")}>
                         <CheckCircle className="h-3 w-3" /> Approve
                       </Button>
-                      <Button size="sm" variant="outline" className="h-7 text-xs gap-1 text-destructive border-destructive/30" onClick={() => handleAction(req.id, req.user_id, "rejected")}>
+                      <Button size="sm" variant="outline" className="h-7 text-xs gap-1 text-destructive border-destructive/30" onClick={() => handleAction(req, "rejected")}>
                         <XCircle className="h-3 w-3" /> Reject
                       </Button>
                     </div>
