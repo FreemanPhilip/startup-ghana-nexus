@@ -40,6 +40,9 @@ const AdminUsersTable = ({ adminLevel }: AdminUsersTableProps) => {
   const [passwordResetDone, setPasswordResetDone] = useState(false);
   const [showGenPassword, setShowGenPassword] = useState(false);
   const [copiedPwd, setCopiedPwd] = useState(false);
+  const [adminLevelUser, setAdminLevelUser] = useState<UserWithRole | null>(null);
+  const [selectedAdminLevel, setSelectedAdminLevel] = useState<string>("viewer");
+  const [changingLevel, setChangingLevel] = useState(false);
 
   const generatePassword = () => {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
