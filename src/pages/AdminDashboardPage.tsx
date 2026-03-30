@@ -14,6 +14,7 @@ import AdminPostsTable from "@/components/admin/AdminPostsTable";
 import AdminOpportunitiesTable from "@/components/admin/AdminOpportunitiesTable";
 import AdminInvitePanel from "@/components/admin/AdminInvitePanel";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
+import AdminNotificationBell from "@/components/admin/AdminNotificationBell";
 
 const tabTitles: Record<string, string> = {
   overview: "Platform Overview",
