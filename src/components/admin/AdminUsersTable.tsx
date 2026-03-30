@@ -414,6 +414,55 @@ const AdminUsersTable = ({ adminLevel }: AdminUsersTableProps) => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Admin Level Dialog */}
+      <Dialog open={!!adminLevelUser} onOpenChange={(open) => { if (!open) setAdminLevelUser(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change Admin Level</DialogTitle>
+          </DialogHeader>
+          {adminLevelUser && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={adminLevelUser.avatar_url || undefined} />
+                  <AvatarFallback className="bg-muted">{adminLevelUser.full_name?.charAt(0) || "U"}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-semibold">{adminLevelUser.full_name || "Unknown"}</p>
+                  <Badge variant="outline" className="text-[10px] mt-1">
+                    Current: {((adminLevelUser as any).admin_level || "viewer").replace("_", " ")}
+                  </Badge>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Admin Level</Label>
+                <Select value={selectedAdminLevel} onValueChange={setSelectedAdminLevel}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ADMIN_LEVEL_OPTIONS.map((level) => (
+                      <SelectItem key={level.value} value={level.value}>
+                        <div>
+                          <span className="font-medium">{level.label}</span>
+                          <span className="text-muted-foreground ml-2 text-xs">— {level.description}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <Button variant="outline" onClick={() => setAdminLevelUser(null)}>Cancel</Button>
+                <Button onClick={handleChangeAdminLevel} disabled={changingLevel}>
+                  {changingLevel ? "Updating..." : "Update Level"}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
