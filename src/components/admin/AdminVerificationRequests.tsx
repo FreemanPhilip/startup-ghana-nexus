@@ -7,6 +7,7 @@ import { CheckCircle, XCircle, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { logAdminAction } from "@/lib/auditLog";
+import { canPerformAction, type AdminLevel } from "@/lib/adminPermissions";
 
 interface VerificationRequest {
   id: string;
@@ -19,7 +20,11 @@ interface VerificationRequest {
   profile?: { full_name: string | null; avatar_url: string | null; headline: string | null };
 }
 
-const AdminVerificationRequests = () => {
+interface AdminVerificationRequestsProps {
+  adminLevel: AdminLevel;
+}
+
+const AdminVerificationRequests = ({ adminLevel }: AdminVerificationRequestsProps) => {
   const [requests, setRequests] = useState<VerificationRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();

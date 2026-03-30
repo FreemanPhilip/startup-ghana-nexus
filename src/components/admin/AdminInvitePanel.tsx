@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { logAdminAction } from "@/lib/auditLog";
+import { canPerformAction, type AdminLevel } from "@/lib/adminPermissions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,7 +29,11 @@ const generatePassword = () => {
   return pwd;
 };
 
-const AdminInvitePanel = () => {
+interface AdminInvitePanelProps {
+  adminLevel: AdminLevel;
+}
+
+const AdminInvitePanel = ({ adminLevel }: AdminInvitePanelProps) => {
   const { user } = useAuth();
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(true);
