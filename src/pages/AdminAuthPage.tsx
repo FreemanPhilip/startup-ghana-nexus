@@ -21,6 +21,7 @@ const AdminAuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [inviteValid, setInviteValid] = useState<boolean | null>(inviteToken ? null : true);
   const [inviteEmail, setInviteEmail] = useState("");
+  const [noAdminsExist, setNoAdminsExist] = useState(false);
   const navigate = useNavigate();
 
   // Redirect if already logged in as admin
@@ -29,6 +30,22 @@ const AdminAuthPage = () => {
       navigate("/admin/dashboard", { replace: true });
     }
   }, [session, roles, navigate]);
+
+  // Check if any admins exist (for first-time setup)
+  useEffect(() => {
+    const checkAdmins = async () => {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("id")
+        .eq("role", "admin")
+        .limit(1);
+      if (!data || data.length === 0) {
+        setNoAdminsExist(true);
+        setMode("signup");
+      }
+    };
+    if (!inviteToken) checkAdmins();
+  }, [inviteToken]);
 
   // Validate invite token
   useEffect(() => {
