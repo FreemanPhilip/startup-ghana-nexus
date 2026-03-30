@@ -15,6 +15,7 @@ import AdminOpportunitiesTable from "@/components/admin/AdminOpportunitiesTable"
 import AdminInvitePanel from "@/components/admin/AdminInvitePanel";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminNotificationBell from "@/components/admin/AdminNotificationBell";
+import AdminAuditLog from "@/components/admin/AdminAuditLog";
 
 const tabTitles: Record<string, string> = {
   overview: "Platform Overview",
@@ -26,6 +27,7 @@ const tabTitles: Record<string, string> = {
   contact: "Contact Submissions",
   invitations: "Admin Invitations",
   analytics: "Analytics",
+  audit: "Audit Log",
 };
 
 const AdminDashboardPage = () => {
@@ -66,6 +68,11 @@ const AdminDashboardPage = () => {
             {activeTab === "analytics" && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <AdminAnalytics />
+              </motion.div>
+            )}
+            {activeTab === "audit" && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <AdminAuditLog />
               </motion.div>
             )}
           </div>
