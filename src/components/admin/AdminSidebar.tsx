@@ -1,4 +1,4 @@
-import { Star, LayoutDashboard, Users, Building2, FileText, Shield, BarChart3, LogOut, Menu, X, Briefcase, MessageSquare, UserPlus } from "lucide-react";
+import { Star, LayoutDashboard, Users, Building2, FileText, Shield, BarChart3, LogOut, Menu, X, Briefcase, MessageSquare, UserPlus, ScrollText } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -21,6 +21,7 @@ const navItems = [
   { id: "contact", label: "Contact Forms", icon: FileText },
   { id: "invitations", label: "Admin Invites", icon: UserPlus },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
+  { id: "audit", label: "Audit Log", icon: ScrollText },
 ];
 
 const AdminSidebar = ({ activeTab, onTabChange, open, onClose }: AdminSidebarProps) => {

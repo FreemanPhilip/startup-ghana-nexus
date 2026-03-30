@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { logAdminAction } from "@/lib/auditLog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -90,6 +91,9 @@ const AdminInvitePanel = () => {
       }
 
       toast.success("Admin account created successfully!");
+      if (user) {
+        logAdminAction(user.id, "admin_invite", "user", trimmedEmail, { email: trimmedEmail, name: fullName.trim() });
+      }
       setCreatedCredentials({ email: trimmedEmail, password: generatedPassword });
       setEmail("");
       setFullName("");
@@ -115,8 +119,11 @@ const AdminInvitePanel = () => {
     toast.success("All credentials copied to clipboard!");
   };
 
-  const deleteInvitation = async (id: string) => {
+  const deleteInvitation = async (id: string, email: string) => {
     await supabase.from("admin_invitations").delete().eq("id", id);
+    if (user) {
+      logAdminAction(user.id, "invite_delete", "invitation", id, { email });
+    }
     toast.success("Invitation deleted.");
     fetchInvitations();
   };
@@ -249,7 +256,7 @@ const AdminInvitePanel = () => {
                   inv.status === "pending" ? "bg-secondary/15 text-secondary border-secondary/30" :
                   ""
                 }>{inv.status}</Badge>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteInvitation(inv.id)} title="Delete">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteInvitation(inv.id, inv.email)} title="Delete">
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
