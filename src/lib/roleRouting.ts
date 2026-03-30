@@ -25,5 +25,6 @@ export function getRoleFromPath(path: string): AppRole | null {
   if (path.startsWith("/investor")) return "investor";
   if (path.startsWith("/mentor")) return "mentor";
   if (path.startsWith("/partner")) return "ecosystem_partner";
+  if (path.startsWith("/admin")) return "admin";
   return null;
 }
