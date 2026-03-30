@@ -29,6 +29,7 @@ const ACTION_CONFIG: Record<string, { label: string; icon: React.ReactNode; colo
   invite_delete: { label: "Invite Deleted", icon: <Trash2 className="h-3.5 w-3.5" />, color: "bg-destructive/15 text-destructive border-destructive/30" },
   verification_update: { label: "Verification Update", icon: <Shield className="h-3.5 w-3.5" />, color: "bg-secondary/15 text-secondary border-secondary/30" },
   login: { label: "Admin Login", icon: <Activity className="h-3.5 w-3.5" />, color: "bg-primary/15 text-primary border-primary/30" },
+  admin_level_change: { label: "Admin Level Changed", icon: <Shield className="h-3.5 w-3.5" />, color: "bg-blue-500/15 text-blue-600 border-blue-500/30" },
 };
 
 const AdminAuditLog = () => {
@@ -86,6 +87,8 @@ const AdminAuditLog = () => {
     if (d.new_role && !d.old_role) parts.push(`Role: ${d.new_role}`);
     if (d.email) parts.push(`Email: ${d.email}`);
     if (d.status) parts.push(`Status: ${d.status}`);
+    if (d.old_level) parts.push(`${String(d.old_level).replace("_", " ")} → ${String(d.new_level).replace("_", " ")}`);
+    if (d.new_level && !d.old_level) parts.push(`Level: ${String(d.new_level).replace("_", " ")}`);
     return parts.length > 0 ? parts.join(" · ") : "—";
   };
 

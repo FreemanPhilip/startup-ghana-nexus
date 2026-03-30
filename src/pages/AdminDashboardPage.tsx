@@ -16,6 +16,8 @@ import AdminInvitePanel from "@/components/admin/AdminInvitePanel";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminNotificationBell from "@/components/admin/AdminNotificationBell";
 import AdminAuditLog from "@/components/admin/AdminAuditLog";
+import { useAdminLevel } from "@/hooks/useAdminLevel";
+import { canAccessTab } from "@/lib/adminPermissions";
 
 const tabTitles: Record<string, string> = {
   overview: "Platform Overview",
@@ -33,10 +35,25 @@ const tabTitles: Record<string, string> = {
 const AdminDashboardPage = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { adminLevel, loading } = useAdminLevel();
+
+  const handleTabChange = (tab: string) => {
+    if (canAccessTab(adminLevel, tab)) {
+      setActiveTab(tab);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      <AdminSidebar activeTab={activeTab} onTabChange={setActiveTab} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <AdminSidebar activeTab={activeTab} onTabChange={handleTabChange} open={sidebarOpen} onClose={() => setSidebarOpen(false)} adminLevel={adminLevel} />
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         <header className="flex h-14 items-center gap-3 border-b border-border bg-card px-4">
           <Button variant="ghost" size="icon" className="md:hidden h-8 w-8" onClick={() => setSidebarOpen(true)}>
@@ -58,19 +75,37 @@ const AdminDashboardPage = () => {
                 </div>
               </motion.div>
             )}
-            {activeTab === "users" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminUsersTable /></motion.div>}
-            {activeTab === "startups" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminStartupsTable /></motion.div>}
-            {activeTab === "opportunities" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminOpportunitiesTable /></motion.div>}
-            {activeTab === "posts" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminPostsTable /></motion.div>}
-            {activeTab === "verification" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminVerificationRequests /></motion.div>}
-            {activeTab === "contact" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminContactSubmissions /></motion.div>}
-            {activeTab === "invitations" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminInvitePanel /></motion.div>}
-            {activeTab === "analytics" && (
+            {activeTab === "users" && canAccessTab(adminLevel, "users") && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <AdminUsersTable adminLevel={adminLevel} />
+              </motion.div>
+            )}
+            {activeTab === "startups" && canAccessTab(adminLevel, "startups") && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminStartupsTable /></motion.div>
+            )}
+            {activeTab === "opportunities" && canAccessTab(adminLevel, "opportunities") && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminOpportunitiesTable /></motion.div>
+            )}
+            {activeTab === "posts" && canAccessTab(adminLevel, "posts") && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminPostsTable /></motion.div>
+            )}
+            {activeTab === "verification" && canAccessTab(adminLevel, "verification") && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <AdminVerificationRequests adminLevel={adminLevel} />
+              </motion.div>
+            )}
+            {activeTab === "contact" && canAccessTab(adminLevel, "contact") && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminContactSubmissions /></motion.div>
+            )}
+            {activeTab === "invitations" && canAccessTab(adminLevel, "invitations") && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminInvitePanel adminLevel={adminLevel} /></motion.div>
+            )}
+            {activeTab === "analytics" && canAccessTab(adminLevel, "analytics") && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <AdminAnalytics />
               </motion.div>
             )}
-            {activeTab === "audit" && (
+            {activeTab === "audit" && canAccessTab(adminLevel, "audit") && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <AdminAuditLog />
               </motion.div>

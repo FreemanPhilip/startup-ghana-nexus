@@ -7,6 +7,7 @@ import { CheckCircle, XCircle, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { logAdminAction } from "@/lib/auditLog";
+import { canPerformAction, type AdminLevel } from "@/lib/adminPermissions";
 
 interface VerificationRequest {
   id: string;
@@ -19,7 +20,11 @@ interface VerificationRequest {
   profile?: { full_name: string | null; avatar_url: string | null; headline: string | null };
 }
 
-const AdminVerificationRequests = () => {
+interface AdminVerificationRequestsProps {
+  adminLevel: AdminLevel;
+}
+
+const AdminVerificationRequests = ({ adminLevel }: AdminVerificationRequestsProps) => {
   const [requests, setRequests] = useState<VerificationRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
@@ -98,7 +103,7 @@ const AdminVerificationRequests = () => {
                     "bg-destructive/15 text-destructive border-destructive/30"
                   }>{req.status}</Badge>
                   <span className="text-[10px] text-muted-foreground">{new Date(req.created_at).toLocaleDateString()}</span>
-                  {req.status === "pending" && (
+                  {req.status === "pending" && canPerformAction(adminLevel, "approve_verification") && (
                     <div className="flex gap-1">
                       <Button size="sm" variant="outline" className="h-7 text-xs gap-1 text-primary border-primary/30" onClick={() => handleAction(req, "verified")}>
                         <CheckCircle className="h-3 w-3" /> Approve

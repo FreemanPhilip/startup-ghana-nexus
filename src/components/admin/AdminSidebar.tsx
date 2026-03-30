@@ -3,15 +3,18 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { canAccessTab, type AdminLevel, ADMIN_LEVELS } from "@/lib/adminPermissions";
 
 interface AdminSidebarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   open?: boolean;
   onClose?: () => void;
+  adminLevel: AdminLevel;
 }
 
-const navItems = [
+const allNavItems = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
   { id: "users", label: "Users", icon: Users },
   { id: "startups", label: "Startups", icon: Building2 },
@@ -24,9 +27,12 @@ const navItems = [
   { id: "audit", label: "Audit Log", icon: ScrollText },
 ];
 
-const AdminSidebar = ({ activeTab, onTabChange, open, onClose }: AdminSidebarProps) => {
+const AdminSidebar = ({ activeTab, onTabChange, open, onClose, adminLevel }: AdminSidebarProps) => {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
+
+  const navItems = allNavItems.filter((item) => canAccessTab(adminLevel, item.id));
+  const levelInfo = ADMIN_LEVELS.find((l) => l.value === adminLevel);
 
   const initials = profile?.full_name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "A";
 
@@ -65,7 +71,13 @@ const AdminSidebar = ({ activeTab, onTabChange, open, onClose }: AdminSidebarPro
           </Avatar>
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold">{profile?.full_name || "Admin"}</p>
-            <p className="truncate text-xs text-destructive font-medium">Administrator</p>
+            <Badge variant="outline" className={
+              adminLevel === "super_admin" ? "bg-destructive/15 text-destructive border-destructive/30 text-[10px]" :
+              adminLevel === "admin" ? "bg-primary/15 text-primary border-primary/30 text-[10px]" :
+              "bg-muted text-muted-foreground text-[10px]"
+            }>
+              {levelInfo?.label || "Viewer"}
+            </Badge>
           </div>
         </div>
       </div>

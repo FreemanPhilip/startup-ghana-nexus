@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { logAdminAction } from "@/lib/auditLog";
+import { canPerformAction, type AdminLevel } from "@/lib/adminPermissions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -28,7 +30,11 @@ const generatePassword = () => {
   return pwd;
 };
 
-const AdminInvitePanel = () => {
+interface AdminInvitePanelProps {
+  adminLevel: AdminLevel;
+}
+
+const AdminInvitePanel = ({ adminLevel }: AdminInvitePanelProps) => {
   const { user } = useAuth();
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,6 +44,7 @@ const AdminInvitePanel = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [createdCredentials, setCreatedCredentials] = useState<{ email: string; password: string } | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [inviteAdminLevel, setInviteAdminLevel] = useState<string>("admin");
 
   const fetchInvitations = async () => {
     const { data } = await supabase
@@ -81,6 +88,7 @@ const AdminInvitePanel = () => {
           password: generatedPassword,
           fullName: fullName.trim() || trimmedEmail.split("@")[0],
           inviteToken: inviteData.token,
+          adminLevel: inviteAdminLevel,
         },
       });
 
@@ -144,9 +152,11 @@ const AdminInvitePanel = () => {
               setFullName("");
             }
           }}>
+            {canPerformAction(adminLevel, "invite_admin") && (
             <DialogTrigger asChild>
               <Button size="sm" className="gap-1"><UserPlus className="h-3 w-3" /> Invite Admin</Button>
             </DialogTrigger>
+            )}
             <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>{createdCredentials ? "Admin Account Created" : "Invite New Admin"}</DialogTitle>
@@ -221,6 +231,19 @@ const AdminInvitePanel = () => {
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input type="email" placeholder="admin@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-9" required />
                     </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Admin Level</Label>
+                    <Select value={inviteAdminLevel} onValueChange={setInviteAdminLevel}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="super_admin">Super Admin — Full platform control</SelectItem>
+                        <SelectItem value="admin">Admin — Manage users & content</SelectItem>
+                        <SelectItem value="viewer">Viewer — Read-only access</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="rounded-md bg-muted/50 border px-3 py-2">
                     <p className="text-xs text-muted-foreground flex items-center gap-1.5">

@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { email, password, fullName, inviteToken } = await req.json();
+    const { email, password, fullName, inviteToken, adminLevel } = await req.json();
 
     if (!email || !password) {
       return new Response(JSON.stringify({ error: "Email and password required" }), {
@@ -91,10 +91,11 @@ Deno.serve(async (req) => {
       { onConflict: "user_id,role" }
     );
 
-    // Mark onboarding as completed for admin
+    // Mark onboarding as completed for admin and set admin level
     await adminClient.from("profiles").update({
       onboarding_step: "completed",
       full_name: fullName || email.split("@")[0],
+      admin_level: adminLevel || "admin",
     }).eq("user_id", newUser.user.id);
 
     // Mark invitation as accepted if token provided

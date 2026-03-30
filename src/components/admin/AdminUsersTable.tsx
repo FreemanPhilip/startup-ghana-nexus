@@ -5,13 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Download, UserCog, KeyRound, Copy, Check, Eye, EyeOff } from "lucide-react";
+import { Search, Download, UserCog, KeyRound, Copy, Check, Eye, EyeOff, Shield } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { logAdminAction } from "@/lib/auditLog";
+import { canPerformAction, type AdminLevel, ADMIN_LEVELS as ADMIN_LEVEL_OPTIONS } from "@/lib/adminPermissions";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 type AppRole = Database["public"]["Enums"]["app_role"];
@@ -20,7 +21,11 @@ interface UserWithRole extends Profile {
   roles: AppRole[];
 }
 
-const AdminUsersTable = () => {
+interface AdminUsersTableProps {
+  adminLevel: AdminLevel;
+}
+
+const AdminUsersTable = ({ adminLevel }: AdminUsersTableProps) => {
   const { user } = useAuth();
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,6 +40,9 @@ const AdminUsersTable = () => {
   const [passwordResetDone, setPasswordResetDone] = useState(false);
   const [showGenPassword, setShowGenPassword] = useState(false);
   const [copiedPwd, setCopiedPwd] = useState(false);
+  const [adminLevelUser, setAdminLevelUser] = useState<UserWithRole | null>(null);
+  const [selectedAdminLevel, setSelectedAdminLevel] = useState<string>("viewer");
+  const [changingLevel, setChangingLevel] = useState(false);
 
   const generatePassword = () => {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
@@ -66,6 +74,28 @@ const AdminUsersTable = () => {
       toast.error(error.message);
     } finally {
       setResettingPassword(false);
+    }
+  };
+
+  const handleChangeAdminLevel = async () => {
+    if (!adminLevelUser || !selectedAdminLevel) return;
+    setChangingLevel(true);
+    try {
+      await supabase.from("profiles").update({ admin_level: selectedAdminLevel } as any).eq("user_id", adminLevelUser.user_id);
+      if (user) {
+        logAdminAction(user.id, "admin_level_change", "user", adminLevelUser.user_id, {
+          target_name: adminLevelUser.full_name,
+          old_level: (adminLevelUser as any).admin_level || "viewer",
+          new_level: selectedAdminLevel,
+        });
+      }
+      toast.success(`Admin level updated to ${selectedAdminLevel.replace("_", " ")}`);
+      setAdminLevelUser(null);
+      fetchUsers();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setChangingLevel(false);
     }
   };
 
@@ -251,12 +281,19 @@ const AdminUsersTable = () => {
                     <td className="px-4 py-3 text-muted-foreground text-xs">{new Date(user.created_at).toLocaleDateString()}</td>
                     <td className="px-4 py-3">
                       <div className="flex gap-1">
-                        <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => { setRoleDialogUser(user); setNewRole(user.roles[0] || ""); }}>
-                          <UserCog className="h-3 w-3" /> Role
-                        </Button>
-                        {user.roles.includes("admin") && (
+                        {canPerformAction(adminLevel, "change_role") && (
+                          <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => { setRoleDialogUser(user); setNewRole(user.roles[0] || ""); }}>
+                            <UserCog className="h-3 w-3" /> Role
+                          </Button>
+                        )}
+                        {user.roles.includes("admin") && canPerformAction(adminLevel, "reset_password") && (
                           <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => { setResetPasswordUser(user); setPasswordResetDone(false); setGeneratedPassword(""); setCopiedPwd(false); }}>
                             <KeyRound className="h-3 w-3" /> Reset Pwd
+                          </Button>
+                        )}
+                        {canPerformAction(adminLevel, "manage_admin_level") && user.roles.includes("admin") && (
+                          <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => { setAdminLevelUser(user); setSelectedAdminLevel((user as any).admin_level || "viewer"); }}>
+                            <Shield className="h-3 w-3" /> Level
                           </Button>
                         )}
                       </div>
@@ -373,6 +410,55 @@ const AdminUsersTable = () => {
                   <Button className="w-full" onClick={() => { setResetPasswordUser(null); setPasswordResetDone(false); }}>Done</Button>
                 </div>
               )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Admin Level Dialog */}
+      <Dialog open={!!adminLevelUser} onOpenChange={(open) => { if (!open) setAdminLevelUser(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change Admin Level</DialogTitle>
+          </DialogHeader>
+          {adminLevelUser && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={adminLevelUser.avatar_url || undefined} />
+                  <AvatarFallback className="bg-muted">{adminLevelUser.full_name?.charAt(0) || "U"}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-semibold">{adminLevelUser.full_name || "Unknown"}</p>
+                  <Badge variant="outline" className="text-[10px] mt-1">
+                    Current: {((adminLevelUser as any).admin_level || "viewer").replace("_", " ")}
+                  </Badge>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Admin Level</Label>
+                <Select value={selectedAdminLevel} onValueChange={setSelectedAdminLevel}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ADMIN_LEVEL_OPTIONS.map((level) => (
+                      <SelectItem key={level.value} value={level.value}>
+                        <div>
+                          <span className="font-medium">{level.label}</span>
+                          <span className="text-muted-foreground ml-2 text-xs">— {level.description}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <Button variant="outline" onClick={() => setAdminLevelUser(null)}>Cancel</Button>
+                <Button onClick={handleChangeAdminLevel} disabled={changingLevel}>
+                  {changingLevel ? "Updating..." : "Update Level"}
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
