@@ -86,6 +86,7 @@ const App = () => (
             <Route path="/sparkx-magazine" element={<ProductPage />} />
             <Route path="/sparkx-podcast" element={<ProductPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/onboarding" element={<OnboardingRoute><OnboardingPage /></OnboardingRoute>} />
             
