@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Download, UserCog } from "lucide-react";
+import { Search, Download, UserCog, KeyRound, Copy, Check, Eye, EyeOff } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
@@ -26,6 +26,40 @@ const AdminUsersTable = () => {
   const [roleDialogUser, setRoleDialogUser] = useState<UserWithRole | null>(null);
   const [newRole, setNewRole] = useState<string>("");
   const [changingRole, setChangingRole] = useState(false);
+  const [resetPasswordUser, setResetPasswordUser] = useState<UserWithRole | null>(null);
+  const [resettingPassword, setResettingPassword] = useState(false);
+  const [generatedPassword, setGeneratedPassword] = useState("");
+  const [passwordResetDone, setPasswordResetDone] = useState(false);
+  const [showGenPassword, setShowGenPassword] = useState(false);
+  const [copiedPwd, setCopiedPwd] = useState(false);
+
+  const generatePassword = () => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+    const special = "!@#$%&*";
+    let pwd = "";
+    for (let i = 0; i < 10; i++) pwd += chars[Math.floor(Math.random() * chars.length)];
+    pwd += special[Math.floor(Math.random() * special.length)];
+    return pwd;
+  };
+
+  const handleResetPassword = async () => {
+    if (!resetPasswordUser) return;
+    setResettingPassword(true);
+    const newPwd = generatePassword();
+    try {
+      const { data, error } = await supabase.functions.invoke("reset-admin-password", {
+        body: { targetUserId: resetPasswordUser.user_id, newPassword: newPwd },
+      });
+      if (error || data?.error) throw new Error(data?.error || error?.message);
+      setGeneratedPassword(newPwd);
+      setPasswordResetDone(true);
+      toast.success("Password reset successfully!");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setResettingPassword(false);
+    }
+  };
 
   const fetchUsers = async () => {
     const [{ data: profiles }, { data: roles }] = await Promise.all([
@@ -201,9 +235,16 @@ const AdminUsersTable = () => {
                     </td>
                     <td className="px-4 py-3 text-muted-foreground text-xs">{new Date(user.created_at).toLocaleDateString()}</td>
                     <td className="px-4 py-3">
-                      <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => { setRoleDialogUser(user); setNewRole(user.roles[0] || ""); }}>
-                        <UserCog className="h-3 w-3" /> Manage
-                      </Button>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => { setRoleDialogUser(user); setNewRole(user.roles[0] || ""); }}>
+                          <UserCog className="h-3 w-3" /> Role
+                        </Button>
+                        {user.roles.includes("admin") && (
+                          <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => { setResetPasswordUser(user); setPasswordResetDone(false); setGeneratedPassword(""); setCopiedPwd(false); }}>
+                            <KeyRound className="h-3 w-3" /> Reset Pwd
+                          </Button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -259,6 +300,64 @@ const AdminUsersTable = () => {
                   {changingRole ? "Updating..." : "Update Role"}
                 </Button>
               </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Reset Password Dialog */}
+      <Dialog open={!!resetPasswordUser} onOpenChange={(open) => { if (!open) { setResetPasswordUser(null); setPasswordResetDone(false); setGeneratedPassword(""); } }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reset Admin Password</DialogTitle>
+          </DialogHeader>
+          {resetPasswordUser && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={resetPasswordUser.avatar_url || undefined} />
+                  <AvatarFallback className="bg-muted">{resetPasswordUser.full_name?.charAt(0) || "U"}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-semibold">{resetPasswordUser.full_name || "Unknown"}</p>
+                  <p className="text-sm text-muted-foreground">{resetPasswordUser.headline || "—"}</p>
+                </div>
+              </div>
+
+              {!passwordResetDone ? (
+                <div className="space-y-3">
+                  <div className="rounded-md bg-destructive/10 border border-destructive/30 px-3 py-2">
+                    <p className="text-xs text-destructive">
+                      This will generate a new temporary password. The admin will be required to change it on next login.
+                    </p>
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <Button variant="outline" onClick={() => setResetPasswordUser(null)}>Cancel</Button>
+                    <Button variant="destructive" onClick={handleResetPassword} disabled={resettingPassword}>
+                      {resettingPassword ? "Resetting..." : "Reset Password"}
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-2">
+                    <p className="text-sm font-medium">New temporary password:</p>
+                    <div className="flex items-center justify-between rounded-md bg-background px-3 py-2 border">
+                      <p className="text-sm font-mono font-medium">{showGenPassword ? generatedPassword : "••••••••••••"}</p>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowGenPassword(!showGenPassword)}>
+                          {showGenPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { navigator.clipboard.writeText(generatedPassword); setCopiedPwd(true); toast.success("Password copied!"); setTimeout(() => setCopiedPwd(false), 2000); }}>
+                          {copiedPwd ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
+                        </Button>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Share this with the admin. They'll be prompted to change it on next login.</p>
+                  </div>
+                  <Button className="w-full" onClick={() => { setResetPasswordUser(null); setPasswordResetDone(false); }}>Done</Button>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>
