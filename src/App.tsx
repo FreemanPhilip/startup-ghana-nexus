@@ -15,6 +15,7 @@ import PartnerDashboardPage from "./pages/PartnerDashboardPage";
 import NotFound from "./pages/NotFound";
 import ProductPage from "./pages/ProductPage";
 import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
 
 const queryClient = new QueryClient();
 
