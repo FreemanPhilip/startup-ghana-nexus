@@ -12,6 +12,7 @@ import FounderDashboardPage from "./pages/FounderDashboardPage";
 import InvestorDashboardPage from "./pages/InvestorDashboardPage";
 import MentorDashboardPage from "./pages/MentorDashboardPage";
 import PartnerDashboardPage from "./pages/PartnerDashboardPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 import NotFound from "./pages/NotFound";
 import ProductPage from "./pages/ProductPage";
 import AboutPage from "./pages/AboutPage";
@@ -98,6 +99,7 @@ const App = () => (
             <Route path="/investor/dashboard" element={<RoleRoute allowedRole="investor"><InvestorDashboardPage /></RoleRoute>} />
             <Route path="/mentor/dashboard" element={<RoleRoute allowedRole="mentor"><MentorDashboardPage /></RoleRoute>} />
             <Route path="/partner/dashboard" element={<RoleRoute allowedRole="ecosystem_partner"><PartnerDashboardPage /></RoleRoute>} />
+            <Route path="/admin/dashboard" element={<RoleRoute allowedRole="admin"><AdminDashboardPage /></RoleRoute>} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>

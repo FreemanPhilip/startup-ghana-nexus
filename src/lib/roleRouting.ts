@@ -12,8 +12,10 @@ export function getRoleDashboardPath(role?: AppRole | null): string {
       return "/mentor/dashboard";
     case "ecosystem_partner":
       return "/partner/dashboard";
+    case "admin":
+      return "/admin/dashboard";
     default:
-      // Fallback for legacy roles (service_provider, member, admin)
+      // Fallback for legacy roles (service_provider, member)
       return "/founder/dashboard";
   }
 }
