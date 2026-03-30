@@ -91,6 +91,9 @@ const AdminInvitePanel = () => {
       }
 
       toast.success("Admin account created successfully!");
+      if (user) {
+        logAdminAction(user.id, "admin_invite", "user", trimmedEmail, { email: trimmedEmail, name: fullName.trim() });
+      }
       setCreatedCredentials({ email: trimmedEmail, password: generatedPassword });
       setEmail("");
       setFullName("");
