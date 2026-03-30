@@ -256,7 +256,7 @@ const AdminInvitePanel = () => {
                   inv.status === "pending" ? "bg-secondary/15 text-secondary border-secondary/30" :
                   ""
                 }>{inv.status}</Badge>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteInvitation(inv.id)} title="Delete">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteInvitation(inv.id, inv.email)} title="Delete">
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
