@@ -1,14 +1,9 @@
 import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const sparkxEcosystem = [
-  { label: "SparkX Talent", href: "/sparkx-talent" },
-  { label: "SparkX Labs", href: "/sparkx-labs" },
-  { label: "SparkX Advisory", href: "/sparkx-advisory" },
-  { label: "SparkX Academy", href: "/sparkx-academy" },
+const sparkxModules = [
   { label: "SparkX Global", href: "/sparkx-global" },
   { label: "SparkX Summit", href: "/sparkx-summit" },
-  { label: "SparkX Fund", href: "/sparkx-fund" },
   { label: "SparkX Lounge", href: "/sparkx-lounge" },
   { label: "SparkX Magazine", href: "/sparkx-magazine" },
   { label: "SparkX Podcast", href: "/sparkx-podcast" },
@@ -41,9 +36,9 @@ const Footer = () => {
 
           {/* SparkX Ecosystem */}
           <div>
-            <h4 className="mb-4 font-display text-sm font-bold">SparkX Ecosystem</h4>
+            <h4 className="mb-4 font-display text-sm font-bold">SparkX Modules</h4>
             <ul className="space-y-2.5">
-              {sparkxEcosystem.map((item) => (
+              {sparkxModules.map((item) => (
                 <li key={item.label}>
                   <Link
                     to={item.href}

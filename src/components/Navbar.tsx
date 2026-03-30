@@ -5,25 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
-const products = [
-  { label: "SparkX Talent", href: "/sparkx-talent" },
-  { label: "SparkX Labs", href: "/sparkx-labs" },
-  { label: "SparkX Advisory", href: "/sparkx-advisory" },
-  { label: "SparkX Academy", href: "/sparkx-academy" },
-  { label: "SparkX Global", href: "/sparkx-global" },
-  { label: "SparkX Summit", href: "/sparkx-summit" },
-  { label: "SparkX Fund", href: "/sparkx-fund" },
-  { label: "SparkX Lounge", href: "/sparkx-lounge" },
-  { label: "SparkX Magazine", href: "/sparkx-magazine" },
-  { label: "SparkX Podcast", href: "/sparkx-podcast" },
+const solutions = [
+  { label: "SparkX Talent", href: "/sparkx-talent", desc: "Hiring, talent discovery, job matching" },
+  { label: "SparkX Labs", href: "/sparkx-labs", desc: "Innovation, product building, incubation" },
+  { label: "SparkX Advisory", href: "/sparkx-advisory", desc: "Consulting, mentorship, expert guidance" },
+  { label: "SparkX Academy", href: "/sparkx-academy", desc: "Learning, courses, training programs" },
+  { label: "SparkX Fund", href: "/sparkx-fund", desc: "Investment, funding access, capital" },
 ];
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "Explore The Index", href: "#features" },
   { label: "Pricing", href: "#pricing" },
   { label: "About", href: "/about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const Navbar = () => {
@@ -51,7 +45,7 @@ const Navbar = () => {
 
         {/* Desktop */}
         <div className="hidden items-center gap-1 md:flex">
-          {navLinks.slice(0, 2).map((link) =>
+          {navLinks.slice(0, 1).map((link) =>
             link.href.startsWith("/") ? (
               <Link
                 key={link.label}
@@ -71,14 +65,14 @@ const Navbar = () => {
             )
           )}
 
-          {/* Products Dropdown */}
+          {/* Solutions Dropdown */}
           <div
             className="relative"
             onMouseEnter={() => setProductsOpen(true)}
             onMouseLeave={() => setProductsOpen(false)}
           >
             <button className="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              Products
+              Solutions
               <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${productsOpen ? "rotate-180" : ""}`} />
             </button>
             <AnimatePresence>
@@ -90,14 +84,15 @@ const Navbar = () => {
                   transition={{ duration: 0.15 }}
                   className="absolute left-1/2 top-full -translate-x-1/2 pt-2"
                 >
-                  <div className="w-56 rounded-lg border border-border bg-card p-2 shadow-xl">
-                    {products.map((product) => (
+                  <div className="w-72 rounded-lg border border-border bg-card p-2 shadow-xl">
+                    {solutions.map((item) => (
                       <Link
-                        key={product.label}
-                        to={product.href}
-                        className="block rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                        key={item.label}
+                        to={item.href}
+                        className="block rounded-md px-3 py-2 transition-colors hover:bg-accent/10"
                       >
-                        {product.label}
+                        <span className="text-sm font-medium text-foreground">{item.label}</span>
+                        <span className="block text-xs text-muted-foreground">{item.desc}</span>
                       </Link>
                     ))}
                   </div>
@@ -106,7 +101,7 @@ const Navbar = () => {
             </AnimatePresence>
           </div>
 
-          {navLinks.slice(2).map((link) =>
+          {navLinks.slice(1).map((link) =>
             link.href.startsWith("/") ? (
               <Link
                 key={link.label}
@@ -188,12 +183,12 @@ const Navbar = () => {
               )
             )}
 
-            {/* Mobile Products Accordion */}
+            {/* Mobile Solutions Accordion */}
             <button
               className="flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-muted-foreground"
               onClick={() => setMobileProductsOpen(!mobileProductsOpen)}
             >
-              Products
+              Solutions
               <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${mobileProductsOpen ? "rotate-180" : ""}`} />
             </button>
             <AnimatePresence>
@@ -204,14 +199,14 @@ const Navbar = () => {
                   exit={{ opacity: 0, height: 0 }}
                   className="overflow-hidden pl-4"
                 >
-                  {products.map((product) => (
+                  {solutions.map((item) => (
                     <Link
-                      key={product.label}
-                      to={product.href}
+                      key={item.label}
+                      to={item.href}
                       className="block rounded-md px-3 py-2 text-sm text-muted-foreground"
                       onClick={() => { setMobileOpen(false); setMobileProductsOpen(false); }}
                     >
-                      {product.label}
+                      {item.label}
                     </Link>
                   ))}
                 </motion.div>
