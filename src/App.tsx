@@ -41,6 +41,8 @@ const OnboardingRoute = ({ children }: { children: React.ReactNode }) => {
   const { session, profile, loading, roles } = useAuth();
   if (loading) return <LoadingSpinner />;
   if (!session) return <Navigate to="/auth" replace />;
+  // Admins skip onboarding entirely
+  if (roles.includes("admin")) return <Navigate to="/admin/dashboard" replace />;
   if (profile && profile.onboarding_step === "completed" && roles.length > 0) {
     return <Navigate to={getRoleDashboardPath(roles[0])} replace />;
   }
@@ -52,7 +54,8 @@ const RoleRoute = ({ allowedRole, children }: { allowedRole: string; children: R
   const { roles, loading, session, profile } = useAuth();
   if (loading) return <LoadingSpinner />;
   if (!session) return <Navigate to="/auth" replace />;
-  if (profile && profile.onboarding_step !== "completed") return <Navigate to="/onboarding" replace />;
+  // Admins skip onboarding check
+  if (allowedRole !== "admin" && profile && profile.onboarding_step !== "completed") return <Navigate to="/onboarding" replace />;
   if (!roles.includes(allowedRole as any)) {
     return <Navigate to={getRoleDashboardPath(roles[0])} replace />;
   }
@@ -64,7 +67,8 @@ const DashboardRedirect = () => {
   const { roles, loading, session, profile } = useAuth();
   if (loading) return <LoadingSpinner />;
   if (!session) return <Navigate to="/auth" replace />;
-  if (profile && profile.onboarding_step !== "completed") return <Navigate to="/onboarding" replace />;
+  // Admins skip onboarding
+  if (!roles.includes("admin") && profile && profile.onboarding_step !== "completed") return <Navigate to="/onboarding" replace />;
   return <Navigate to={getRoleDashboardPath(roles[0])} replace />;
 };
 
