@@ -191,11 +191,11 @@ const AdminAuthPage = () => {
                   id="email"
                   type="email"
                   placeholder="admin@sparkxindex.com"
-                  value={mode === "signup" ? inviteEmail : email}
+                  value={mode === "signup" && inviteToken ? inviteEmail : email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10"
                   required
-                  readOnly={mode === "signup"}
+                  readOnly={mode === "signup" && !!inviteToken}
                 />
               </div>
             </div>
@@ -212,13 +212,13 @@ const AdminAuthPage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10 pr-10"
                   required
-                  minLength={8}
+                  minLength={6}
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              {mode === "signup" && <p className="text-xs text-muted-foreground">Minimum 8 characters</p>}
+              {mode === "signup" && <p className="text-xs text-muted-foreground">Minimum 6 characters</p>}
             </div>
 
             <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
@@ -226,15 +226,26 @@ const AdminAuthPage = () => {
             </Button>
           </form>
 
-          {!inviteToken && (
+          {!inviteToken && !noAdminsExist && mode === "login" && (
             <p className="mt-6 text-center text-xs text-muted-foreground">
               Admin accounts are invitation-only. Contact a super admin for access.
             </p>
           )}
 
-          {mode === "signup" && !inviteToken && (
+          {noAdminsExist && mode === "signup" && (
+            <p className="mt-6 text-center text-xs text-muted-foreground">
+              First-time setup — create the super admin account.
+            </p>
+          )}
+
+          {mode === "signup" && !noAdminsExist && (
             <button onClick={() => setMode("login")} className="mt-3 w-full text-center text-sm text-primary hover:underline">
               Already have an admin account? Sign In
+            </button>
+          )}
+          {mode === "login" && (
+            <button onClick={() => setMode("signup")} className="mt-3 w-full text-center text-sm text-primary hover:underline">
+              Have an invitation? Create Account
             </button>
           )}
         </div>
