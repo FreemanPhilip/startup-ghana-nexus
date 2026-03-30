@@ -304,6 +304,64 @@ const AdminUsersTable = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Reset Password Dialog */}
+      <Dialog open={!!resetPasswordUser} onOpenChange={(open) => { if (!open) { setResetPasswordUser(null); setPasswordResetDone(false); setGeneratedPassword(""); } }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reset Admin Password</DialogTitle>
+          </DialogHeader>
+          {resetPasswordUser && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={resetPasswordUser.avatar_url || undefined} />
+                  <AvatarFallback className="bg-muted">{resetPasswordUser.full_name?.charAt(0) || "U"}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-semibold">{resetPasswordUser.full_name || "Unknown"}</p>
+                  <p className="text-sm text-muted-foreground">{resetPasswordUser.headline || "—"}</p>
+                </div>
+              </div>
+
+              {!passwordResetDone ? (
+                <div className="space-y-3">
+                  <div className="rounded-md bg-destructive/10 border border-destructive/30 px-3 py-2">
+                    <p className="text-xs text-destructive">
+                      This will generate a new temporary password. The admin will be required to change it on next login.
+                    </p>
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <Button variant="outline" onClick={() => setResetPasswordUser(null)}>Cancel</Button>
+                    <Button variant="destructive" onClick={handleResetPassword} disabled={resettingPassword}>
+                      {resettingPassword ? "Resetting..." : "Reset Password"}
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-2">
+                    <p className="text-sm font-medium">New temporary password:</p>
+                    <div className="flex items-center justify-between rounded-md bg-background px-3 py-2 border">
+                      <p className="text-sm font-mono font-medium">{showGenPassword ? generatedPassword : "••••••••••••"}</p>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowGenPassword(!showGenPassword)}>
+                          {showGenPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { navigator.clipboard.writeText(generatedPassword); setCopiedPwd(true); toast.success("Password copied!"); setTimeout(() => setCopiedPwd(false), 2000); }}>
+                          {copiedPwd ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
+                        </Button>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Share this with the admin. They'll be prompted to change it on next login.</p>
+                  </div>
+                  <Button className="w-full" onClick={() => { setResetPasswordUser(null); setPasswordResetDone(false); }}>Done</Button>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
