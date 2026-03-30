@@ -40,7 +40,8 @@ const AdminDashboardPage = () => {
           <Button variant="ghost" size="icon" className="md:hidden h-8 w-8" onClick={() => setSidebarOpen(true)}>
             <Menu className="h-5 w-5" />
           </Button>
-          <h1 className="font-display text-lg font-bold">{tabTitles[activeTab] || "Admin"}</h1>
+          <h1 className="font-display text-lg font-bold flex-1">{tabTitles[activeTab] || "Admin"}</h1>
+          <AdminNotificationBell />
         </header>
         <main className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-6xl px-4 md:px-6 py-6">
