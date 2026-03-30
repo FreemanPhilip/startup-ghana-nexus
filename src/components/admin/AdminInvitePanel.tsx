@@ -5,6 +5,7 @@ import { logAdminAction } from "@/lib/auditLog";
 import { canPerformAction, type AdminLevel } from "@/lib/adminPermissions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -43,6 +44,7 @@ const AdminInvitePanel = ({ adminLevel }: AdminInvitePanelProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [createdCredentials, setCreatedCredentials] = useState<{ email: string; password: string } | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [inviteAdminLevel, setInviteAdminLevel] = useState<string>("admin");
 
   const fetchInvitations = async () => {
     const { data } = await supabase
