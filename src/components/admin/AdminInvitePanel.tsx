@@ -119,8 +119,11 @@ const AdminInvitePanel = () => {
     toast.success("All credentials copied to clipboard!");
   };
 
-  const deleteInvitation = async (id: string) => {
+  const deleteInvitation = async (id: string, email: string) => {
     await supabase.from("admin_invitations").delete().eq("id", id);
+    if (user) {
+      logAdminAction(user.id, "invite_delete", "invitation", id, { email });
+    }
     toast.success("Invitation deleted.");
     fetchInvitations();
   };
