@@ -74,7 +74,7 @@ const AdminAuthPage = () => {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      // Check if user has admin role - will be verified by route guard
+      toast.success("Welcome back, Admin!");
       navigate("/admin/dashboard");
     } catch (error: any) {
       toast.error(error.message);
