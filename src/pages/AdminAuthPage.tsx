@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { logAdminAction } from "@/lib/auditLog";
 
 const AdminAuthPage = () => {
   const { session, roles, loading: authLoading } = useAuth();
