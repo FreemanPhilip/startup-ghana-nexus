@@ -13,6 +13,7 @@ import InvestorDashboardPage from "./pages/InvestorDashboardPage";
 import MentorDashboardPage from "./pages/MentorDashboardPage";
 import PartnerDashboardPage from "./pages/PartnerDashboardPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AdminAuthPage from "./pages/AdminAuthPage";
 import NotFound from "./pages/NotFound";
 import ProductPage from "./pages/ProductPage";
 import AboutPage from "./pages/AboutPage";
@@ -89,6 +90,7 @@ const App = () => (
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/admin/login" element={<AdminAuthPage />} />
             <Route path="/onboarding" element={<OnboardingRoute><OnboardingPage /></OnboardingRoute>} />
             
             {/* Smart redirect for backward compat */}
