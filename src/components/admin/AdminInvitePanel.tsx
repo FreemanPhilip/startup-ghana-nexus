@@ -232,6 +232,19 @@ const AdminInvitePanel = ({ adminLevel }: AdminInvitePanelProps) => {
                       <Input type="email" placeholder="admin@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-9" required />
                     </div>
                   </div>
+                  <div className="space-y-2">
+                    <Label>Admin Level</Label>
+                    <Select value={inviteAdminLevel} onValueChange={setInviteAdminLevel}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="super_admin">Super Admin — Full platform control</SelectItem>
+                        <SelectItem value="admin">Admin — Manage users & content</SelectItem>
+                        <SelectItem value="viewer">Viewer — Read-only access</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <div className="rounded-md bg-muted/50 border px-3 py-2">
                     <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                       <Key className="h-3 w-3" />
