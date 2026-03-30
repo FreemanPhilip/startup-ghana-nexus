@@ -73,6 +73,11 @@ const ContactPage = () => {
         message: result.data.message,
       });
       if (error) throw error;
+      setForm({ name: "", email: "", subject: "", company: "", message: "" });
+      toast({
+        title: "Message Sent!",
+        description: "Thank you for reaching out. We'll get back to you within 24 hours.",
+      });
     } catch {
       toast({
         title: "Something went wrong",
@@ -82,11 +87,6 @@ const ContactPage = () => {
     } finally {
       setIsSubmitting(false);
     }
-    setForm({ name: "", email: "", subject: "", company: "", message: "" });
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for reaching out. We'll get back to you within 24 hours.",
-    });
   };
 
   return (
