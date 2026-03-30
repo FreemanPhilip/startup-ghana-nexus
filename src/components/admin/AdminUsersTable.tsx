@@ -26,6 +26,40 @@ const AdminUsersTable = () => {
   const [roleDialogUser, setRoleDialogUser] = useState<UserWithRole | null>(null);
   const [newRole, setNewRole] = useState<string>("");
   const [changingRole, setChangingRole] = useState(false);
+  const [resetPasswordUser, setResetPasswordUser] = useState<UserWithRole | null>(null);
+  const [resettingPassword, setResettingPassword] = useState(false);
+  const [generatedPassword, setGeneratedPassword] = useState("");
+  const [passwordResetDone, setPasswordResetDone] = useState(false);
+  const [showGenPassword, setShowGenPassword] = useState(false);
+  const [copiedPwd, setCopiedPwd] = useState(false);
+
+  const generatePassword = () => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+    const special = "!@#$%&*";
+    let pwd = "";
+    for (let i = 0; i < 10; i++) pwd += chars[Math.floor(Math.random() * chars.length)];
+    pwd += special[Math.floor(Math.random() * special.length)];
+    return pwd;
+  };
+
+  const handleResetPassword = async () => {
+    if (!resetPasswordUser) return;
+    setResettingPassword(true);
+    const newPwd = generatePassword();
+    try {
+      const { data, error } = await supabase.functions.invoke("reset-admin-password", {
+        body: { targetUserId: resetPasswordUser.user_id, newPassword: newPwd },
+      });
+      if (error || data?.error) throw new Error(data?.error || error?.message);
+      setGeneratedPassword(newPwd);
+      setPasswordResetDone(true);
+      toast.success("Password reset successfully!");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setResettingPassword(false);
+    }
+  };
 
   const fetchUsers = async () => {
     const [{ data: profiles }, { data: roles }] = await Promise.all([
