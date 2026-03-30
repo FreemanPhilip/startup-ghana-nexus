@@ -87,6 +87,8 @@ const AdminAuditLog = () => {
     if (d.new_role && !d.old_role) parts.push(`Role: ${d.new_role}`);
     if (d.email) parts.push(`Email: ${d.email}`);
     if (d.status) parts.push(`Status: ${d.status}`);
+    if (d.old_level) parts.push(`${String(d.old_level).replace("_", " ")} → ${String(d.new_level).replace("_", " ")}`);
+    if (d.new_level && !d.old_level) parts.push(`Level: ${String(d.new_level).replace("_", " ")}`);
     return parts.length > 0 ? parts.join(" · ") : "—";
   };
 
