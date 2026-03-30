@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { logAdminAction } from "@/lib/auditLog";
+import { canPerformAction, type AdminLevel, ADMIN_LEVELS as ADMIN_LEVEL_OPTIONS } from "@/lib/adminPermissions";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 type AppRole = Database["public"]["Enums"]["app_role"];
@@ -20,7 +21,11 @@ interface UserWithRole extends Profile {
   roles: AppRole[];
 }
 
-const AdminUsersTable = () => {
+interface AdminUsersTableProps {
+  adminLevel: AdminLevel;
+}
+
+const AdminUsersTable = ({ adminLevel }: AdminUsersTableProps) => {
   const { user } = useAuth();
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
