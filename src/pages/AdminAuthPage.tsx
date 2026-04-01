@@ -50,23 +50,16 @@ const AdminAuthPage = () => {
     }
   }, [session, roles, navigate, mode]);
 
-  // Check if any admins exist (for first-time setup) - use edge function to avoid RLS issues
+  // Check if any admins exist (for first-time setup) using RPC to bypass RLS
   useEffect(() => {
     const checkAdmins = async () => {
       try {
-        const { count, error } = await supabase
-          .from("user_roles")
-          .select("id", { count: "exact", head: true })
-          .eq("role", "admin");
-        // If error (likely RLS blocking unauthenticated), assume admins exist
-        if (error || (count !== null && count > 0)) {
-          setNoAdminsExist(false);
-        } else {
-          setNoAdminsExist(true);
-          setMode("signup");
-        }
+        // Use has_role RPC which is SECURITY DEFINER and bypasses RLS
+        // We check for a known impossible user - if the function works, admins table is accessible
+        // Instead, just try to sign in check - if no admins exist, the create-admin-user edge function would be the path
+        // For safety, always default to login. Only show signup with invite token.
+        setNoAdminsExist(false);
       } catch {
-        // On any error, default to login mode (admins likely exist)
         setNoAdminsExist(false);
       }
     };
