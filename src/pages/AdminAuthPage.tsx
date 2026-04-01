@@ -10,11 +10,21 @@ import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { logAdminAction } from "@/lib/auditLog";
 
+type AuthMode = "login" | "signup" | "change_password" | "forgot_password" | "reset_password";
+
 const AdminAuthPage = () => {
   const { session, roles, loading: authLoading } = useAuth();
   const [searchParams] = useSearchParams();
   const inviteToken = searchParams.get("token");
-  const [mode, setMode] = useState<"login" | "signup" | "change_password">(inviteToken ? "signup" : "login");
+  const isRecovery = window.location.hash.includes("type=recovery");
+
+  const getInitialMode = (): AuthMode => {
+    if (isRecovery) return "reset_password";
+    if (inviteToken) return "signup";
+    return "login";
+  };
+
+  const [mode, setMode] = useState<AuthMode>(getInitialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -28,10 +38,9 @@ const AdminAuthPage = () => {
   const [noAdminsExist, setNoAdminsExist] = useState(false);
   const navigate = useNavigate();
 
-  // Redirect if already logged in as admin (but not if they need to change password)
+  // Redirect if already logged in as admin (but not if they need to change password or are resetting)
   useEffect(() => {
-    if (session && roles.includes("admin") && mode !== "change_password") {
-      // Check if must change password
+    if (session && roles.includes("admin") && mode !== "change_password" && mode !== "reset_password") {
       const mustChange = session.user?.user_metadata?.must_change_password;
       if (mustChange) {
         setMode("change_password");
@@ -54,8 +63,8 @@ const AdminAuthPage = () => {
         setMode("signup");
       }
     };
-    if (!inviteToken) checkAdmins();
-  }, [inviteToken]);
+    if (!inviteToken && !isRecovery) checkAdmins();
+  }, [inviteToken, isRecovery]);
 
   // Validate invite token
   useEffect(() => {
@@ -84,13 +93,24 @@ const AdminAuthPage = () => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      
-      // Log admin login
-      if (data.user) {
-        logAdminAction(data.user.id, "login", "session", data.user.id, { email });
+
+      // Verify the user has admin role
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", data.user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (!roleData) {
+        await supabase.auth.signOut();
+        toast.error("Access denied. This login is for administrators only.");
+        setLoading(false);
+        return;
       }
 
-      // Check if user needs to change password
+      logAdminAction(data.user.id, "login", "session", data.user.id, { email });
+
       if (data.user?.user_metadata?.must_change_password) {
         setMode("change_password");
         toast.info("Please change your temporary password to continue.");
@@ -131,6 +151,53 @@ const AdminAuthPage = () => {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast.error("Please enter your email address.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/admin/login`,
+      });
+      if (error) throw error;
+      toast.success("Password reset link sent! Check your email.");
+      setMode("login");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmNewPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+        data: { must_change_password: false },
+      });
+      if (error) throw error;
+      toast.success("Password reset successfully! You can now sign in.");
+      setMode("login");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     const isFirstSetup = noAdminsExist;
@@ -161,7 +228,7 @@ const AdminAuthPage = () => {
         
         await supabase
           .from("profiles")
-          .update({ onboarding_step: "completed", full_name: fullName || signupEmail.split("@")[0] })
+          .update({ onboarding_step: "completed", full_name: fullName || signupEmail.split("@")[0], admin_level: isFirstSetup ? "super_admin" : "admin" })
           .eq("user_id", data.session.user.id);
 
         toast.success("Admin account created successfully!");
@@ -197,6 +264,49 @@ const AdminAuthPage = () => {
     );
   }
 
+  const renderPasswordFields = (isReset = false) => (
+    <>
+      <div className="space-y-2">
+        <Label htmlFor="newPassword">New Password</Label>
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            id="newPassword"
+            type={showNewPassword ? "text" : "password"}
+            placeholder="Enter new password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className="pl-10 pr-10"
+            required
+            minLength={6}
+          />
+          <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+            {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            id="confirmNewPassword"
+            type={showNewPassword ? "text" : "password"}
+            placeholder="Confirm new password"
+            value={confirmNewPassword}
+            onChange={(e) => setConfirmNewPassword(e.target.value)}
+            className="pl-10"
+            required
+            minLength={6}
+          />
+        </div>
+        {newPassword && confirmNewPassword && newPassword !== confirmNewPassword && (
+          <p className="text-xs text-destructive">Passwords do not match</p>
+        )}
+      </div>
+    </>
+  );
+
   const renderChangePasswordForm = () => (
     <>
       <div className="mb-6 flex items-center gap-3">
@@ -208,56 +318,72 @@ const AdminAuthPage = () => {
           <p className="text-xs text-muted-foreground">Update your temporary password</p>
         </div>
       </div>
-
       <div className="rounded-md bg-yellow-500/10 border border-yellow-500/30 px-3 py-2 mb-4">
         <p className="text-xs text-yellow-600 dark:text-yellow-400">
           You're using a temporary password. Please set a new password to secure your account.
         </p>
       </div>
-
       <form onSubmit={handleChangePassword} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="newPassword">New Password</Label>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              id="newPassword"
-              type={showNewPassword ? "text" : "password"}
-              placeholder="Enter new password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="pl-10 pr-10"
-              required
-              minLength={6}
-            />
-            <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-              {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              id="confirmNewPassword"
-              type={showNewPassword ? "text" : "password"}
-              placeholder="Confirm new password"
-              value={confirmNewPassword}
-              onChange={(e) => setConfirmNewPassword(e.target.value)}
-              className="pl-10"
-              required
-              minLength={6}
-            />
-          </div>
-          {newPassword && confirmNewPassword && newPassword !== confirmNewPassword && (
-            <p className="text-xs text-destructive">Passwords do not match</p>
-          )}
-        </div>
-
+        {renderPasswordFields()}
         <Button type="submit" disabled={loading || (newPassword !== confirmNewPassword)} className="w-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
           {loading ? "Updating..." : "Set New Password"}
+        </Button>
+      </form>
+    </>
+  );
+
+  const renderForgotPasswordForm = () => (
+    <>
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80">
+          <Mail className="h-5 w-5 text-primary-foreground" />
+        </div>
+        <div>
+          <h2 className="font-display text-xl font-bold">Reset Password</h2>
+          <p className="text-xs text-muted-foreground">We'll send a reset link to your email</p>
+        </div>
+      </div>
+      <form onSubmit={handleForgotPassword} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">Admin Email</Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="admin@sparkxindex.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="pl-10"
+              required
+            />
+          </div>
+        </div>
+        <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
+          {loading ? "Sending..." : "Send Reset Link"}
+        </Button>
+      </form>
+      <button onClick={() => setMode("login")} className="mt-4 w-full text-center text-sm text-primary hover:underline">
+        Back to Sign In
+      </button>
+    </>
+  );
+
+  const renderResetPasswordForm = () => (
+    <>
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80">
+          <Key className="h-5 w-5 text-primary-foreground" />
+        </div>
+        <div>
+          <h2 className="font-display text-xl font-bold">Set New Password</h2>
+          <p className="text-xs text-muted-foreground">Enter your new password below</p>
+        </div>
+      </div>
+      <form onSubmit={handleResetPassword} className="space-y-4">
+        {renderPasswordFields(true)}
+        <Button type="submit" disabled={loading || (newPassword !== confirmNewPassword)} className="w-full bg-primary text-primary-foreground font-semibold hover:opacity-90">
+          {loading ? "Resetting..." : "Reset Password"}
         </Button>
       </form>
     </>
@@ -311,7 +437,14 @@ const AdminAuthPage = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">Password</Label>
+            {mode === "login" && (
+              <button type="button" onClick={() => setMode("forgot_password")} className="text-xs text-primary hover:underline">
+                Forgot password?
+              </button>
+            )}
+          </div>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -361,11 +494,20 @@ const AdminAuthPage = () => {
     </>
   );
 
+  const renderContent = () => {
+    switch (mode) {
+      case "change_password": return renderChangePasswordForm();
+      case "forgot_password": return renderForgotPasswordForm();
+      case "reset_password": return renderResetPasswordForm();
+      default: return renderAuthForm();
+    }
+  };
+
   return (
     <div className="dark flex min-h-screen items-center justify-center bg-gradient-hero px-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
         <div className="rounded-2xl border border-border/20 bg-card p-8 shadow-2xl">
-          {mode === "change_password" ? renderChangePasswordForm() : renderAuthForm()}
+          {renderContent()}
         </div>
 
         <button onClick={() => navigate("/")} className="mt-4 flex items-center gap-2 mx-auto text-sm text-muted-foreground hover:text-foreground transition-colors">
