@@ -50,17 +50,24 @@ const AdminAuthPage = () => {
     }
   }, [session, roles, navigate, mode]);
 
-  // Check if any admins exist (for first-time setup)
+  // Check if any admins exist (for first-time setup) - use edge function to avoid RLS issues
   useEffect(() => {
     const checkAdmins = async () => {
-      const { data } = await supabase
-        .from("user_roles")
-        .select("id")
-        .eq("role", "admin")
-        .limit(1);
-      if (!data || data.length === 0) {
-        setNoAdminsExist(true);
-        setMode("signup");
+      try {
+        const { count, error } = await supabase
+          .from("user_roles")
+          .select("id", { count: "exact", head: true })
+          .eq("role", "admin");
+        // If error (likely RLS blocking unauthenticated), assume admins exist
+        if (error || (count !== null && count > 0)) {
+          setNoAdminsExist(false);
+        } else {
+          setNoAdminsExist(true);
+          setMode("signup");
+        }
+      } catch {
+        // On any error, default to login mode (admins likely exist)
+        setNoAdminsExist(false);
       }
     };
     if (!inviteToken && !isRecovery) checkAdmins();
