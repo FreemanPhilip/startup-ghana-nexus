@@ -49,6 +49,7 @@ export type Database = {
           accepted_at: string | null
           created_at: string
           email: string
+          expires_at: string | null
           id: string
           invited_by: string
           status: string
@@ -58,6 +59,7 @@ export type Database = {
           accepted_at?: string | null
           created_at?: string
           email: string
+          expires_at?: string | null
           id?: string
           invited_by: string
           status?: string
@@ -67,6 +69,7 @@ export type Database = {
           accepted_at?: string | null
           created_at?: string
           email?: string
+          expires_at?: string | null
           id?: string
           invited_by?: string
           status?: string
@@ -888,6 +891,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
+          {
+            foreignKeyName: "opportunities_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       opportunity_applications: {
@@ -1071,6 +1081,13 @@ export type Database = {
             columns: ["author_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["user_id"]
           },
           {
@@ -1418,7 +1435,76 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          availability: string | null
+          avatar_url: string | null
+          bio: string | null
+          company_name: string | null
+          company_stage: string | null
+          created_at: string | null
+          expertise: string[] | null
+          full_name: string | null
+          headline: string | null
+          industry: string | null
+          linkedin_url: string | null
+          location: string | null
+          onboarding_step: Database["public"]["Enums"]["onboarding_step"] | null
+          user_id: string | null
+          verification:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          website_url: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          availability?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          company_name?: string | null
+          company_stage?: string | null
+          created_at?: string | null
+          expertise?: string[] | null
+          full_name?: string | null
+          headline?: string | null
+          industry?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          onboarding_step?:
+            | Database["public"]["Enums"]["onboarding_step"]
+            | null
+          user_id?: string | null
+          verification?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          website_url?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          availability?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          company_name?: string | null
+          company_stage?: string | null
+          created_at?: string | null
+          expertise?: string[] | null
+          full_name?: string | null
+          headline?: string | null
+          industry?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          onboarding_step?:
+            | Database["public"]["Enums"]["onboarding_step"]
+            | null
+          user_id?: string | null
+          verification?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          website_url?: string | null
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_admin_level: { Args: { _user_id: string }; Returns: string }
@@ -1453,6 +1539,14 @@ export type Database = {
       is_startup_role: {
         Args: { _role: string; _startup_id: string; _user_id: string }
         Returns: boolean
+      }
+      verify_admin_invitation: {
+        Args: { _token: string }
+        Returns: {
+          email: string
+          id: string
+          status: string
+        }[]
       }
     }
     Enums: {
