@@ -66,20 +66,15 @@ const AdminAuthPage = () => {
     if (!inviteToken && !isRecovery) checkAdmins();
   }, [inviteToken, isRecovery]);
 
-  // Validate invite token
+  // Validate invite token via secure RPC
   useEffect(() => {
     if (!inviteToken) return;
     const validate = async () => {
-      const { data } = await supabase
-        .from("admin_invitations")
-        .select("email")
-        .eq("token", inviteToken)
-        .eq("status", "pending")
-        .maybeSingle();
-      if (data) {
+      const { data } = await supabase.rpc("verify_admin_invitation", { _token: inviteToken });
+      if (data && data.length > 0) {
         setInviteValid(true);
-        setInviteEmail(data.email);
-        setEmail(data.email);
+        setInviteEmail(data[0].email);
+        setEmail(data[0].email);
       } else {
         setInviteValid(false);
       }
