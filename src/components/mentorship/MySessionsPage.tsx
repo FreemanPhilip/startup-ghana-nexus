@@ -68,7 +68,7 @@ const MySessionsPage = () => {
 
     const otherIds = [...new Set(data.map(b => b.mentor_id === user.id ? b.mentee_id : b.mentor_id))];
     const { data: profiles } = await supabase
-      .from("profiles")
+      .from("public_profiles")
       .select("user_id, full_name, avatar_url, headline")
       .in("user_id", otherIds);
 
