@@ -56,7 +56,7 @@ const GroupFilesTab = ({ groupId, isMember, isAdmin }: GroupFilesTabProps) => {
     if (data && data.length > 0) {
       const uploaderIds = [...new Set(data.map(f => f.uploaded_by))];
       const { data: profiles } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("user_id, full_name")
         .in("user_id", uploaderIds);
       const nameMap = new Map(profiles?.map(p => [p.user_id, p.full_name]) || []);

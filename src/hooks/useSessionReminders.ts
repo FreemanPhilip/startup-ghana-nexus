@@ -33,7 +33,7 @@ export function useSessionReminders() {
     // Get profiles for other users
     const otherIds = [...new Set(bookings.map(b => b.mentor_id === user.id ? b.mentee_id : b.mentor_id))];
     const { data: profiles } = await supabase
-      .from("profiles")
+      .from("public_profiles")
       .select("user_id, full_name")
       .in("user_id", otherIds);
     const profileMap = new Map((profiles ?? []).map((p: any) => [p.user_id, p.full_name]));

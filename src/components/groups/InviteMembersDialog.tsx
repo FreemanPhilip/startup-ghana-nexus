@@ -39,7 +39,7 @@ const InviteMembersDialog = ({ groupId, existingMemberIds, onInvite }: InviteMem
       if (followingIds.length === 0) { setUsers([]); setLoading(false); return; }
 
       const { data: profiles } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("user_id, full_name, avatar_url, headline")
         .in("user_id", followingIds);
       setUsers(profiles || []);

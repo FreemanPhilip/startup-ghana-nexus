@@ -107,7 +107,7 @@ const StartupTeamManagement = ({ startupId, team, onTeamUpdated }: StartupTeamMa
 
       // Try to find user and add as unconfirmed member
       const { data: profiles } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("user_id")
         .ilike("full_name", `%${inviteEmail.trim()}%`)
         .limit(1);

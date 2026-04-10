@@ -63,7 +63,7 @@ const IncomingRequestsTab = () => {
 
     const senderIds = [...new Set(data.map(r => r.sender_id))];
     const { data: profiles } = await supabase
-      .from("profiles")
+      .from("public_profiles")
       .select("user_id, full_name, avatar_url, headline, company_name, industry, location")
       .in("user_id", senderIds);
 

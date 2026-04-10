@@ -51,20 +51,19 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
       if (investorIds.length === 0) return [];
 
       const { data: profiles } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("*")
         .in("user_id", investorIds);
 
-      return (profiles ?? []).map((p): InvestorData => ({
+      return (profiles ?? []).map((p: any): InvestorData => ({
         id: p.user_id,
         name: p.company_name || p.full_name || "Investor",
         description: p.bio || p.headline || "Investor on SparkX Index",
         tags: [
-          p.investment_focus || p.industry || "General",
-          p.investment_range || "Flexible",
+          p.industry || "General",
           ...(p.expertise?.slice(0, 1) || []),
         ].filter(Boolean),
-        avgTicket: p.investment_range || "Flexible",
+        avgTicket: "Flexible",
         matchPercent: Math.floor(Math.random() * 30) + 70,
         status: p.verification === "verified" ? "Verified" : "Active",
         icon: "building",

@@ -163,7 +163,7 @@ export function useGroupDetail(groupId: string | null) {
     const { data: membersRaw } = await supabase.from("group_members").select("user_id, role, joined_at").eq("group_id", groupId);
     const memberUserIds = membersRaw?.map(m => m.user_id) || [];
     const { data: profilesData } = memberUserIds.length > 0
-      ? await supabase.from("profiles").select("user_id, full_name, avatar_url, headline").in("user_id", memberUserIds)
+      ? await supabase.from("public_profiles").select("user_id, full_name, avatar_url, headline").in("user_id", memberUserIds)
       : { data: [] };
 
     const profileMap = new Map<string, { full_name: string | null; avatar_url: string | null; headline: string | null }>();
@@ -191,7 +191,7 @@ export function useGroupDetail(groupId: string | null) {
     const { data: postsRaw } = await supabase.from("group_posts").select("*").eq("group_id", groupId).order("created_at", { ascending: false });
     if (postsRaw && postsRaw.length > 0) {
       const authorIds = [...new Set(postsRaw.map(p => p.author_id))];
-      const { data: authorsData } = await supabase.from("profiles").select("user_id, full_name, avatar_url, headline").in("user_id", authorIds);
+      const { data: authorsData } = await supabase.from("public_profiles").select("user_id, full_name, avatar_url, headline").in("user_id", authorIds);
       const authorMap = new Map(authorsData?.map(a => [a.user_id, a]) || []);
 
       // Likes & comments counts

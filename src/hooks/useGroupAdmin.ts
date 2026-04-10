@@ -41,7 +41,7 @@ export function useGroupAdmin(groupId: string | null) {
     if (data && data.length > 0) {
       const userIds = data.map(r => r.user_id);
       const { data: profiles } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("user_id, full_name, avatar_url, headline")
         .in("user_id", userIds);
       const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);

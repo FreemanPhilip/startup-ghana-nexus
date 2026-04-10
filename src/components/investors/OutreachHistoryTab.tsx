@@ -55,7 +55,7 @@ const OutreachHistoryTab = () => {
 
       // Get profiles of receivers
       const { data: profiles } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("user_id, full_name, avatar_url, headline, company_name")
         .in("user_id", receiverIds);
 

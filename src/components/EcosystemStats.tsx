@@ -26,7 +26,7 @@ const EcosystemStats = () => {
       ] = await Promise.all([
         supabase.from("startups").select("*", { count: "exact", head: true }),
         supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "investor"),
-        supabase.from("profiles").select("*", { count: "exact", head: true }),
+        supabase.from("public_profiles").select("*", { count: "exact", head: true }),
         supabase.from("opportunities").select("*", { count: "exact", head: true }),
         supabase.from("groups").select("*", { count: "exact", head: true }),
         supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "mentor"),

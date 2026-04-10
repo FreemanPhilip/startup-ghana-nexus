@@ -67,7 +67,7 @@ const PublicProfilePage = ({ userId, onBack, onMessage }: PublicProfilePageProps
     const fetchAll = async () => {
       setLoading(true);
       const [profileRes, rolesRes, followersRes, followingRes, postsRes] = await Promise.all([
-        supabase.from("profiles").select("user_id, full_name, headline, bio, avatar_url, location, website_url, linkedin_url, company_name, company_stage, industry, team_size, expertise, verification, membership, availability, created_at").eq("user_id", userId).single(),
+        supabase.from("public_profiles").select("user_id, full_name, headline, bio, avatar_url, location, website_url, linkedin_url, company_name, company_stage, industry, expertise, verification, availability, created_at").eq("user_id", userId).single(),
         supabase.from("user_roles").select("role").eq("user_id", userId),
         supabase.from("follows").select("id", { count: "exact", head: true }).eq("following_id", userId),
         supabase.from("follows").select("id", { count: "exact", head: true }).eq("follower_id", userId),

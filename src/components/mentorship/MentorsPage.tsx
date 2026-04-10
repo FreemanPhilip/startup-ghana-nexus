@@ -32,7 +32,7 @@ const MentorsPage = ({ onOpenMessages }: MentorsPageProps) => {
       if (mentorIds.length === 0) return [];
 
       const { data: profiles } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("*")
         .in("user_id", mentorIds);
 
