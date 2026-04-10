@@ -28,7 +28,7 @@ export function useNetwork() {
 
     // Fetch all profiles except current user
     const { data: profilesData } = await supabase
-      .from("profiles")
+      .from("public_profiles")
       .select("user_id, full_name, headline, avatar_url, industry, company_name, company_stage, location, verification, expertise")
       .neq("user_id", user?.id ?? "");
 

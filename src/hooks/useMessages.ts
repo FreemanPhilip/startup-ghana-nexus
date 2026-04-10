@@ -65,7 +65,7 @@ export function useMessages() {
 
     // Fetch profiles
     const { data: profiles } = await supabase
-      .from("profiles")
+      .from("public_profiles")
       .select("user_id, full_name, avatar_url, headline, company_name, location, industry, expertise, verification")
       .in("user_id", otherUserIds);
 

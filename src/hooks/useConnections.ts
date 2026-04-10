@@ -67,7 +67,7 @@ export function useConnections() {
     let profileMap = new Map<string, any>();
     if (allUserIds.length > 0) {
       const { data: profiles } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("user_id, full_name, avatar_url, headline, company_name")
         .in("user_id", allUserIds);
       profileMap = new Map(profiles?.map(p => [p.user_id, p]) ?? []);
