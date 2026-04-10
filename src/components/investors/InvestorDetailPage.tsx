@@ -192,7 +192,7 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
   useEffect(() => {
     const findInvestor = async () => {
       const { data } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("user_id, company_name, full_name")
         .or(`company_name.ilike.%${investor.name}%,full_name.ilike.%${investor.name}%`)
         .limit(1);

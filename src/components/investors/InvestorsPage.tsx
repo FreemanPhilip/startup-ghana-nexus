@@ -51,7 +51,7 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
       if (investorIds.length === 0) return [];
 
       const { data: profiles } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("*")
         .in("user_id", investorIds);
 

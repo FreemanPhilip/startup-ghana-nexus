@@ -56,7 +56,7 @@ const NewConversationDialog = ({ open, onOpenChange, onStartConversation }: NewC
       if (follows && follows.length > 0) {
         const followingIds = follows.map(f => f.following_id);
         const { data: profiles } = await supabase
-          .from("profiles")
+          .from("public_profiles")
           .select("user_id, full_name, avatar_url, headline, company_name, location, industry, expertise, verification")
           .in("user_id", followingIds);
         setContacts(profiles ?? []);
@@ -72,7 +72,7 @@ const NewConversationDialog = ({ open, onOpenChange, onStartConversation }: NewC
     );
 
     const { data: profiles } = await supabase
-      .from("profiles")
+      .from("public_profiles")
       .select("user_id, full_name, avatar_url, headline, company_name, location, industry, expertise, verification")
       .in("user_id", connectedIds);
 
