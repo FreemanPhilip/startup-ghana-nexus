@@ -89,7 +89,7 @@ export function useHomeFeed() {
     const gpIds = groupPostsData.map(p => p.id);
 
     const [profilesRes, startupsRes, rolesRes, likesRes, commentsRes, userLikesRes, gpLikesRes, gpCommentsRes, gpUserLikesRes] = await Promise.all([
-      authorIdsArr.length > 0 ? supabase.from("profiles").select("user_id, full_name, headline, avatar_url, verification").in("user_id", authorIdsArr) : Promise.resolve({ data: [] }),
+      authorIdsArr.length > 0 ? supabase.from("public_profiles").select("user_id, full_name, headline, avatar_url, verification").in("user_id", authorIdsArr) : Promise.resolve({ data: [] }),
       startupIdsArr.length > 0 ? supabase.from("startups").select("id, name, logo_url").in("id", startupIdsArr) : Promise.resolve({ data: [] }),
       authorIdsArr.length > 0 ? supabase.from("user_roles").select("user_id, role").in("user_id", authorIdsArr) : Promise.resolve({ data: [] }),
       startupIdsArr.length > 0 ? supabase.from("startups").select("id, name, logo_url").in("id", startupIdsArr) : Promise.resolve({ data: [] }),

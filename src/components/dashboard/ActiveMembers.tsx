@@ -41,7 +41,7 @@ const ActiveMembers = () => {
 
     const userIds = presence.map(p => p.user_id);
     const [profilesRes, rolesRes] = await Promise.all([
-      supabase.from("profiles").select("user_id, full_name, avatar_url").in("user_id", userIds),
+      supabase.from("public_profiles").select("user_id, full_name, avatar_url").in("user_id", userIds),
       supabase.from("user_roles").select("user_id, role").in("user_id", userIds),
     ]);
 
