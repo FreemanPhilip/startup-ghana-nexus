@@ -111,7 +111,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
 
     if (members?.length) {
       const userIds = members.map(m => m.user_id);
-      const { data: profiles } = await supabase.from("profiles").select("user_id, full_name, avatar_url, headline").in("user_id", userIds);
+      const { data: profiles } = await supabase.from("public_profiles").select("user_id, full_name, avatar_url, headline").in("user_id", userIds);
       const profileMap = new Map(profiles?.map(p => [p.user_id, p]) ?? []);
       setTeam(members.map(m => ({ ...m, profile: profileMap.get(m.user_id) ?? null })));
     } else {
@@ -136,7 +136,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
         const authorIds = [...new Set(postsData.map(p => p.author_id))];
         const postIds = postsData.map(p => p.id);
         const [profilesRes, likesRes, commentsRes, userLikesRes] = await Promise.all([
-          supabase.from("profiles").select("user_id, full_name, headline, avatar_url, verification").in("user_id", authorIds),
+          supabase.from("public_profiles").select("user_id, full_name, headline, avatar_url, verification").in("user_id", authorIds),
           supabase.from("post_likes").select("post_id").in("post_id", postIds),
           supabase.from("post_comments").select("post_id").in("post_id", postIds),
           user ? supabase.from("post_likes").select("post_id").eq("user_id", user.id).in("post_id", postIds) : Promise.resolve({ data: [] }),
@@ -186,7 +186,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
     const { data: comments } = await supabase.from("post_comments").select("*").eq("post_id", postId).order("created_at", { ascending: true });
     if (!comments) return [];
     const authorIds = [...new Set(comments.map(c => c.author_id))];
-    const { data: profiles } = await supabase.from("profiles").select("user_id, full_name, avatar_url").in("user_id", authorIds);
+    const { data: profiles } = await supabase.from("public_profiles").select("user_id, full_name, avatar_url").in("user_id", authorIds);
     const profileMap = new Map(profiles?.map(p => [p.user_id, p]) ?? []);
     return comments.map(c => ({
       id: c.id, post_id: c.post_id, author_id: c.author_id, content: c.content, created_at: c.created_at,
