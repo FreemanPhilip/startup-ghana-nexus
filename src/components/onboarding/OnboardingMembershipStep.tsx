@@ -104,7 +104,7 @@ const OnboardingMembershipStep = ({ onNext, saving: parentSaving }: Props) => {
               <h3 className="font-display text-lg font-bold">Premium</h3>
             </div>
             <p className="text-2xl font-bold mt-1">
-              GH₵{STRIPE_CONFIG.premium.price}
+              ${STRIPE_CONFIG.premium.price}
               <span className="text-sm font-normal text-muted-foreground">/mo</span>
             </p>
           </div>
