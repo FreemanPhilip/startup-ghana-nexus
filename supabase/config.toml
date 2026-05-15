@@ -1,4 +1,1 @@
 project_id = "puxxgqevbtmqsgtqdsdb"
-
-[functions.bootstrap-reset-superadmin]
-verify_jwt = false
