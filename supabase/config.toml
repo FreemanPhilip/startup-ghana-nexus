@@ -1,22 +1,4 @@
 project_id = "puxxgqevbtmqsgtqdsdb"
 
-[functions.ecosystem-chat]
-verify_jwt = false
-
-[functions.mentor-match]
-verify_jwt = false
-
-[functions.investor-match]
-verify_jwt = false
-
-[functions.create-checkout]
-verify_jwt = false
-
-[functions.check-subscription]
-verify_jwt = false
-
-[functions.customer-portal]
-verify_jwt = false
-
-[functions.create-mentor-payment]
+[functions.bootstrap-reset-superadmin]
 verify_jwt = false
