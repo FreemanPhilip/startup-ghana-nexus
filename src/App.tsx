@@ -18,6 +18,10 @@ import NotFound from "./pages/NotFound";
 import ProductPage from "./pages/ProductPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
+import StartupsIndexPage from "./pages/StartupsIndexPage";
+import StartupDetailPage from "./pages/StartupDetailPage";
+
+
 
 const queryClient = new QueryClient();
 
@@ -93,6 +97,8 @@ const App = () => (
             <Route path="/sparkx-podcast" element={<ProductPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/startups" element={<StartupsIndexPage />} />
+            <Route path="/startups/:slug" element={<StartupDetailPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/admin/login" element={<AdminAuthPage />} />
             <Route path="/onboarding" element={<OnboardingRoute><OnboardingPage /></OnboardingRoute>} />
