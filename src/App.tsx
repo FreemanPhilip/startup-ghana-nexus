@@ -18,6 +18,10 @@ import NotFound from "./pages/NotFound";
 import ProductPage from "./pages/ProductPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
+import StartupsIndexPage from "./pages/StartupsIndexPage";
+import StartupDetailPage from "./pages/StartupDetailPage";
+
+
 
 const queryClient = new QueryClient();
 
