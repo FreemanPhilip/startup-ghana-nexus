@@ -575,6 +575,283 @@ export type Database = {
         }
         Relationships: []
       }
+      index_claims: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          id: string
+          index_startup_id: string
+          member_startup_id: string
+          proof_url: string | null
+          requested_by: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["index_claim_status"]
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          id?: string
+          index_startup_id: string
+          member_startup_id: string
+          proof_url?: string | null
+          requested_by: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["index_claim_status"]
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          id?: string
+          index_startup_id?: string
+          member_startup_id?: string
+          proof_url?: string | null
+          requested_by?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["index_claim_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "index_claims_index_startup_id_fkey"
+            columns: ["index_startup_id"]
+            isOneToOne: false
+            referencedRelation: "index_startups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "index_claims_member_startup_id_fkey"
+            columns: ["member_startup_id"]
+            isOneToOne: false
+            referencedRelation: "startups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      index_funding_rounds: {
+        Row: {
+          amount_usd: number | null
+          announced_on: string | null
+          created_at: string
+          id: string
+          index_startup_id: string
+          notes: string | null
+          round_type: Database["public"]["Enums"]["index_round_type"]
+          source_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_usd?: number | null
+          announced_on?: string | null
+          created_at?: string
+          id?: string
+          index_startup_id: string
+          notes?: string | null
+          round_type: Database["public"]["Enums"]["index_round_type"]
+          source_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_usd?: number | null
+          announced_on?: string | null
+          created_at?: string
+          id?: string
+          index_startup_id?: string
+          notes?: string | null
+          round_type?: Database["public"]["Enums"]["index_round_type"]
+          source_url?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "index_funding_rounds_index_startup_id_fkey"
+            columns: ["index_startup_id"]
+            isOneToOne: false
+            referencedRelation: "index_startups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      index_investors: {
+        Row: {
+          check_size_max: number | null
+          check_size_min: number | null
+          created_at: string
+          description: string | null
+          focus_sectors: string[]
+          hq_country: string | null
+          id: string
+          linked_user_id: string | null
+          logo_url: string | null
+          name: string
+          slug: string | null
+          source: Database["public"]["Enums"]["index_source"]
+          stage_focus: string[]
+          type: Database["public"]["Enums"]["index_investor_type"] | null
+          updated_at: string
+          verified: boolean
+          website_url: string | null
+        }
+        Insert: {
+          check_size_max?: number | null
+          check_size_min?: number | null
+          created_at?: string
+          description?: string | null
+          focus_sectors?: string[]
+          hq_country?: string | null
+          id?: string
+          linked_user_id?: string | null
+          logo_url?: string | null
+          name: string
+          slug?: string | null
+          source?: Database["public"]["Enums"]["index_source"]
+          stage_focus?: string[]
+          type?: Database["public"]["Enums"]["index_investor_type"] | null
+          updated_at?: string
+          verified?: boolean
+          website_url?: string | null
+        }
+        Update: {
+          check_size_max?: number | null
+          check_size_min?: number | null
+          created_at?: string
+          description?: string | null
+          focus_sectors?: string[]
+          hq_country?: string | null
+          id?: string
+          linked_user_id?: string | null
+          logo_url?: string | null
+          name?: string
+          slug?: string | null
+          source?: Database["public"]["Enums"]["index_source"]
+          stage_focus?: string[]
+          type?: Database["public"]["Enums"]["index_investor_type"] | null
+          updated_at?: string
+          verified?: boolean
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      index_round_investors: {
+        Row: {
+          created_at: string
+          id: string
+          index_investor_id: string
+          is_lead: boolean
+          round_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          index_investor_id: string
+          is_lead?: boolean
+          round_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          index_investor_id?: string
+          is_lead?: boolean
+          round_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "index_round_investors_index_investor_id_fkey"
+            columns: ["index_investor_id"]
+            isOneToOne: false
+            referencedRelation: "index_investors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "index_round_investors_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "index_funding_rounds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      index_startups: {
+        Row: {
+          city: string | null
+          claimed_by_startup_id: string | null
+          country: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          founded_year: number | null
+          id: string
+          is_raising: boolean
+          logo_url: string | null
+          name: string
+          sector: Database["public"]["Enums"]["index_sector"] | null
+          slug: string | null
+          source: Database["public"]["Enums"]["index_source"]
+          sparkx_score: number | null
+          stage: Database["public"]["Enums"]["index_stage"] | null
+          team_size: number | null
+          updated_at: string
+          verified: boolean
+          website_url: string | null
+        }
+        Insert: {
+          city?: string | null
+          claimed_by_startup_id?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          founded_year?: number | null
+          id?: string
+          is_raising?: boolean
+          logo_url?: string | null
+          name: string
+          sector?: Database["public"]["Enums"]["index_sector"] | null
+          slug?: string | null
+          source?: Database["public"]["Enums"]["index_source"]
+          sparkx_score?: number | null
+          stage?: Database["public"]["Enums"]["index_stage"] | null
+          team_size?: number | null
+          updated_at?: string
+          verified?: boolean
+          website_url?: string | null
+        }
+        Update: {
+          city?: string | null
+          claimed_by_startup_id?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          founded_year?: number | null
+          id?: string
+          is_raising?: boolean
+          logo_url?: string | null
+          name?: string
+          sector?: Database["public"]["Enums"]["index_sector"] | null
+          slug?: string | null
+          source?: Database["public"]["Enums"]["index_source"]
+          sparkx_score?: number | null
+          stage?: Database["public"]["Enums"]["index_stage"] | null
+          team_size?: number | null
+          updated_at?: string
+          verified?: boolean
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "index_startups_claimed_by_startup_id_fkey"
+            columns: ["claimed_by_startup_id"]
+            isOneToOne: false
+            referencedRelation: "startups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       investor_shortlists: {
         Row: {
           created_at: string
@@ -1558,6 +1835,56 @@ export type Database = {
         | "service_provider"
         | "admin"
         | "member"
+      index_claim_status: "pending" | "approved" | "rejected"
+      index_investor_type:
+        | "vc"
+        | "angel"
+        | "accelerator"
+        | "corporate"
+        | "dfi"
+        | "family_office"
+        | "syndicate"
+        | "government"
+        | "other"
+      index_round_type:
+        | "pre_seed"
+        | "seed"
+        | "series_a"
+        | "series_b"
+        | "series_c"
+        | "growth"
+        | "debt"
+        | "grant"
+        | "bridge"
+        | "other"
+      index_sector:
+        | "fintech"
+        | "agritech"
+        | "healthtech"
+        | "edtech"
+        | "ecommerce"
+        | "logistics"
+        | "energy"
+        | "creative"
+        | "mobility"
+        | "proptech"
+        | "insurtech"
+        | "cleantech"
+        | "ai"
+        | "saas"
+        | "deeptech"
+        | "media"
+        | "other"
+      index_source: "admin" | "scrape" | "claim" | "import"
+      index_stage:
+        | "idea"
+        | "pre_seed"
+        | "seed"
+        | "series_a"
+        | "series_b"
+        | "series_c"
+        | "growth"
+        | "mature"
       membership_type: "standard" | "premium"
       onboarding_step:
         | "role_selection"
@@ -1701,6 +2028,60 @@ export const Constants = {
         "service_provider",
         "admin",
         "member",
+      ],
+      index_claim_status: ["pending", "approved", "rejected"],
+      index_investor_type: [
+        "vc",
+        "angel",
+        "accelerator",
+        "corporate",
+        "dfi",
+        "family_office",
+        "syndicate",
+        "government",
+        "other",
+      ],
+      index_round_type: [
+        "pre_seed",
+        "seed",
+        "series_a",
+        "series_b",
+        "series_c",
+        "growth",
+        "debt",
+        "grant",
+        "bridge",
+        "other",
+      ],
+      index_sector: [
+        "fintech",
+        "agritech",
+        "healthtech",
+        "edtech",
+        "ecommerce",
+        "logistics",
+        "energy",
+        "creative",
+        "mobility",
+        "proptech",
+        "insurtech",
+        "cleantech",
+        "ai",
+        "saas",
+        "deeptech",
+        "media",
+        "other",
+      ],
+      index_source: ["admin", "scrape", "claim", "import"],
+      index_stage: [
+        "idea",
+        "pre_seed",
+        "seed",
+        "series_a",
+        "series_b",
+        "series_c",
+        "growth",
+        "mature",
       ],
       membership_type: ["standard", "premium"],
       onboarding_step: [
