@@ -20,6 +20,9 @@ import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import StartupsIndexPage from "./pages/StartupsIndexPage";
 import StartupDetailPage from "./pages/StartupDetailPage";
+import InvestorsIndexPage from "./pages/InvestorsIndexPage";
+import InvestorDetailPage from "./pages/InvestorDetailPage";
+import HowRankingWorksPage from "./pages/HowRankingWorksPage";
 
 
 
@@ -99,6 +102,9 @@ const App = () => (
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/startups" element={<StartupsIndexPage />} />
             <Route path="/startups/:slug" element={<StartupDetailPage />} />
+            <Route path="/investors" element={<InvestorsIndexPage />} />
+            <Route path="/investors/:slug" element={<InvestorDetailPage />} />
+            <Route path="/how-ranking-works" element={<HowRankingWorksPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/admin/login" element={<AdminAuthPage />} />
             <Route path="/onboarding" element={<OnboardingRoute><OnboardingPage /></OnboardingRoute>} />
