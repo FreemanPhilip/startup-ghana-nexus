@@ -116,6 +116,15 @@ const AdminDashboardPage = () => {
                 <AdminAuditLog />
               </motion.div>
             )}
+            {activeTab === "claims" && canAccessTab(adminLevel, "claims") && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminClaimsQueue /></motion.div>
+            )}
+            {activeTab === "funding" && canAccessTab(adminLevel, "funding") && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminFundingVerification /></motion.div>
+            )}
+            {activeTab === "featured" && canAccessTab(adminLevel, "featured") && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminFeatureManager /></motion.div>
+            )}
           </div>
         </main>
       </div>
