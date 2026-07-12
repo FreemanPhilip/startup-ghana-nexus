@@ -23,6 +23,9 @@ import StartupDetailPage from "./pages/StartupDetailPage";
 import InvestorsIndexPage from "./pages/InvestorsIndexPage";
 import InvestorDetailPage from "./pages/InvestorDetailPage";
 import HowRankingWorksPage from "./pages/HowRankingWorksPage";
+import HomePage from "./pages/HomePage";
+import FeedPage from "./pages/FeedPage";
+import EcosystemDashboardPage from "./pages/EcosystemDashboardPage";
 
 
 
@@ -105,6 +108,9 @@ const App = () => (
             <Route path="/investors" element={<InvestorsIndexPage />} />
             <Route path="/investors/:slug" element={<InvestorDetailPage />} />
             <Route path="/how-ranking-works" element={<HowRankingWorksPage />} />
+            <Route path="/ecosystem" element={<EcosystemDashboardPage />} />
+            <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+            <Route path="/feed" element={<ProtectedRoute><FeedPage /></ProtectedRoute>} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/admin/login" element={<AdminAuthPage />} />
             <Route path="/onboarding" element={<OnboardingRoute><OnboardingPage /></OnboardingRoute>} />
