@@ -644,6 +644,7 @@ export type Database = {
           source_post_id: string | null
           source_url: string | null
           updated_at: string
+          verified: boolean
         }
         Insert: {
           amount_usd?: number | null
@@ -656,6 +657,7 @@ export type Database = {
           source_post_id?: string | null
           source_url?: string | null
           updated_at?: string
+          verified?: boolean
         }
         Update: {
           amount_usd?: number | null
@@ -668,6 +670,7 @@ export type Database = {
           source_post_id?: string | null
           source_url?: string | null
           updated_at?: string
+          verified?: boolean
         }
         Relationships: [
           {
