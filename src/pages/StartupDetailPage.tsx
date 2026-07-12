@@ -4,8 +4,10 @@ import {
   ArrowLeft,
   BadgeCheck,
   Flame,
+  Flag,
   Globe,
   MapPin,
+  Sparkles,
   TrendingUp,
   Users,
   Calendar,
@@ -17,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import ClaimStartupDialog from "@/components/startups/ClaimStartupDialog";
 import type { Database } from "@/integrations/supabase/types";
 
 type IndexStartup = Database["public"]["Tables"]["index_startups"]["Row"];
@@ -49,6 +52,7 @@ const StartupDetailPage = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followTargetUserId, setFollowTargetUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [claimOpen, setClaimOpen] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -208,6 +212,11 @@ const StartupDetailPage = () => {
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-3xl font-bold">{startup.name}</h1>
                 {startup.verified && <BadgeCheck className="h-6 w-6 text-primary" />}
+                {(startup as any).is_featured && (
+                  <Badge className="gap-1 bg-primary/15 text-primary hover:bg-primary/20 border-primary/30">
+                    <Sparkles className="h-3 w-3" /> Featured
+                  </Badge>
+                )}
                 {startup.is_raising && (
                   <Badge className="gap-1 bg-amber-500/15 text-amber-600 hover:bg-amber-500/20">
                     <Flame className="h-3 w-3" /> Raising
@@ -253,6 +262,11 @@ const StartupDetailPage = () => {
               >
                 {isFollowing ? "Following" : "Follow"} · {followerCount}
               </Button>
+              {!startup.claimed_by_startup_id && (
+                <Button variant="outline" onClick={() => setClaimOpen(true)} className="gap-1">
+                  <Flag className="h-4 w-4" /> Claim this startup
+                </Button>
+              )}
             </div>
           </div>
 
