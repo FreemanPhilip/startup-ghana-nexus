@@ -353,6 +353,12 @@ const StartupDetailPage = () => {
         </div>
       </main>
       <Footer />
+      <ClaimStartupDialog
+        open={claimOpen}
+        onOpenChange={setClaimOpen}
+        indexStartupId={startup.id}
+        indexStartupName={startup.name}
+      />
     </div>
   );
 };
