@@ -641,8 +641,10 @@ export type Database = {
           index_startup_id: string
           notes: string | null
           round_type: Database["public"]["Enums"]["index_round_type"]
+          source_post_id: string | null
           source_url: string | null
           updated_at: string
+          verified: boolean
         }
         Insert: {
           amount_usd?: number | null
@@ -652,8 +654,10 @@ export type Database = {
           index_startup_id: string
           notes?: string | null
           round_type: Database["public"]["Enums"]["index_round_type"]
+          source_post_id?: string | null
           source_url?: string | null
           updated_at?: string
+          verified?: boolean
         }
         Update: {
           amount_usd?: number | null
@@ -663,8 +667,10 @@ export type Database = {
           index_startup_id?: string
           notes?: string | null
           round_type?: Database["public"]["Enums"]["index_round_type"]
+          source_post_id?: string | null
           source_url?: string | null
           updated_at?: string
+          verified?: boolean
         }
         Relationships: [
           {
@@ -672,6 +678,13 @@ export type Database = {
             columns: ["index_startup_id"]
             isOneToOne: false
             referencedRelation: "index_startups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "index_funding_rounds_source_post_id_fkey"
+            columns: ["source_post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
         ]
@@ -783,8 +796,10 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string | null
+          featured_at: string | null
           founded_year: number | null
           id: string
+          is_featured: boolean
           is_raising: boolean
           logo_url: string | null
           name: string
@@ -805,8 +820,10 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          featured_at?: string | null
           founded_year?: number | null
           id?: string
+          is_featured?: boolean
           is_raising?: boolean
           logo_url?: string | null
           name: string
@@ -827,8 +844,10 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          featured_at?: string | null
           founded_year?: number | null
           id?: string
+          is_featured?: boolean
           is_raising?: boolean
           logo_url?: string | null
           name?: string
@@ -1324,6 +1343,7 @@ export type Database = {
           id: string
           image_url: string | null
           image_urls: string[] | null
+          post_type: Database["public"]["Enums"]["post_type"]
           startup_id: string | null
           updated_at: string
           video_url: string | null
@@ -1336,6 +1356,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           image_urls?: string[] | null
+          post_type?: Database["public"]["Enums"]["post_type"]
           startup_id?: string | null
           updated_at?: string
           video_url?: string | null
@@ -1348,6 +1369,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           image_urls?: string[] | null
+          post_type?: Database["public"]["Enums"]["post_type"]
           startup_id?: string | null
           updated_at?: string
           video_url?: string | null
@@ -1398,6 +1420,7 @@ export type Database = {
           location: string | null
           membership: Database["public"]["Enums"]["membership_type"]
           onboarding_step: Database["public"]["Enums"]["onboarding_step"]
+          partner_type: string | null
           phone: string | null
           portfolio_size: number | null
           team_size: number | null
@@ -1428,6 +1451,7 @@ export type Database = {
           location?: string | null
           membership?: Database["public"]["Enums"]["membership_type"]
           onboarding_step?: Database["public"]["Enums"]["onboarding_step"]
+          partner_type?: string | null
           phone?: string | null
           portfolio_size?: number | null
           team_size?: number | null
@@ -1458,6 +1482,7 @@ export type Database = {
           location?: string | null
           membership?: Database["public"]["Enums"]["membership_type"]
           onboarding_step?: Database["public"]["Enums"]["onboarding_step"]
+          partner_type?: string | null
           phone?: string | null
           portfolio_size?: number | null
           team_size?: number | null
@@ -1492,6 +1517,35 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      sparkx_score_history: {
+        Row: {
+          captured_at: string
+          id: string
+          index_startup_id: string
+          score: number
+        }
+        Insert: {
+          captured_at?: string
+          id?: string
+          index_startup_id: string
+          score: number
+        }
+        Update: {
+          captured_at?: string
+          id?: string
+          index_startup_id?: string
+          score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sparkx_score_history_index_startup_id_fkey"
+            columns: ["index_startup_id"]
+            isOneToOne: false
+            referencedRelation: "index_startups"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       startup_invitations: {
         Row: {
@@ -1898,6 +1952,7 @@ export type Database = {
         | "kyc"
         | "subscription"
         | "completed"
+      post_type: "update" | "funding_announcement" | "milestone" | "hiring"
       verification_status: "unverified" | "pending" | "verified"
     }
     CompositeTypes: {
@@ -2097,6 +2152,7 @@ export const Constants = {
         "subscription",
         "completed",
       ],
+      post_type: ["update", "funding_announcement", "milestone", "hiring"],
       verification_status: ["unverified", "pending", "verified"],
     },
   },

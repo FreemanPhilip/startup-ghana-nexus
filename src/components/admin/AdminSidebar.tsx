@@ -1,4 +1,4 @@
-import { Star, LayoutDashboard, Users, Building2, FileText, Shield, BarChart3, LogOut, Menu, X, Briefcase, MessageSquare, UserPlus, ScrollText } from "lucide-react";
+import { Star, LayoutDashboard, Users, Building2, FileText, Shield, BarChart3, LogOut, Menu, X, Briefcase, MessageSquare, UserPlus, ScrollText, Flag, DollarSign, Sparkles } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -18,6 +18,9 @@ const allNavItems = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
   { id: "users", label: "Users", icon: Users },
   { id: "startups", label: "Startups", icon: Building2 },
+  { id: "claims", label: "Claim Requests", icon: Flag },
+  { id: "funding", label: "Funding Queue", icon: DollarSign },
+  { id: "featured", label: "Featured", icon: Sparkles },
   { id: "opportunities", label: "Opportunities", icon: Briefcase },
   { id: "posts", label: "Posts", icon: MessageSquare },
   { id: "verification", label: "Verification", icon: Shield },
