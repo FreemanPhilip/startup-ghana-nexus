@@ -25,7 +25,7 @@ const AdminFundingVerification = () => {
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase
+    const { data } = await (supabase as any)
       .from("index_funding_rounds")
       .select("*, index_startup:index_startups(name, slug)")
       .eq("verified", false)
@@ -38,7 +38,7 @@ const AdminFundingVerification = () => {
 
   const approve = async (id: string) => {
     setBusyId(id);
-    const { error } = await supabase.from("index_funding_rounds").update({ verified: true }).eq("id", id);
+    const { error } = await (supabase as any).from("index_funding_rounds").update({ verified: true }).eq("id", id);
     setBusyId(null);
     if (error) { toast.error(error.message); return; }
     toast.success("Round verified");
