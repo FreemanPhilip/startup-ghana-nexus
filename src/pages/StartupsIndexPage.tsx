@@ -74,38 +74,22 @@ const StartupsIndexPage = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Dark hero header — matches landing page aesthetic */}
-      <section className="dark relative overflow-hidden bg-gradient-hero pt-16">
-        <div className="absolute inset-0 bg-gradient-to-b from-navy/60 via-navy/40 to-background" />
-        <div className="container relative z-10 py-16 text-center text-foreground">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-sm font-medium text-gold"
-          >
-            <Sparkles className="h-4 w-4" />
+      {/* Light header — matches site aesthetic */}
+      <section className="border-b border-border bg-card/30 pt-16">
+        <div className="container py-12">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+            <Sparkles className="h-3.5 w-3.5" />
             The Pan-African Startup Index
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="mx-auto max-w-3xl font-display text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl"
-          >
-            Discover Africa's{" "}
-            <span className="text-gradient-gold">Rising Ventures</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg"
-          >
+          </div>
+          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            Discover Africa's <span className="text-gradient-gold">Rising Ventures</span>
+          </h1>
+          <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
             Browse, rank, and follow the continent's most promising startups — ordered by SparkX Score.
-          </motion.p>
+          </p>
         </div>
       </section>
+
 
       <main className="container mx-auto px-4 py-12">
         {/* Filters */}
