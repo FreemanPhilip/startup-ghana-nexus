@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, BadgeCheck, MapPin, Flame, TrendingUp } from "lucide-react";
+import { motion } from "framer-motion";
+import { Search, BadgeCheck, MapPin, Flame, TrendingUp, Rocket, Sparkles } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/input";
@@ -72,23 +73,50 @@ const StartupsIndexPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto px-4 pt-28 pb-16">
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold tracking-tight">Startups Directory</h1>
-          <p className="mt-2 text-muted-foreground">
-            The pan-African startup index — discover, rank, and follow ventures ranked by SparkX Score.
-          </p>
-        </header>
 
+      {/* Dark hero header — matches landing page aesthetic */}
+      <section className="dark relative overflow-hidden bg-gradient-hero pt-16">
+        <div className="absolute inset-0 bg-gradient-to-b from-navy/60 via-navy/40 to-background" />
+        <div className="container relative z-10 py-16 text-center text-foreground">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-sm font-medium text-gold"
+          >
+            <Sparkles className="h-4 w-4" />
+            The Pan-African Startup Index
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mx-auto max-w-3xl font-display text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl"
+          >
+            Discover Africa's{" "}
+            <span className="text-gradient-gold">Rising Ventures</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg"
+          >
+            Browse, rank, and follow the continent's most promising startups — ordered by SparkX Score.
+          </motion.p>
+        </div>
+      </section>
+
+      <main className="container mx-auto px-4 py-12">
         {/* Filters */}
-        <div className="mb-8 space-y-4 rounded-xl border border-border bg-card p-4">
+        <div className="mb-8 space-y-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search startups by name or description"
               value={q}
               onChange={e => setQ(e.target.value)}
-              className="pl-10 h-11"
+              className="h-11 pl-10"
             />
           </div>
           <div className="grid gap-3 md:grid-cols-4">
@@ -111,7 +139,7 @@ const StartupsIndexPage = () => {
               value={location}
               onChange={e => setLocation(e.target.value)}
             />
-            <div className="flex items-center justify-between rounded-md border border-input px-3">
+            <div className="flex items-center justify-between rounded-md border border-input bg-background px-3">
               <Label htmlFor="raising" className="cursor-pointer text-sm">Raising now</Label>
               <Switch id="raising" checked={raisingOnly} onCheckedChange={setRaisingOnly} />
             </div>
@@ -122,18 +150,21 @@ const StartupsIndexPage = () => {
         {loading ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-56 animate-pulse rounded-xl border border-border bg-card" />
+              <div key={i} className="h-56 animate-pulse rounded-2xl border border-border bg-card" />
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border bg-card p-12 text-center text-muted-foreground">
-            No startups match your filters.
+          <div className="rounded-2xl border border-dashed border-border bg-card p-16 text-center">
+            <Rocket className="mx-auto mb-3 h-8 w-8 text-muted-foreground" />
+            <p className="text-muted-foreground">No startups match your filters.</p>
           </div>
         ) : (
           <>
-            <p className="mb-4 text-sm text-muted-foreground">{filtered.length} startup{filtered.length === 1 ? "" : "s"}</p>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {filtered.map(s => <StartupCard key={s.id} s={s} />)}
+            <p className="mb-4 text-sm text-muted-foreground">
+              {filtered.length} startup{filtered.length === 1 ? "" : "s"}
+            </p>
+            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((s, i) => <StartupCard key={s.id} s={s} i={i} />)}
             </div>
           </>
         )}
@@ -143,58 +174,64 @@ const StartupsIndexPage = () => {
   );
 };
 
-const StartupCard = ({ s }: { s: IndexStartup }) => {
+const StartupCard = ({ s, i }: { s: IndexStartup; i: number }) => {
   const initials = s.name.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
   return (
-    <Link
-      to={`/startups/${s.slug}`}
-      className="group flex flex-col rounded-xl border border-border bg-card p-5 transition hover:border-primary/60 hover:shadow-lg"
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: Math.min(i * 0.04, 0.4) }}
     >
-      <div className="flex items-start gap-3">
-        {s.logo_url ? (
-          <img src={s.logo_url} alt={s.name} className="h-12 w-12 rounded-lg object-cover" />
-        ) : (
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 font-bold text-primary">
-            {initials}
+      <Link
+        to={`/startups/${s.slug}`}
+        className="group flex h-full flex-col rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-lg hover:shadow-primary/5"
+      >
+        <div className="flex items-start gap-3">
+          {s.logo_url ? (
+            <img src={s.logo_url} alt={s.name} className="h-12 w-12 rounded-lg object-cover ring-1 ring-border" />
+          ) : (
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-emerald font-bold text-primary-foreground">
+              {initials}
+            </div>
+          )}
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <h3 className="truncate font-semibold group-hover:text-primary">{s.name}</h3>
+              {s.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-primary" />}
+            </div>
+            {(s.country || s.city) && (
+              <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                <MapPin className="h-3 w-3" />
+                {[s.city, s.country].filter(Boolean).join(", ")}
+              </p>
+            )}
           </div>
-        )}
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5">
-            <h3 className="truncate font-semibold group-hover:text-primary">{s.name}</h3>
-            {s.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-primary" />}
-          </div>
-          {(s.country || s.city) && (
-            <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3" />
-              {[s.city, s.country].filter(Boolean).join(", ")}
-            </p>
+          {s.sparkx_score != null && (
+            <div className="flex flex-col items-end rounded-lg bg-gold/10 px-2.5 py-1.5">
+              <div className="flex items-center gap-1 text-gold">
+                <TrendingUp className="h-3.5 w-3.5" />
+                <span className="font-display text-lg font-bold leading-none">{Number(s.sparkx_score).toFixed(0)}</span>
+              </div>
+              <span className="mt-0.5 text-[9px] font-medium uppercase tracking-wide text-gold/80">SparkX</span>
+            </div>
           )}
         </div>
-        {s.sparkx_score != null && (
-          <div className="flex flex-col items-end">
-            <div className="flex items-center gap-1 text-primary">
-              <TrendingUp className="h-3.5 w-3.5" />
-              <span className="text-lg font-bold leading-none">{Number(s.sparkx_score).toFixed(0)}</span>
-            </div>
-            <span className="text-[10px] uppercase tracking-wide text-muted-foreground">SparkX Rank</span>
-          </div>
-        )}
-      </div>
 
-      <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
-        {s.description || "No description yet."}
-      </p>
+        <p className="mt-4 line-clamp-2 flex-1 text-sm text-muted-foreground">
+          {s.description || "No description yet."}
+        </p>
 
-      <div className="mt-4 flex flex-wrap gap-1.5">
-        {s.sector && <Badge variant="secondary">{prettify(s.sector)}</Badge>}
-        {s.stage && <Badge variant="outline">{prettify(s.stage)}</Badge>}
-        {s.is_raising && (
-          <Badge className="gap-1 bg-amber-500/15 text-amber-600 hover:bg-amber-500/20">
-            <Flame className="h-3 w-3" /> Raising
-          </Badge>
-        )}
-      </div>
-    </Link>
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {s.sector && <Badge variant="secondary">{prettify(s.sector)}</Badge>}
+          {s.stage && <Badge variant="outline">{prettify(s.stage)}</Badge>}
+          {s.is_raising && (
+            <Badge className="gap-1 bg-gold/15 text-gold hover:bg-gold/20">
+              <Flame className="h-3 w-3" /> Raising
+            </Badge>
+          )}
+        </div>
+      </Link>
+    </motion.div>
   );
 };
 
