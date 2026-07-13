@@ -16,9 +16,6 @@ import AdminInvitePanel from "@/components/admin/AdminInvitePanel";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminNotificationBell from "@/components/admin/AdminNotificationBell";
 import AdminAuditLog from "@/components/admin/AdminAuditLog";
-import AdminClaimsQueue from "@/components/admin/AdminClaimsQueue";
-import AdminFundingVerification from "@/components/admin/AdminFundingVerification";
-import AdminFeatureManager from "@/components/admin/AdminFeatureManager";
 import { useAdminLevel } from "@/hooks/useAdminLevel";
 import { canAccessTab } from "@/lib/adminPermissions";
 
@@ -26,9 +23,6 @@ const tabTitles: Record<string, string> = {
   overview: "Platform Overview",
   users: "User Management",
   startups: "Startups",
-  claims: "Claim Requests",
-  funding: "Funding Verification",
-  featured: "Featured Startups",
   opportunities: "Opportunities",
   posts: "Posts",
   verification: "Verification Requests",
@@ -115,15 +109,6 @@ const AdminDashboardPage = () => {
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <AdminAuditLog />
               </motion.div>
-            )}
-            {activeTab === "claims" && canAccessTab(adminLevel, "claims") && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminClaimsQueue /></motion.div>
-            )}
-            {activeTab === "funding" && canAccessTab(adminLevel, "funding") && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminFundingVerification /></motion.div>
-            )}
-            {activeTab === "featured" && canAccessTab(adminLevel, "featured") && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminFeatureManager /></motion.div>
             )}
           </div>
         </main>

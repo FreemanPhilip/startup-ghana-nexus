@@ -1,92 +1,87 @@
-# Plan: Role-Based Home, Feed, Claims & Admin Extensions
+# Phase 1: Ecosystem Index Foundation
 
-This spans three connected features. All queries reuse existing tables (`index_startups`, `index_funding_rounds`, `index_investors`, `index_round_investors`, `posts`, `post_likes`, `post_comments`, `profiles`, `follows`) plus a few new tables. The existing social layer stays intact — we extend `posts` rather than replace it.
+Additive-only. The existing social platform (profiles, startups, posts, follows, groups, messaging, mentorship, investors module) is **not touched**. All new objects live under an `index_` prefix so there is zero collision with current tables.
 
----
+## Goal
 
-## 1. Role-Based Home Page (`/home`)
+Stand up the public, canonical registry of African startups, investors, and funding rounds — plus the bridge that lets a member-owned startup "claim" its index entry.
 
-New page `src/pages/HomePage.tsx` that reads `profiles.primary_role` and renders one of these views. Add route + redirect from `getRoleDashboardPath` so post-login lands here.
+## What gets built
 
-- **founder** — Their claimed startup card (sparkx_score, followers, profile views placeholder=0), a "Complete your profile" checklist that inspects the same fields `compute_sparkx_score` uses (logo, description>100, website, team_size, founded_year, sector, verified, funding rounds) and shows missing points, and investors whose `sectors_focus` overlaps the startup's sector.
-- **investor** — Top 10 startups by `sparkx_score` filtered to the investor's `sectors_focus`, a "Raising now" strip (`is_raising=true`), and newest `index_funding_rounds` where `verified=true`.
-- **government / development_partner** — Ecosystem dashboard: stat cards (total startups, total verified funding USD sum, rounds this quarter) + recharts BarChart (funding by sector) + Donut/PieChart (startups by stage).
-- **incubator / corporate / bank** — "Rising startups" ranked by score delta over 30 days (needs score history — see §5), sector filter dropdown.
-- **media / university / student** — Latest verified funding rounds as news cards, top-ranked startups list, link to `/ecosystem` (same dashboard as gov view).
+### 1. New database tables (all in `public`, all prefixed `index_`)
 
-Featured section (top of every view): startups with `is_featured=true`, labeled "Featured this week — editorial picks".
-
-## 2. Feed with Post Types & Funding Announcements
-
-Extend existing `posts` table with `post_type` (enum: `update`, `funding_announcement`, `milestone`, `hiring`) and keep existing likes/comments (`post_likes`, `post_comments` already exist with RLS).
-
-New composer in `src/components/feed/CreatePost.tsx` (or extend existing `CreatePostCard`):
-- post_type selector
-- if `funding_announcement`: amount (USD), round stage, announced_on date, investors multi-select from `index_investors`
-- on submit: insert a `posts` row AND insert an `index_funding_rounds` row with `verified=false`, linked to the author's claimed startup, plus `index_round_investors` rows for each selected investor.
-
-Feed page `src/pages/FeedPage.tsx` renders posts with author, role badge, timestamp, like/comment counts (reuse existing `PostCard`), plus a linked startup card when `startup_id` is set.
-
-## 3. Claim Startup Flow
-
-Add "Claim this startup" button on `StartupDetailPage` when `claimed_by_startup_id IS NULL`. Opens a dialog collecting `evidence` (textarea: email domain, LinkedIn, role proof). Reuses the existing `index_claims` table (already has `member_startup_id`, `index_startup_id`, `status`, `evidence`) — no new table needed; we'll pass the user's owned member startup id.
-
-## 4. Admin Dashboard Extensions
-
-Extend the existing `/admin/dashboard` with three tabs (added to `AdminSidebar` + `AdminDashboardPage`):
-1. **Claims Queue** — lists `index_claims` where `status='pending'`; approve triggers existing `on_index_claim_approved` (sets `claimed_by_startup_id`, `verified=true`); reject sets `status='rejected'`.
-2. **Funding Verification** — lists `index_funding_rounds` where `verified=false`; approve sets `verified=true`, reject deletes the row (and optionally flags the source post).
-3. **Feature Manager** — pick up to 3 `index_startups` to set `is_featured=true`; enforces the 3-cap client + DB side.
-
-## 5. Database Changes (single migration)
-
-```sql
--- posts.post_type
-CREATE TYPE public.post_type AS ENUM ('update','funding_announcement','milestone','hiring');
-ALTER TABLE public.posts ADD COLUMN post_type post_type NOT NULL DEFAULT 'update';
-
--- funding rounds verified flag already exists; add source_post linkage
-ALTER TABLE public.index_funding_rounds ADD COLUMN source_post_id uuid REFERENCES public.posts(id) ON DELETE SET NULL;
-
--- Featured startups (cap 3 enforced via partial unique + trigger)
-ALTER TABLE public.index_startups ADD COLUMN is_featured boolean NOT NULL DEFAULT false;
-ALTER TABLE public.index_startups ADD COLUMN featured_at timestamptz;
-CREATE OR REPLACE FUNCTION public.enforce_featured_cap() RETURNS trigger ...
-  -- raises exception if count(is_featured)>3
-CREATE TRIGGER trg_featured_cap BEFORE INSERT OR UPDATE ...;
-
--- Score history for "rising startups"
-CREATE TABLE public.sparkx_score_history (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  index_startup_id uuid NOT NULL REFERENCES public.index_startups(id) ON DELETE CASCADE,
-  score numeric NOT NULL,
-  captured_at timestamptz NOT NULL DEFAULT now()
-);
-GRANT SELECT ON public.sparkx_score_history TO anon, authenticated;
-GRANT ALL ON public.sparkx_score_history TO service_role;
-ALTER TABLE ... ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "history public read" ... FOR SELECT USING (true);
--- Nightly pg_cron snapshot job appended.
+```text
+index_startups         canonical startup registry (public read)
+index_investors        canonical investor/fund registry (public read)
+index_funding_rounds   rounds attached to an index_startup
+index_round_investors  join table: which investors participated in a round
+index_claims           claim requests linking a member startup -> index_startup
 ```
 
-Note: existing `index_claims` table already covers claim requests. Existing `post_likes` / `post_comments` already exist. No new likes/comments tables needed.
+**index_startups** — name, slug (unique), logo_url, website_url, description, sector (enum), stage (enum), country, city, founded_year, team_size, is_raising (bool), sparkx_score (numeric, nullable — computed later in Phase 3), source (enum: admin, scrape, claim), verified (bool), claimed_by_startup_id (nullable FK to existing `public.startups.id`), created_by (admin user), timestamps.
 
-## 6. Files
+**index_investors** — name, slug, logo_url, website_url, type (enum: vc, angel, accelerator, corporate, dfi, family_office, syndicate), hq_country, focus_sectors (text[]), stage_focus (text[]), check_size_min, check_size_max, verified, source, timestamps. Optional `linked_user_id` nullable FK to `auth.users` for when a platform investor user claims an index entry.
 
-**New**
-- `src/pages/HomePage.tsx`, `src/pages/FeedPage.tsx`, `src/pages/EcosystemDashboardPage.tsx`
-- `src/components/home/{FounderHome,InvestorHome,EcosystemHome,PartnerHome,MediaHome,FeaturedStrip,ProfileChecklist}.tsx`
-- `src/components/feed/CreatePostDialog.tsx` (with funding fields)
-- `src/components/startups/ClaimStartupDialog.tsx`
-- `src/components/admin/{AdminClaimsQueue,AdminFundingVerification,AdminFeatureManager}.tsx`
-- One SQL migration.
+**index_funding_rounds** — index_startup_id (FK), round_type (enum: pre_seed, seed, series_a, series_b, series_c, growth, debt, grant), amount_usd, announced_on (date), source_url, notes, timestamps.
 
-**Edited**
-- `src/App.tsx` — add `/home`, `/feed`, `/ecosystem` routes.
-- `src/lib/roleRouting.ts` — post-login → `/home`.
-- `src/pages/StartupDetailPage.tsx` — add Claim button + Featured badge.
-- `src/pages/AdminDashboardPage.tsx` + `AdminSidebar.tsx` — add 3 tabs.
+**index_round_investors** — round_id (FK), index_investor_id (FK), is_lead (bool). Composite unique (round_id, index_investor_id).
 
-## Out of scope
-- Real "profile views" tracking (placeholder shown as 0 with tooltip).
-- Deep editorial workflow for featured picks beyond a simple toggle.
+**index_claims** — index_startup_id (FK), member_startup_id (FK to `public.startups.id`), requested_by (user), status (pending/approved/rejected), proof_url, admin_notes, reviewed_by, reviewed_at, timestamps.
+
+### 2. New enums
+
+`index_sector`, `index_stage`, `index_round_type`, `index_investor_type`, `index_source`, `index_claim_status`.
+
+### 3. RLS — public read, admin write, claimant write
+
+- `index_startups`, `index_investors`, `index_funding_rounds`, `index_round_investors`: **SELECT to `anon` and `authenticated`** (fully public — this is the SEO moat).
+- INSERT / UPDATE / DELETE on all four: restricted to admins via `has_role(auth.uid(), 'admin')`.
+- Additional UPDATE policy on `index_startups`: the owner of the linked member startup (checked via `claimed_by_startup_id` + `startup_members.role in ('owner','admin')`) can update a **whitelisted subset** of columns (description, logo_url, website_url, is_raising, team_size). Enforced with a `BEFORE UPDATE` trigger that reverts non-whitelisted fields for non-admins.
+- `index_claims`: user can INSERT their own claim (requested_by = auth.uid()) and SELECT their own claims; admins can SELECT/UPDATE all.
+
+### 4. GRANTs (mandatory, same migration)
+
+```sql
+GRANT SELECT ON public.index_startups, public.index_investors,
+              public.index_funding_rounds, public.index_round_investors
+  TO anon, authenticated;
+GRANT INSERT, UPDATE, DELETE ON <same four> TO authenticated;
+GRANT ALL ON <same four> TO service_role;
+
+GRANT SELECT, INSERT, UPDATE ON public.index_claims TO authenticated;
+GRANT ALL ON public.index_claims TO service_role;
+```
+
+### 5. Triggers / functions
+
+- `update_updated_at_column` reused on every new table.
+- `enforce_index_startup_field_scope()` — BEFORE UPDATE trigger keeping non-admin claimant edits within the whitelist.
+- `on_claim_approved()` — AFTER UPDATE on `index_claims`: when status flips to `approved`, set `index_startups.claimed_by_startup_id = member_startup_id` and `verified = true`.
+- `slugify_index_name()` — BEFORE INSERT to auto-generate slug when null.
+
+### 6. Indexes
+
+`index_startups(slug)` unique, `(country, sector, stage)`, `(sparkx_score DESC NULLS LAST)`, `(claimed_by_startup_id)`.
+`index_investors(slug)` unique, `(type, hq_country)`.
+`index_funding_rounds(index_startup_id, announced_on DESC)`.
+
+## What does NOT change in this phase
+
+- No changes to `profiles`, `startups`, `posts`, `follows`, `groups`, `messages`, `mentor_*`, `investor_*`, `user_roles`, or any existing RLS policy.
+- No frontend routes yet. No `/index` pages. No claim UI. No admin importer. No SparkX Score computation. No seeding.
+- No edge functions.
+
+Those land in Phase 2+ once the schema is approved and the types file regenerates.
+
+## Deliverable of Phase 1
+
+One migration containing: enums → tables → GRANTs → RLS enable → policies → triggers → indexes. After approval, the generated Supabase types will expose the new tables so Phase 2 (claim UI + public directory pages) can begin.
+
+## Out of scope (later phases)
+
+- Phase 2: Public `/index` directory pages + claim flow UI.
+- Phase 3: SparkX Score edge function (scheduled).
+- Phase 4: SEO polish, sitemaps, JSON-LD.
+- Phase 5: Firecrawl-powered admin importer + CSV bulk import.
+
+Approve this and I'll write the migration.

@@ -3,9 +3,21 @@ import type { Database } from "@/integrations/supabase/types";
 type AppRole = Database["public"]["Enums"]["app_role"];
 
 export function getRoleDashboardPath(role?: AppRole | null): string {
-  if (role === "admin") return "/admin/dashboard";
-  // Everyone else lands on the unified role-aware home
-  return "/home";
+  switch (role) {
+    case "startup_founder":
+      return "/founder/dashboard";
+    case "investor":
+      return "/investor/dashboard";
+    case "mentor":
+      return "/mentor/dashboard";
+    case "ecosystem_partner":
+      return "/partner/dashboard";
+    case "admin":
+      return "/admin/dashboard";
+    default:
+      // Fallback for legacy roles (service_provider, member)
+      return "/founder/dashboard";
+  }
 }
 
 export function getRoleFromPath(path: string): AppRole | null {
