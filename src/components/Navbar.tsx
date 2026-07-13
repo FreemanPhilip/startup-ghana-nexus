@@ -26,7 +26,9 @@ const solutionCategories = [
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "Pricing", href: "#pricing" },
+  { label: "Startups", href: "/startups" },
+  { label: "Investors", href: "/investors" },
+  { label: "Rankings", href: "/how-ranking-works" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
