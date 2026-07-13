@@ -1784,7 +1784,6 @@ export type Database = {
       }
     }
     Functions: {
-      compute_sparkx_score: { Args: { _startup_id: string }; Returns: number }
       get_admin_level: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
@@ -1817,11 +1816,6 @@ export type Database = {
       is_startup_role: {
         Args: { _role: string; _startup_id: string; _user_id: string }
         Returns: boolean
-      }
-      refresh_all_sparkx_scores: { Args: never; Returns: number }
-      refresh_sparkx_score: {
-        Args: { _startup_id: string }
-        Returns: undefined
       }
       verify_admin_invitation: {
         Args: { _token: string }
