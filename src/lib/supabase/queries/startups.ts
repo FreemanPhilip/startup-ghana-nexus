@@ -7,12 +7,19 @@ export interface Startup {
   industry: string | null;
   stage: string | null;
   logo_url: string | null;
-  website: string | null;
+  website_url: string | null;
   location: string | null;
   founded_year: number | null;
   team_size: number | null;
+  short_description: string | null;
+  verification_status: string;
   created_by: string;
   created_at: string;
+}
+
+export interface EnrichedStartup extends Startup {
+  member_count: number;
+  my_role: string | null;
 }
 
 export interface StartupMember {
@@ -23,17 +30,35 @@ export interface StartupMember {
   avatar_url: string | null;
 }
 
-export async function fetchStartupsByUser(userId: string): Promise<Startup[]> {
+export async function fetchStartupsByUser(userId: string): Promise<EnrichedStartup[]> {
   const { data: memberships } = await supabase
     .from("startup_members")
-    .select("startup_id")
+    .select("startup_id, role")
     .eq("user_id", userId);
 
   if (!memberships || memberships.length === 0) return [];
 
   const startupIds = memberships.map(m => m.startup_id);
+  const roleMap = new Map(memberships.map(m => [m.startup_id, m.role]));
+
   const { data } = await supabase.from("startups").select("*").in("id", startupIds);
-  return (data as Startup[]) ?? [];
+  if (!data) return [];
+
+  const { data: memberCounts } = await supabase
+    .from("startup_members")
+    .select("startup_id")
+    .in("startup_id", startupIds);
+
+  const countMap = new Map<string, number>();
+  memberCounts?.forEach(m => {
+    countMap.set(m.startup_id, (countMap.get(m.startup_id) || 0) + 1);
+  });
+
+  return data.map(s => ({
+    ...s,
+    member_count: countMap.get(s.id) || 0,
+    my_role: roleMap.get(s.id) || null,
+  })) as EnrichedStartup[];
 }
 
 export async function fetchStartupDetail(startupId: string): Promise<{

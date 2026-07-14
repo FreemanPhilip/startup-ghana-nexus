@@ -32,10 +32,10 @@ const RoleBadge = ({ role }: { role: string }) => {
 
 interface PostCardProps {
   post: PostWithDetails;
-  onToggleLike: (postId: string, isLiked: boolean) => Promise<void>;
+  onToggleLike: (vars: { postId: string; isLiked: boolean }) => Promise<void> | void;
   onFetchComments: (postId: string) => Promise<Comment[]>;
-  onAddComment: (postId: string, content: string) => Promise<void>;
-  onToggleFollow?: (userId: string) => Promise<void>;
+  onAddComment: (vars: { postId: string; content: string }) => Promise<void> | void;
+  onToggleFollow?: (userId: string) => Promise<void> | void;
   isFollowing?: boolean;
   onViewStartup?: (startupId: string) => void;
 }
@@ -95,7 +95,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
 
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
-    await onAddComment(post.id, newComment.trim());
+    await onAddComment({ postId: post.id, content: newComment.trim() });
     setNewComment("");
     const data = await onFetchComments(post.id);
     setComments(data);
@@ -159,7 +159,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
             <Button
               size="sm"
               variant={isFollowing ? "outline" : "default"}
-              onClick={() => onToggleFollow(post.author_id)}
+              onClick={() => onToggleFollow?.(post.author_id)}
               className={!isFollowing ? "bg-gradient-gold text-navy font-semibold hover:opacity-90 h-7 text-xs" : "h-7 text-xs"}
             >
               {isFollowing ? "Following" : "Follow"}
@@ -199,7 +199,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => onToggleLike(post.id, post.is_liked)}
+          onClick={() => onToggleLike({ postId: post.id, isLiked: post.is_liked })}
           className={`gap-1.5 text-xs ${post.is_liked ? "text-destructive" : "text-muted-foreground"}`}
         >
           <Heart className={`h-4 w-4 ${post.is_liked ? "fill-current" : ""}`} />

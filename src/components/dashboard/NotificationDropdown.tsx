@@ -174,15 +174,15 @@ const NotificationDropdown = () => {
 
   const handleAccept = async (requestId: string) => {
     setProcessing(requestId);
-    const ok = await acceptRequest(requestId);
-    if (ok) toast.success("Connection accepted!");
+    const { error } = await acceptRequest(requestId);
+    if (!error) toast.success("Connection accepted!");
     setProcessing(null);
   };
 
   const handleReject = async (requestId: string) => {
     setProcessing(requestId);
-    const ok = await rejectRequest(requestId);
-    if (ok) toast.success("Request declined");
+    const { error } = await rejectRequest(requestId);
+    if (!error) toast.success("Request declined");
     setProcessing(null);
   };
 

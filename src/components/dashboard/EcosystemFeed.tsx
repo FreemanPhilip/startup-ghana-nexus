@@ -43,7 +43,7 @@ const EcosystemFeed = ({ onViewOpportunity, onViewGroup, onViewStartup, activeId
   const showConnectionsAt = 2;
 
   const handleCreatePost = async (content: string, category: string, imageUrl?: string, videoUrl?: string, startupId?: string, imageUrls?: string[]) => {
-    await createPost(content, category, imageUrl, videoUrl, startupId, imageUrls);
+    createPost({ content, category, image_url: imageUrl, video_url: videoUrl, startup_id: startupId, image_urls: imageUrls });
   };
 
   return (

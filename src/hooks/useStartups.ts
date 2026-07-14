@@ -6,9 +6,11 @@ import {
   updateStartup,
   addStartupMember,
   removeStartupMember,
-  type Startup,
 } from "@/lib/supabase/queries/startups";
+import type { Startup, EnrichedStartup } from "@/lib/supabase/queries/startups";
 import { toast } from "@/hooks/use-toast";
+
+export type { Startup, EnrichedStartup };
 
 export function useStartups() {
   const { user } = useAuth();
@@ -56,7 +58,7 @@ export function useStartups() {
   });
 
   return {
-    startups,
+    myStartups: startups,
     loading: isLoading,
     addStartup: addStartup.mutateAsync,
     editStartup: editStartup.mutateAsync,
