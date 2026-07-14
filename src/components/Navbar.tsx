@@ -12,6 +12,7 @@ const solutionCategories = [
     items: [
       { label: "SparkX Labs", href: "/sparkx-labs", desc: "Innovation & incubation" },
       { label: "SparkX Academy", href: "/sparkx-academy", desc: "Courses & training" },
+      { label: "SparkX Talent", href: "https://talent.sparkxglobal.net", desc: "Hire vetted talent" },
     ],
   },
   {
@@ -26,7 +27,6 @@ const solutionCategories = [
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Pricing", href: "#pricing" },
-  { label: "Talent", href: "https://talent.sparkxglobal.net" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
@@ -115,20 +115,35 @@ const Navbar = () => {
                             {cat.title}
                           </p>
                           <div className="flex flex-col gap-1">
-                            {cat.items.map((item) => (
-                              <Link
-                                key={item.label}
-                                to={item.href}
-                                className="group rounded-lg px-3 py-2.5 transition-colors hover:bg-accent/10"
-                              >
-                                <span className="block text-sm font-medium text-foreground group-hover:text-primary">
-                                  {item.label}
-                                </span>
-                                <span className="block text-xs text-muted-foreground">
-                                  {item.desc}
-                                </span>
-                              </Link>
-                            ))}
+                            {cat.items.map((item) =>
+                              item.href.startsWith("/") ? (
+                                <Link
+                                  key={item.label}
+                                  to={item.href}
+                                  className="group rounded-lg px-3 py-2.5 transition-colors hover:bg-accent/10"
+                                >
+                                  <span className="block text-sm font-medium text-foreground group-hover:text-primary">
+                                    {item.label}
+                                  </span>
+                                  <span className="block text-xs text-muted-foreground">
+                                    {item.desc}
+                                  </span>
+                                </Link>
+                              ) : (
+                                <a
+                                  key={item.label}
+                                  href={item.href}
+                                  className="group rounded-lg px-3 py-2.5 transition-colors hover:bg-accent/10"
+                                >
+                                  <span className="block text-sm font-medium text-foreground group-hover:text-primary">
+                                    {item.label}
+                                  </span>
+                                  <span className="block text-xs text-muted-foreground">
+                                    {item.desc}
+                                  </span>
+                                </a>
+                              )
+                            )}
                           </div>
                         </div>
                       ))}
@@ -212,16 +227,27 @@ const Navbar = () => {
                   {solutionCategories.map((cat) => (
                     <div key={cat.title} className="mb-2">
                       <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{cat.title}</p>
-                      {cat.items.map((item) => (
-                        <Link
-                          key={item.label}
-                          to={item.href}
-                          className="block rounded-md px-3 py-2 text-sm text-muted-foreground"
-                          onClick={() => { setMobileOpen(false); setMobileProductsOpen(false); }}
-                        >
-                          {item.label}
-                        </Link>
-                      ))}
+                      {cat.items.map((item) =>
+                        item.href.startsWith("/") ? (
+                          <Link
+                            key={item.label}
+                            to={item.href}
+                            className="block rounded-md px-3 py-2 text-sm text-muted-foreground"
+                            onClick={() => { setMobileOpen(false); setMobileProductsOpen(false); }}
+                          >
+                            {item.label}
+                          </Link>
+                        ) : (
+                          <a
+                            key={item.label}
+                            href={item.href}
+                            className="block rounded-md px-3 py-2 text-sm text-muted-foreground"
+                            onClick={() => { setMobileOpen(false); setMobileProductsOpen(false); }}
+                          >
+                            {item.label}
+                          </a>
+                        )
+                      )}
                     </div>
                   ))}
                 </motion.div>
