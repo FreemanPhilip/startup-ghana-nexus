@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Star, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import solutionsImg from "@/assets/solutions-dropdown.jpg";
+import sparkxLogo from "@/assets/sparkx-logo.png";
+import sparkxLogoWhite from "@/assets/sparkx-logo-white.png";
 
 const solutionCategories = [
   {
@@ -12,6 +14,7 @@ const solutionCategories = [
     items: [
       { label: "SparkX Labs", href: "/sparkx-labs", desc: "Innovation & incubation" },
       { label: "SparkX Academy", href: "/sparkx-academy", desc: "Courses & training" },
+      { label: "SparkX Talent", href: "https://talent.sparkxglobal.net", desc: "Hire vetted talent" },
     ],
   },
   {
@@ -26,7 +29,6 @@ const solutionCategories = [
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Pricing", href: "#pricing" },
-  { label: "Talent", href: "https://talent.sparkxglobal.net" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
@@ -45,13 +47,9 @@ const Navbar = () => {
       className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl"
     >
       <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-gold">
-            <Star className="h-5 w-5 text-navy" fill="currentColor" />
-          </div>
-          <span className="font-display text-xl font-bold tracking-tight">
-            SparkX Index
-          </span>
+        <Link to="/" className="flex items-center">
+          <img src={sparkxLogo} alt="SparkX" className="h-8 w-auto dark:hidden" />
+          <img src={sparkxLogoWhite} alt="SparkX" className="hidden h-8 w-auto dark:block" />
         </Link>
 
         {/* Desktop */}
@@ -115,20 +113,35 @@ const Navbar = () => {
                             {cat.title}
                           </p>
                           <div className="flex flex-col gap-1">
-                            {cat.items.map((item) => (
-                              <Link
-                                key={item.label}
-                                to={item.href}
-                                className="group rounded-lg px-3 py-2.5 transition-colors hover:bg-accent/10"
-                              >
-                                <span className="block text-sm font-medium text-foreground group-hover:text-primary">
-                                  {item.label}
-                                </span>
-                                <span className="block text-xs text-muted-foreground">
-                                  {item.desc}
-                                </span>
-                              </Link>
-                            ))}
+                            {cat.items.map((item) =>
+                              item.href.startsWith("/") ? (
+                                <Link
+                                  key={item.label}
+                                  to={item.href}
+                                  className="group rounded-lg px-3 py-2.5 transition-colors hover:bg-accent/10"
+                                >
+                                  <span className="block text-sm font-medium text-foreground group-hover:text-primary">
+                                    {item.label}
+                                  </span>
+                                  <span className="block text-xs text-muted-foreground">
+                                    {item.desc}
+                                  </span>
+                                </Link>
+                              ) : (
+                                <a
+                                  key={item.label}
+                                  href={item.href}
+                                  className="group rounded-lg px-3 py-2.5 transition-colors hover:bg-accent/10"
+                                >
+                                  <span className="block text-sm font-medium text-foreground group-hover:text-primary">
+                                    {item.label}
+                                  </span>
+                                  <span className="block text-xs text-muted-foreground">
+                                    {item.desc}
+                                  </span>
+                                </a>
+                              )
+                            )}
                           </div>
                         </div>
                       ))}
@@ -212,16 +225,27 @@ const Navbar = () => {
                   {solutionCategories.map((cat) => (
                     <div key={cat.title} className="mb-2">
                       <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{cat.title}</p>
-                      {cat.items.map((item) => (
-                        <Link
-                          key={item.label}
-                          to={item.href}
-                          className="block rounded-md px-3 py-2 text-sm text-muted-foreground"
-                          onClick={() => { setMobileOpen(false); setMobileProductsOpen(false); }}
-                        >
-                          {item.label}
-                        </Link>
-                      ))}
+                      {cat.items.map((item) =>
+                        item.href.startsWith("/") ? (
+                          <Link
+                            key={item.label}
+                            to={item.href}
+                            className="block rounded-md px-3 py-2 text-sm text-muted-foreground"
+                            onClick={() => { setMobileOpen(false); setMobileProductsOpen(false); }}
+                          >
+                            {item.label}
+                          </Link>
+                        ) : (
+                          <a
+                            key={item.label}
+                            href={item.href}
+                            className="block rounded-md px-3 py-2 text-sm text-muted-foreground"
+                            onClick={() => { setMobileOpen(false); setMobileProductsOpen(false); }}
+                          >
+                            {item.label}
+                          </a>
+                        )
+                      )}
                     </div>
                   ))}
                 </motion.div>

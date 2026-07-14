@@ -1,5 +1,6 @@
-import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
+import sparkxLogo from "@/assets/sparkx-logo.png";
+import sparkxLogoWhite from "@/assets/sparkx-logo-white.png";
 
 const sparkxModules = [
   { label: "SparkX Global", href: "/sparkx-global" },
@@ -22,11 +23,9 @@ const Footer = () => {
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-gold">
-                <Star className="h-5 w-5 text-navy" fill="currentColor" />
-              </div>
-              <span className="font-display text-xl font-bold">SparkX Index</span>
+            <Link to="/" className="flex items-center">
+              <img src={sparkxLogo} alt="SparkX" className="h-8 w-auto dark:hidden" />
+              <img src={sparkxLogoWhite} alt="SparkX" className="hidden h-8 w-auto dark:block" />
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               Powering Africa's startup ecosystem through connection, mentorship,
