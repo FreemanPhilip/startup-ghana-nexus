@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFollows } from "@/hooks/useFollows";
+import { getProfilesWithRoles } from "@/lib/supabase/queries/profiles";
 
 export interface NetworkProfile {
   user_id: string;
@@ -20,44 +21,27 @@ export interface NetworkProfile {
 export function useNetwork() {
   const { user } = useAuth();
   const { isFollowing, toggleFollow, followerCount, followingCount } = useFollows();
-  const [profiles, setProfiles] = useState<NetworkProfile[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  const fetchProfiles = useCallback(async () => {
-    setLoading(true);
+  const { data: profiles = [], isLoading } = useQuery({
+    queryKey: ["network"],
+    queryFn: async (): Promise<NetworkProfile[]> => {
+      const { data: profilesData } = await supabase
+        .from("public_profiles")
+        .select("user_id, full_name, headline, avatar_url, industry, company_name, company_stage, location, verification, expertise")
+        .neq("user_id", user!.id);
 
-    // Fetch all profiles except current user
-    const { data: profilesData } = await supabase
-      .from("public_profiles")
-      .select("user_id, full_name, headline, avatar_url, industry, company_name, company_stage, location, verification, expertise")
-      .neq("user_id", user?.id ?? "");
+      if (!profilesData) return [];
 
-    if (!profilesData) { setProfiles([]); setLoading(false); return; }
+      const userIds = profilesData.map(p => p.user_id);
+      const { profiles: profileMap, roles: roleMap } = await getProfilesWithRoles(userIds);
 
-    // Fetch roles for all these users
-    const userIds = profilesData.map(p => p.user_id);
-    const { data: rolesData } = await supabase
-      .from("user_roles")
-      .select("user_id, role")
-      .in("user_id", userIds);
+      return profilesData.map(p => ({
+        ...p,
+        roles: roleMap.get(p.user_id) ? [roleMap.get(p.user_id)!] : [],
+      }));
+    },
+    enabled: !!user,
+  });
 
-    const rolesMap = new Map<string, string[]>();
-    rolesData?.forEach(r => {
-      const existing = rolesMap.get(r.user_id) || [];
-      existing.push(r.role);
-      rolesMap.set(r.user_id, existing);
-    });
-
-    const enriched: NetworkProfile[] = profilesData.map(p => ({
-      ...p,
-      roles: rolesMap.get(p.user_id) || ["member"],
-    }));
-
-    setProfiles(enriched);
-    setLoading(false);
-  }, [user]);
-
-  useEffect(() => { fetchProfiles(); }, [fetchProfiles]);
-
-  return { profiles, loading, isFollowing, toggleFollow, followerCount, followingCount, refetch: fetchProfiles };
+  return { profiles, loading: isLoading, isFollowing, toggleFollow, followerCount, followingCount };
 }

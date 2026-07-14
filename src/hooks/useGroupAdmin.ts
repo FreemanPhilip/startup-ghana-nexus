@@ -1,7 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import { getProfilesByIds } from "@/lib/supabase/queries/profiles";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 
 export interface JoinRequest {
   id: string;
@@ -26,122 +28,152 @@ export interface GroupInvitation {
 
 export function useGroupAdmin(groupId: string | null) {
   const { user } = useAuth();
-  const [joinRequests, setJoinRequests] = useState<JoinRequest[]>([]);
-  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  const fetchJoinRequests = useCallback(async () => {
-    if (!groupId) return;
-    setLoading(true);
-    const { data } = await supabase
-      .from("group_join_requests")
-      .select("*")
-      .eq("group_id", groupId)
-      .eq("status", "pending");
+  const { data: joinRequests = [], isLoading } = useQuery({
+    queryKey: ["groupJoinRequests", groupId],
+    queryFn: async (): Promise<JoinRequest[]> => {
+      const { data } = await supabase
+        .from("group_join_requests")
+        .select("*")
+        .eq("group_id", groupId!)
+        .eq("status", "pending");
 
-    if (data && data.length > 0) {
+      if (!data || data.length === 0) return [];
+
       const userIds = data.map(r => r.user_id);
-      const { data: profiles } = await supabase
-        .from("public_profiles")
-        .select("user_id, full_name, avatar_url, headline")
-        .in("user_id", userIds);
-      const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
+      const profilesMap = await getProfilesByIds(userIds);
 
-      setJoinRequests(data.map(r => ({
+      return data.map(r => ({
         ...r,
-        full_name: profileMap.get(r.user_id)?.full_name || null,
-        avatar_url: profileMap.get(r.user_id)?.avatar_url || null,
-        headline: profileMap.get(r.user_id)?.headline || null,
-      })));
-    } else {
-      setJoinRequests([]);
-    }
-    setLoading(false);
-  }, [groupId]);
+        full_name: profilesMap.get(r.user_id)?.full_name || null,
+        avatar_url: profilesMap.get(r.user_id)?.avatar_url || null,
+        headline: profilesMap.get(r.user_id)?.headline || null,
+      }));
+    },
+    enabled: !!groupId,
+  });
 
-  useEffect(() => { fetchJoinRequests(); }, [fetchJoinRequests]);
+  useRealtimeSubscription(
+    { table: "group_join_requests", filter: `group_id=eq.${groupId}` },
+    () => queryClient.invalidateQueries({ queryKey: ["groupJoinRequests", groupId] }),
+    !!groupId
+  );
 
-  // Realtime
-  useEffect(() => {
-    if (!groupId) return;
-    const channel = supabase
-      .channel(`group-requests-${groupId}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "group_join_requests", filter: `group_id=eq.${groupId}` }, () => fetchJoinRequests())
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [groupId, fetchJoinRequests]);
+  const approveRequest = useMutation({
+    mutationFn: async ({ requestId, userId }: { requestId: string; userId: string }) => {
+      const { error: updateErr } = await supabase
+        .from("group_join_requests")
+        .update({ status: "approved", reviewed_by: user!.id, reviewed_at: new Date().toISOString() })
+        .eq("id", requestId);
+      if (updateErr) throw updateErr;
+      await supabase.from("group_members").insert({ group_id: groupId!, user_id: userId, role: "member" });
+    },
+    onSuccess: () => {
+      toast({ title: "Request approved" });
+      queryClient.invalidateQueries({ queryKey: ["groupJoinRequests", groupId] });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    },
+  });
 
-  const approveRequest = async (requestId: string, userId: string) => {
-    if (!groupId || !user) return;
-    const { error: updateErr } = await supabase
-      .from("group_join_requests")
-      .update({ status: "approved", reviewed_by: user.id, reviewed_at: new Date().toISOString() })
-      .eq("id", requestId);
-    if (updateErr) { toast({ title: "Error", description: updateErr.message, variant: "destructive" }); return; }
+  const rejectRequest = useMutation({
+    mutationFn: async (requestId: string) => {
+      const { error } = await supabase
+        .from("group_join_requests")
+        .update({ status: "rejected", reviewed_by: user?.id, reviewed_at: new Date().toISOString() })
+        .eq("id", requestId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Request rejected" });
+      queryClient.invalidateQueries({ queryKey: ["groupJoinRequests", groupId] });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    },
+  });
 
-    await supabase.from("group_members").insert({ group_id: groupId, user_id: userId, role: "member" });
-    toast({ title: "Request approved" });
-    fetchJoinRequests();
-  };
+  const requestToJoin = useMutation({
+    mutationFn: async (message?: string) => {
+      const { error } = await supabase.from("group_join_requests").insert({
+        group_id: groupId!,
+        user_id: user!.id,
+        message: message || null,
+      });
+      if (error) {
+        if (error.code === "23505") {
+          toast({ title: "Already requested", description: "You have a pending request." });
+        } else {
+          toast({ title: "Error", description: error.message, variant: "destructive" });
+        }
+        return;
+      }
+      toast({ title: "Join request sent!" });
+    },
+  });
 
-  const rejectRequest = async (requestId: string) => {
-    const { error } = await supabase
-      .from("group_join_requests")
-      .update({ status: "rejected", reviewed_by: user?.id, reviewed_at: new Date().toISOString() })
-      .eq("id", requestId);
-    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-    toast({ title: "Request rejected" });
-    fetchJoinRequests();
-  };
+  const inviteUser = useMutation({
+    mutationFn: async (invitedUserId: string) => {
+      const { data: existing } = await supabase
+        .from("group_members")
+        .select("id")
+        .eq("group_id", groupId!)
+        .eq("user_id", invitedUserId)
+        .maybeSingle();
+      if (existing) {
+        toast({ title: "Already a member" });
+        return;
+      }
+      const { error } = await supabase.from("group_invitations").insert({
+        group_id: groupId!,
+        invited_user_id: invitedUserId,
+        invited_by: user!.id,
+      });
+      if (error) {
+        if (error.code === "23505") toast({ title: "Already invited" });
+        else toast({ title: "Error", description: error.message, variant: "destructive" });
+        return;
+      }
+      toast({ title: "Invitation sent!" });
+    },
+  });
 
-  const requestToJoin = async (message?: string) => {
-    if (!user || !groupId) return;
-    const { error } = await supabase.from("group_join_requests").insert({
-      group_id: groupId, user_id: user.id, message: message || null,
-    });
-    if (error) {
-      if (error.code === "23505") toast({ title: "Already requested", description: "You have a pending request." });
-      else toast({ title: "Error", description: error.message, variant: "destructive" });
-      return;
-    }
-    toast({ title: "Join request sent!" });
-  };
+  const updateMemberRole = useMutation({
+    mutationFn: async ({ memberUserId, newRole }: { memberUserId: string; newRole: string }) => {
+      if (memberUserId === user!.id) {
+        toast({ title: "Cannot change your own role" });
+        return;
+      }
+      const { error } = await supabase.from("group_members").update({ role: newRole }).eq("group_id", groupId!).eq("user_id", memberUserId);
+      if (error) throw error;
+      toast({ title: `Role updated to ${newRole}` });
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["groupDetail", groupId] }),
+  });
 
-  const inviteUser = async (invitedUserId: string) => {
-    if (!user || !groupId) return;
-    // Check if already a member
-    const { data: existing } = await supabase.from("group_members").select("id").eq("group_id", groupId).eq("user_id", invitedUserId).maybeSingle();
-    if (existing) { toast({ title: "Already a member" }); return; }
-
-    const { error } = await supabase.from("group_invitations").insert({
-      group_id: groupId, invited_user_id: invitedUserId, invited_by: user.id,
-    });
-    if (error) {
-      if (error.code === "23505") toast({ title: "Already invited" });
-      else toast({ title: "Error", description: error.message, variant: "destructive" });
-      return;
-    }
-    toast({ title: "Invitation sent!" });
-  };
-
-  const updateMemberRole = async (memberId: string, memberUserId: string, newRole: string) => {
-    if (!user || !groupId) return;
-    if (memberUserId === user.id) { toast({ title: "Cannot change your own role" }); return; }
-    const { error } = await supabase.from("group_members").update({ role: newRole }).eq("group_id", groupId).eq("user_id", memberUserId);
-    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-    toast({ title: `Role updated to ${newRole}` });
-  };
-
-  const removeMember = async (memberUserId: string) => {
-    if (!user || !groupId) return;
-    if (memberUserId === user.id) { toast({ title: "Cannot remove yourself" }); return; }
-    await supabase.from("group_members").delete().eq("group_id", groupId).eq("user_id", memberUserId);
-    toast({ title: "Member removed" });
-  };
+  const removeMember = useMutation({
+    mutationFn: async (memberUserId: string) => {
+      if (memberUserId === user!.id) {
+        toast({ title: "Cannot remove yourself" });
+        return;
+      }
+      await supabase.from("group_members").delete().eq("group_id", groupId!).eq("user_id", memberUserId);
+      toast({ title: "Member removed" });
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["groupDetail", groupId] }),
+  });
 
   return {
-    joinRequests, loading,
-    approveRequest, rejectRequest, requestToJoin,
-    inviteUser, updateMemberRole, removeMember,
-    refetch: fetchJoinRequests,
+    joinRequests,
+    loading: isLoading,
+    approveRequest: approveRequest.mutateAsync,
+    rejectRequest: rejectRequest.mutateAsync,
+    requestToJoin: requestToJoin.mutateAsync,
+    inviteUser: inviteUser.mutateAsync,
+    updateMemberRole: updateMemberRole.mutateAsync,
+    removeMember: removeMember.mutateAsync,
+    refetch: () => queryClient.invalidateQueries({ queryKey: ["groupJoinRequests", groupId] }),
   };
 }

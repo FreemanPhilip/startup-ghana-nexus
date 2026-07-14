@@ -1,10 +1,11 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { getRoleDashboardPath } from "@/lib/roleRouting";
+import { queryClient } from "@/lib/queryClient";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import OnboardingPage from "./pages/OnboardingPage";
@@ -20,10 +21,6 @@ import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import StartupsIndexPage from "./pages/StartupsIndexPage";
 import StartupDetailPage from "./pages/StartupDetailPage";
-
-
-
-const queryClient = new QueryClient();
 
 const LoadingSpinner = () => (
   <div className="flex min-h-screen items-center justify-center">

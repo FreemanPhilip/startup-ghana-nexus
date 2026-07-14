@@ -1,106 +1,89 @@
-import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 
 export function useFollows() {
   const { user } = useAuth();
-  const [following, setFollowing] = useState<Set<string>>(new Set());
-  const [followerCount, setFollowerCount] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
+  const queryClient = useQueryClient();
 
-  const fetchFollowData = useCallback(async () => {
-    if (!user) return;
-    const [followingRes, followerRes] = await Promise.all([
-      supabase.from("follows").select("following_id").eq("follower_id", user.id),
-      supabase.from("follows").select("follower_id").eq("following_id", user.id),
-    ]);
-    setFollowing(new Set(followingRes.data?.map(f => f.following_id) ?? []));
-    setFollowerCount(followerRes.data?.length ?? 0);
-    setFollowingCount(followingRes.data?.length ?? 0);
-  }, [user]);
+  const { data: followData } = useQuery({
+    queryKey: ["follows", user?.id],
+    queryFn: async () => {
+      const [followingRes, followerRes] = await Promise.all([
+        supabase.from("follows").select("following_id").eq("follower_id", user!.id),
+        supabase.from("follows").select("follower_id").eq("following_id", user!.id),
+      ]);
+      return {
+        following: new Set<string>(followingRes.data?.map(f => f.following_id) ?? []),
+        followerCount: followerRes.data?.length ?? 0,
+        followingCount: followingRes.data?.length ?? 0,
+      };
+    },
+    enabled: !!user,
+  });
 
-  useEffect(() => { fetchFollowData(); }, [fetchFollowData]);
+  const following = followData?.following ?? new Set<string>();
+  const followerCount = followData?.followerCount ?? 0;
+  const followingCount = followData?.followingCount ?? 0;
 
-  // Real-time subscription for follower updates
-  useEffect(() => {
-    if (!user) return;
+  useRealtimeSubscription(
+    { table: "follows", filter: `following_id=eq.${user?.id}` },
+    () => queryClient.invalidateQueries({ queryKey: ["follows", user?.id] }),
+    !!user
+  );
 
-    const channel = supabase
-      .channel(`follows-realtime-${user.id}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "follows",
-          filter: `following_id=eq.${user.id}`,
-        },
-        (payload) => {
-          if (payload.eventType === "INSERT") {
-            setFollowerCount(c => c + 1);
-          } else if (payload.eventType === "DELETE") {
-            setFollowerCount(c => Math.max(0, c - 1));
-          }
-        }
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "follows",
-          filter: `follower_id=eq.${user.id}`,
-        },
-        (payload) => {
-          if (payload.eventType === "INSERT") {
-            const newRow = payload.new as any;
-            setFollowing(prev => new Set(prev).add(newRow.following_id));
-            setFollowingCount(c => c + 1);
-          } else if (payload.eventType === "DELETE") {
-            const oldRow = payload.old as any;
-            setFollowing(prev => {
-              const n = new Set(prev);
-              n.delete(oldRow.following_id);
-              return n;
-            });
-            setFollowingCount(c => Math.max(0, c - 1));
-          }
-        }
-      )
-      .subscribe();
+  useRealtimeSubscription(
+    { table: "follows", filter: `follower_id=eq.${user?.id}` },
+    () => queryClient.invalidateQueries({ queryKey: ["follows", user?.id] }),
+    !!user
+  );
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [user]);
-
-  const toggleFollow = useCallback(async (targetUserId: string) => {
-    if (!user) return;
-    const currentlyFollowing = following.has(targetUserId);
-    if (currentlyFollowing) {
-      // Optimistic update
-      setFollowing(prev => { const n = new Set(prev); n.delete(targetUserId); return n; });
-      setFollowingCount(c => Math.max(0, c - 1));
-      const { error } = await supabase.from("follows").delete().eq("follower_id", user.id).eq("following_id", targetUserId);
-      if (error) {
-        // Revert
-        setFollowing(prev => new Set(prev).add(targetUserId));
-        setFollowingCount(c => c + 1);
+  const toggleFollow = useMutation({
+    mutationFn: async (targetUserId: string) => {
+      const isCurrentlyFollowing = following.has(targetUserId);
+      if (isCurrentlyFollowing) {
+        await supabase.from("follows").delete().eq("follower_id", user!.id).eq("following_id", targetUserId);
+      } else {
+        await supabase.from("follows").insert({ follower_id: user!.id, following_id: targetUserId });
       }
-    } else {
-      // Optimistic update
-      setFollowing(prev => new Set(prev).add(targetUserId));
-      setFollowingCount(c => c + 1);
-      const { error } = await supabase.from("follows").insert({ follower_id: user.id, following_id: targetUserId });
-      if (error) {
-        // Revert
-        setFollowing(prev => { const n = new Set(prev); n.delete(targetUserId); return n; });
-        setFollowingCount(c => Math.max(0, c - 1));
-      }
-    }
-  }, [user, following]);
+      return { targetUserId, isCurrentlyFollowing };
+    },
+    onMutate: async (targetUserId) => {
+      await queryClient.cancelQueries({ queryKey: ["follows", user?.id] });
+      const prev = queryClient.getQueryData(["follows", user?.id]);
+      const isCurrentlyFollowing = following.has(targetUserId);
+      queryClient.setQueryData(["follows", user?.id], (old: typeof followData) => {
+        if (!old) return old;
+        const newFollowing = new Set(old.following);
+        if (isCurrentlyFollowing) {
+          newFollowing.delete(targetUserId);
+        } else {
+          newFollowing.add(targetUserId);
+        }
+        return {
+          ...old,
+          following: newFollowing,
+          followerCount: old.followerCount,
+          followingCount: isCurrentlyFollowing ? old.followingCount - 1 : old.followingCount + 1,
+        };
+      });
+      return { prev };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.prev) queryClient.setQueryData(["follows", user?.id], context.prev);
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["follows", user?.id] }),
+  });
 
-  const isFollowing = useCallback((userId: string) => following.has(userId), [following]);
+  const isFollowing = (userId: string) => following.has(userId);
 
-  return { following, followerCount, followingCount, toggleFollow, isFollowing, refetch: fetchFollowData };
+  return {
+    following,
+    followerCount,
+    followingCount,
+    toggleFollow: toggleFollow.mutate,
+    isFollowing,
+    refetch: () => queryClient.invalidateQueries({ queryKey: ["follows", user?.id] }),
+  };
 }
