@@ -21,6 +21,7 @@ import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import StartupsIndexPage from "./pages/StartupsIndexPage";
 import StartupDetailPage from "./pages/StartupDetailPage";
+import SparkXIndexPage from "./pages/SparkXIndexPage";
 
 const LoadingSpinner = () => (
   <div className="flex min-h-screen items-center justify-center">
@@ -96,6 +97,7 @@ const App = () => (
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/startups" element={<StartupsIndexPage />} />
             <Route path="/startups/:slug" element={<StartupDetailPage />} />
+            <Route path="/sparkx-index" element={<SparkXIndexPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/admin/login" element={<AdminAuthPage />} />
             <Route path="/onboarding" element={<OnboardingRoute><OnboardingPage /></OnboardingRoute>} />
