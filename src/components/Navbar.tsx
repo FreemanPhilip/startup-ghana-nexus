@@ -10,7 +10,6 @@ const solutionCategories = [
   {
     title: "BUILD & GROW",
     items: [
-      { label: "SparkX Talent", href: "/sparkx-talent", desc: "Hiring & talent discovery" },
       { label: "SparkX Labs", href: "/sparkx-labs", desc: "Innovation & incubation" },
       { label: "SparkX Academy", href: "/sparkx-academy", desc: "Courses & training" },
     ],
@@ -27,6 +26,7 @@ const solutionCategories = [
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Pricing", href: "#pricing" },
+  { label: "Talent", href: "https://talent.sparkxglobal.net" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];

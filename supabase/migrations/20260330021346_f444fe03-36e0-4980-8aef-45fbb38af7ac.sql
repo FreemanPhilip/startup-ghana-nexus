@@ -5,7 +5,7 @@ CREATE TABLE public.admin_invitations (
   email TEXT NOT NULL,
   invited_by UUID NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending',
-  token TEXT NOT NULL DEFAULT encode(gen_random_bytes(32), 'hex'),
+  token TEXT NOT NULL DEFAULT substring(replace(cast(gen_random_uuid() as text), '-', '') || md5(random()::text), 1, 32),
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   accepted_at TIMESTAMP WITH TIME ZONE,
   UNIQUE(email, status)
