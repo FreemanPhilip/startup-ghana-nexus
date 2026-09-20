@@ -65,7 +65,7 @@ const QuickChatDialog = ({
 
   const handleSend = () => {
     if (!input.trim()) return;
-    sendMessage(input);
+    sendMessage({ content: input });
     setInput("");
   };
 

@@ -35,19 +35,19 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
 
   const handlePost = async (content: string, imageUrl?: string, videoUrl?: string) => {
     setPosting(true);
-    await createPost(content, imageUrl, videoUrl);
+    await createPost({ content, imageUrl, videoUrl });
     setPosting(false);
   };
 
   const handleComment = async (postId: string) => {
     const content = commentInputs[postId]?.trim();
     if (!content) return;
-    await addComment(postId, content);
+    await addComment({ postId, content });
     setCommentInputs(prev => ({ ...prev, [postId]: "" }));
   };
 
   const handleRequestToJoin = async () => {
-    await admin.requestToJoin();
+    await admin.requestToJoin(undefined);
   };
 
   const handleUpdateGroup = async (updates: { name: string; description: string; is_private: boolean; cover_color: string; category: string; icon_url: string | null }) => {
@@ -245,7 +245,7 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
                       <video src={(post as any).video_url} controls className="w-full max-h-96 rounded-lg" />
                     )}
                     <div className="flex items-center gap-4 pt-2 border-t border-border">
-                      <button onClick={() => toggleLike(post.id)} className={`flex items-center gap-1.5 text-xs transition-colors ${post.is_liked ? "text-destructive" : "text-muted-foreground hover:text-foreground"}`}>
+                      <button onClick={() => toggleLike({ postId: post.id })} className={`flex items-center gap-1.5 text-xs transition-colors ${post.is_liked ? "text-destructive" : "text-muted-foreground hover:text-foreground"}`}>
                         <Heart className={`h-3.5 w-3.5 ${post.is_liked ? "fill-current" : ""}`} /> {post.like_count}
                       </button>
                       <button onClick={() => setExpandedComments(prev => { const n = new Set(prev); n.has(post.id) ? n.delete(post.id) : n.add(post.id); return n; })} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
@@ -294,11 +294,11 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         {m.role === "member" ? (
-                          <DropdownMenuItem onClick={() => admin.updateMemberRole("", m.user_id, "admin")}>
+                          <DropdownMenuItem onClick={() => admin.updateMemberRole({ memberUserId: m.user_id, newRole: "admin" })}>
                             <ChevronUp className="h-3.5 w-3.5 mr-2" /> Promote to Admin
                           </DropdownMenuItem>
                         ) : m.role === "admin" && (
-                          <DropdownMenuItem onClick={() => admin.updateMemberRole("", m.user_id, "member")}>
+                          <DropdownMenuItem onClick={() => admin.updateMemberRole({ memberUserId: m.user_id, newRole: "member" })}>
                             <ChevronUp className="h-3.5 w-3.5 mr-2 rotate-180" /> Demote to Member
                           </DropdownMenuItem>
                         )}
@@ -339,7 +339,7 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
             <JoinRequestsPanel
               requests={admin.joinRequests}
               loading={admin.loading}
-              onApprove={async (reqId, userId) => { await admin.approveRequest(reqId, userId); refetch(); }}
+              onApprove={async (reqId, userId) => { await admin.approveRequest({ requestId: reqId, userId }); refetch(); }}
               onReject={admin.rejectRequest}
             />
           )}

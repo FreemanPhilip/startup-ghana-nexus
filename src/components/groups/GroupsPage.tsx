@@ -44,7 +44,11 @@ const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => 
           <h1 className="font-display text-2xl font-bold">Ecosystem Groups</h1>
           <p className="text-sm text-muted-foreground">Discover and join Africa's most active startup communities.</p>
         </div>
-        <CreateGroupDialog onCreate={createGroup} />
+        <CreateGroupDialog
+          onCreate={async (name, description, isPrivate, coverColor, category, iconUrl) => {
+            await createGroup({ name, description, isPrivate, coverColor, category, iconUrl });
+          }}
+        />
       </div>
 
       {/* Search */}

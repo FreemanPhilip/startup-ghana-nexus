@@ -92,12 +92,13 @@ export async function markMessagesAsRead(conversationId: string, userId: string)
 }
 
 export async function sendMessage(conversationId: string, senderId: string, content: string, imageUrl?: string | null) {
-  return supabase.from("messages").insert({
+  const { error } = await supabase.from("messages").insert({
     conversation_id: conversationId,
     sender_id: senderId,
     content: content.trim() || (imageUrl ? "📎 Attachment" : ""),
     image_url: imageUrl || null,
   });
+  if (error) throw error;
 }
 
 export async function startConversation(userId: string, otherUserId: string): Promise<string | null> {
@@ -121,28 +122,50 @@ export async function startConversation(userId: string, otherUserId: string): Pr
 }
 
 export async function deleteMessage(messageId: string, userId: string) {
-  return supabase.from("messages").delete().eq("id", messageId).eq("sender_id", userId);
+  const { error } = await supabase.from("messages").delete().eq("id", messageId).eq("sender_id", userId);
+  if (error) throw error;
 }
 
 export async function deleteMessages(messageIds: string[], userId: string) {
-  return supabase.from("messages").delete().in("id", messageIds).eq("sender_id", userId);
+  const { error } = await supabase.from("messages").delete().in("id", messageIds).eq("sender_id", userId);
+  if (error) throw error;
 }
 
 export async function clearChat(conversationId: string, userId: string) {
-  return supabase.from("messages").delete().eq("conversation_id", conversationId).eq("sender_id", userId);
+  const { error } = await supabase
+    .from("messages")
+    .delete()
+    .eq("conversation_id", conversationId)
+    .eq("sender_id", userId);
+  if (error) throw error;
 }
 
 export async function deleteConversation(conversationId: string, userId: string) {
-  await supabase.from("messages").delete().eq("conversation_id", conversationId).eq("sender_id", userId);
-  return supabase.from("conversations").delete().eq("id", conversationId);
+  const { error: messagesError } = await supabase
+    .from("messages")
+    .delete()
+    .eq("conversation_id", conversationId)
+    .eq("sender_id", userId);
+  if (messagesError) throw messagesError;
+
+  const { error } = await supabase.from("conversations").delete().eq("id", conversationId);
+  if (error) throw error;
 }
 
 export async function blockUser(blockerId: string, blockedId: string) {
-  return supabase.from("blocked_users").insert({ blocker_id: blockerId, blocked_id: blockedId });
+  const { error } = await supabase
+    .from("blocked_users")
+    .insert({ blocker_id: blockerId, blocked_id: blockedId });
+  if (error) throw error;
 }
 
 export async function unblockUser(blockerId: string, blockedId: string) {
-  return supabase.from("blocked_users").delete().eq("blocker_id", blockerId).eq("blocked_id", blockedId);
+  const { error } = await supabase
+    .from("blocked_users")
+    .delete()
+    .eq("blocker_id", blockerId)
+    .eq("blocked_id", blockedId);
+  if (error) throw error;
 }
 
 export async function isUserBlocked(blockerId: string, blockedId: string): Promise<boolean> {

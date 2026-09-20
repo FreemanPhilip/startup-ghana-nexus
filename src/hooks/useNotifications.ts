@@ -10,6 +10,8 @@ import {
 } from "@/lib/supabase/queries/notifications";
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 
+export type { Notification };
+
 export function useNotifications() {
   const { user } = useAuth();
   const queryClient = useQueryClient();

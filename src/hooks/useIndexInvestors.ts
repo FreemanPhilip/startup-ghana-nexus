@@ -61,11 +61,12 @@ export function useIndexInvestors(filters: InvestorFilters) {
   return useQuery({
     queryKey: ["indexInvestors", filters],
     queryFn: async (): Promise<IndexInvestor[]> => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("index_investors")
         .select("*")
         .order("name");
 
+      if (error) throw error;
       if (!data) return [];
 
       let results = data as IndexInvestor[];

@@ -40,7 +40,8 @@ export function useGroups() {
       category?: string;
       iconUrl?: string;
     }) => {
-      const { data, error } = await insertGroup({
+      // insertGroup throws on failure and resolves to the created row.
+      const group = await insertGroup({
         name: input.name,
         description: input.description,
         is_private: input.isPrivate,
@@ -49,9 +50,8 @@ export function useGroups() {
         category: input.category,
         icon_url: input.iconUrl,
       });
-      if (error) throw error;
-      await joinGroupAsAdmin(data.id, user!.id);
-      return data;
+      await joinGroupAsAdmin(group.id, user!.id);
+      return group;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["groups"] });

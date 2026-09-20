@@ -174,15 +174,23 @@ const NotificationDropdown = () => {
 
   const handleAccept = async (requestId: string) => {
     setProcessing(requestId);
-    const { error } = await acceptRequest(requestId);
-    if (!error) toast.success("Connection accepted!");
+    try {
+      await acceptRequest(requestId);
+      toast.success("Connection accepted!");
+    } catch {
+      // useConnections surfaces the failure.
+    }
     setProcessing(null);
   };
 
   const handleReject = async (requestId: string) => {
     setProcessing(requestId);
-    const { error } = await rejectRequest(requestId);
-    if (!error) toast.success("Request declined");
+    try {
+      await rejectRequest(requestId);
+      toast.success("Request declined");
+    } catch {
+      // useConnections surfaces the failure.
+    }
     setProcessing(null);
   };
 
@@ -232,12 +240,12 @@ const NotificationDropdown = () => {
           <TabsContent value="notifications" className="mt-0">
             <div className="flex items-center justify-end gap-1 px-3 py-1.5 border-b border-border">
               {unreadCount > 0 && (
-                <Button variant="ghost" size="sm" className="h-6 text-[10px] gap-1 text-primary" onClick={markAllAsRead}>
+                <Button variant="ghost" size="sm" className="h-6 text-[10px] gap-1 text-primary" onClick={() => markAllAsRead()}>
                   <Check className="h-3 w-3" /> Mark all read
                 </Button>
               )}
               {notifications.length > 0 && (
-                <Button variant="ghost" size="sm" className="h-6 text-[10px] gap-1 text-muted-foreground" onClick={clearAll}>
+                <Button variant="ghost" size="sm" className="h-6 text-[10px] gap-1 text-muted-foreground" onClick={() => clearAll()}>
                   <Trash2 className="h-3 w-3" />
                 </Button>
               )}

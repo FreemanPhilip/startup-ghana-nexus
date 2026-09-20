@@ -223,9 +223,14 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
     if (pitchDeckUrl) parts.push(`[Pitch Deck: ${pitchDeckUrl}]`);
     parts.push(message);
     const fullMessage = parts.join(" ");
-    const ok = await sendRequest(investorUserId, fullMessage);
-    if (ok) toast({ title: "Intro request sent!", description: `Your request has been sent to ${investor.name}.` });
-    return ok;
+    try {
+      await sendRequest({ receiverId: investorUserId, message: fullMessage });
+    } catch {
+      // useConnections surfaces the error toast; report failure to the dialog.
+      return false;
+    }
+    toast({ title: "Intro request sent!", description: `Your request has been sent to ${investor.name}.` });
+    return true;
   };
 
   // Match portfolio entries to real startups by fuzzy name matching

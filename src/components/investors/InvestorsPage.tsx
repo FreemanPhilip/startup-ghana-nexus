@@ -85,7 +85,7 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
         toast({ title: "Connected!", description: `You're now connected with ${inv.name}.` });
       }
     } else {
-      toggleShortlist(inv.id, inv.name, inv);
+      toggleShortlist({ investorId: inv.id, investorName: inv.name, investorData: inv });
       toast({ title: "Shortlisted!", description: `${inv.name} added to your shortlist.` });
     }
   };
@@ -105,7 +105,7 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
   });
 
   const handleViewInvestor = (inv: InvestorData) => {
-    trackView(inv.id, inv.name, inv.icon);
+    trackView({ investorId: inv.id, investorName: inv.name, investorIcon: inv.icon });
     setSelectedInvestor(inv);
   };
 
@@ -171,7 +171,7 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
                     className="absolute top-3 right-3 z-10 p-1 rounded-full hover:bg-muted/80 transition-colors"
                     onClick={(e) => {
                       e.stopPropagation();
-                      toggleShortlist(inv.id, inv.name, inv);
+                      toggleShortlist({ investorId: inv.id, investorName: inv.name, investorData: inv });
                     }}
                     title={isShortlisted(inv.id) ? "Remove from shortlist" : "Add to shortlist"}
                   >
@@ -221,7 +221,7 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
                     className="absolute top-3 right-3 z-10 p-1 rounded-full hover:bg-muted/80 transition-colors"
                     onClick={(e) => {
                       e.stopPropagation();
-                      toggleShortlist(inv.id, inv.name, inv);
+                      toggleShortlist({ investorId: inv.id, investorName: inv.name, investorData: inv });
                     }}
                     title="Remove from shortlist"
                   >

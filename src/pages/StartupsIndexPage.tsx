@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, BadgeCheck, MapPin, Flame, TrendingUp } from "lucide-react";
 import Navbar from "@/components/Navbar";
@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import DataLoadError from "@/components/DataLoadError";
 import type { Database } from "@/integrations/supabase/types";
 
 type IndexStartup = Database["public"]["Tables"]["index_startups"]["Row"];
@@ -32,23 +33,33 @@ const prettify = (s: string) => s.replace(/_/g, " ").replace(/\b\w/g, c => c.toU
 const StartupsIndexPage = () => {
   const [rows, setRows] = useState<IndexStartup[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [q, setQ] = useState("");
   const [sector, setSector] = useState<string>("all");
   const [stage, setStage] = useState<string>("all");
   const [location, setLocation] = useState("");
   const [raisingOnly, setRaisingOnly] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const { data } = await supabase
-        .from("index_startups")
-        .select("*")
-        .order("sparkx_score", { ascending: false, nullsFirst: false });
+  const loadStartups = useCallback(async () => {
+    setLoading(true);
+    setLoadError(false);
+    const { data, error } = await supabase
+      .from("index_startups")
+      .select("*")
+      .order("sparkx_score", { ascending: false, nullsFirst: false });
+    // Distinguish a failed request from a genuinely empty directory.
+    if (error) {
+      setLoadError(true);
+      setRows([]);
+    } else {
       setRows(data ?? []);
-      setLoading(false);
-    })();
+    }
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    void loadStartups();
+  }, [loadStartups]);
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -125,6 +136,8 @@ const StartupsIndexPage = () => {
               <div key={i} className="h-56 animate-pulse rounded-xl border border-border bg-card" />
             ))}
           </div>
+        ) : loadError ? (
+          <DataLoadError entity="startups" onRetry={() => void loadStartups()} />
         ) : filtered.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border bg-card p-12 text-center text-muted-foreground">
             No startups match your filters.

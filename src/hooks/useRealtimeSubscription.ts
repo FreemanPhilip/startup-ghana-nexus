@@ -1,9 +1,12 @@
 import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+type PostgresChangeEvent = "*" | "INSERT" | "UPDATE" | "DELETE";
+
 interface RealtimeConfig {
   table: string;
-  event?: string;
+  /** Narrowed to the literals supabase-js accepts for postgres_changes. */
+  event?: PostgresChangeEvent;
   filter?: string;
   schema?: string;
 }

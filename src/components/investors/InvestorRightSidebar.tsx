@@ -102,7 +102,7 @@ const InvestorRightSidebar = ({ onViewInvestor }: InvestorRightSidebarProps) => 
         )}
         {recentViews.length > 0 && (
           <button
-            onClick={clearHistory}
+            onClick={() => clearHistory()}
             className="mt-4 w-full text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground"
           >
             Clear History

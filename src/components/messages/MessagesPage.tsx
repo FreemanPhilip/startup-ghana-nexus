@@ -74,14 +74,28 @@ const MessagesPage = ({ onViewProfile }: MessagesPageProps) => {
           conversation={activeConvoData}
           messages={messages}
           loading={loadingMessages}
-          onSendMessage={sendMessage}
+          onSendMessage={(content: string, imageUrl?: string) => {
+            void sendMessage({ content, imageUrl });
+          }}
           onBack={handleBack}
-          onDeleteMessage={deleteMessage}
-          onDeleteMessages={deleteMessages}
-          onClearChat={clearChat}
-          onDeleteConversation={deleteConversation}
-          onBlockUser={blockUser}
-          onUnblockUser={unblockUser}
+          onDeleteMessage={async (messageId: string) => {
+            try { await deleteMessage(messageId); return true; } catch { return false; }
+          }}
+          onDeleteMessages={async (messageIds: string[]) => {
+            try { await deleteMessages(messageIds); return true; } catch { return false; }
+          }}
+          onClearChat={async () => {
+            try { await clearChat(); return true; } catch { return false; }
+          }}
+          onDeleteConversation={async (conversationId: string) => {
+            try { await deleteConversation(conversationId); return true; } catch { return false; }
+          }}
+          onBlockUser={async (userId: string) => {
+            try { await blockUser(userId); return true; } catch { return false; }
+          }}
+          onUnblockUser={async (userId: string) => {
+            try { await unblockUser(userId); return true; } catch { return false; }
+          }}
           isUserBlocked={isUserBlocked}
         />
       </div>

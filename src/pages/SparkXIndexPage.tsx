@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import DataLoadError from "@/components/DataLoadError";
 import { IndexSearchBar } from "@/components/sparkx-index/IndexSearchBar";
 import { StageFilterChips } from "@/components/sparkx-index/StageFilterChips";
 import { IndexStartupCard } from "@/components/sparkx-index/IndexStartupCard";
@@ -37,7 +38,12 @@ export default function SparkXIndexPage() {
   const [selectedInvestor, setSelectedInvestor] = useState<IndexInvestor | null>(null);
   const [investorDetailOpen, setInvestorDetailOpen] = useState(false);
 
-  const { data: startups = [], isLoading: loadingStartups } = useIndexStartups({
+  const {
+    data: startups = [],
+    isLoading: loadingStartups,
+    isError: startupsError,
+    refetch: refetchStartups,
+  } = useIndexStartups({
     search: activeTab === "startups" ? search : undefined,
     sector: activeTab === "startups" ? sector : undefined,
     stage: activeTab === "startups" ? stage : undefined,
@@ -48,11 +54,20 @@ export default function SparkXIndexPage() {
   const startupIds = useMemo(() => startups.slice(0, 50).map(s => s.id), [startups]);
   const { data: roundsMap = new Map() } = useStartupRounds(startupIds);
 
-  const { data: investors = [], isLoading: loadingInvestors } = useIndexInvestors({
+  const {
+    data: investors = [],
+    isLoading: loadingInvestors,
+    isError: investorsError,
+    refetch: refetchInvestors,
+  } = useIndexInvestors({
     search: activeTab === "investors" ? search : undefined,
     type: activeTab === "investors" ? investorType : undefined,
     sector: activeTab === "investors" && investorSector !== "all" ? investorSector : undefined,
   });
+
+  // Neither a failed fetch nor an in-flight one should render a confident "0".
+  const startupCount = startupsError || loadingStartups ? "—" : startups.length;
+  const investorCount = investorsError || loadingInvestors ? "—" : investors.length;
 
   const handleStartupClick = (startup: IndexStartup) => {
     setSelectedStartup(startup);
@@ -101,11 +116,11 @@ export default function SparkXIndexPage() {
               <div className="flex items-center justify-center gap-6 mt-6 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Building2 className="h-4 w-4 text-primary" />
-                  <span><strong className="text-foreground">{startups.length}</strong> Startups</span>
+                  <span><strong className="text-foreground">{startupCount}</strong> Startups</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-primary" />
-                  <span><strong className="text-foreground">{investors.length}</strong> Investors</span>
+                  <span><strong className="text-foreground">{investorCount}</strong> Investors</span>
                 </div>
               </div>
             </div>
@@ -120,12 +135,12 @@ export default function SparkXIndexPage() {
                 <TabsTrigger value="startups" className="gap-2">
                   <Building2 className="h-4 w-4" />
                   Startups
-                  <Badge variant="secondary" className="ml-1 text-xs">{startups.length}</Badge>
+                  <Badge variant="secondary" className="ml-1 text-xs">{startupCount}</Badge>
                 </TabsTrigger>
                 <TabsTrigger value="investors" className="gap-2">
                   <Users className="h-4 w-4" />
                   Investors
-                  <Badge variant="secondary" className="ml-1 text-xs">{investors.length}</Badge>
+                  <Badge variant="secondary" className="ml-1 text-xs">{investorCount}</Badge>
                 </TabsTrigger>
               </TabsList>
 
@@ -253,6 +268,8 @@ export default function SparkXIndexPage() {
                     <Skeleton key={i} className="h-48 rounded-xl" />
                   ))}
                 </div>
+              ) : startupsError ? (
+                <DataLoadError entity="startups" onRetry={() => refetchStartups()} />
               ) : startups.length === 0 ? (
                 <div className="text-center py-16 text-muted-foreground">
                   <Building2 className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -288,6 +305,8 @@ export default function SparkXIndexPage() {
                     ))}
                   </div>
                 )
+              ) : investorsError ? (
+                <DataLoadError entity="investors" onRetry={() => refetchInvestors()} />
               ) : investors.length === 0 ? (
                 <div className="text-center py-16 text-muted-foreground">
                   <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />

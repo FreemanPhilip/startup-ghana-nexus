@@ -9,6 +9,8 @@ import {
 } from "@/lib/supabase/queries/connections";
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 
+export type { ConnectionRequest };
+
 export function useConnections() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
