@@ -9,9 +9,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 
+type AuthMode = "signup" | "signin" | "talent";
+
 const AuthPage = () => {
   const { session, profile, loading: authLoading } = useAuth();
-  const [isSignUp, setIsSignUp] = useState(true);
+  const [mode, setMode] = useState<AuthMode>("signup");
+  const isSignUp = mode === "signup";
+  const isTalent = mode === "talent";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -52,6 +56,49 @@ const AuthPage = () => {
       }
     } catch (error: any) {
       toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Signs in with a talent.sparkxglobal.net account. sparkxtalent is a separate
+  // Supabase project, so the talent-login edge function verifies the credentials
+  // there and returns a token we exchange for a session in this project.
+  const handleTalentAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("talent-login", {
+        body: { email, password },
+      });
+
+      if (error) {
+        // functions.invoke surfaces a non-2xx as an opaque error; the readable
+        // message is on the underlying response.
+        let message = "Could not sign in with SparkX Talent.";
+        try {
+          const body = await (error as { context?: Response }).context?.json();
+          if (body?.error) message = body.error;
+        } catch {
+          // keep the generic message
+        }
+        throw new Error(message);
+      }
+
+      if (!data?.token_hash) throw new Error("Could not sign in with SparkX Talent.");
+
+      const { error: otpError } = await supabase.auth.verifyOtp({
+        token_hash: data.token_hash,
+        type: "magiclink",
+      });
+      if (otpError) throw otpError;
+
+      toast.success("Signed in with your SparkX Talent account");
+      navigate("/dashboard");
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Could not sign in with SparkX Talent.";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -120,10 +167,14 @@ const AuthPage = () => {
             </div>
 
             <h2 className="font-display text-2xl font-bold">
-              {isSignUp ? "Create your account" : "Welcome back"}
+              {isTalent ? "Sign in with SparkX Talent" : isSignUp ? "Create your account" : "Welcome back"}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {isSignUp ? "Start your journey in Africa's startup ecosystem" : "Sign in to continue"}
+              {isTalent
+                ? "Use the email and password from your talent.sparkxglobal.net account"
+                : isSignUp
+                  ? "Start your journey in Africa's startup ecosystem"
+                  : "Sign in to continue"}
             </p>
 
             {/* Google OAuth */}
@@ -148,8 +199,8 @@ const AuthPage = () => {
               <div className="h-px flex-1 bg-border" />
             </div>
 
-            <form onSubmit={handleEmailAuth} className="space-y-4">
-              {isSignUp && (
+            <form onSubmit={isTalent ? handleTalentAuth : handleEmailAuth} className="space-y-4">
+              {isSignUp && !isTalent && (
                 <div className="space-y-2">
                   <Label htmlFor="fullName">Full Name</Label>
                   <div className="relative">
@@ -211,19 +262,48 @@ const AuthPage = () => {
                 disabled={loading}
                 className="w-full bg-gradient-gold font-semibold text-navy hover:opacity-90"
               >
-                {loading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
+                {loading
+                  ? "Please wait..."
+                  : isTalent
+                    ? "Sign in with SparkX Talent"
+                    : isSignUp
+                      ? "Create Account"
+                      : "Sign In"}
               </Button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-muted-foreground">
-              {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
-              <button
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="font-semibold text-gold hover:underline"
-              >
-                {isSignUp ? "Sign In" : "Sign Up"}
-              </button>
-            </p>
+            {isTalent ? (
+              <p className="mt-6 text-center text-sm text-muted-foreground">
+                Not a SparkX Talent member?{" "}
+                <button
+                  onClick={() => setMode("signin")}
+                  className="font-semibold text-gold hover:underline"
+                >
+                  Back to sign in
+                </button>
+              </p>
+            ) : (
+              <>
+                <p className="mt-6 text-center text-sm text-muted-foreground">
+                  {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+                  <button
+                    onClick={() => setMode(isSignUp ? "signin" : "signup")}
+                    className="font-semibold text-gold hover:underline"
+                  >
+                    {isSignUp ? "Sign In" : "Sign Up"}
+                  </button>
+                </p>
+                <p className="mt-2 text-center text-sm text-muted-foreground">
+                  Already on SparkX Talent?{" "}
+                  <button
+                    onClick={() => setMode("talent")}
+                    className="font-semibold text-gold hover:underline"
+                  >
+                    Use that account
+                  </button>
+                </p>
+              </>
+            )}
           </div>
 
           <p className="mt-4 text-center text-xs text-muted-foreground">

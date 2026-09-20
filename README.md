@@ -49,6 +49,63 @@ This project is built with:
 - Tailwind CSS
 - Supabase (Backend & Database)
 
+## Signing in with a SparkX Talent account
+
+Users can sign in here with their `talent.sparkxglobal.net` credentials.
+
+`sparkxglobal` and `sparkxtalent` are **two separate Supabase projects** (same
+organisation, different regions). They do not share `auth.users`, so a Talent
+account does not exist in this project until someone signs in with it. The
+`talent-login` edge function bridges the two:
+
+1. It verifies the submitted email/password against the Talent project's auth API.
+2. On success it creates — or finds, matching on email — the corresponding user here.
+3. It returns a one-time token the browser exchanges for a normal session.
+
+The password is only ever forwarded to the Talent auth endpoint. It is never
+stored, logged, or persisted in this project.
+
+Accounts are matched **by email**. If someone already signed up here directly,
+signing in with Talent links to that same account instead of creating a duplicate.
+
+### Required setup
+
+Apply the migration, then set two secrets on the **sparkxglobal** project and
+deploy the function:
+
+```sh
+supabase db push
+
+# From the sparkxtalent project's API settings:
+supabase secrets set TALENT_SUPABASE_URL="https://<talent-project-ref>.supabase.co"
+supabase secrets set TALENT_SUPABASE_ANON_KEY="<talent anon/publishable key>"
+
+supabase functions deploy talent-login
+```
+
+Use the Talent project's **anon** key here, not its service-role key — the
+function only needs to verify credentials, not administer that project.
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are injected automatically.
+
+Until both secrets are set, the Talent option returns a clear
+"not configured yet" message rather than failing silently.
+
+After applying the migration, regenerate the database types so
+`profiles.talent_user_id` is available to the frontend:
+
+```sh
+supabase gen types typescript --linked > src/integrations/supabase/types.ts
+```
+
+### Notes
+
+- The bridge is rate-limited to 10 failed attempts per email per 15 minutes, so
+  it cannot be used to brute-force Talent accounts.
+- `profiles.talent_user_id` records which Talent identity an account is linked to.
+- A more secure variant (a redirect flow where Talent issues a signed token, so
+  this app never handles Talent passwords) is possible, but requires adding an
+  authorize endpoint to the `sparkxtalent` app.
+
 ## How can I deploy this project?
 
 You can deploy this project to various platforms:
