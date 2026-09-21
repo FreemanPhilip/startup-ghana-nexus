@@ -71,7 +71,7 @@ const StartupDetailPage = () => {
         .order("announced_on", { ascending: false, nullsFirst: false });
 
       const roundIds = (roundRows ?? []).map(r => r.id);
-      let riMap = new Map<string, { investor: Investor; is_lead: boolean }[]>();
+      const riMap = new Map<string, { investor: Investor; is_lead: boolean }[]>();
       if (roundIds.length) {
         const { data: ri } = await supabase
           .from("index_round_investors")

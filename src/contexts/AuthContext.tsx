@@ -48,17 +48,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", userId)
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("get_own_profile");
 
-      if (error && error.code !== "PGRST116") {
+      if (error) {
         throw error;
       }
 
-      setProfile(data ?? null);
+      setProfile((data && data[0]) ?? null);
     } catch (error) {
       console.warn("Unable to load profile for user:", error);
       setProfile(null);

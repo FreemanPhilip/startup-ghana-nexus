@@ -225,12 +225,6 @@ const AdminAuthPage = () => {
       if (error) throw error;
 
       if (data.session) {
-        const { error: roleError } = await supabase
-          .from("user_roles")
-          .upsert({ user_id: data.session.user.id, role: "admin" }, { onConflict: "user_id,role" });
-
-        if (roleError) throw roleError;
-
         if (inviteToken) {
           await supabase
             .from("admin_invitations")
@@ -238,6 +232,9 @@ const AdminAuthPage = () => {
             .eq("token", inviteToken);
         }
 
+        // The admin role is assigned by the handle_new_user trigger from the
+        // signup metadata (primary_role: "admin"); direct user_roles inserts of
+        // admin are blocked by RLS by design.
         await supabase
           .from("profiles")
           .update({ onboarding_step: "completed", full_name: fullName || signupEmail.split("@")[0], admin_level: isFirstSetup ? "super_admin" : "admin" })

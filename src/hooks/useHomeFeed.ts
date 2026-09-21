@@ -58,7 +58,7 @@ export function useHomeFeed() {
       const myGroupIds = (myGroupsRes.data || []).map((g) => g.group_id);
 
       let groupPostsData: Record<string, unknown>[] = [];
-      let groupsMap = new Map<string, { name: string; cover_color: string | null }>();
+      const groupsMap = new Map<string, { name: string; cover_color: string | null }>();
       if (myGroupIds.length > 0) {
         const [gpRes, groupsRes] = await Promise.all([
           supabase.from("group_posts").select("*").in("group_id", myGroupIds).order("created_at", { ascending: false }).limit(10),

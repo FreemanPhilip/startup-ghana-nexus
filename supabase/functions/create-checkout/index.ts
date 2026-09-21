@@ -7,6 +7,18 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Redirect targets come from the client, but only ever to a trusted origin, never
+// the caller-supplied Origin header (which an attacker can set to anything).
+const PORTAL_ORIGIN = Deno.env.get("PORTAL_ORIGIN") || "https://sparkxglobal.net";
+
+const safePath = (path: unknown, fallback: string): string => {
+  if (typeof path !== "string") return fallback;
+  if (!path.startsWith("/") || path.startsWith("//") || path.includes("://") || path.includes("\\")) {
+    return fallback;
+  }
+  return path;
+};
+
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
@@ -58,14 +70,12 @@ serve(async (req) => {
       logStep("Created new customer", { customerId });
     }
 
-    const origin = req.headers.get("origin") || "http://localhost:3000";
-
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       line_items: [{ price: price_id, quantity: 1 }],
       mode: mode || "subscription",
-      success_url: `${origin}${success_path || "/dashboard"}`,
-      cancel_url: `${origin}${cancel_path || "/dashboard"}`,
+      success_url: `${PORTAL_ORIGIN}${safePath(success_path, "/dashboard")}`,
+      cancel_url: `${PORTAL_ORIGIN}${safePath(cancel_path, "/dashboard")}`,
       metadata: { user_id: user.id },
       allow_promotion_codes: true,
     });

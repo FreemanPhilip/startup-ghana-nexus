@@ -59,6 +59,11 @@ const RoleRoute = ({ allowedRole, children }: { allowedRole: string; children: R
   if (!session) return <Navigate to={sanitizeAppPath("/auth")} replace />;
   // Admins skip onboarding check
   if (allowedRole !== "admin" && profile && profile.onboarding_step !== "completed") return <Navigate to={sanitizeAppPath("/onboarding")} replace />;
+  if (roles.length === 0) {
+    // No roles yet: send to onboarding (a terminal route) instead of looping
+    // through the role-based dashboard redirect.
+    return <Navigate to={sanitizeAppPath("/onboarding")} replace />;
+  }
   if (!roles.includes(allowedRole as any)) {
     return <Navigate to={sanitizeAppPath(getRoleDashboardPath(roles[0]))} replace />;
   }

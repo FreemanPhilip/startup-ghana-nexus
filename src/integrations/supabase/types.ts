@@ -1909,6 +1909,14 @@ export type Database = {
     }
     Functions: {
       get_admin_level: { Args: { _user_id: string }; Returns: string }
+      get_admin_profiles: {
+        Args: Record<string, never>
+        Returns: Database["public"]["Tables"]["profiles"]["Row"][]
+      }
+      get_own_profile: {
+        Args: Record<string, never>
+        Returns: Database["public"]["Tables"]["profiles"]["Row"][]
+      }
       has_admin_users: { Args: Record<string, never>; Returns: boolean }
       has_role: {
         Args: {

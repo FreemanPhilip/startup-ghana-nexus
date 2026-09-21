@@ -101,7 +101,7 @@ const AdminUsersTable = ({ adminLevel }: AdminUsersTableProps) => {
 
   const fetchUsers = async () => {
     const [{ data: profiles }, { data: roles }] = await Promise.all([
-      supabase.from("profiles").select("*").order("created_at", { ascending: false }),
+      supabase.rpc("get_admin_profiles"),
       supabase.from("user_roles").select("user_id, role"),
     ]);
 

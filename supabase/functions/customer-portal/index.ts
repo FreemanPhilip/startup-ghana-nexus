@@ -7,6 +7,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const PORTAL_ORIGIN = Deno.env.get("PORTAL_ORIGIN") || "https://sparkxglobal.net";
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -37,10 +39,9 @@ serve(async (req) => {
       throw new Error("No Stripe customer found");
     }
 
-    const origin = req.headers.get("origin") || "http://localhost:3000";
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customers.data[0].id,
-      return_url: `${origin}/dashboard`,
+      return_url: `${PORTAL_ORIGIN}/dashboard`,
     });
 
     return new Response(JSON.stringify({ url: portalSession.url }), {

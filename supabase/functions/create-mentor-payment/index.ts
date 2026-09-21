@@ -7,6 +7,16 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const PORTAL_ORIGIN = Deno.env.get("PORTAL_ORIGIN") || "https://sparkxglobal.net";
+
+const safePath = (path: unknown, fallback: string): string => {
+  if (typeof path !== "string") return fallback;
+  if (!path.startsWith("/") || path.startsWith("//") || path.includes("://") || path.includes("\\")) {
+    return fallback;
+  }
+  return path;
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -35,7 +45,7 @@ serve(async (req) => {
     let customerId: string | undefined;
     if (customers.data.length > 0) customerId = customers.data[0].id;
 
-    const origin = req.headers.get("origin") || "http://localhost:3000";
+    const successPath = safePath(`/dashboard?mentor_payment=success&mentor_id=${mentor_id}&booking_date=${booking_date}&start_time=${start_time}&end_time=${end_time}&notes=${encodeURIComponent(notes || "")}`, "/dashboard");
 
     // Create a one-time payment session for the mentor session
     const session = await stripe.checkout.sessions.create({
@@ -53,8 +63,8 @@ serve(async (req) => {
         quantity: 1,
       }],
       mode: "payment",
-      success_url: `${origin}/dashboard?mentor_payment=success&mentor_id=${mentor_id}&booking_date=${booking_date}&start_time=${start_time}&end_time=${end_time}&notes=${encodeURIComponent(notes || "")}`,
-      cancel_url: `${origin}/dashboard`,
+      success_url: `${PORTAL_ORIGIN}${successPath}`,
+      cancel_url: `${PORTAL_ORIGIN}/dashboard`,
       metadata: {
         user_id: user.id,
         mentor_id,

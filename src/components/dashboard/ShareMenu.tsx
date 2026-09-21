@@ -60,7 +60,9 @@ const ShareMenu = ({ postId, postContent, authorName }: ShareMenuProps) => {
     if (navigator.share) {
       try {
         await navigator.share({ title: `Post by ${authorName}`, text: shareText, url: shareUrl });
-      } catch {}
+      } catch {
+        // User dismissed the native share sheet — not an error.
+      }
     }
   };
 

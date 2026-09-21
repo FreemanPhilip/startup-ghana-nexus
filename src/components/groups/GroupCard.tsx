@@ -77,7 +77,7 @@ const GroupCard = ({ group, onJoin, onLeave, onView }: GroupCardProps) => {
           variant="outline"
           size="sm"
           className={`w-full text-xs ${group.is_member ? "text-muted-foreground" : "text-primary border-primary hover:bg-primary hover:text-primary-foreground"}`}
-          onClick={(e) => { e.stopPropagation(); group.is_member ? onLeave(group.id) : onJoin(group.id); }}
+          onClick={(e) => { e.stopPropagation(); if (group.is_member) { onLeave(group.id); } else { onJoin(group.id); } }}
         >
           {group.is_member ? "Leave Group" : group.is_private ? "Request to Join" : "Join Group"}
         </Button>

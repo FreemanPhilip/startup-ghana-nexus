@@ -19,8 +19,12 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+      "react-refresh/only-export-components": "warn",
       "@typescript-eslint/no-unused-vars": "off",
+      // Pragmatic: explicit `any` is tolerated (warn) but genuine mistakes
+      // (empty blocks, dead expressions, missed consts) stay errors.
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-empty-object-type": "warn",
     },
   },
 );

@@ -248,7 +248,7 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
                       <button onClick={() => toggleLike({ postId: post.id })} className={`flex items-center gap-1.5 text-xs transition-colors ${post.is_liked ? "text-destructive" : "text-muted-foreground hover:text-foreground"}`}>
                         <Heart className={`h-3.5 w-3.5 ${post.is_liked ? "fill-current" : ""}`} /> {post.like_count}
                       </button>
-                      <button onClick={() => setExpandedComments(prev => { const n = new Set(prev); n.has(post.id) ? n.delete(post.id) : n.add(post.id); return n; })} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+                      <button onClick={() => setExpandedComments(prev => { const n = new Set(prev); if (n.has(post.id)) { n.delete(post.id); } else { n.add(post.id); } return n; })} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
                         <MessageCircle className="h-3.5 w-3.5" /> {post.comment_count}
                       </button>
                     </div>

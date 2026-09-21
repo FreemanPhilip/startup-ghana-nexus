@@ -10,13 +10,10 @@ export const useAdminLevel = () => {
   const { data: adminLevel = "viewer", isLoading } = useQuery({
     queryKey: ["adminLevel", user?.id],
     queryFn: async (): Promise<AdminLevel> => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("admin_level")
-        .eq("user_id", user!.id)
-        .single();
+      const { data } = await supabase.rpc("get_own_profile");
+      const own = data?.[0];
 
-      return resolveAdminLevel(data?.admin_level ?? null, roles);
+      return resolveAdminLevel(own?.admin_level ?? null, roles);
     },
     enabled: !!user && isAdmin,
   });
