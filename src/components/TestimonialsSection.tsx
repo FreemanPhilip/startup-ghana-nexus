@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { Quote, Star } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -34,7 +35,7 @@ const containerVariants = {
   visible: { transition: { staggerChildren: 0.15 } },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };

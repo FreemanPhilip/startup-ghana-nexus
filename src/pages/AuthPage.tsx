@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { beginTalentSso } from "@/lib/talentSso";
 
 const AuthPage = () => {
   const { session, profile, loading: authLoading } = useAuth();
@@ -55,6 +56,15 @@ const AuthPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Hands off to talent.sparkxglobal.net. SparkX Talent is a separate Supabase
+  // project, so it can't be a normal OAuth provider: it authenticates the user
+  // itself and redirects back to /auth/talent/callback with a signed assertion.
+  // This app never sees the user's Talent password.
+  const handleTalentAuth = () => {
+    setLoading(true);
+    window.location.href = beginTalentSso();
   };
 
   const handleGoogleAuth = async () => {
@@ -140,6 +150,18 @@ const AuthPage = () => {
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
               </svg>
               Continue with Google
+            </Button>
+
+            {/* SparkX Talent lives on a separate Supabase project, so this is a
+                redirect hand-off rather than an OAuth provider. */}
+            <Button
+              variant="outline"
+              className="mt-3 w-full gap-2"
+              onClick={handleTalentAuth}
+              disabled={loading}
+            >
+              <Star className="h-4 w-4 text-gold" fill="currentColor" />
+              Continue with SparkX Talent
             </Button>
 
             <div className="my-6 flex items-center gap-3">

@@ -23,17 +23,20 @@ export async function fetchNotifications(userId: string): Promise<Notification[]
 }
 
 export async function markNotificationAsRead(id: string) {
-  return supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id);
+  const { error } = await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id);
+  if (error) throw error;
 }
 
 export async function markAllNotificationsAsRead(userId: string) {
-  return supabase
-    .from("notifications")
-    .update({ read_at: new Date().toISOString() })
-    .eq("user_id", userId)
-    .is("read_at", null);
+  const { error } = await supabase
+      .from("notifications")
+      .update({ read_at: new Date().toISOString() })
+      .eq("user_id", userId)
+      .is("read_at", null);
+  if (error) throw error;
 }
 
 export async function clearAllNotifications(userId: string) {
-  return supabase.from("notifications").delete().eq("user_id", userId);
+  const { error } = await supabase.from("notifications").delete().eq("user_id", userId);
+  if (error) throw error;
 }

@@ -185,7 +185,7 @@ const AIInvestorMatchDialog = ({ open, onOpenChange, onViewInvestor }: AIInvesto
                       variant="outline"
                       className="h-7 text-[10px] gap-1 px-2"
                       onClick={() => {
-                        toggleShortlist(match.investor_id, match.investor_name);
+                        toggleShortlist({ investorId: match.investor_id, investorName: match.investor_name });
                       }}
                     >
                       <Star className={`h-3 w-3 ${isShortlisted(match.investor_id) ? "fill-amber-400 text-amber-400" : ""}`} />

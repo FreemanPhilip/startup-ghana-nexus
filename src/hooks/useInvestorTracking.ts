@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatDistanceToNow } from "date-fns";
 
@@ -70,7 +71,7 @@ export function useInvestorTracking() {
   });
 
   const toggleShortlist = useMutation({
-    mutationFn: async ({ investorId, investorName, investorData }: { investorId: string; investorName: string; investorData?: Record<string, unknown> }) => {
+    mutationFn: async ({ investorId, investorName, investorData }: { investorId: string; investorName: string; investorData?: object }) => {
       const existing = shortlisted.find(s => s.investor_id === investorId);
       if (existing) {
         await supabase.from("investor_shortlists").delete().eq("id", existing.id);
@@ -79,7 +80,7 @@ export function useInvestorTracking() {
           user_id: user!.id,
           investor_id: investorId,
           investor_name: investorName,
-          investor_data: investorData || {},
+          investor_data: (investorData ?? {}) as Json,
         });
       }
     },
@@ -87,7 +88,10 @@ export function useInvestorTracking() {
   });
 
   const clearHistory = useMutation({
-    mutationFn: () => supabase.from("investor_views").delete().eq("user_id", user!.id),
+    mutationFn: async () => {
+      const { error } = await supabase.from("investor_views").delete().eq("user_id", user!.id);
+      if (error) throw error;
+    },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["investorViews", user?.id] }),
   });
 

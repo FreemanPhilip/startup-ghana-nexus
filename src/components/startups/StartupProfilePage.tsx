@@ -477,9 +477,9 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
               <PostCard
                 key={post.id}
                 post={post}
-                onToggleLike={handleToggleLike}
+                onToggleLike={({ postId, isLiked }) => handleToggleLike(postId, isLiked)}
                 onFetchComments={handleFetchComments}
-                onAddComment={handleAddComment}
+                onAddComment={({ postId, content }) => handleAddComment(postId, content)}
               />
             ))
           )}

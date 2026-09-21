@@ -61,16 +61,24 @@ const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
   const handleAcceptFromCard = async (userId: string) => {
     const req = pendingReceived.find(r => r.sender_id === userId);
     if (req) {
-      const ok = await acceptRequest(req.id);
-      if (ok) toast({ title: "Connected!", description: "You're now connected." });
+      try {
+        await acceptRequest(req.id);
+        toast({ title: "Connected!", description: "You're now connected." });
+      } catch {
+        // useConnections surfaces the error toast.
+      }
     }
   };
 
   const handleSendRequest = async (message?: string) => {
     if (!connectTarget) return false;
-    const ok = await sendRequest(connectTarget.userId, message);
-    if (ok) toast({ title: "Request sent!", description: `Connection request sent to ${connectTarget.name}.` });
-    return ok;
+    try {
+      await sendRequest({ receiverId: connectTarget.userId, message });
+    } catch {
+      return false;
+    }
+    toast({ title: "Request sent!", description: `Connection request sent to ${connectTarget.name}.` });
+    return true;
   };
 
   const connectedProfiles = useMemo(() => {
@@ -160,8 +168,12 @@ const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
         <PendingRequestsPanel
           requests={pendingReceived}
           loading={connectionsLoading}
-          onAccept={acceptRequest}
-          onReject={rejectRequest}
+          onAccept={async (requestId: string) => {
+            try { await acceptRequest(requestId); return true; } catch { return false; }
+          }}
+          onReject={async (requestId: string) => {
+            try { await rejectRequest(requestId); return true; } catch { return false; }
+          }}
         />
       ) : activeTab === "sent" ? (
         <SentRequestsPanel requests={pendingSent} loading={connectionsLoading} />

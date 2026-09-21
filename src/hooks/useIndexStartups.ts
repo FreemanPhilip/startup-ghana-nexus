@@ -70,26 +70,31 @@ function formatSector(sector: string | null): string {
 async function fetchStartupRounds(startupIds: string[]): Promise<Map<string, FundingRound[]>> {
   if (startupIds.length === 0) return new Map();
 
-  const { data: rounds } = await supabase
+  const { data: rounds, error: roundsError } = await supabase
     .from("index_funding_rounds")
     .select("*")
     .in("index_startup_id", startupIds)
     .order("announced_on", { ascending: false });
 
+  if (roundsError) throw roundsError;
   if (!rounds || rounds.length === 0) return new Map();
 
   const roundIds = rounds.map(r => r.id);
-  const { data: roundInvestors } = await supabase
+  const { data: roundInvestors, error: roundInvestorsError } = await supabase
     .from("index_round_investors")
     .select("round_id, index_investor_id, is_lead")
     .in("round_id", roundIds);
 
-  const investorIds = [...new Set((roundInvestors ?? []).map(ri => ri.index_investor_id))];
-  const { data: investors } = investorIds.length > 0
-    ? await supabase.from("index_investors").select("id, name").in("id", investorIds)
-    : { data: [] };
+  if (roundInvestorsError) throw roundInvestorsError;
 
-  const investorMap = new Map(investors?.map(i => [i.id, i.name]) ?? []);
+  const investorIds = [...new Set((roundInvestors ?? []).map(ri => ri.index_investor_id))];
+  const { data: investors, error: investorsError } = investorIds.length > 0
+    ? await supabase.from("index_investors").select("id, name").in("id", investorIds)
+    : { data: [] as { id: string; name: string }[], error: null };
+
+  if (investorsError) throw investorsError;
+
+  const investorMap = new Map<string, string>((investors ?? []).map(i => [i.id, i.name]));
 
   const roundsByStartup = new Map<string, FundingRound[]>();
   for (const round of rounds) {
@@ -114,11 +119,12 @@ export function useIndexStartups(filters: StartupFilters) {
   return useQuery({
     queryKey: ["indexStartups", filters],
     queryFn: async (): Promise<IndexStartup[]> => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("index_startups")
         .select("*")
         .order("sparkx_score", { ascending: false });
 
+      if (error) throw error;
       if (!data) return [];
 
       let results = data as IndexStartup[];

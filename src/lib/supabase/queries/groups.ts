@@ -152,7 +152,7 @@ export async function insertGroup(input: {
   category?: string;
   icon_url?: string | null;
 }) {
-  return supabase.from("groups").insert({
+  const { data, error } = await supabase.from("groups").insert({
     name: input.name,
     description: input.description,
     is_private: input.is_private,
@@ -161,18 +161,23 @@ export async function insertGroup(input: {
     category: input.category || "general",
     icon_url: input.icon_url || null,
   }).select().single();
+  if (error) throw error;
+  return data;
 }
 
 export async function joinGroup(groupId: string, userId: string) {
-  return supabase.from("group_members").insert({ group_id: groupId, user_id: userId });
+  const { error } = await supabase.from("group_members").insert({ group_id: groupId, user_id: userId });
+  if (error) throw error;
 }
 
 export async function joinGroupAsAdmin(groupId: string, userId: string) {
-  return supabase.from("group_members").insert({ group_id: groupId, user_id: userId, role: "admin" });
+  const { error } = await supabase.from("group_members").insert({ group_id: groupId, user_id: userId, role: "admin" });
+  if (error) throw error;
 }
 
 export async function leaveGroup(groupId: string, userId: string) {
-  return supabase.from("group_members").delete().eq("group_id", groupId).eq("user_id", userId);
+  const { error } = await supabase.from("group_members").delete().eq("group_id", groupId).eq("user_id", userId);
+  if (error) throw error;
 }
 
 export async function updateGroup(groupId: string, updates: {
@@ -183,27 +188,32 @@ export async function updateGroup(groupId: string, updates: {
   category: string;
   icon_url: string | null;
 }) {
-  return supabase.from("groups").update(updates).eq("id", groupId);
+  const { error } = await supabase.from("groups").update(updates).eq("id", groupId);
+  if (error) throw error;
 }
 
 export async function insertGroupPost(groupId: string, authorId: string, content: string, imageUrl?: string | null, videoUrl?: string | null) {
-  return supabase.from("group_posts").insert({
+  const { error } = await supabase.from("group_posts").insert({
     group_id: groupId,
     author_id: authorId,
     content,
     image_url: imageUrl ?? null,
     video_url: videoUrl ?? null,
   });
+  if (error) throw error;
 }
 
 export async function insertGroupPostLike(postId: string, userId: string) {
-  return supabase.from("group_post_likes").insert({ post_id: postId, user_id: userId });
+  const { error } = await supabase.from("group_post_likes").insert({ post_id: postId, user_id: userId });
+  if (error) throw error;
 }
 
 export async function deleteGroupPostLike(postId: string, userId: string) {
-  return supabase.from("group_post_likes").delete().eq("post_id", postId).eq("user_id", userId);
+  const { error } = await supabase.from("group_post_likes").delete().eq("post_id", postId).eq("user_id", userId);
+  if (error) throw error;
 }
 
 export async function insertGroupPostComment(postId: string, authorId: string, content: string) {
-  return supabase.from("group_post_comments").insert({ post_id: postId, author_id: authorId, content });
+  const { error } = await supabase.from("group_post_comments").insert({ post_id: postId, author_id: authorId, content });
+  if (error) throw error;
 }

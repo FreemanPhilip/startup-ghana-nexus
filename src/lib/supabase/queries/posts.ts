@@ -118,7 +118,7 @@ export async function insertPost(input: {
   video_url?: string | null;
   startup_id?: string | null;
 }) {
-  return supabase.from("posts").insert({
+  const { error } = await supabase.from("posts").insert({
     author_id: input.author_id,
     content: input.content,
     category: input.category ?? "general",
@@ -127,16 +127,20 @@ export async function insertPost(input: {
     video_url: input.video_url ?? null,
     startup_id: input.startup_id ?? null,
   });
+  if (error) throw error;
 }
 
 export async function insertPostLike(postId: string, userId: string) {
-  return supabase.from("post_likes").insert({ post_id: postId, user_id: userId });
+  const { error } = await supabase.from("post_likes").insert({ post_id: postId, user_id: userId });
+  if (error) throw error;
 }
 
 export async function deletePostLike(postId: string, userId: string) {
-  return supabase.from("post_likes").delete().eq("post_id", postId).eq("user_id", userId);
+  const { error } = await supabase.from("post_likes").delete().eq("post_id", postId).eq("user_id", userId);
+  if (error) throw error;
 }
 
 export async function insertPostComment(postId: string, authorId: string, content: string) {
-  return supabase.from("post_comments").insert({ post_id: postId, author_id: authorId, content });
+  const { error } = await supabase.from("post_comments").insert({ post_id: postId, author_id: authorId, content });
+  if (error) throw error;
 }

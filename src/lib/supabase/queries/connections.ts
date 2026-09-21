@@ -44,25 +44,28 @@ export async function fetchConnectionRequests(userId: string): Promise<{
 }
 
 export async function sendConnectionRequest(senderId: string, receiverId: string, message?: string) {
-  return supabase.from("connection_requests").insert({
+  const { error } = await supabase.from("connection_requests").insert({
     sender_id: senderId,
     receiver_id: receiverId,
     message: message || null,
   });
+  if (error) throw error;
 }
 
 export async function acceptConnectionRequest(requestId: string, receiverId: string) {
-  return supabase
+  const { error } = await supabase
     .from("connection_requests")
     .update({ status: "accepted", responded_at: new Date().toISOString() })
     .eq("id", requestId)
     .eq("receiver_id", receiverId);
+  if (error) throw error;
 }
 
 export async function rejectConnectionRequest(requestId: string, receiverId: string) {
-  return supabase
+  const { error } = await supabase
     .from("connection_requests")
     .update({ status: "rejected", responded_at: new Date().toISOString() })
     .eq("id", requestId)
     .eq("receiver_id", receiverId);
+  if (error) throw error;
 }
