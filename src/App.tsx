@@ -4,7 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import { getPostAuthRoute, getRoleDashboardPath, sanitizeAppPath } from "@/lib/roleRouting";
+import { getPostAuthRoute, getPrimaryDashboardRole, getRoleDashboardPath, sanitizeAppPath } from "@/lib/roleRouting";
+import type { Database } from "@/integrations/supabase/types";
 import { queryClient } from "@/lib/queryClient";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
@@ -17,6 +18,7 @@ import PartnerDashboardPage from "./pages/PartnerDashboardPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminAuthPage from "./pages/AdminAuthPage";
 import NotFound from "./pages/NotFound";
+import PostDetailPage from "./pages/PostDetailPage";
 import ProductPage from "./pages/ProductPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
@@ -44,11 +46,17 @@ const OnboardingRoute = ({ children }: { children: React.ReactNode }) => {
   const { session, profile, loading, roles } = useAuth();
   if (loading) return <LoadingSpinner />;
   if (!session) return <Navigate to="/auth" replace />;
-  // Admins skip onboarding entirely
-  if (roles.includes("admin")) return <Navigate to={sanitizeAppPath("/admin/dashboard")} replace />;
-  if (profile && profile.onboarding_step === "completed" && roles.length > 0) {
-    return <Navigate to={sanitizeAppPath(getRoleDashboardPath(roles[0]))} replace />;
+  // Only bounce out of onboarding when the user is actually done: admins go to
+  // the admin dashboard, completed users with a dashboard role go to it.
+  // Completed users with no dashboard role stay here so OnboardingPage can
+  // send them back to role selection (avoiding a /dashboard redirect loop).
+  const primary = getPrimaryDashboardRole(roles);
+  if (primary) {
+    if (profile && profile.onboarding_step === "completed") {
+      return <Navigate to={sanitizeAppPath(getRoleDashboardPath(primary))} replace />;
+    }
   }
+  if (roles.includes("admin")) return <Navigate to={sanitizeAppPath("/admin/dashboard")} replace />;
   return <>{children}</>;
 };
 
@@ -59,13 +67,14 @@ const RoleRoute = ({ allowedRole, children }: { allowedRole: string; children: R
   if (!session) return <Navigate to={sanitizeAppPath("/auth")} replace />;
   // Admins skip onboarding check
   if (allowedRole !== "admin" && profile && profile.onboarding_step !== "completed") return <Navigate to={sanitizeAppPath("/onboarding")} replace />;
-  if (roles.length === 0) {
-    // No roles yet: send to onboarding (a terminal route) instead of looping
-    // through the role-based dashboard redirect.
+  const primary = getPrimaryDashboardRole(roles);
+  if (!primary) {
+    // No dashboard-capable role yet: send to onboarding (a terminal route)
+    // instead of looping through the role-based dashboard redirect.
     return <Navigate to={sanitizeAppPath("/onboarding")} replace />;
   }
-  if (!roles.includes(allowedRole as any)) {
-    return <Navigate to={sanitizeAppPath(getRoleDashboardPath(roles[0]))} replace />;
+  if (!roles.includes(allowedRole as Database["public"]["Enums"]["app_role"])) {
+    return <Navigate to={sanitizeAppPath(getRoleDashboardPath(primary))} replace />;
   }
   return <>{children}</>;
 };
@@ -109,6 +118,7 @@ const App = () => (
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/startups" element={<StartupsIndexPage />} />
             <Route path="/startups/:slug" element={<StartupDetailPage />} />
+            <Route path="/post/:postId" element={<PostDetailPage />} />
             <Route path="/sparkx-index" element={<SparkXIndexPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/auth/talent/callback" element={<TalentCallbackPage />} />
@@ -118,12 +128,12 @@ const App = () => (
             {/* Shared dashboard entry: wait for auth state, then redirect to the correct role-aware dashboard */}
             <Route path="/dashboard" element={<ProtectedRoute><DashboardRedirect /></ProtectedRoute>} />
             
-            {/* Role-based dashboards */}
-            <Route path="/founder/dashboard" element={<RoleRoute allowedRole="startup_founder"><FounderDashboardPage /></RoleRoute>} />
-            <Route path="/investor/dashboard" element={<RoleRoute allowedRole="investor"><InvestorDashboardPage /></RoleRoute>} />
-            <Route path="/mentor/dashboard" element={<RoleRoute allowedRole="mentor"><MentorDashboardPage /></RoleRoute>} />
-            <Route path="/partner/dashboard" element={<RoleRoute allowedRole="ecosystem_partner"><PartnerDashboardPage /></RoleRoute>} />
-            <Route path="/admin/dashboard" element={<RoleRoute allowedRole="admin"><AdminDashboardPage /></RoleRoute>} />
+            {/* Role-based dashboards — tabs and deep links live under each dashboard path */}
+            <Route path="/founder/dashboard/*" element={<RoleRoute allowedRole="startup_founder"><FounderDashboardPage /></RoleRoute>} />
+            <Route path="/investor/dashboard/*" element={<RoleRoute allowedRole="investor"><InvestorDashboardPage /></RoleRoute>} />
+            <Route path="/mentor/dashboard/*" element={<RoleRoute allowedRole="mentor"><MentorDashboardPage /></RoleRoute>} />
+            <Route path="/partner/dashboard/*" element={<RoleRoute allowedRole="ecosystem_partner"><PartnerDashboardPage /></RoleRoute>} />
+            <Route path="/admin/dashboard/*" element={<RoleRoute allowedRole="admin"><AdminDashboardPage /></RoleRoute>} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>

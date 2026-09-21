@@ -1,8 +1,8 @@
-import { useState, useCallback, useRef } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { usePresenceTracker } from "@/hooks/usePresence";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import RoleBasedSidebar from "@/components/dashboard/RoleBasedSidebar";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardRightSidebar from "@/components/dashboard/DashboardRightSidebar";
@@ -14,54 +14,40 @@ import PublicProfilePage from "@/components/profile/PublicProfilePage";
 import StartupProfilePage from "@/components/startups/StartupProfilePage";
 import SettingsPage from "@/components/settings/SettingsPage";
 import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
+import { parseDashboardPath } from "@/lib/roleRouting";
 import { buildPartnerDashboardStats } from "@/lib/dashboardMetrics";
+
+const BASE_PATH = "/partner/dashboard";
+const TABS = new Set([
+  "home", "programs", "opportunities", "startups", "analytics", "messages",
+  "settings", "startup-profile", "public-profile",
+]);
 
 const PartnerDashboardPage = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   usePresenceTracker();
-  const [activeTab, setActiveTab] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [viewStartupId, setViewStartupId] = useState<string | null>(null);
-  const [viewProfileUserId, setViewProfileUserId] = useState<string | null>(null);
-  const [deepLinkOpportunityId, setDeepLinkOpportunityId] = useState<string | null>(null);
-  const navHistoryRef = useRef<string[]>(["home"]);
   const [activeIdentity, setActiveIdentity] = useState<PostingIdentity>({ type: "personal" });
 
-  const goBack = useCallback(() => {
-    const history = navHistoryRef.current;
-    if (history.length > 1) {
-      history.pop();
-      const prev = history[history.length - 1];
-      setActiveTab(prev);
-      if (prev !== "startup-profile") setViewStartupId(null);
-      if (prev !== "public-profile") setViewProfileUserId(null);
-    } else setActiveTab("home");
-  }, []);
+  const { tab: rawTab, id } = parseDashboardPath(pathname, BASE_PATH);
+  const activeTab = TABS.has(rawTab) ? rawTab : null;
+  if (!activeTab) return <Navigate to={BASE_PATH} replace />;
 
-  const handleViewStartup = useCallback((id: string) => {
-    setViewStartupId(id);
-    navHistoryRef.current.push("startup-profile");
-    setActiveTab("startup-profile");
-  }, []);
+  const viewStartupId = activeTab === "startup-profile" ? id : null;
+  const viewProfileUserId = activeTab === "public-profile" ? id : null;
+  const deepLinkOpportunityId = activeTab === "opportunities" ? id?.replace(/^opp-/, "") ?? null : null;
 
-  const handleViewProfile = useCallback((userId: string) => {
-    setViewProfileUserId(userId);
-    navHistoryRef.current.push("public-profile");
-    setActiveTab("public-profile");
-  }, []);
-
-  const handleOpenMessages = useCallback(() => handleTabChange("messages"), []);
-  const handleSignOut = useCallback(async () => { await signOut(); navigate("/"); }, [signOut, navigate]);
-
-  const handleTabChange = useCallback((tab: string) => {
-    if (tab !== "opportunities") setDeepLinkOpportunityId(null);
-    if (tab !== "startup-profile") setViewStartupId(null);
-    if (tab !== "public-profile") setViewProfileUserId(null);
-    const history = navHistoryRef.current;
-    if (history[history.length - 1] !== tab) history.push(tab);
-    setActiveTab(tab);
-  }, []);
+  const handleTabChange = (tab: string) => navigate(`${BASE_PATH}/${tab}`);
+  const handleViewOpportunity = (opportunityId: string) => {
+    const cleanId = opportunityId.startsWith("opp-") ? opportunityId.slice(4) : opportunityId;
+    navigate(`${BASE_PATH}/opportunities/${cleanId}`);
+  };
+  const handleViewStartup = (startupId: string) => navigate(`${BASE_PATH}/startup-profile/${startupId}`);
+  const handleViewProfile = (userId: string) => navigate(`${BASE_PATH}/public-profile/${userId}`);
+  const handleOpenMessages = () => handleTabChange("messages");
+  const handleSignOut = async () => { await signOut(); navigate("/"); };
 
   const isWideTab = ["programs", "opportunities", "startups", "analytics", "profile", "startup-profile", "public-profile", "settings"].includes(activeTab);
 
@@ -90,7 +76,7 @@ const PartnerDashboardPage = () => {
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto">
             <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : isWideTab ? "max-w-5xl" : "max-w-3xl"}`}>
-              {activeTab === "home" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><EcosystemFeed onViewOpportunity={(id) => { setDeepLinkOpportunityId(id); handleTabChange("opportunities"); }} onViewGroup={() => {}} onViewStartup={handleViewStartup} activeIdentity={activeIdentity} onIdentityChange={setActiveIdentity} /></motion.div>}
+              {activeTab === "home" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><EcosystemFeed onViewOpportunity={handleViewOpportunity} onViewGroup={() => {}} onViewStartup={handleViewStartup} activeIdentity={activeIdentity} onIdentityChange={setActiveIdentity} /></motion.div>}
               {activeTab === "programs" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                 <div className="grid gap-4 md:grid-cols-3">
                   <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Active programs</p><p className="mt-3 text-3xl font-bold">{portalStats.activeProgramCount}</p></div>
@@ -112,7 +98,7 @@ const PartnerDashboardPage = () => {
                   </div>
                 </div>
               </motion.div>}
-              {activeTab === "opportunities" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><OpportunitiesPage initialOpportunityId={deepLinkOpportunityId} onDeepLinkConsumed={() => setDeepLinkOpportunityId(null)} /></motion.div>}
+              {activeTab === "opportunities" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><OpportunitiesPage initialOpportunityId={deepLinkOpportunityId} onDeepLinkConsumed={() => navigate(`${BASE_PATH}/opportunities`, { replace: true })} /></motion.div>}
               {activeTab === "startups" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                 <div className="rounded-xl border border-border bg-card p-5">
                   <h3 className="font-display text-xl font-bold">Startup directory</h3>
@@ -155,8 +141,8 @@ const PartnerDashboardPage = () => {
               </motion.div>}
               {activeTab === "messages" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><MessagesPage onViewProfile={handleViewProfile} /></motion.div>}
               {activeTab === "profile" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><ProfilePage onSignOut={handleSignOut} /></motion.div>}
-              {activeTab === "startup-profile" && viewStartupId && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><StartupProfilePage startupId={viewStartupId} onBack={goBack} /></motion.div>}
-              {activeTab === "public-profile" && viewProfileUserId && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><PublicProfilePage userId={viewProfileUserId} onBack={goBack} onMessage={() => handleOpenMessages()} /></motion.div>}
+              {activeTab === "startup-profile" && viewStartupId && <motion.div key={viewStartupId} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><StartupProfilePage startupId={viewStartupId} onBack={() => navigate(-1)} /></motion.div>}
+              {activeTab === "public-profile" && viewProfileUserId && <motion.div key={viewProfileUserId} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><PublicProfilePage userId={viewProfileUserId} onBack={() => navigate(-1)} onMessage={() => handleOpenMessages()} /></motion.div>}
               {activeTab === "settings" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><SettingsPage onSignOut={handleSignOut} /></motion.div>}
             </div>
           </main>

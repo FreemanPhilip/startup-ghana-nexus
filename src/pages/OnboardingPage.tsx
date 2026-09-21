@@ -5,7 +5,7 @@ import { Star } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { getRoleDashboardPath } from "@/lib/roleRouting";
+import { getPostAuthRoute, getPrimaryDashboardRole } from "@/lib/roleRouting";
 import OnboardingRoleStep from "@/components/onboarding/OnboardingRoleStep";
 import OnboardingProfileStep from "@/components/onboarding/OnboardingProfileStep";
 import OnboardingKYCStep from "@/components/onboarding/OnboardingKYCStep";
@@ -57,12 +57,23 @@ const OnboardingPage = () => {
     }
   }, [user, roles.length]);
 
-  // If completed, redirect
+  // If completed, redirect to the member's dashboard — unless they have no
+  // dashboard-capable role (role revoked/never assigned), in which case send
+  // them back to role selection instead of showing a blank page.
   useEffect(() => {
     if (profile?.onboarding_step === "completed") {
-      navigate(getRoleDashboardPath(roles[0]), { replace: true });
+      const primary = getPrimaryDashboardRole(roles);
+      if (primary) {
+        navigate(getPostAuthRoute(roles, profile), { replace: true });
+      } else if (user) {
+        supabase
+          .from("profiles")
+          .update({ onboarding_step: "role_selection" })
+          .eq("user_id", user.id)
+          .then(() => refreshProfile());
+      }
     }
-  }, [profile?.onboarding_step, roles, navigate]);
+  }, [profile?.onboarding_step, roles, user, navigate, refreshProfile]);
 
   const advanceStep = async (nextStep: OnboardingStep) => {
     if (!user) return;
@@ -76,7 +87,10 @@ const OnboardingPage = () => {
       await refreshProfile();
       if (nextStep === "completed") {
         toast.success("Welcome to GSE! 🎉");
-        navigate(getRoleDashboardPath(roles[0]), { replace: true });
+        const primary = getPrimaryDashboardRole(roles);
+        if (primary) {
+          navigate(getPostAuthRoute(roles, { onboarding_step: "completed" }), { replace: true });
+        }
       }
     } catch (err: any) {
       toast.error(err.message);

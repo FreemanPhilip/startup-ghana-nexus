@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminStatsCards from "@/components/admin/AdminStatsCards";
 import AdminUsersTable from "@/components/admin/AdminUsersTable";
@@ -18,6 +19,13 @@ import AdminNotificationBell from "@/components/admin/AdminNotificationBell";
 import AdminAuditLog from "@/components/admin/AdminAuditLog";
 import { useAdminLevel } from "@/hooks/useAdminLevel";
 import { canAccessTab, getDefaultAdminTab } from "@/lib/adminPermissions";
+import { parseDashboardPath } from "@/lib/roleRouting";
+
+const BASE_PATH = "/admin/dashboard";
+const TABS = [
+  "overview", "users", "startups", "opportunities", "posts", "verification",
+  "contact", "invitations", "analytics", "audit",
+];
 
 const tabTitles: Record<string, string> = {
   overview: "Platform Overview",
@@ -33,24 +41,10 @@ const tabTitles: Record<string, string> = {
 };
 
 const AdminDashboardPage = () => {
-  const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { adminLevel, loading } = useAdminLevel();
-
-  useEffect(() => {
-    const fallbackTab = getDefaultAdminTab(adminLevel);
-    if (!canAccessTab(adminLevel, activeTab)) {
-      setActiveTab(fallbackTab);
-    }
-  }, [activeTab, adminLevel]);
-
-  const handleTabChange = (tab: string) => {
-    if (canAccessTab(adminLevel, tab)) {
-      setActiveTab(tab);
-      return;
-    }
-    setActiveTab(getDefaultAdminTab(adminLevel));
-  };
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   if (loading) {
     return (
@@ -59,6 +53,16 @@ const AdminDashboardPage = () => {
       </div>
     );
   }
+
+  const { tab: rawTab } = parseDashboardPath(pathname, BASE_PATH);
+  const validTab = TABS.includes(rawTab) && canAccessTab(adminLevel, rawTab);
+  const fallbackTab = getDefaultAdminTab(adminLevel);
+  if (!validTab) return <Navigate to={`${BASE_PATH}/${fallbackTab}`} replace />;
+  const activeTab = rawTab;
+
+  const handleTabChange = (tab: string) => {
+    navigate(`${BASE_PATH}/${canAccessTab(adminLevel, tab) ? tab : fallbackTab}`);
+  };
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">

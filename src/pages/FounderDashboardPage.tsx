@@ -1,9 +1,9 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { usePresenceTracker } from "@/hooks/usePresence";
 import { useSessionReminders } from "@/hooks/useSessionReminders";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import RoleBasedSidebar from "@/components/dashboard/RoleBasedSidebar";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardRightSidebar from "@/components/dashboard/DashboardRightSidebar";
@@ -25,23 +25,26 @@ import PublicProfilePage from "@/components/profile/PublicProfilePage";
 import CreateStartupWizard from "@/components/startups/CreateStartupWizard";
 import SettingsPage from "@/components/settings/SettingsPage";
 import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
+import { parseDashboardPath } from "@/lib/roleRouting";
 import { useStartups } from "@/hooks/useStartups";
 import { buildFounderDashboardSummary } from "@/lib/dashboardMetrics";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+const BASE_PATH = "/founder/dashboard";
+const TABS = new Set([
+  "home", "network", "groups", "messages", "mentors", "mentor-briefing",
+  "my-sessions", "investors", "opportunities", "my-startups", "settings",
+  "startup-profile", "public-profile",
+]);
+
 const FounderDashboardPage = () => {
-  const { profile, roles, signOut } = useAuth();
+  const { profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   usePresenceTracker();
   useSessionReminders();
-  const [activeTab, setActiveTab] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [deepLinkOpportunityId, setDeepLinkOpportunityId] = useState<string | null>(null);
-  const [deepLinkGroupId, setDeepLinkGroupId] = useState<string | null>(null);
-  const [viewStartupId, setViewStartupId] = useState<string | null>(null);
-  const [viewProfileUserId, setViewProfileUserId] = useState<string | null>(null);
-  const navHistoryRef = useRef<string[]>(["home"]);
   const [activeIdentity, setActiveIdentity] = useState<PostingIdentity>({ type: "personal" });
   const { myStartups, loading: startupsLoading, refetch: refetchStartups } = useStartups();
   const [showFounderModal, setShowFounderModal] = useState(false);
@@ -55,61 +58,36 @@ const FounderDashboardPage = () => {
     }
   }, [startupsLoading, myStartups.length, founderModalShown]);
 
-  const goBack = useCallback(() => {
-    const history = navHistoryRef.current;
-    if (history.length > 1) {
-      history.pop();
-      const prev = history[history.length - 1];
-      setActiveTab(prev);
-      if (prev !== "startup-profile") setViewStartupId(null);
-      if (prev !== "public-profile") setViewProfileUserId(null);
-    } else {
-      setActiveTab("home");
-    }
-  }, []);
+  // Tab state lives in the URL so refresh, browser back/forward and deep links
+  // all work. Detail views carry their id in the next path segment.
+  const { tab: rawTab, id } = parseDashboardPath(pathname, BASE_PATH);
+  const activeTab = TABS.has(rawTab) ? rawTab : null;
+  if (!activeTab) return <Navigate to={BASE_PATH} replace />;
 
-  const handleViewOpportunity = useCallback((opportunityId: string) => {
+  const viewStartupId = activeTab === "startup-profile" ? id : null;
+  const viewProfileUserId = activeTab === "public-profile" ? id : null;
+  const deepLinkOpportunityId = activeTab === "opportunities" ? id?.replace(/^opp-/, "") ?? null : null;
+  const deepLinkGroupId = activeTab === "groups" ? id : null;
+
+  const handleTabChange = (tab: string) => navigate(`${BASE_PATH}/${tab}`);
+
+  const handleViewOpportunity = (opportunityId: string) => {
     const cleanId = opportunityId.startsWith("opp-") ? opportunityId.slice(4) : opportunityId;
-    setDeepLinkOpportunityId(cleanId);
-    handleTabChange("opportunities");
-  }, []);
+    navigate(`${BASE_PATH}/opportunities/${cleanId}`);
+  };
 
-  const handleViewGroup = useCallback((groupId: string) => {
-    setDeepLinkGroupId(groupId);
-    handleTabChange("groups");
-  }, []);
+  const handleViewGroup = (groupId: string) => navigate(`${BASE_PATH}/groups/${groupId}`);
 
-  const handleViewStartup = useCallback((startupId: string) => {
-    setViewStartupId(startupId);
-    navHistoryRef.current.push("startup-profile");
-    setActiveTab("startup-profile");
-  }, []);
+  const handleViewStartup = (startupId: string) => navigate(`${BASE_PATH}/startup-profile/${startupId}`);
 
-  const handleViewProfile = useCallback((userId: string) => {
-    setViewProfileUserId(userId);
-    navHistoryRef.current.push("public-profile");
-    setActiveTab("public-profile");
-  }, []);
+  const handleViewProfile = (userId: string) => navigate(`${BASE_PATH}/public-profile/${userId}`);
 
-  const handleOpenMessages = useCallback(() => { handleTabChange("messages"); }, []);
+  const handleOpenMessages = () => handleTabChange("messages");
 
-  const handleSignOut = useCallback(async () => {
+  const handleSignOut = async () => {
     await signOut();
     navigate("/");
-  }, [signOut, navigate]);
-
-  const handleTabChange = useCallback((tab: string) => {
-    if (tab !== "opportunities") setDeepLinkOpportunityId(null);
-    if (tab !== "groups") setDeepLinkGroupId(null);
-    if (tab !== "startup-profile") setViewStartupId(null);
-    if (tab !== "public-profile") setViewProfileUserId(null);
-    const history = navHistoryRef.current;
-    if (history[history.length - 1] !== tab) {
-      history.push(tab);
-      if (history.length > 20) history.splice(0, history.length - 20);
-    }
-    setActiveTab(tab);
-  }, []);
+  };
 
   const isWideTab = ["mentors", "investors", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile", "mentor-briefing", "my-sessions", "public-profile", "settings"].includes(activeTab);
   const founderSummary = buildFounderDashboardSummary({ startupCount: myStartups.length, mentorConnections: 0, opportunityCount: 0 });
@@ -162,12 +140,12 @@ const FounderDashboardPage = () => {
               {activeTab === "mentor-briefing" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><MentorBriefingPage /></motion.div>}
               {activeTab === "my-sessions" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><MySessionsPage /></motion.div>}
               {activeTab === "investors" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><InvestorsPage onViewStartup={handleViewStartup} /></motion.div>}
-              {activeTab === "opportunities" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><OpportunitiesPage initialOpportunityId={deepLinkOpportunityId} onDeepLinkConsumed={() => setDeepLinkOpportunityId(null)} /></motion.div>}
-              {activeTab === "groups" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><GroupsPage initialGroupId={deepLinkGroupId} onDeepLinkConsumed={() => setDeepLinkGroupId(null)} /></motion.div>}
+              {activeTab === "opportunities" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><OpportunitiesPage initialOpportunityId={deepLinkOpportunityId} onDeepLinkConsumed={() => navigate(`${BASE_PATH}/opportunities`, { replace: true })} /></motion.div>}
+              {activeTab === "groups" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><GroupsPage initialGroupId={deepLinkGroupId} onDeepLinkConsumed={() => navigate(`${BASE_PATH}/groups`, { replace: true })} /></motion.div>}
               {activeTab === "profile" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><ProfilePage onSignOut={handleSignOut} /></motion.div>}
               {activeTab === "my-startups" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><MyStartupsPage onViewStartup={handleViewStartup} /></motion.div>}
-              {activeTab === "startup-profile" && viewStartupId && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><StartupProfilePage startupId={viewStartupId} onBack={goBack} /></motion.div>}
-              {activeTab === "public-profile" && viewProfileUserId && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><PublicProfilePage userId={viewProfileUserId} onBack={goBack} onMessage={() => handleOpenMessages()} /></motion.div>}
+              {activeTab === "startup-profile" && viewStartupId && <motion.div key={viewStartupId} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><StartupProfilePage startupId={viewStartupId} onBack={() => navigate(-1)} /></motion.div>}
+              {activeTab === "public-profile" && viewProfileUserId && <motion.div key={viewProfileUserId} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><PublicProfilePage userId={viewProfileUserId} onBack={() => navigate(-1)} onMessage={() => handleOpenMessages()} /></motion.div>}
               {activeTab === "settings" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><SettingsPage onSignOut={handleSignOut} /></motion.div>}
             </div>
           </main>

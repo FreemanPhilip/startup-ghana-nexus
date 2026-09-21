@@ -1,70 +1,51 @@
-import { useState, useCallback, useRef } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { usePresenceTracker } from "@/hooks/usePresence";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import RoleBasedSidebar from "@/components/dashboard/RoleBasedSidebar";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardRightSidebar from "@/components/dashboard/DashboardRightSidebar";
 import EcosystemFeed from "@/components/dashboard/EcosystemFeed";
 import InvestorDashboardContent from "@/components/investors/InvestorDashboardPage";
 import InvestorsPage from "@/components/investors/InvestorsPage";
-import InvestorRightSidebar from "@/components/investors/InvestorRightSidebar";
 import MessagesPage from "@/components/messages/MessagesPage";
 import ProfilePage from "@/components/profile/ProfilePage";
 import PublicProfilePage from "@/components/profile/PublicProfilePage";
 import StartupProfilePage from "@/components/startups/StartupProfilePage";
 import SettingsPage from "@/components/settings/SettingsPage";
 import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
+import { parseDashboardPath } from "@/lib/roleRouting";
 import { buildInvestorDashboardSummary } from "@/lib/dashboardMetrics";
 
-const InvestorDashboardPageRoute = () => {
+const BASE_PATH = "/investor/dashboard";
+const TABS = new Set([
+  "home", "discover", "saved", "portfolio", "messages", "settings",
+  "startup-profile", "public-profile",
+]);
+
+const InvestorDashboardPage = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   usePresenceTracker();
-  const [activeTab, setActiveTab] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [viewStartupId, setViewStartupId] = useState<string | null>(null);
-  const [viewProfileUserId, setViewProfileUserId] = useState<string | null>(null);
-  const navHistoryRef = useRef<string[]>(["home"]);
   const [activeIdentity, setActiveIdentity] = useState<PostingIdentity>({ type: "personal" });
 
-  const goBack = useCallback(() => {
-    const history = navHistoryRef.current;
-    if (history.length > 1) {
-      history.pop();
-      const prev = history[history.length - 1];
-      setActiveTab(prev);
-      if (prev !== "startup-profile") setViewStartupId(null);
-      if (prev !== "public-profile") setViewProfileUserId(null);
-    } else setActiveTab("home");
-  }, []);
+  const { tab: rawTab, id } = parseDashboardPath(pathname, BASE_PATH);
+  const activeTab = TABS.has(rawTab) ? rawTab : null;
+  if (!activeTab) return <Navigate to={BASE_PATH} replace />;
 
-  const handleViewStartup = useCallback((id: string) => {
-    setViewStartupId(id);
-    navHistoryRef.current.push("startup-profile");
-    setActiveTab("startup-profile");
-  }, []);
+  const viewStartupId = activeTab === "startup-profile" ? id : null;
+  const viewProfileUserId = activeTab === "public-profile" ? id : null;
 
-  const handleViewProfile = useCallback((userId: string) => {
-    setViewProfileUserId(userId);
-    navHistoryRef.current.push("public-profile");
-    setActiveTab("public-profile");
-  }, []);
-
-  const handleOpenMessages = useCallback(() => handleTabChange("messages"), []);
-
-  const handleSignOut = useCallback(async () => { await signOut(); navigate("/"); }, [signOut, navigate]);
-
-  const handleTabChange = useCallback((tab: string) => {
-    if (tab !== "startup-profile") setViewStartupId(null);
-    if (tab !== "public-profile") setViewProfileUserId(null);
-    const history = navHistoryRef.current;
-    if (history[history.length - 1] !== tab) history.push(tab);
-    setActiveTab(tab);
-  }, []);
+  const handleTabChange = (tab: string) => navigate(`${BASE_PATH}/${tab}`);
+  const handleViewStartup = (startupId: string) => navigate(`${BASE_PATH}/startup-profile/${startupId}`);
+  const handleViewProfile = (userId: string) => navigate(`${BASE_PATH}/public-profile/${userId}`);
+  const handleOpenMessages = () => handleTabChange("messages");
+  const handleSignOut = async () => { await signOut(); navigate("/"); };
 
   const isWideTab = ["discover", "saved", "portfolio", "profile", "startup-profile", "public-profile", "settings"].includes(activeTab);
   const investorSummary = buildInvestorDashboardSummary({
@@ -103,8 +84,8 @@ const InvestorDashboardPageRoute = () => {
               {activeTab === "portfolio" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><InvestorDashboardContent /></motion.div>}
               {activeTab === "messages" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><MessagesPage onViewProfile={handleViewProfile} /></motion.div>}
               {activeTab === "profile" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><ProfilePage onSignOut={handleSignOut} /></motion.div>}
-              {activeTab === "startup-profile" && viewStartupId && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><StartupProfilePage startupId={viewStartupId} onBack={goBack} /></motion.div>}
-              {activeTab === "public-profile" && viewProfileUserId && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><PublicProfilePage userId={viewProfileUserId} onBack={goBack} onMessage={() => handleOpenMessages()} /></motion.div>}
+              {activeTab === "startup-profile" && viewStartupId && <motion.div key={viewStartupId} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><StartupProfilePage startupId={viewStartupId} onBack={() => navigate(-1)} /></motion.div>}
+              {activeTab === "public-profile" && viewProfileUserId && <motion.div key={viewProfileUserId} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><PublicProfilePage userId={viewProfileUserId} onBack={() => navigate(-1)} onMessage={() => handleOpenMessages()} /></motion.div>}
               {activeTab === "settings" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><SettingsPage onSignOut={handleSignOut} /></motion.div>}
             </div>
           </main>
@@ -115,4 +96,4 @@ const InvestorDashboardPageRoute = () => {
   );
 };
 
-export default InvestorDashboardPageRoute;
+export default InvestorDashboardPage;

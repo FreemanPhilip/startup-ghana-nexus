@@ -13,7 +13,7 @@ vi.mock("./pages/Index", () => ({ default: () => <div>Index Page</div> }));
 vi.mock("./pages/AuthPage", () => ({ default: () => <div>Auth Page</div> }));
 vi.mock("./pages/TalentCallbackPage", () => ({ default: () => <div>Talent Callback Page</div> }));
 vi.mock("./pages/OnboardingPage", () => ({ default: () => <div>Onboarding Page</div> }));
-vi.mock("./pages/DashboardPage", () => ({ default: () => <div>Shared Dashboard</div> }));
+vi.mock("./pages/PostDetailPage", () => ({ default: () => <div>Post Detail</div> }));
 vi.mock("./pages/FounderDashboardPage", () => ({ default: () => <div>Founder Dashboard</div> }));
 vi.mock("./pages/InvestorDashboardPage", () => ({ default: () => <div>Investor Dashboard</div> }));
 vi.mock("./pages/MentorDashboardPage", () => ({ default: () => <div>Mentor Dashboard</div> }));
@@ -50,5 +50,86 @@ describe("App routing", () => {
     render(<App />);
 
     expect(screen.getByText("Founder Dashboard")).toBeTruthy();
+  });
+
+  it("renders the correct dashboard for deep-linked subroutes", () => {
+    window.history.pushState({}, "", "/founder/dashboard/groups");
+    render(<App />);
+
+    expect(screen.getByText("Founder Dashboard")).toBeTruthy();
+  });
+
+  it("sends users without a dashboard-capable role to onboarding instead of looping", () => {
+    window.history.pushState({}, "", "/dashboard");
+    mockUseAuth.mockReturnValue({
+      session: { user: { id: "user-123" } },
+      user: { id: "user-123" },
+      profile: { onboarding_step: "completed" },
+      roles: ["member"],
+      loading: false,
+      primaryRole: null,
+      subscription: { subscribed: false, product_id: null, subscription_end: null },
+      isPremium: false,
+      signOut: vi.fn(),
+      refreshProfile: vi.fn(),
+      checkSubscription: vi.fn(),
+    });
+    render(<App />);
+
+    expect(screen.getByText("Onboarding Page")).toBeTruthy();
+  });
+
+  it("redirects the wrong role away from a dashboard to their own", () => {
+    window.history.pushState({}, "", "/investor/dashboard/discover");
+    mockUseAuth.mockReturnValue({
+      session: { user: { id: "user-123" } },
+      user: { id: "user-123" },
+      profile: { onboarding_step: "completed" },
+      roles: ["mentor"],
+      loading: false,
+      primaryRole: "mentor",
+      subscription: { subscribed: false, product_id: null, subscription_end: null },
+      isPremium: false,
+      signOut: vi.fn(),
+      refreshProfile: vi.fn(),
+      checkSubscription: vi.fn(),
+    });
+    render(<App />);
+
+    expect(screen.getByText("Mentor Dashboard")).toBeTruthy();
+  });
+
+  it("shows the landing page to signed-out visitors at the root", () => {
+    window.history.pushState({}, "", "/");
+    mockUseAuth.mockReturnValue({
+      session: null,
+      user: null,
+      profile: null,
+      roles: [],
+      loading: false,
+      primaryRole: null,
+      subscription: { subscribed: false, product_id: null, subscription_end: null },
+      isPremium: false,
+      signOut: vi.fn(),
+      refreshProfile: vi.fn(),
+      checkSubscription: vi.fn(),
+    });
+    render(<App />);
+
+    expect(screen.getByText("Index Page")).toBeTruthy();
+  });
+
+  it("renders the public post page at /post/:postId", () => {
+    window.history.pushState({}, "", "/post/abc-123");
+    render(<App />);
+
+    expect(screen.getByText("Post Detail")).toBeTruthy();
+  });
+
+  it("falls back to NotFound for unknown paths", () => {
+    window.history.pushState({}, "", "/no/such/route");
+    render(<App />);
+
+    expect(screen.getByText("Not Found")).toBeTruthy();
   });
 });

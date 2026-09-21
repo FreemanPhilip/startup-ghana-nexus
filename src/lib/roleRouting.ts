@@ -6,6 +6,16 @@ type ProfileLike = {
   onboarding_step?: string | null;
 };
 
+// Roles that own a URL-backed dashboard. Anything else must never be sent to
+// "/dashboard", otherwise DashboardRedirect would bounce forever.
+const DASHBOARD_ROLES = new Set<AppRole>([
+  "startup_founder",
+  "investor",
+  "mentor",
+  "ecosystem_partner",
+  "admin",
+]);
+
 export function sanitizeAppPath(path: string | null | undefined, fallback = "/dashboard"): string {
   const candidate = typeof path === "string" ? path.trim() : "";
 
@@ -37,16 +47,21 @@ export function getRoleDashboardPath(role?: AppRole | null): string {
       return "/partner/dashboard";
     case "admin":
       return "/admin/dashboard";
-    case "member":
-    case "service_provider":
-      return "/dashboard";
     default:
-      return "/dashboard";
+      // member / service_provider / unknown roles have no dashboard — send them
+      // to onboarding (a terminal route) instead of looping on /dashboard.
+      return "/onboarding";
   }
 }
 
+export function getPrimaryDashboardRole(roles: AppRole[] = []): AppRole | null {
+  return roles.find((role) => DASHBOARD_ROLES.has(role)) ?? null;
+}
+
 export function getPostAuthRoute(roles: AppRole[] = [], profile?: ProfileLike | null): string {
-  if (roles.includes("admin")) {
+  const primary = getPrimaryDashboardRole(roles);
+
+  if (primary === "admin") {
     return "/admin/dashboard";
   }
 
@@ -54,11 +69,7 @@ export function getPostAuthRoute(roles: AppRole[] = [], profile?: ProfileLike | 
     return "/onboarding";
   }
 
-  if (roles.length > 0) {
-    return getRoleDashboardPath(roles[0]);
-  }
-
-  return "/dashboard";
+  return primary ? getRoleDashboardPath(primary) : "/onboarding";
 }
 
 export function getRoleFromPath(path: string): AppRole | null {
@@ -68,4 +79,26 @@ export function getRoleFromPath(path: string): AppRole | null {
   if (path.startsWith("/partner")) return "ecosystem_partner";
   if (path.startsWith("/admin")) return "admin";
   return null;
+}
+
+export interface DashboardRoute {
+  tab: string;
+  id: string | null;
+}
+
+/** Split a dashboard path like "/founder/dashboard/groups/abc" into its tab and optional id segment. */
+export function parseDashboardPath(pathname: string, basePath: string): DashboardRoute {
+  const base = basePath.replace(/\/+$/, "");
+  const suffix = pathname.startsWith(base) ? pathname.slice(base.length) : "";
+  const segments = suffix.split("/").filter(Boolean);
+  const tab = segments[0] || "home";
+  let id: string | null = null;
+  if (segments[1]) {
+    try {
+      id = decodeURIComponent(segments[1]);
+    } catch {
+      id = segments[1];
+    }
+  }
+  return { tab, id };
 }
