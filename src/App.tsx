@@ -8,6 +8,7 @@ import { getRoleDashboardPath } from "@/lib/roleRouting";
 import { queryClient } from "@/lib/queryClient";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
+import TalentCallbackPage from "./pages/TalentCallbackPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import FounderDashboardPage from "./pages/FounderDashboardPage";
 import InvestorDashboardPage from "./pages/InvestorDashboardPage";
@@ -99,6 +100,7 @@ const App = () => (
             <Route path="/startups/:slug" element={<StartupDetailPage />} />
             <Route path="/sparkx-index" element={<SparkXIndexPage />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/auth/talent/callback" element={<TalentCallbackPage />} />
             <Route path="/admin/login" element={<AdminAuthPage />} />
             <Route path="/onboarding" element={<OnboardingRoute><OnboardingPage /></OnboardingRoute>} />
             

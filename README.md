@@ -51,44 +51,69 @@ This project is built with:
 
 ## Signing in with a SparkX Talent account
 
-Users can sign in here with their `talent.sparkxglobal.net` credentials.
+Users can sign in here with their `talent.sparkxglobal.net` account.
 
 `sparkxglobal` and `sparkxtalent` are **two separate Supabase projects** (same
 organisation, different regions). They do not share `auth.users`, so a Talent
-account does not exist in this project until someone signs in with it. The
-`talent-login` edge function bridges the two:
+account does not exist in this project until someone signs in with it.
 
-1. It verifies the submitted email/password against the Talent project's auth API.
-2. On success it creates — or finds, matching on email — the corresponding user here.
-3. It returns a one-time token the browser exchanges for a normal session.
+This is a **redirect hand-off**, not a password bridge — SparkX Index never
+sees a Talent password:
 
-The password is only ever forwarded to the Talent auth endpoint. It is never
-stored, logged, or persisted in this project.
+1. "Continue with SparkX Talent" sends the browser to
+   `talent.sparkxglobal.net/sso/authorize` with a `redirect_uri` and a CSRF `state`.
+2. Talent signs the user in (its own login page) and asks them to approve.
+3. Talent's `sso-issue-token` function checks the `redirect_uri` against an
+   allowlist and mints a ~2 minute HS256 assertion naming the user.
+4. The browser returns to `/auth/talent/callback` with the assertion in the URL
+   **fragment** (kept out of server logs and `Referer`).
+5. `talent-sso-callback` verifies signature, `iss`/`aud`/`exp`, and that the
+   assertion's `jti` has not already been redeemed, then provisions the local
+   user and returns a one-time token the browser exchanges for a session.
 
 Accounts are matched **by email**. If someone already signed up here directly,
 signing in with Talent links to that same account instead of creating a duplicate.
 
 ### Required setup
 
-Apply the migration, then set two secrets on the **sparkxglobal** project and
-deploy the function:
+This spans **both** projects. The shared secret must be byte-identical on each.
+
+```sh
+# Generate once, use the same value in both places:
+openssl rand -base64 48
+```
+
+On **sparkxglobal** (this repo):
 
 ```sh
 supabase db push
-
-# From the sparkxtalent project's API settings:
-supabase secrets set TALENT_SUPABASE_URL="https://<talent-project-ref>.supabase.co"
-supabase secrets set TALENT_SUPABASE_ANON_KEY="<talent anon/publishable key>"
-
-supabase functions deploy talent-login
+supabase secrets set SPARKX_SSO_SHARED_SECRET="<the generated secret>"
+supabase functions deploy talent-sso-callback --no-verify-jwt
 ```
 
-Use the Talent project's **anon** key here, not its service-role key — the
-function only needs to verify credentials, not administer that project.
-`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are injected automatically.
+On **sparkxtalent**:
 
-Until both secrets are set, the Talent option returns a clear
-"not configured yet" message rather than failing silently.
+```sh
+supabase secrets set SPARKX_SSO_SHARED_SECRET="<the same secret>"
+supabase secrets set SPARKX_SSO_ALLOWED_REDIRECTS="https://<this-app-host>/auth/talent/callback"
+supabase functions deploy sso-issue-token
+```
+
+`SPARKX_SSO_ALLOWED_REDIRECTS` is an **exact-match** allowlist — put the full
+callback URL of every host that may receive an assertion (production, and any
+preview/staging host you want to work). A prefix check would let a crafted
+`redirect_uri` carry the assertion somewhere you don't control.
+
+`talent-sso-callback` is deployed `--no-verify-jwt` because the caller is signed
+out by definition; it authenticates the request by verifying the assertion
+itself. `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are injected automatically.
+
+If this app is not served from `https://talent.sparkxglobal.net`'s sibling
+default, override the Talent origin at build time:
+
+```sh
+VITE_TALENT_ORIGIN="https://talent.sparkxglobal.net"
+```
 
 After applying the migration, regenerate the database types so
 `profiles.talent_user_id` is available to the frontend:
@@ -97,14 +122,16 @@ After applying the migration, regenerate the database types so
 supabase gen types typescript --linked > src/integrations/supabase/types.ts
 ```
 
+Until the secrets are set, the flow surfaces a clear "not configured yet"
+message rather than failing silently.
+
 ### Notes
 
-- The bridge is rate-limited to 10 failed attempts per email per 15 minutes, so
-  it cannot be used to brute-force Talent accounts.
+- Assertions are **single use**: `talent_sso_used_tokens` records each redeemed
+  `jti`, so a replayed assertion is rejected inside its own validity window.
 - `profiles.talent_user_id` records which Talent identity an account is linked to.
-- A more secure variant (a redirect flow where Talent issues a signed token, so
-  this app never handles Talent passwords) is possible, but requires adding an
-  authorize endpoint to the `sparkxtalent` app.
+- Rotating `SPARKX_SSO_SHARED_SECRET` requires updating both projects together;
+  in-flight assertions (≤2 min) will fail during the swap.
 
 ## How can I deploy this project?
 

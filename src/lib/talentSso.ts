@@ -1,0 +1,48 @@
+// Cross-app sign-in with SparkX Talent (talent.sparkxglobal.net).
+//
+// SparkX Talent runs on a separate Supabase project, so it cannot be added as
+// an ordinary OAuth provider here. Instead we send the user to Talent's
+// /sso/authorize page; it authenticates them and redirects back to
+// TALENT_CALLBACK_PATH with a short-lived signed assertion in the URL fragment,
+// which talent-sso-callback verifies.
+
+const TALENT_ORIGIN = import.meta.env.VITE_TALENT_ORIGIN || "https://talent.sparkxglobal.net";
+
+export const TALENT_CALLBACK_PATH = "/auth/talent/callback";
+
+const STATE_KEY = "talent-sso-state";
+
+/** The exact callback URL — must be allowlisted on the Talent project. */
+export function talentCallbackUrl(): string {
+  return `${window.location.origin}${TALENT_CALLBACK_PATH}`;
+}
+
+/**
+ * Begin the hand-off. Generates a CSRF state value, stores it for the callback
+ * to check, and returns the Talent URL to send the browser to.
+ */
+export function beginTalentSso(): string {
+  const state = crypto.randomUUID();
+  try {
+    sessionStorage.setItem(STATE_KEY, state);
+  } catch {
+    // Storage unavailable (private mode). The flow still works; the callback
+    // simply cannot verify state, and says so rather than signing anyone in.
+  }
+  const params = new URLSearchParams({
+    redirect_uri: talentCallbackUrl(),
+    state,
+  });
+  return `${TALENT_ORIGIN}/sso/authorize?${params.toString()}`;
+}
+
+/** Check and clear the stored state. False means the callback is not ours. */
+export function consumeTalentSsoState(returned: string | null): boolean {
+  try {
+    const expected = sessionStorage.getItem(STATE_KEY);
+    sessionStorage.removeItem(STATE_KEY);
+    return !!expected && !!returned && expected === returned;
+  } catch {
+    return false;
+  }
+}
