@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import solutionsImg from "@/assets/solutions-dropdown.jpg";
-import agsLogo from "@/assets/ags.png";
 import sparkxLogo from "@/assets/sparkx-logo.png";
 import sparkxLogoWhite from "@/assets/sparkx-logo-white.png";
 
@@ -50,7 +49,6 @@ const Navbar = () => {
     >
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <img src={agsLogo} alt="AGS" className="h-8 w-auto" />
           <img src={sparkxLogo} alt="SparkX" className="h-8 w-auto dark:hidden" />
           <img src={sparkxLogoWhite} alt="SparkX" className="hidden h-8 w-auto dark:block" />
         </Link>
