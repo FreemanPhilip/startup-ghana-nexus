@@ -1,3 +1,4 @@
+import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,8 +19,15 @@ import PartnerDashboardPage from "./pages/PartnerDashboardPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminAuthPage from "./pages/AdminAuthPage";
 import NotFound from "./pages/NotFound";
-import PostDetailPage from "./pages/PostDetailPage";
 import ProductPage from "./pages/ProductPage";
+
+const PostDetailPage = lazy(async () => {
+  try {
+    return await import("./pages/PostDetailPage");
+  } catch {
+    return { default: NotFound };
+  }
+});
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import StartupsIndexPage from "./pages/StartupsIndexPage";
@@ -118,7 +126,7 @@ const App = () => (
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/startups" element={<StartupsIndexPage />} />
             <Route path="/startups/:slug" element={<StartupDetailPage />} />
-            <Route path="/post/:postId" element={<PostDetailPage />} />
+            <Route path="/post/:postId" element={<Suspense fallback={<LoadingSpinner />}><PostDetailPage /></Suspense>} />
             <Route path="/sparkx-index" element={<SparkXIndexPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/auth/talent/callback" element={<TalentCallbackPage />} />

@@ -119,11 +119,11 @@ describe("App routing", () => {
     expect(screen.getByText("Index Page")).toBeTruthy();
   });
 
-  it("renders the public post page at /post/:postId", () => {
+  it("renders the public post page at /post/:postId", async () => {
     window.history.pushState({}, "", "/post/abc-123");
     render(<App />);
 
-    expect(screen.getByText("Post Detail")).toBeTruthy();
+    expect(await screen.findByText("Post Detail")).toBeTruthy();
   });
 
   it("falls back to NotFound for unknown paths", () => {
