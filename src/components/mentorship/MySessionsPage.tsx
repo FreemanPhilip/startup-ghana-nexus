@@ -23,6 +23,7 @@ import { toast } from "@/hooks/use-toast";
 import { format, isPast, parseISO, isSameDay } from "date-fns";
 import { getGoogleCalendarUrl, downloadICSFile, type CalendarEvent } from "./calendarUtils";
 import RescheduleSessionDialog from "./RescheduleSessionDialog";
+import { buildMentorBriefingSummary } from "./mentorshipBriefing";
 
 interface Booking {
   id: string;
@@ -41,6 +42,16 @@ interface Booking {
   };
 }
 
+interface MentorUpdate {
+  id: string;
+  title: string;
+  body: string | null;
+  type: "meeting" | "task";
+  created_at: string;
+  actor_id: string | null;
+  actor_name?: string | null;
+}
+
 const MySessionsPage = () => {
   const { user } = useAuth();
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -49,6 +60,7 @@ const MySessionsPage = () => {
   const [cancelling, setCancelling] = useState(false);
   const [rescheduleBooking, setRescheduleBooking] = useState<Booking | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [mentorUpdates, setMentorUpdates] = useState<MentorUpdate[]>([]);
 
   const fetchBookings = async () => {
     if (!user) return;
@@ -84,6 +96,50 @@ const MySessionsPage = () => {
   };
 
   useEffect(() => { fetchBookings(); }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchMentorUpdates = async () => {
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("id, title, body, type, created_at, actor_id")
+        .eq("user_id", user.id)
+        .in("type", ["meeting", "task"])
+        .order("created_at", { ascending: false });
+
+      if (error || !data) {
+        setMentorUpdates([]);
+        return;
+      }
+
+      const actorIds = [...new Set((data ?? []).map(item => item.actor_id).filter(Boolean) as string[])];
+      let actorMap = new Map<string, string>();
+
+      if (actorIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("public_profiles")
+          .select("user_id, full_name")
+          .in("user_id", actorIds);
+
+        actorMap = new Map((profiles ?? []).map(profile => [profile.user_id, profile.full_name]));
+      }
+
+      setMentorUpdates(
+        (data ?? []).map(item => ({
+          id: item.id,
+          title: item.title,
+          body: item.body,
+          type: item.type as "meeting" | "task",
+          created_at: item.created_at,
+          actor_id: item.actor_id,
+          actor_name: item.actor_id ? actorMap.get(item.actor_id) ?? "Mentor" : "Mentor",
+        }))
+      );
+    };
+
+    void fetchMentorUpdates();
+  }, [user]);
 
   const handleCancel = async () => {
     if (!cancelId) return;
@@ -133,6 +189,7 @@ const MySessionsPage = () => {
 
   const upcoming = bookings.filter(b => b.status === "confirmed" && !isPast(parseISO(b.booking_date)));
   const past = bookings.filter(b => b.status !== "confirmed" || isPast(parseISO(b.booking_date)));
+  const briefingSummary = buildMentorBriefingSummary(mentorUpdates);
 
   const getInitials = (name: string | null) =>
     name?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "U";
@@ -256,6 +313,60 @@ const MySessionsPage = () => {
         <h1 className="text-xl sm:text-2xl font-display font-bold">My Sessions</h1>
         <p className="text-xs sm:text-sm text-muted-foreground">View and manage your mentorship sessions.</p>
       </div>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Card className="p-4">
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Mentor updates</p>
+          <div className="mt-2 flex items-end justify-between">
+            <span className="text-2xl font-bold">{briefingSummary.total}</span>
+            <Badge variant="outline">Total</Badge>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Meetings</p>
+          <div className="mt-2 flex items-end justify-between">
+            <span className="text-2xl font-bold">{briefingSummary.meetingCount}</span>
+            <Badge variant="default">Booked</Badge>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Tasks</p>
+          <div className="mt-2 flex items-end justify-between">
+            <span className="text-2xl font-bold">{briefingSummary.taskCount}</span>
+            <Badge variant="secondary">Action</Badge>
+          </div>
+        </Card>
+      </div>
+
+      {mentorUpdates.length > 0 && (
+        <Card className="p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="font-semibold">Mentor updates</h2>
+            <Badge variant="outline">{mentorUpdates.length}</Badge>
+          </div>
+          <div className="space-y-3">
+            {mentorUpdates.slice(0, 3).map(update => (
+              <div key={update.id} className="rounded-xl border border-border bg-muted/30 p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-semibold">{update.title}</p>
+                  <Badge variant={update.type === "meeting" ? "default" : "secondary"} className="text-[10px]">
+                    {update.type}
+                  </Badge>
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">{update.body || "No details provided."}</p>
+                <p className="mt-2 text-[10px] text-muted-foreground">
+                  {update.actor_name || "Mentor"} · {format(new Date(update.created_at), "MMM d, yyyy")}
+                </p>
+              </div>
+            ))}
+          </div>
+          {briefingSummary.latestUpdate && (
+            <p className="mt-3 text-xs text-muted-foreground">
+              Latest update: <span className="font-medium text-foreground">{briefingSummary.latestUpdate.title}</span>
+            </p>
+          )}
+        </Card>
+      )}
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Left: Calendar sidebar */}

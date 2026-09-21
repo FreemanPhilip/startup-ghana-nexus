@@ -10,7 +10,7 @@ serve(async (req: Request) => {
 
   try {
     const { messages, context } = await req.json();
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+    const OPENAI_API_KEY = Denoenv.get("OPENAI_API_KEY");
     if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
 
     const systemPrompt = `You are SparkX AI — the intelligent assistant for Africa's Startup Ecosystem platform (SparkX Index). You help founders, investors, mentors, and ecosystem partners navigate the platform and Africa's startup landscape.

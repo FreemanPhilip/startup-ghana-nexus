@@ -9,9 +9,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { beginTalentSso } from "@/lib/talentSso";
+import { getPostAuthRoute, sanitizeAppPath } from "@/lib/roleRouting";
 
 const AuthPage = () => {
-  const { session, profile, loading: authLoading } = useAuth();
+  const { session, profile, roles, loading: authLoading } = useAuth();
   const [isSignUp, setIsSignUp] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,12 +21,13 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Redirect authenticated users away from auth page
+  // Redirect authenticated users away from auth page without flashing the landing page
   useEffect(() => {
-    if (session && profile) {
-      navigate("/dashboard", { replace: true });
+    if (authLoading) return;
+    if (session) {
+      navigate(sanitizeAppPath(getPostAuthRoute(roles, profile)), { replace: true });
     }
-  }, [session, profile, navigate]);
+  }, [session, profile, roles, authLoading, navigate]);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,14 +44,14 @@ const AuthPage = () => {
         });
         if (error) throw error;
         if (data.session) {
-          navigate("/dashboard");
+          navigate(sanitizeAppPath("/dashboard"), { replace: true });
         } else {
           toast.success("Check your email to confirm your account!");
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate("/dashboard");
+        navigate(sanitizeAppPath("/dashboard"), { replace: true });
       }
     } catch (error: any) {
       toast.error(error.message);

@@ -5,6 +5,7 @@ import GroupCard from "./GroupCard";
 import CreateGroupDialog from "./CreateGroupDialog";
 import GroupDetailPage from "./GroupDetailPage";
 import { useGroups } from "@/hooks/useGroups";
+import { buildTrendingTopics } from "@/lib/dashboardMetrics";
 import { categoryOptions } from "./groupConstants";
 
 interface GroupsPageProps {
@@ -31,6 +32,8 @@ const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => 
     const matchesCategory = selectedCategory === "all" || g.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  const trendingTopics = buildTrendingTopics(groups);
 
   if (selectedGroupId) {
     return <GroupDetailPage groupId={selectedGroupId} onBack={() => setSelectedGroupId(null)} />;
@@ -118,10 +121,10 @@ const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => 
               <h3 className="font-display font-bold text-sm">Trending Topics</h3>
             </div>
             <div className="space-y-2">
-              {["#StartupAfrica", "#AIInAfrica", "#SeedFunding25"].map(tag => (
-                <div key={tag}>
-                  <p className="text-xs font-semibold">{tag}</p>
-                  <p className="text-[10px] text-muted-foreground">{Math.floor(Math.random() * 100 + 20)} posts today</p>
+              {trendingTopics.map(topic => (
+                <div key={topic.label}>
+                  <p className="text-xs font-semibold">#{topic.label}</p>
+                  <p className="text-[10px] text-muted-foreground">{topic.count} posts today</p>
                 </div>
               ))}
             </div>

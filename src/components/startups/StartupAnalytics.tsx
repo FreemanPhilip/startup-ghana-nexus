@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import { BarChart3, TrendingUp, Users, Eye, Heart, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { format, subDays, startOfDay, eachDayOfInterval } from "date-fns";
+import { buildStartupReachSummary } from "@/lib/startupMetrics";
+import { format, subDays, eachDayOfInterval } from "date-fns";
 
 interface StartupAnalyticsProps {
   startupId: string;
@@ -25,6 +26,7 @@ const StartupAnalytics = ({ startupId }: StartupAnalyticsProps) => {
   const [totalComments, setTotalComments] = useState(0);
   const [totalPosts, setTotalPosts] = useState(0);
   const [teamSize, setTeamSize] = useState(0);
+  const [founderFollowerCount, setFounderFollowerCount] = useState(0);
   const [engagementData, setEngagementData] = useState<PostEngagement[]>([]);
   const [teamData, setTeamData] = useState<TeamGrowth[]>([]);
 
@@ -32,14 +34,29 @@ const StartupAnalytics = ({ startupId }: StartupAnalyticsProps) => {
     const fetchAnalytics = async () => {
       setLoading(true);
 
-      // Get all posts for this startup
-      const { data: posts } = await supabase
-        .from("posts")
-        .select("id, created_at")
-        .eq("startup_id", startupId);
+      const { data: startupData } = await supabase
+        .from("startups")
+        .select("created_by")
+        .eq("id", startupId)
+        .single();
+
+      const founderId = startupData?.created_by ?? null;
+      const [{ data: posts }, followerCountRes] = await Promise.all([
+        supabase
+          .from("posts")
+          .select("id, created_at")
+          .eq("startup_id", startupId),
+        founderId
+          ? supabase
+              .from("follows")
+              .select("id", { count: "exact", head: true })
+              .eq("following_id", founderId)
+          : Promise.resolve({ count: 0 }),
+      ]);
 
       const postIds = posts?.map(p => p.id) ?? [];
       setTotalPosts(postIds.length);
+      setFounderFollowerCount(followerCountRes?.count ?? 0);
 
       // Get likes and comments counts
       const [likesRes, commentsRes] = await Promise.all([
@@ -116,6 +133,16 @@ const StartupAnalytics = ({ startupId }: StartupAnalyticsProps) => {
   const maxEngagement = useMemo(() => Math.max(...engagementData.map(d => d.likes + d.comments), 1), [engagementData]);
   const maxTeam = useMemo(() => Math.max(...teamData.map(d => d.members), 1), [teamData]);
   const avgEngagement = totalPosts > 0 ? ((totalLikes + totalComments) / totalPosts).toFixed(1) : "0";
+  const reachSummary = useMemo(
+    () => buildStartupReachSummary({
+      followers: founderFollowerCount,
+      teamMembers: teamSize,
+      likes: totalLikes,
+      comments: totalComments,
+      posts: totalPosts,
+    }),
+    [founderFollowerCount, teamSize, totalLikes, totalComments, totalPosts],
+  );
 
   if (loading) {
     return (
@@ -217,17 +244,32 @@ const StartupAnalytics = ({ startupId }: StartupAnalyticsProps) => {
         </div>
       </div>
 
-      {/* Profile Views (mock - since we don't track views yet) */}
+      {/* Community Reach */}
       <div className="rounded-xl border border-border bg-card p-5">
         <div className="flex items-center justify-between">
           <h3 className="font-display font-bold text-sm flex items-center gap-2">
-            <Eye className="h-4 w-4 text-primary" /> Profile Views
+            <Eye className="h-4 w-4 text-primary" /> Community Reach
           </h3>
-          <span className="text-xs text-muted-foreground">Coming soon</span>
+          <span className="text-xs text-muted-foreground">{reachSummary.engagementRate}% engagement</span>
         </div>
-        <p className="text-sm text-muted-foreground mt-3">
-          Profile view tracking will be available soon. You'll be able to see who viewed your startup profile and track trends over time.
-        </p>
+
+        <p className="mt-3 text-2xl font-bold">{reachSummary.communityReach.toLocaleString()}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{reachSummary.reachLabel}</p>
+
+        <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
+          <div className="rounded-md bg-muted/40 p-2">
+            <p className="font-bold text-foreground">{founderFollowerCount}</p>
+            <span className="text-muted-foreground">Followers</span>
+          </div>
+          <div className="rounded-md bg-muted/40 p-2">
+            <p className="font-bold text-foreground">{teamSize}</p>
+            <span className="text-muted-foreground">Team</span>
+          </div>
+          <div className="rounded-md bg-muted/40 p-2">
+            <p className="font-bold text-foreground">{totalPosts}</p>
+            <span className="text-muted-foreground">Posts</span>
+          </div>
+        </div>
       </div>
     </div>
   );

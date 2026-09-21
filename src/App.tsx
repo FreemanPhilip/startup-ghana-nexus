@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import { getRoleDashboardPath } from "@/lib/roleRouting";
+import { getPostAuthRoute, getRoleDashboardPath, sanitizeAppPath } from "@/lib/roleRouting";
 import { queryClient } from "@/lib/queryClient";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
@@ -35,7 +35,7 @@ const ProtectedRoute = ({ children, requireOnboarding = true }: { children: Reac
   if (loading) return <LoadingSpinner />;
   if (!session) return <Navigate to="/auth" replace />;
   if (requireOnboarding && profile && profile.onboarding_step !== "completed") {
-    return <Navigate to="/onboarding" replace />;
+    return <Navigate to={sanitizeAppPath("/onboarding")} replace />;
   }
   return <>{children}</>;
 };
@@ -45,9 +45,9 @@ const OnboardingRoute = ({ children }: { children: React.ReactNode }) => {
   if (loading) return <LoadingSpinner />;
   if (!session) return <Navigate to="/auth" replace />;
   // Admins skip onboarding entirely
-  if (roles.includes("admin")) return <Navigate to="/admin/dashboard" replace />;
+  if (roles.includes("admin")) return <Navigate to={sanitizeAppPath("/admin/dashboard")} replace />;
   if (profile && profile.onboarding_step === "completed" && roles.length > 0) {
-    return <Navigate to={getRoleDashboardPath(roles[0])} replace />;
+    return <Navigate to={sanitizeAppPath(getRoleDashboardPath(roles[0]))} replace />;
   }
   return <>{children}</>;
 };
@@ -56,11 +56,11 @@ const OnboardingRoute = ({ children }: { children: React.ReactNode }) => {
 const RoleRoute = ({ allowedRole, children }: { allowedRole: string; children: React.ReactNode }) => {
   const { roles, loading, session, profile } = useAuth();
   if (loading) return <LoadingSpinner />;
-  if (!session) return <Navigate to="/auth" replace />;
+  if (!session) return <Navigate to={sanitizeAppPath("/auth")} replace />;
   // Admins skip onboarding check
-  if (allowedRole !== "admin" && profile && profile.onboarding_step !== "completed") return <Navigate to="/onboarding" replace />;
+  if (allowedRole !== "admin" && profile && profile.onboarding_step !== "completed") return <Navigate to={sanitizeAppPath("/onboarding")} replace />;
   if (!roles.includes(allowedRole as any)) {
-    return <Navigate to={getRoleDashboardPath(roles[0])} replace />;
+    return <Navigate to={sanitizeAppPath(getRoleDashboardPath(roles[0]))} replace />;
   }
   return <>{children}</>;
 };
@@ -69,10 +69,16 @@ const RoleRoute = ({ allowedRole, children }: { allowedRole: string; children: R
 const DashboardRedirect = () => {
   const { roles, loading, session, profile } = useAuth();
   if (loading) return <LoadingSpinner />;
-  if (!session) return <Navigate to="/auth" replace />;
-  // Admins skip onboarding
-  if (!roles.includes("admin") && profile && profile.onboarding_step !== "completed") return <Navigate to="/onboarding" replace />;
-  return <Navigate to={getRoleDashboardPath(roles[0])} replace />;
+  if (!session) return <Navigate to={sanitizeAppPath("/auth")} replace />;
+  return <Navigate to={sanitizeAppPath(getPostAuthRoute(roles, profile))} replace />;
+};
+
+const HomeOrDashboardRedirect = () => {
+  const { session, profile, roles, loading } = useAuth();
+
+  if (loading) return <LoadingSpinner />;
+  if (session) return <Navigate to={sanitizeAppPath(getPostAuthRoute(roles, profile))} replace />;
+  return <Index />;
 };
 
 const App = () => (
@@ -83,7 +89,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<HomeOrDashboardRedirect />} />
             <Route path="/sparkx-talent" element={<ProductPage />} />
             <Route path="/sparkx-labs" element={<ProductPage />} />
             <Route path="/sparkx-advisory" element={<ProductPage />} />
@@ -104,8 +110,8 @@ const App = () => (
             <Route path="/admin/login" element={<AdminAuthPage />} />
             <Route path="/onboarding" element={<OnboardingRoute><OnboardingPage /></OnboardingRoute>} />
             
-            {/* Smart redirect for backward compat */}
-            <Route path="/dashboard" element={<DashboardRedirect />} />
+            {/* Shared dashboard entry: wait for auth state, then redirect to the correct role-aware dashboard */}
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardRedirect /></ProtectedRoute>} />
             
             {/* Role-based dashboards */}
             <Route path="/founder/dashboard" element={<RoleRoute allowedRole="startup_founder"><FounderDashboardPage /></RoleRoute>} />

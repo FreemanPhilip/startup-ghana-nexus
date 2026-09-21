@@ -1,4 +1,4 @@
-import { Bell, UserPlus, MessageSquare, Users, Heart, MessageCircle, Check, Trash2, Building2, Loader2, X } from "lucide-react";
+import { Bell, UserPlus, MessageSquare, Users, Heart, MessageCircle, Check, Trash2, Building2, Loader2, X, CalendarCheck2, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -20,6 +20,9 @@ const typeIconMap: Record<string, typeof Bell> = {
   startup_invitation: Building2,
   connection_request: UserPlus,
   connection_accepted: Check,
+  meeting: CalendarCheck2,
+  task: ClipboardList,
+  session_cancelled: X,
 };
 
 const typeColorMap: Record<string, string> = {
@@ -31,6 +34,9 @@ const typeColorMap: Record<string, string> = {
   startup_invitation: "bg-violet-500/10 text-violet-500",
   connection_request: "bg-primary/10 text-primary",
   connection_accepted: "bg-emerald-500/10 text-emerald-500",
+  meeting: "bg-cyan-500/10 text-cyan-600",
+  task: "bg-amber-500/10 text-amber-600",
+  session_cancelled: "bg-red-500/10 text-red-600",
 };
 
 const NotificationItem = ({

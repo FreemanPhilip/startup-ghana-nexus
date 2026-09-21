@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { logAdminAction } from "@/lib/auditLog";
-import { canPerformAction, type AdminLevel, ADMIN_LEVELS as ADMIN_LEVEL_OPTIONS } from "@/lib/adminPermissions";
+import { canPerformAction, getAdminLevelForRole, resolveAdminLevel, type AdminLevel, ADMIN_LEVELS as ADMIN_LEVEL_OPTIONS } from "@/lib/adminPermissions";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 type AppRole = Database["public"]["Enums"]["app_role"];
@@ -115,6 +115,7 @@ const AdminUsersTable = ({ adminLevel }: AdminUsersTableProps) => {
     const usersWithRoles: UserWithRole[] = (profiles || []).map((p) => ({
       ...p,
       roles: roleMap.get(p.user_id) || [],
+      admin_level: resolveAdminLevel((p as any).admin_level ?? null, roleMap.get(p.user_id) || []),
     }));
 
     setUsers(usersWithRoles);
@@ -152,6 +153,13 @@ const AdminUsersTable = ({ adminLevel }: AdminUsersTableProps) => {
       // Insert new role
       const { error } = await supabase.from("user_roles").insert({ user_id: roleDialogUser.user_id, role: newRole as AppRole });
       if (error) throw error;
+
+      const nextAdminLevel = getAdminLevelForRole(newRole);
+      await supabase
+        .from("profiles")
+        .update({ admin_level: nextAdminLevel ?? null } as any)
+        .eq("user_id", roleDialogUser.user_id);
+
       toast.success(`Role updated to ${newRole.replace("_", " ")}`);
       if (user) {
         logAdminAction(user.id, "role_change", "user", roleDialogUser.user_id, {

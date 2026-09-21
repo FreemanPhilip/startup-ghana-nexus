@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import type { AdminLevel } from "@/lib/adminPermissions";
+import { resolveAdminLevel, type AdminLevel } from "@/lib/adminPermissions";
 
 export const useAdminLevel = () => {
   const { user, roles } = useAuth();
@@ -15,7 +15,8 @@ export const useAdminLevel = () => {
         .select("admin_level")
         .eq("user_id", user!.id)
         .single();
-      return (data?.admin_level as AdminLevel) || "viewer";
+
+      return resolveAdminLevel(data?.admin_level ?? null, roles);
     },
     enabled: !!user && isAdmin,
   });

@@ -14,6 +14,7 @@ import PublicProfilePage from "@/components/profile/PublicProfilePage";
 import StartupProfilePage from "@/components/startups/StartupProfilePage";
 import SettingsPage from "@/components/settings/SettingsPage";
 import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
+import { buildPartnerDashboardStats } from "@/lib/dashboardMetrics";
 
 const PartnerDashboardPage = () => {
   const { signOut } = useAuth();
@@ -64,6 +65,23 @@ const PartnerDashboardPage = () => {
 
   const isWideTab = ["programs", "opportunities", "startups", "analytics", "profile", "startup-profile", "public-profile", "settings"].includes(activeTab);
 
+  const portalStats = buildPartnerDashboardStats({
+    startupCount: 42,
+    activeProgramCount: 7,
+    opportunityCount: 18,
+    engagementRate: 81,
+  });
+  const programHighlights = [
+    { name: "Seed Capital Bootcamp", cohort: "Cohort 5", status: "Open" },
+    { name: "Founder Growth Sprint", cohort: "West Africa", status: "Live" },
+    { name: "Investor Matchmaking", cohort: "Q4 2026", status: "Scheduled" },
+  ];
+  const startupDirectory = [
+    { name: "Sankofa Health", stage: "Seed", industry: "HealthTech" },
+    { name: "AgriPulse", stage: "Series A", industry: "AgriTech" },
+    { name: "BlueLight Fintech", stage: "Pre-Seed", industry: "FinTech" },
+  ];
+
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <RoleBasedSidebar role="ecosystem_partner" activeTab={activeTab} onTabChange={handleTabChange} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
@@ -73,10 +91,68 @@ const PartnerDashboardPage = () => {
           <main className="flex-1 overflow-y-auto">
             <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : isWideTab ? "max-w-5xl" : "max-w-3xl"}`}>
               {activeTab === "home" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><EcosystemFeed onViewOpportunity={(id) => { setDeepLinkOpportunityId(id); handleTabChange("opportunities"); }} onViewGroup={() => {}} onViewStartup={handleViewStartup} activeIdentity={activeIdentity} onIdentityChange={setActiveIdentity} /></motion.div>}
-              {activeTab === "programs" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><div className="rounded-xl border border-border bg-card p-12 text-center"><h2 className="font-display text-xl font-bold">Programs</h2><p className="mt-2 text-sm text-muted-foreground">Coming soon</p></div></motion.div>}
+              {activeTab === "programs" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Active programs</p><p className="mt-3 text-3xl font-bold">{portalStats.activeProgramCount}</p></div>
+                  <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Open opportunities</p><p className="mt-3 text-3xl font-bold">{portalStats.opportunityCount}</p></div>
+                  <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Engagement</p><p className="mt-3 text-3xl font-bold">{portalStats.engagementRate}%</p></div>
+                </div>
+                <div className="rounded-xl border border-border bg-card p-5">
+                  <h3 className="font-display text-xl font-bold">Program pipeline</h3>
+                  <div className="mt-4 space-y-3">
+                    {programHighlights.map((program) => (
+                      <div key={program.name} className="flex items-center justify-between rounded-xl border border-border bg-muted/20 p-3">
+                        <div>
+                          <p className="font-medium">{program.name}</p>
+                          <p className="text-xs text-muted-foreground">{program.cohort}</p>
+                        </div>
+                        <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">{program.status}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>}
               {activeTab === "opportunities" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><OpportunitiesPage initialOpportunityId={deepLinkOpportunityId} onDeepLinkConsumed={() => setDeepLinkOpportunityId(null)} /></motion.div>}
-              {activeTab === "startups" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><div className="rounded-xl border border-border bg-card p-12 text-center"><h2 className="font-display text-xl font-bold">Startups Directory</h2><p className="mt-2 text-sm text-muted-foreground">Coming soon</p></div></motion.div>}
-              {activeTab === "analytics" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><div className="rounded-xl border border-border bg-card p-12 text-center"><h2 className="font-display text-xl font-bold">Analytics</h2><p className="mt-2 text-sm text-muted-foreground">Coming soon</p></div></motion.div>}
+              {activeTab === "startups" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                <div className="rounded-xl border border-border bg-card p-5">
+                  <h3 className="font-display text-xl font-bold">Startup directory</h3>
+                  <div className="mt-4 space-y-3">
+                    {startupDirectory.map((startup) => (
+                      <div key={startup.name} className="flex items-center justify-between rounded-xl border border-border bg-muted/20 p-3">
+                        <div>
+                          <p className="font-medium">{startup.name}</p>
+                          <p className="text-xs text-muted-foreground">{startup.industry}</p>
+                        </div>
+                        <span className="rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-600">{startup.stage}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>}
+              {activeTab === "analytics" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                <div className="grid gap-4 md:grid-cols-4">
+                  <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Startups</p><p className="mt-3 text-3xl font-bold">{portalStats.startupCount}</p></div>
+                  <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Programs</p><p className="mt-3 text-3xl font-bold">{portalStats.activeProgramCount}</p></div>
+                  <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Opportunities</p><p className="mt-3 text-3xl font-bold">{portalStats.opportunityCount}</p></div>
+                  <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Tracked</p><p className="mt-3 text-3xl font-bold">{portalStats.totalTracked}</p></div>
+                </div>
+                <div className="rounded-xl border border-border bg-card p-5">
+                  <h3 className="font-display text-xl font-bold">Ecosystem momentum</h3>
+                  <div className="mt-4 space-y-4">
+                    {[
+                      { label: "Fundraising readiness", value: 88 },
+                      { label: "Investor interest", value: 76 },
+                      { label: "Mentor engagement", value: 83 },
+                      { label: "Program conversion", value: 71 },
+                    ].map((metric) => (
+                      <div key={metric.label}>
+                        <div className="mb-1 flex items-center justify-between text-sm"><span>{metric.label}</span><span>{metric.value}%</span></div>
+                        <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-gradient-gold" style={{ width: `${metric.value}%` }} /></div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>}
               {activeTab === "messages" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><MessagesPage onViewProfile={handleViewProfile} /></motion.div>}
               {activeTab === "profile" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><ProfilePage onSignOut={handleSignOut} /></motion.div>}
               {activeTab === "startup-profile" && viewStartupId && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><StartupProfilePage startupId={viewStartupId} onBack={goBack} /></motion.div>}

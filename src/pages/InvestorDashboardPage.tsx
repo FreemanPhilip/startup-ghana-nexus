@@ -1,5 +1,7 @@
 import { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { usePresenceTracker } from "@/hooks/usePresence";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +18,7 @@ import PublicProfilePage from "@/components/profile/PublicProfilePage";
 import StartupProfilePage from "@/components/startups/StartupProfilePage";
 import SettingsPage from "@/components/settings/SettingsPage";
 import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
+import { buildInvestorDashboardSummary } from "@/lib/dashboardMetrics";
 
 const InvestorDashboardPageRoute = () => {
   const { signOut } = useAuth();
@@ -64,6 +67,11 @@ const InvestorDashboardPageRoute = () => {
   }, []);
 
   const isWideTab = ["discover", "saved", "portfolio", "profile", "startup-profile", "public-profile", "settings"].includes(activeTab);
+  const investorSummary = buildInvestorDashboardSummary({
+    savedStartups: 0,
+    pendingRequests: 0,
+    portfolioCount: 0,
+  });
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -73,6 +81,22 @@ const InvestorDashboardPageRoute = () => {
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto">
             <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : isWideTab ? "max-w-5xl" : "max-w-3xl"}`}>
+              <Card className="mb-6 p-5 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Investor snapshot</p>
+                    <h2 className="mt-1 font-display text-xl font-bold">{investorSummary.title}</h2>
+                    <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{investorSummary.description}</p>
+                  </div>
+                  <Button
+                    size="sm"
+                    className="bg-gradient-gold text-navy hover:opacity-90"
+                    onClick={() => handleTabChange("discover")}
+                  >
+                    {investorSummary.actionLabel}
+                  </Button>
+                </div>
+              </Card>
               {activeTab === "home" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><EcosystemFeed onViewOpportunity={() => {}} onViewGroup={() => {}} onViewStartup={handleViewStartup} activeIdentity={activeIdentity} onIdentityChange={setActiveIdentity} /></motion.div>}
               {activeTab === "discover" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><InvestorsPage onViewStartup={handleViewStartup} /></motion.div>}
               {activeTab === "saved" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><InvestorDashboardContent /></motion.div>}

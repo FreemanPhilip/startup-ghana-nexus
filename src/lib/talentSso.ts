@@ -7,14 +7,41 @@
 // which talent-sso-callback verifies.
 
 const TALENT_ORIGIN = import.meta.env.VITE_TALENT_ORIGIN || "https://talent.sparkxglobal.net";
+const PORTAL_ORIGIN = import.meta.env.VITE_PORTAL_ORIGIN || import.meta.env.VITE_APP_ORIGIN || "https://sparkxglobal.net";
 
 export const TALENT_CALLBACK_PATH = "/auth/talent/callback";
 
 const STATE_KEY = "talent-sso-state";
 
+export function isTrustedPortalOrigin(origin: string | null | undefined): boolean {
+  if (!origin) return false;
+
+  try {
+    const url = new URL(origin);
+    const hostname = url.hostname.toLowerCase();
+    return hostname === "localhost" || hostname === "sparkxglobal.net" || hostname.endsWith(".sparkxglobal.net");
+  } catch {
+    return false;
+  }
+}
+
+export function getPortalOrigin(): string {
+  const configuredOrigin = (
+    import.meta.env.VITE_PORTAL_ORIGIN ||
+    import.meta.env.VITE_APP_ORIGIN ||
+    (typeof window !== "undefined" ? window.location.origin : "https://sparkxglobal.net")
+  )?.replace(/\/$/, "");
+
+  if (configuredOrigin && isTrustedPortalOrigin(configuredOrigin)) {
+    return configuredOrigin;
+  }
+
+  return "https://sparkxglobal.net";
+}
+
 /** The exact callback URL — must be allowlisted on the Talent project. */
 export function talentCallbackUrl(): string {
-  return `${window.location.origin}${TALENT_CALLBACK_PATH}`;
+  return `${getPortalOrigin()}${TALENT_CALLBACK_PATH}`;
 }
 
 /**

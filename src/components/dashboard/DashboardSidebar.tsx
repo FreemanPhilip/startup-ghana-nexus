@@ -91,6 +91,8 @@ const DashboardSidebar = ({ activeTab, onTabChange, open, onClose }: DashboardSi
     .toUpperCase()
     .slice(0, 2) || "U";
 
+  const isFounder = roles.includes("startup_founder");
+
   const sidebarContent = (
     <>
       {/* Logo */}
@@ -170,13 +172,15 @@ const DashboardSidebar = ({ activeTab, onTabChange, open, onClose }: DashboardSi
 
       {/* Bottom actions */}
       <div className="border-t border-border p-3 space-y-1">
-        <Button
-          className="w-full bg-primary text-primary-foreground font-semibold gap-2 text-sm hover:opacity-90"
-          onClick={() => setPitchDeckOpen(true)}
-        >
-          <Upload className="h-4 w-4" />
-          Pitch Deck Upload
-        </Button>
+        {isFounder && (
+          <Button
+            className="w-full bg-primary text-primary-foreground font-semibold gap-2 text-sm hover:opacity-90"
+            onClick={() => setPitchDeckOpen(true)}
+          >
+            <Upload className="h-4 w-4" />
+            Pitch Deck Upload
+          </Button>
+        )}
         <button
           onClick={handleSignOut}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -185,7 +189,7 @@ const DashboardSidebar = ({ activeTab, onTabChange, open, onClose }: DashboardSi
           Sign Out
         </button>
       </div>
-      <PitchDeckUploadDialog open={pitchDeckOpen} onOpenChange={setPitchDeckOpen} />
+      {isFounder && <PitchDeckUploadDialog open={pitchDeckOpen} onOpenChange={setPitchDeckOpen} />}
     </>
   );
 

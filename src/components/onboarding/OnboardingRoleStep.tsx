@@ -31,7 +31,7 @@ const OnboardingRoleStep = ({ onNext, saving: parentSaving }: Props) => {
     try {
       const { error } = await supabase
         .from("user_roles")
-        .insert({ user_id: user.id, role: selected });
+        .upsert({ user_id: user.id, role: selected }, { onConflict: "user_id,role" });
       if (error) throw error;
       await refreshProfile();
       onNext();

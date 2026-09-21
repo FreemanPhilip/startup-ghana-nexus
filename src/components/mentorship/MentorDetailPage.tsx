@@ -8,6 +8,7 @@ import type { MentorData } from "./MentorCard";
 import { useToast } from "@/hooks/use-toast";
 import QuickChatDialog from "@/components/messages/QuickChatDialog";
 import BookSessionDialog from "./BookSessionDialog";
+import { buildMentorFeedbackSummary } from "@/lib/mentorMetrics";
 
 interface MentorDetailPageProps {
   mentor: MentorData;
@@ -27,11 +28,11 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
     .toUpperCase()
     .slice(0, 2) || "M";
 
-  const demoReviews = [
-    { name: "Ama K.", rating: 5, text: "Incredibly insightful session. Got actionable advice for our Series A preparation.", date: "2 weeks ago" },
-    { name: "Kwesi M.", rating: 4, text: "Very knowledgeable mentor. Helped clarify our go-to-market strategy.", date: "1 month ago" },
-    { name: "Efua D.", rating: 5, text: "Best mentorship session I've had. Clear, structured, and deeply helpful.", date: "2 months ago" },
-  ];
+  const feedbackSummary = buildMentorFeedbackSummary({
+    reviewsCount: mentor.reviews_count,
+    rating: mentor.rating,
+    sessionsCount: mentor.sessions_count,
+  });
 
   return (
     <div className="space-y-6">
@@ -112,23 +113,18 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
           {/* Reviews */}
           <div className="rounded-xl border border-border bg-card p-5">
             <h3 className="font-display font-bold text-sm mb-4 flex items-center gap-2">
-              <Star className="h-4 w-4 text-primary" /> Reviews ({mentor.reviews_count})
+              <Star className="h-4 w-4 text-primary" /> Founder feedback
             </h3>
-            <div className="space-y-4">
-              {demoReviews.map((review, i) => (
-                <div key={i} className="border-b border-border last:border-0 pb-4 last:pb-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-semibold">{review.name}</span>
-                    <div className="flex items-center gap-1">
-                      {Array.from({ length: review.rating }).map((_, j) => (
-                        <Star key={j} className="h-3 w-3 text-primary fill-primary" />
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{review.text}</p>
-                  <p className="text-[10px] text-muted-foreground mt-1">{review.date}</p>
-                </div>
-              ))}
+            <div className="space-y-3">
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-3">
+                <p className="text-sm font-semibold text-foreground">{feedbackSummary.headline}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{feedbackSummary.detail}</p>
+              </div>
+              {mentor.reviews_count === 0 && (
+                <p className="text-xs text-muted-foreground">
+                  Reviews appear after founders complete and rate a mentorship session.
+                </p>
+              )}
             </div>
           </div>
         </div>

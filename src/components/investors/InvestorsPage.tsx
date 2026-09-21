@@ -14,15 +14,7 @@ import InvestorDetailPage from "./InvestorDetailPage";
 import OutreachHistoryTab from "./OutreachHistoryTab";
 import { useInvestorTracking } from "@/hooks/useInvestorTracking";
 import { useFollows } from "@/hooks/useFollows";
-
-const demoInvestors: InvestorData[] = [
-  { id: "demo-1", name: "Accra Venture Partners", description: "Early-stage VC focusing on FinTech and e-commerce startups across West Africa with hands-on mentorship and strategic connections.", tags: ["FinTech", "Seed", "B2B"], avgTicket: "$150k", matchPercent: 98, status: "Active Now", icon: "building" },
-  { id: "demo-2", name: "GCF Impact Fund", description: "Driving sustainable growth through Series A investments in climate-positive ventures across Africa and the broader region.", tags: ["CleanTech", "Series A", "Impact"], avgTicket: "$750k", matchPercent: 85, status: "Replied in 2h", icon: "globe" },
-  { id: "demo-3", name: "Pan-African Angels", description: "Strategic angel network connecting diaspora capital to high-potential African startups at the earliest stages.", tags: ["Any Sector", "Pre-Seed", "Equity"], avgTicket: "$25k", matchPercent: 92, status: "Top Rated", icon: "users" },
-  { id: "demo-4", name: "Nairobi Tech Capital", description: "Dedicated to fostering the tech ecosystem across East and West Africa with seed-stage investments in hardware and SaaS.", tags: ["Hardware", "Seed", "SaaS"], avgTicket: "$100k", matchPercent: 72, status: "New Fund", icon: "briefcase" },
-  { id: "demo-5", name: "Osei-Danquah Family Office", description: "Private capital group looking for sustainable real estate and property technology investments across Africa.", tags: ["PropTech", "Growth", "Debt"], avgTicket: "$500k", matchPercent: 89, status: "Verified", icon: "landmark" },
-  { id: "demo-6", name: "Retail Africa Fund", description: "Specialized fund for retail supply chain optimization and last-mile logistics solutions across Africa.", tags: ["Logistics", "SME", "Seed"], avgTicket: "$125k", matchPercent: 65, status: "Low Activity", icon: "dollar" },
-];
+import { buildDeterministicScore } from "@/lib/dashboardMetrics";
 
 interface InvestorsPageProps {
   onViewStartup?: (startupId: string) => void;
@@ -64,7 +56,7 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
           ...(p.expertise?.slice(0, 1) || []),
         ].filter(Boolean),
         avgTicket: "Flexible",
-        matchPercent: Math.floor(Math.random() * 30) + 70,
+        matchPercent: buildDeterministicScore(p.company_name || p.full_name || p.user_id || "Investor"),
         status: p.verification === "verified" ? "Verified" : "Active",
         icon: "building",
         avatar_url: p.avatar_url,
@@ -73,7 +65,7 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
     },
   });
 
-  const allInvestors = realInvestors.length > 0 ? realInvestors : demoInvestors;
+  const allInvestors = realInvestors;
 
   const handleConnect = (investorId: string) => {
     const inv = allInvestors.find(i => i.id === investorId);
@@ -191,7 +183,11 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
               ))}
               {filtered.length === 0 && (
                 <div className="col-span-full text-center py-12">
-                  <p className="text-sm text-muted-foreground">No investors match your current filters.</p>
+                  <p className="text-sm text-muted-foreground">
+                    {realInvestors.length === 0
+                      ? "No investors are available on the platform yet. Check back soon."
+                      : "No investors match your current filters."}
+                  </p>
                 </div>
               )}
             </div>

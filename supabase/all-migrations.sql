@@ -1952,6 +1952,21 @@ CREATE INDEX idx_audit_logs_action ON public.admin_audit_logs (action);
 -- Add admin_level to profiles to track admin tier
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS admin_level text DEFAULT NULL;
 
+-- Check whether any admin exists yet for first-time setup flow
+CREATE OR REPLACE FUNCTION public.has_admin_users()
+RETURNS boolean
+LANGUAGE sql
+STABLE SECURITY DEFINER
+SET search_path = 'public'
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.user_roles
+    WHERE role = 'admin'
+    LIMIT 1
+  );
+$$;
+
 -- Create a helper function to get admin level
 CREATE OR REPLACE FUNCTION public.get_admin_level(_user_id uuid)
 RETURNS text

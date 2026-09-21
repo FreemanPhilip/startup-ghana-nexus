@@ -20,11 +20,15 @@ import MyStartupsPage from "@/components/startups/MyStartupsPage";
 import StartupProfilePage from "@/components/startups/StartupProfilePage";
 import FirstTimeFounderModal from "@/components/startups/FirstTimeFounderModal";
 import MySessionsPage from "@/components/mentorship/MySessionsPage";
+import MentorBriefingPage from "@/components/mentorship/MentorBriefingPage";
 import PublicProfilePage from "@/components/profile/PublicProfilePage";
 import CreateStartupWizard from "@/components/startups/CreateStartupWizard";
 import SettingsPage from "@/components/settings/SettingsPage";
 import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
 import { useStartups } from "@/hooks/useStartups";
+import { buildFounderDashboardSummary } from "@/lib/dashboardMetrics";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const FounderDashboardPage = () => {
   const { profile, roles, signOut } = useAuth();
@@ -107,7 +111,8 @@ const FounderDashboardPage = () => {
     setActiveTab(tab);
   }, []);
 
-  const isWideTab = ["mentors", "investors", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile", "settings"].includes(activeTab);
+  const isWideTab = ["mentors", "investors", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile", "mentor-briefing", "my-sessions", "public-profile", "settings"].includes(activeTab);
+  const founderSummary = buildFounderDashboardSummary({ startupCount: myStartups.length, mentorConnections: 0, opportunityCount: 0 });
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -129,10 +134,32 @@ const FounderDashboardPage = () => {
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto">
             <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : isWideTab ? "max-w-5xl" : "max-w-3xl"}`}>
+              <Card className="mb-6 p-5 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Founder snapshot</p>
+                    <h2 className="mt-1 font-display text-xl font-bold">{founderSummary.title}</h2>
+                    <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{founderSummary.description}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary">
+                      {founderSummary.readiness}% readiness
+                    </div>
+                    <Button
+                      size="sm"
+                      className="bg-gradient-gold text-navy hover:opacity-90"
+                      onClick={() => (myStartups.length > 0 ? handleTabChange("my-startups") : setShowWizard(true))}
+                    >
+                      {founderSummary.actionLabel}
+                    </Button>
+                  </div>
+                </div>
+              </Card>
               {activeTab === "home" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><EcosystemFeed onViewOpportunity={handleViewOpportunity} onViewGroup={handleViewGroup} onViewStartup={handleViewStartup} activeIdentity={activeIdentity} onIdentityChange={setActiveIdentity} /></motion.div>}
               {activeTab === "messages" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><MessagesPage onViewProfile={handleViewProfile} /></motion.div>}
               {activeTab === "network" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><NetworkPage onOpenMessages={handleOpenMessages} /></motion.div>}
               {activeTab === "mentors" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><MentorsPage onOpenMessages={handleOpenMessages} /></motion.div>}
+              {activeTab === "mentor-briefing" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><MentorBriefingPage /></motion.div>}
               {activeTab === "my-sessions" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><MySessionsPage /></motion.div>}
               {activeTab === "investors" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><InvestorsPage onViewStartup={handleViewStartup} /></motion.div>}
               {activeTab === "opportunities" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><OpportunitiesPage initialOpportunityId={deepLinkOpportunityId} onDeepLinkConsumed={() => setDeepLinkOpportunityId(null)} /></motion.div>}
@@ -144,7 +171,7 @@ const FounderDashboardPage = () => {
               {activeTab === "settings" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><SettingsPage onSignOut={handleSignOut} /></motion.div>}
             </div>
           </main>
-          {!["messages", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile", "settings"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar onViewInvestor={() => {}} /> : <DashboardRightSidebar onNavigate={handleTabChange} />)}
+          {!["messages", "groups", "profile", "my-startups", "startup-profile", "mentor-briefing", "my-sessions", "public-profile", "settings"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar onViewInvestor={() => {}} /> : <DashboardRightSidebar onNavigate={handleTabChange} />)}
         </div>
       </div>
       <FirstTimeFounderModal open={showFounderModal} onOpenChange={setShowFounderModal} onCreateStartup={() => setShowWizard(true)} />

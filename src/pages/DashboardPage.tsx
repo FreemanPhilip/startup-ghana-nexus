@@ -26,6 +26,7 @@ import CreateStartupWizard from "@/components/startups/CreateStartupWizard";
 import SettingsPage from "@/components/settings/SettingsPage";
 import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
 import { useStartups } from "@/hooks/useStartups";
+import { buildDashboardFallbackMessage } from "@/lib/dashboardMetrics";
 
 const DashboardPage = () => {
   const { profile, roles, signOut } = useAuth();
@@ -124,6 +125,7 @@ const DashboardPage = () => {
   }, []);
 
   const isWideTab = ["mentors", "investors", "investor-dashboard", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile", "my-sessions", "public-profile", "settings"].includes(activeTab);
+  const fallbackContent = buildDashboardFallbackMessage(activeTab);
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -252,10 +254,10 @@ const DashboardPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex flex-col items-center justify-center py-20"
                 >
-                  <div className="rounded-xl border border-border bg-card p-12 text-center max-w-md">
-                    <h2 className="font-display text-xl font-bold capitalize">{activeTab.replace("_", " ")}</h2>
+                  <div className="rounded-xl border border-border bg-card p-12 text-center max-w-lg">
+                    <h2 className="font-display text-xl font-bold">{fallbackContent.title}</h2>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      This section is coming soon. Stay tuned for updates!
+                      {fallbackContent.description}
                     </p>
                   </div>
                 </motion.div>

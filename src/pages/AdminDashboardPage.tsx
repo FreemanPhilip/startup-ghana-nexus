@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminNotificationBell from "@/components/admin/AdminNotificationBell";
 import AdminAuditLog from "@/components/admin/AdminAuditLog";
 import { useAdminLevel } from "@/hooks/useAdminLevel";
-import { canAccessTab } from "@/lib/adminPermissions";
+import { canAccessTab, getDefaultAdminTab } from "@/lib/adminPermissions";
 
 const tabTitles: Record<string, string> = {
   overview: "Platform Overview",
@@ -37,10 +37,19 @@ const AdminDashboardPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { adminLevel, loading } = useAdminLevel();
 
+  useEffect(() => {
+    const fallbackTab = getDefaultAdminTab(adminLevel);
+    if (!canAccessTab(adminLevel, activeTab)) {
+      setActiveTab(fallbackTab);
+    }
+  }, [activeTab, adminLevel]);
+
   const handleTabChange = (tab: string) => {
     if (canAccessTab(adminLevel, tab)) {
       setActiveTab(tab);
+      return;
     }
+    setActiveTab(getDefaultAdminTab(adminLevel));
   };
 
   if (loading) {

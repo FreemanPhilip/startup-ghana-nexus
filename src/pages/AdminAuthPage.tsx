@@ -53,18 +53,29 @@ const AdminAuthPage = () => {
   // Check if any admins exist (for first-time setup) using RPC to bypass RLS
   useEffect(() => {
     const checkAdmins = async () => {
-      try {
-        // Use has_role RPC which is SECURITY DEFINER and bypasses RLS
-        // We check for a known impossible user - if the function works, admins table is accessible
-        // Instead, just try to sign in check - if no admins exist, the create-admin-user edge function would be the path
-        // For safety, always default to login. Only show signup with invite token.
+      if (inviteToken || isRecovery) {
         setNoAdminsExist(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase.rpc("has_admin_users");
+        if (error) throw error;
+        const hasAdmins = Boolean(data);
+        setNoAdminsExist(!hasAdmins);
       } catch {
         setNoAdminsExist(false);
       }
     };
-    if (!inviteToken && !isRecovery) checkAdmins();
+
+    checkAdmins();
   }, [inviteToken, isRecovery]);
+
+  useEffect(() => {
+    if (!inviteToken && !isRecovery && noAdminsExist && mode === "login") {
+      setMode("signup");
+    }
+  }, [inviteToken, isRecovery, noAdminsExist, mode]);
 
   // Validate invite token via secure RPC
   useEffect(() => {
@@ -214,13 +225,19 @@ const AdminAuthPage = () => {
       if (error) throw error;
 
       if (data.session) {
+        const { error: roleError } = await supabase
+          .from("user_roles")
+          .upsert({ user_id: data.session.user.id, role: "admin" }, { onConflict: "user_id,role" });
+
+        if (roleError) throw roleError;
+
         if (inviteToken) {
           await supabase
             .from("admin_invitations")
             .update({ status: "accepted", accepted_at: new Date().toISOString() })
             .eq("token", inviteToken);
         }
-        
+
         await supabase
           .from("profiles")
           .update({ onboarding_step: "completed", full_name: fullName || signupEmail.split("@")[0], admin_level: isFirstSetup ? "super_admin" : "admin" })

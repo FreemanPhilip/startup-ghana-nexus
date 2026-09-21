@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { consumeTalentSsoState } from "@/lib/talentSso";
+import { consumeTalentSsoState, getPortalOrigin } from "@/lib/talentSso";
+import { sanitizeAppPath } from "@/lib/roleRouting";
 
 // Landing point for the SparkX Talent hand-off. Talent redirects here with a
 // short-lived signed assertion in the URL *fragment* (not the query string, so
@@ -71,7 +72,9 @@ const TalentCallbackPage = () => {
           return;
         }
 
-        navigate("/dashboard", { replace: true });
+        const portalOrigin = getPortalOrigin();
+        const dashboardPath = sanitizeAppPath("/dashboard");
+        window.location.assign(`${portalOrigin}${dashboardPath}`);
       } catch {
         setError("Something went wrong completing sign-in. Please try again.");
       }

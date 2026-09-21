@@ -29,6 +29,7 @@ const founderNav = [
   { id: "groups", label: "Groups", icon: UserPlus },
   { id: "messages", label: "Messages", icon: MessageSquare },
   { id: "mentors", label: "Mentors", icon: StarIcon },
+  { id: "mentor-briefing", label: "Mentor Briefing", icon: CalendarCheck },
   { id: "my-sessions", label: "My Sessions", icon: CalendarCheck },
   { id: "investors", label: "Investors", icon: TrendingUp },
   { id: "opportunities", label: "Opportunities", icon: Briefcase },
@@ -47,6 +48,7 @@ const investorNav = [
 
 const mentorNav = [
   { id: "home", label: "Home", icon: Home },
+  { id: "mentees", label: "Mentees", icon: Users },
   { id: "my-sessions", label: "My Sessions", icon: CalendarCheck },
   { id: "availability", label: "Availability", icon: Clock },
   { id: "messages", label: "Messages", icon: MessageSquare },
