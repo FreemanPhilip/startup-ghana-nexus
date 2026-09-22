@@ -127,17 +127,31 @@ export const buildMentorPipelineSummary = ({
   menteeCount = 0,
   meetingCount = 0,
   openTaskCount = 0,
+  pendingCount = 0,
 }: {
   menteeCount?: number;
   meetingCount?: number;
   openTaskCount?: number;
+  /** Founders waiting on an answer to their request to join the cohort. */
+  pendingCount?: number;
 }) => {
   const engagementScore = Math.min(100, 35 + menteeCount * 25 + meetingCount * 8 + openTaskCount * 3);
+
+  // Unanswered requests are the most useful thing a mentor can act on, so they
+  // take priority over the generic copy.
+  if (pendingCount > 0) {
+    return {
+      title: `${pendingCount} founder${pendingCount === 1 ? "" : "s"} waiting on you`,
+      description: `${pendingCount === 1 ? "A founder has" : `${pendingCount} founders have`} asked to join your cohort. Accept or decline to let them know where they stand.`,
+      actionLabel: `Review request${pendingCount === 1 ? "" : "s"}`,
+      engagementScore,
+    };
+  }
 
   if (menteeCount === 0) {
     return {
       title: "Build your mentoring cohort",
-      description: "Start connecting with founders, confirm sessions, and assign tasks to create momentum with your mentees.",
+      description: "Founders join your cohort by requesting mentorship, booking a session, or being assigned by an admin.",
       actionLabel: "Review your cohort",
       engagementScore,
     };

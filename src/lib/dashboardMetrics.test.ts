@@ -66,6 +66,20 @@ describe("dashboardMetrics", () => {
     expect(summary.engagementScore).toBeGreaterThan(0);
   });
 
+  it("surfaces pending cohort requests ahead of the generic mentor copy", () => {
+    const summary = buildMentorPipelineSummary({ menteeCount: 0, pendingCount: 2 });
+
+    expect(summary.title).toContain("2 founders waiting");
+    expect(summary.actionLabel).toBe("Review requests");
+  });
+
+  it("uses singular wording for a single pending request", () => {
+    const summary = buildMentorPipelineSummary({ menteeCount: 3, pendingCount: 1 });
+
+    expect(summary.title).toContain("1 founder waiting");
+    expect(summary.actionLabel).toBe("Review request");
+  });
+
   it("builds deterministic match scores without using random values", () => {
     const score = buildDeterministicScore("Nairobi Tech Capital");
 

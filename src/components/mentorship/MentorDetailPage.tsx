@@ -8,6 +8,7 @@ import type { MentorData } from "./MentorCard";
 import { useToast } from "@/hooks/use-toast";
 import QuickChatDialog from "@/components/messages/QuickChatDialog";
 import BookSessionDialog from "./BookSessionDialog";
+import JoinCohortButton from "./JoinCohortButton";
 import { buildMentorFeedbackSummary } from "@/lib/mentorMetrics";
 
 interface MentorDetailPageProps {
@@ -73,6 +74,7 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
                   <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setQuickChatOpen(true)}>
                     <MessageCircle className="h-3.5 w-3.5" /> Quick Chat
                   </Button>
+                  <JoinCohortButton mentorId={mentor.id} mentorName={mentor.full_name} />
                 </div>
               </div>
             </div>

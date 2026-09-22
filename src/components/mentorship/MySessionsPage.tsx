@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
+import MyMentorsPanel from "./MyMentorsPanel";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { format, isPast, parseISO, isSameDay } from "date-fns";
@@ -313,6 +314,8 @@ const MySessionsPage = () => {
         <h1 className="text-xl sm:text-2xl font-display font-bold">My Sessions</h1>
         <p className="text-xs sm:text-sm text-muted-foreground">View and manage your mentorship sessions.</p>
       </div>
+
+      <MyMentorsPanel />
 
       <div className="grid gap-3 sm:grid-cols-3">
         <Card className="p-4">

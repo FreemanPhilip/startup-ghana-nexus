@@ -33,8 +33,8 @@ export const ADMIN_LEVELS: { value: AdminLevel; label: string; description: stri
 
 // Which sidebar tabs each role can see
 export const ADMIN_TAB_ACCESS: Record<AdminLevel, string[]> = {
-  super_admin: ["overview", "users", "startups", "opportunities", "posts", "verification", "contact", "invitations", "analytics", "audit"],
-  admin: ["overview", "users", "startups", "opportunities", "posts", "verification", "contact", "analytics"],
+  super_admin: ["overview", "users", "mentorship", "startups", "opportunities", "posts", "verification", "contact", "invitations", "analytics", "audit"],
+  admin: ["overview", "users", "mentorship", "startups", "opportunities", "posts", "verification", "contact", "analytics"],
   viewer: ["overview", "analytics", "contact"],
 };
 

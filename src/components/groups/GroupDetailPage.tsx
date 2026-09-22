@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useGroupDetail } from "@/hooks/useGroups";
+import { useGroupDetail, useGroups } from "@/hooks/useGroups";
 import { useGroupAdmin } from "@/hooks/useGroupAdmin";
 import { useGroupEvents } from "@/hooks/useGroupEvents";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,6 +25,7 @@ interface GroupDetailPageProps {
 
 const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
   const { group, posts, members, loading, createPost, toggleLike, addComment, refetch } = useGroupDetail(groupId);
+  const { joinGroup } = useGroups();
   const admin = useGroupAdmin(groupId);
   const eventsHook = useGroupEvents(groupId);
   const [posting, setPosting] = useState(false);
@@ -32,6 +33,7 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const [editOpen, setEditOpen] = useState(false);
+  const [joining, setJoining] = useState(false);
 
   const handlePost = async (content: string, imageUrl?: string, videoUrl?: string) => {
     setPosting(true);
@@ -44,6 +46,18 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
     if (!content) return;
     await addComment({ postId, content });
     setCommentInputs(prev => ({ ...prev, [postId]: "" }));
+  };
+
+  // Public groups are joined directly; the button used to do nothing at all.
+  const handleJoinGroup = async () => {
+    if (joining) return;
+    setJoining(true);
+    try {
+      await joinGroup(groupId);
+      refetch();
+    } finally {
+      setJoining(false);
+    }
   };
 
   const handleRequestToJoin = async () => {
@@ -145,7 +159,9 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
                 <Lock className="h-3.5 w-3.5" /> Request to Join
               </Button>
             ) : (
-              <Button size="sm" className="gap-1.5 text-xs" onClick={() => {}}>Join Group</Button>
+              <Button size="sm" className="gap-1.5 text-xs" onClick={handleJoinGroup} disabled={joining}>
+                {joining ? "Joining…" : "Join Group"}
+              </Button>
             )}
           </div>
         </div>
