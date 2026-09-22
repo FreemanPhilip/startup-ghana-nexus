@@ -26,6 +26,10 @@ interface AuthContextType {
   checkSubscription: () => Promise<void>;
 }
 
+// How long to wait for Supabase to restore the session and load the profile
+// before giving up and rendering the app anyway.
+const AUTH_INIT_TIMEOUT_MS = 8000;
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
@@ -105,7 +109,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    let active = true;
+
+    // Never let a slow or unreachable backend leave the app stuck on a loading
+    // screen. Supabase requests have no timeout of their own, so if the project
+    // is throttled or the network stalls, getSession/profile/roles can hang
+    // indefinitely — and every route guard renders a bare spinner while
+    // `loading` is true, which looks like a blank page. Resolve the gate after
+    // this long regardless; the guards then route on whatever we do have.
+    const failsafe = setTimeout(() => {
+      if (!active) return;
+      console.warn("Auth is taking too long; continuing without it.");
+      setLoading(false);
+    }, AUTH_INIT_TIMEOUT_MS);
+
+    const settle = () => {
+      if (!active) return;
+      clearTimeout(failsafe);
+      setLoading(false);
+    };
+
     const applySession = async (nextSession: Session | null) => {
+      if (!active) return;
       setSession(nextSession);
       setUser(nextSession?.user ?? null);
 
@@ -113,16 +138,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setProfile(null);
         setRoles([]);
         setSubscription({ subscribed: false, product_id: null, subscription_end: null });
-        setLoading(false);
+        settle();
         return;
       }
 
-      setLoading(true);
       await Promise.allSettled([
         fetchProfile(nextSession.user.id),
         fetchRoles(nextSession.user.id),
       ]);
-      setLoading(false);
+      settle();
     };
 
     const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange(
@@ -131,11 +155,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      void applySession(session);
-    });
+    // A rejection here must still clear the gate, otherwise the app renders a
+    // spinner forever.
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => applySession(session))
+      .catch((error) => {
+        console.warn("Unable to restore session:", error);
+        settle();
+      });
 
-    return () => authSub.unsubscribe();
+    return () => {
+      active = false;
+      clearTimeout(failsafe);
+      authSub.unsubscribe();
+    };
   }, []);
 
   // Check subscription on login
