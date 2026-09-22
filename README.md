@@ -95,7 +95,7 @@ On **sparkxtalent**:
 
 ```sh
 supabase secrets set SPARKX_SSO_SHARED_SECRET="<the same secret>"
-supabase secrets set SPARKX_SSO_ALLOWED_REDIRECTS="https://<this-app-host>/auth/talent/callback"
+supabase secrets set SPARKX_SSO_ALLOWED_REDIRECTS="https://sparkxglobal.net/auth/talent/callback"
 supabase functions deploy sso-issue-token
 ```
 
@@ -103,6 +103,12 @@ supabase functions deploy sso-issue-token
 callback URL of every host that may receive an assertion (production, and any
 preview/staging host you want to work). A prefix check would let a crafted
 `redirect_uri` carry the assertion somewhere you don't control.
+
+This app is served from **`https://sparkxglobal.net`**, so that is the origin the
+browser sends. The `*.vercel.app` deployment URL is not what users visit, and
+Vercel preview deployments get a fresh hostname each time — neither is in the
+allowlist unless you add it explicitly. For local development add
+`http://localhost:8080/auth/talent/callback` as a second comma-separated entry.
 
 `talent-sso-callback` is deployed `--no-verify-jwt` because the caller is signed
 out by definition; it authenticates the request by verifying the assertion
@@ -140,3 +146,29 @@ You can deploy this project to various platforms:
 - **Vercel**: Connect your GitHub repository to Vercel for automatic deployments
 - **Netlify**: Similar GitHub integration for continuous deployment
 - **Self-hosted**: Build with `npm run build` and deploy the `dist/` folder to any static hosting service
+
+### Client-side routing (required)
+
+This is a single-page app using React Router. `npm run build` emits **one**
+`index.html` and no per-route files, so the host must serve `index.html` for
+every path it doesn't recognise as a real file. Without that, the landing page
+works but every other URL — `/sparkx-index`, `/auth`, `/dashboard` — returns the
+host's own 404 on a direct visit or a refresh, and signing in appears to "go
+blank" because the post-login redirect is a fresh page load.
+
+`vercel.json` handles this:
+
+```json
+"rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+```
+
+Two things to keep in mind:
+
+- **Do not add `cleanUrls: true`.** It strips the `.html` extension, which can
+  leave the rewrite pointing at a path that no longer resolves, reintroducing
+  the 404 on every route.
+- Static files under `dist/` are matched *before* rewrites, so the catch-all
+  does not swallow `/assets/*`, `/favicon.ico` or `/og-image.png`.
+
+On another host the equivalent is a SPA fallback — for Netlify, a `public/_redirects`
+containing `/* /index.html 200`.
