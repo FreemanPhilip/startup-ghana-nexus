@@ -13,12 +13,13 @@ export interface Notification {
 }
 
 export async function fetchNotifications(userId: string): Promise<Notification[]> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("notifications")
     .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(50);
+  if (error) throw error;
   return (data as Notification[]) ?? [];
 }
 

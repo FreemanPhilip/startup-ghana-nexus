@@ -6,6 +6,7 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminStatsCards from "@/components/admin/AdminStatsCards";
 import AdminUsersTable from "@/components/admin/AdminUsersTable";
+import AdminMentorAssignments from "@/components/admin/AdminMentorAssignments";
 import AdminStartupsTable from "@/components/admin/AdminStartupsTable";
 import AdminContactSubmissions from "@/components/admin/AdminContactSubmissions";
 import AdminRecentActivity from "@/components/admin/AdminRecentActivity";
@@ -23,13 +24,14 @@ import { parseDashboardPath } from "@/lib/roleRouting";
 
 const BASE_PATH = "/admin/dashboard";
 const TABS = [
-  "overview", "users", "startups", "opportunities", "posts", "verification",
+  "overview", "users", "mentorship", "startups", "opportunities", "posts", "verification",
   "contact", "invitations", "analytics", "audit",
 ];
 
 const tabTitles: Record<string, string> = {
   overview: "Platform Overview",
   users: "User Management",
+  mentorship: "Mentor Assignments",
   startups: "Startups",
   opportunities: "Opportunities",
   posts: "Posts",
@@ -91,6 +93,11 @@ const AdminDashboardPage = () => {
             {activeTab === "users" && canAccessTab(adminLevel, "users") && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <AdminUsersTable adminLevel={adminLevel} />
+              </motion.div>
+            )}
+            {activeTab === "mentorship" && canAccessTab(adminLevel, "mentorship") && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <AdminMentorAssignments />
               </motion.div>
             )}
             {activeTab === "startups" && canAccessTab(adminLevel, "startups") && (

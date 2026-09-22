@@ -64,11 +64,12 @@ export async function fetchConversations(userId: string): Promise<Conversation[]
 }
 
 export async function fetchMessages(conversationId: string): Promise<Message[]> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("messages")
     .select("*")
     .eq("conversation_id", conversationId)
     .order("created_at", { ascending: true });
+  if (error) throw error;
   return data ?? [];
 }
 

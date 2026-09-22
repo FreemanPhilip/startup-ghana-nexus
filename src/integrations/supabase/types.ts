@@ -1090,6 +1090,48 @@ export type Database = {
         }
         Relationships: []
       }
+      mentor_mentees: {
+        Row: {
+          assigned_by: string | null
+          created_at: string
+          id: string
+          mentee_id: string
+          mentor_id: string
+          note: string | null
+          requested_at: string
+          responded_at: string | null
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_by?: string | null
+          created_at?: string
+          id?: string
+          mentee_id: string
+          mentor_id: string
+          note?: string | null
+          requested_at?: string
+          responded_at?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_by?: string | null
+          created_at?: string
+          id?: string
+          mentee_id?: string
+          mentor_id?: string
+          note?: string | null
+          requested_at?: string
+          responded_at?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       mentor_payments: {
         Row: {
           amount: number

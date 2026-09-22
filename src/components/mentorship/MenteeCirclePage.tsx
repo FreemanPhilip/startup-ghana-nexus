@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CalendarDays, CheckCircle2, Circle, Clock3, MessageSquareText, PencilLine, Plus, Trash2, Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useCohort } from "@/hooks/useMentorship";
+import CohortRequestsPanel from "./CohortRequestsPanel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -96,6 +98,15 @@ const parseStorage = <T,>(key: string, fallback: T): T => {
 
 const MenteeCirclePage = () => {
   const { user } = useAuth();
+  // Cohort membership is now explicit (mentor_mentees). Bookings still feed the
+  // "last meeting" detail below, and are unioned in so a mentor whose project
+  // has not yet run the migration still sees everyone they have met.
+  const cohort = useCohort();
+  const activeCohortKey = cohort.active.map((m) => m.mentee_id).sort().join(",");
+  const activeCohortIds = useMemo(
+    () => (activeCohortKey ? activeCohortKey.split(",") : []),
+    [activeCohortKey],
+  );
   const [mentees, setMentees] = useState<MenteeProfile[]>([]);
   const [selectedMenteeId, setSelectedMenteeId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -111,6 +122,16 @@ const MenteeCirclePage = () => {
   const [meetingAgenda, setMeetingAgenda] = useState("");
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [editingMeetingId, setEditingMeetingId] = useState<string | null>(null);
+  const cohortPanelRef = useRef<HTMLDivElement | null>(null);
+
+  // Always give the CTA a visible effect: select the first mentee when there is
+  // one, and bring the cohort/requests column into view either way. Previously
+  // it silently did nothing whenever the cohort was empty — which is exactly
+  // when the button reads "Review your cohort".
+  const handleCohortCta = () => {
+    setSelectedMenteeId((current) => current ?? mentees[0]?.userId ?? null);
+    cohortPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -128,7 +149,9 @@ const MenteeCirclePage = () => {
 
         if (bookingsError) throw bookingsError;
 
-        const menteeIds = Array.from(new Set((bookings ?? []).map((b) => b.mentee_id).filter(Boolean))) as string[];
+        const bookingIds = (bookings ?? []).map((b) => b.mentee_id).filter(Boolean) as string[];
+        const cohortIds = activeCohortIds;
+        const menteeIds = Array.from(new Set([...cohortIds, ...bookingIds]));
 
         if (menteeIds.length === 0) {
           setMentees([]);
@@ -170,7 +193,7 @@ const MenteeCirclePage = () => {
     };
 
     loadData();
-  }, [user]);
+  }, [user, activeCohortIds]);
 
   useEffect(() => {
     const loadMentorshipData = async () => {
@@ -233,6 +256,7 @@ const MenteeCirclePage = () => {
 
   const openTaskCount = tasks.filter((task) => task.menteeId === selectedMentee?.userId && task.status !== "Done").length;
   const mentorSummary = buildMentorPipelineSummary({
+    pendingCount: cohort.pending.length,
     menteeCount: mentees.length,
     meetingCount: meetings.length,
     openTaskCount: tasks.filter((task) => task.status !== "Done").length,
@@ -597,7 +621,7 @@ const MenteeCirclePage = () => {
             <div className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary">
               {mentorSummary.engagementScore}% engagement
             </div>
-            <Button size="sm" className="bg-gradient-gold text-navy hover:opacity-90" onClick={() => setSelectedMenteeId((current) => current ?? mentees[0]?.userId ?? null)}>
+            <Button size="sm" className="bg-gradient-gold text-navy hover:opacity-90" onClick={handleCohortCta}>
               {mentorSummary.actionLabel}
             </Button>
           </div>
@@ -620,7 +644,13 @@ const MenteeCirclePage = () => {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
-        <div className="space-y-4">
+        <div ref={cohortPanelRef} className="space-y-4 scroll-mt-24">
+          <CohortRequestsPanel
+            requests={cohort.pending}
+            onRespond={cohort.respond}
+            busy={cohort.responding}
+          />
+
           <Card className="p-4">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="font-semibold">Your cohort</h2>
@@ -630,7 +660,8 @@ const MenteeCirclePage = () => {
             <div className="space-y-3">
               {mentees.length === 0 ? (
                 <div className="rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
-                  No mentees are connected yet. They will appear once you confirm mentorship sessions.
+                  No mentees yet. Founders appear here when they ask to join your cohort and you
+                  accept, when they book a session with you, or when an admin assigns them.
                 </div>
               ) : (
                 mentees.map((mentee) => (

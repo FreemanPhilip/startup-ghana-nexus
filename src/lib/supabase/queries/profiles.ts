@@ -16,19 +16,21 @@ const PROFILE_FIELDS = "user_id, full_name, headline, avatar_url, verification, 
 
 export async function getProfilesByIds(userIds: string[]): Promise<Map<string, EnrichedProfile>> {
   if (userIds.length === 0) return new Map();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("public_profiles")
     .select(PROFILE_FIELDS)
     .in("user_id", userIds);
+  if (error) throw error;
   return new Map(data?.map(p => [p.user_id, p]) ?? []);
 }
 
 export async function getProfileById(userId: string): Promise<EnrichedProfile | null> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("public_profiles")
     .select(PROFILE_FIELDS)
     .eq("user_id", userId)
     .maybeSingle();
+  if (error) throw error;
   return data;
 }
 

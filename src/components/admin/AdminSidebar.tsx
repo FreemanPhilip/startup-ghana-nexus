@@ -1,4 +1,4 @@
-import { Star, LayoutDashboard, Users, Building2, FileText, Shield, BarChart3, LogOut, Menu, X, Briefcase, MessageSquare, UserPlus, ScrollText } from "lucide-react";
+import { Star, LayoutDashboard, Users, Building2, FileText, Shield, BarChart3, LogOut, Menu, X, Briefcase, MessageSquare, UserPlus, ScrollText, GraduationCap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -17,6 +17,7 @@ interface AdminSidebarProps {
 const allNavItems = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
   { id: "users", label: "Users", icon: Users },
+  { id: "mentorship", label: "Mentor Assignments", icon: GraduationCap },
   { id: "startups", label: "Startups", icon: Building2 },
   { id: "opportunities", label: "Opportunities", icon: Briefcase },
   { id: "posts", label: "Posts", icon: MessageSquare },
