@@ -34,9 +34,13 @@ import StartupsIndexPage from "./pages/StartupsIndexPage";
 import StartupDetailPage from "./pages/StartupDetailPage";
 import SparkXIndexPage from "./pages/SparkXIndexPage";
 
-const LoadingSpinner = () => (
-  <div className="flex min-h-screen items-center justify-center">
+// Shows text as well as a spinner: a bare spinner on a dark background is
+// indistinguishable from a blank page, which makes "still loading" impossible
+// to tell apart from "the app crashed" when something goes wrong.
+const LoadingSpinner = ({ label = "Loading…" }: { label?: string }) => (
+  <div className="flex min-h-screen flex-col items-center justify-center gap-4">
     <div className="h-8 w-8 animate-spin rounded-full border-4 border-gold border-t-transparent" />
+    <p className="text-sm text-muted-foreground">{label}</p>
   </div>
 );
 
