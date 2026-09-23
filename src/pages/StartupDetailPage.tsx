@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 import type { Database } from "@/integrations/supabase/types";
 
 type IndexStartup = Database["public"]["Tables"]["index_startups"]["Row"];
@@ -50,102 +51,118 @@ const StartupDetailPage = () => {
   const [followTargetUserId, setFollowTargetUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const load = useCallback(async (showSpinner = true) => {
     if (!slug) return;
-    (async () => {
-      setLoading(true);
-      const { data: s } = await supabase
-        .from("index_startups")
-        .select("*")
-        .eq("slug", slug)
+    if (showSpinner) setLoading(true);
+    const { data: s } = await supabase
+      .from("index_startups")
+      .select("*")
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (!s) { setStartup(null); setLoading(false); return; }
+    setStartup(s);
+
+    // Funding rounds + investors
+    const { data: roundRows } = await supabase
+      .from("index_funding_rounds")
+      .select("*")
+      .eq("index_startup_id", s.id)
+      .order("announced_on", { ascending: false, nullsFirst: false });
+
+    const roundIds = (roundRows ?? []).map(r => r.id);
+    const riMap = new Map<string, { investor: Investor; is_lead: boolean }[]>();
+    if (roundIds.length) {
+      const { data: ri } = await supabase
+        .from("index_round_investors")
+        .select("round_id, is_lead, index_investor_id")
+        .in("round_id", roundIds);
+      const invIds = [...new Set((ri ?? []).map(r => r.index_investor_id))];
+      const { data: invs } = invIds.length
+        ? await supabase.from("index_investors").select("*").in("id", invIds)
+        : { data: [] as Investor[] };
+      const invMap = new Map((invs ?? []).map(i => [i.id, i]));
+      (ri ?? []).forEach(r => {
+        const inv = invMap.get(r.index_investor_id);
+        if (!inv) return;
+        const arr = riMap.get(r.round_id) ?? [];
+        arr.push({ investor: inv, is_lead: r.is_lead ?? false });
+        riMap.set(r.round_id, arr);
+      });
+    }
+    setRounds((roundRows ?? []).map(r => ({ ...r, investors: riMap.get(r.id) ?? [] })));
+
+    // Recent posts (only if claimed)
+    let ownerUserId: string | null = null;
+    if (s.claimed_by_startup_id) {
+      const { data: memberStartup } = await supabase
+        .from("startups")
+        .select("created_by")
+        .eq("id", s.claimed_by_startup_id)
         .maybeSingle();
+      ownerUserId = memberStartup?.created_by ?? null;
 
-      if (!s) { setStartup(null); setLoading(false); return; }
-      setStartup(s);
+      const { data: rawPosts } = await supabase
+        .from("posts")
+        .select("id, content, created_at, author_id")
+        .eq("startup_id", s.claimed_by_startup_id)
+        .order("created_at", { ascending: false })
+        .limit(5);
+      const authorIds = [...new Set((rawPosts ?? []).map(p => p.author_id))];
+      const { data: profiles } = authorIds.length
+        ? await supabase.from("public_profiles").select("user_id, full_name, avatar_url").in("user_id", authorIds)
+        : { data: [] as any[] };
+      const pMap = new Map((profiles ?? []).map((p: any) => [p.user_id, p]));
+      setPosts(
+        (rawPosts ?? []).map(p => ({
+          id: p.id,
+          content: p.content,
+          created_at: p.created_at,
+          author_name: pMap.get(p.author_id)?.full_name ?? null,
+          author_avatar: pMap.get(p.author_id)?.avatar_url ?? null,
+        }))
+      );
 
-      // Funding rounds + investors
-      const { data: roundRows } = await supabase
-        .from("index_funding_rounds")
-        .select("*")
-        .eq("index_startup_id", s.id)
-        .order("announced_on", { ascending: false, nullsFirst: false });
-
-      const roundIds = (roundRows ?? []).map(r => r.id);
-      const riMap = new Map<string, { investor: Investor; is_lead: boolean }[]>();
-      if (roundIds.length) {
-        const { data: ri } = await supabase
-          .from("index_round_investors")
-          .select("round_id, is_lead, index_investor_id")
-          .in("round_id", roundIds);
-        const invIds = [...new Set((ri ?? []).map(r => r.index_investor_id))];
-        const { data: invs } = invIds.length
-          ? await supabase.from("index_investors").select("*").in("id", invIds)
-          : { data: [] as Investor[] };
-        const invMap = new Map((invs ?? []).map(i => [i.id, i]));
-        (ri ?? []).forEach(r => {
-          const inv = invMap.get(r.index_investor_id);
-          if (!inv) return;
-          const arr = riMap.get(r.round_id) ?? [];
-          arr.push({ investor: inv, is_lead: r.is_lead ?? false });
-          riMap.set(r.round_id, arr);
-        });
-      }
-      setRounds((roundRows ?? []).map(r => ({ ...r, investors: riMap.get(r.id) ?? [] })));
-
-      // Recent posts (only if claimed)
-      let ownerUserId: string | null = null;
-      if (s.claimed_by_startup_id) {
-        const { data: memberStartup } = await supabase
-          .from("startups")
-          .select("created_by")
-          .eq("id", s.claimed_by_startup_id)
-          .maybeSingle();
-        ownerUserId = memberStartup?.created_by ?? null;
-
-        const { data: rawPosts } = await supabase
-          .from("posts")
-          .select("id, content, created_at, author_id")
-          .eq("startup_id", s.claimed_by_startup_id)
-          .order("created_at", { ascending: false })
-          .limit(5);
-        const authorIds = [...new Set((rawPosts ?? []).map(p => p.author_id))];
-        const { data: profiles } = authorIds.length
-          ? await supabase.from("public_profiles").select("user_id, full_name, avatar_url").in("user_id", authorIds)
-          : { data: [] as any[] };
-        const pMap = new Map((profiles ?? []).map((p: any) => [p.user_id, p]));
-        setPosts(
-          (rawPosts ?? []).map(p => ({
-            id: p.id,
-            content: p.content,
-            created_at: p.created_at,
-            author_name: pMap.get(p.author_id)?.full_name ?? null,
-            author_avatar: pMap.get(p.author_id)?.avatar_url ?? null,
-          }))
-        );
-
-        // Follower count on the claimed startup's owner
-        if (ownerUserId) {
-          setFollowTargetUserId(ownerUserId);
-          const { count } = await supabase
+      // Follower count on the claimed startup's owner
+      if (ownerUserId) {
+        setFollowTargetUserId(ownerUserId);
+        const { count } = await supabase
+          .from("follows")
+          .select("*", { count: "exact", head: true })
+          .eq("following_id", ownerUserId);
+        setFollowerCount(count ?? 0);
+        if (user) {
+          const { data: f } = await supabase
             .from("follows")
-            .select("*", { count: "exact", head: true })
-            .eq("following_id", ownerUserId);
-          setFollowerCount(count ?? 0);
-          if (user) {
-            const { data: f } = await supabase
-              .from("follows")
-              .select("follower_id")
-              .eq("follower_id", user.id)
-              .eq("following_id", ownerUserId)
-              .maybeSingle();
-            setIsFollowing(!!f);
-          }
+            .select("follower_id")
+            .eq("follower_id", user.id)
+            .eq("following_id", ownerUserId)
+            .maybeSingle();
+          setIsFollowing(!!f);
         }
       }
+    }
 
-      setLoading(false);
-    })();
+    setLoading(false);
   }, [slug, user]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  // Filtered to this one startup rather than watching the whole table: a
+  // detail page has no reason to refetch because some unrelated company was
+  // edited, and unfiltered subscriptions on public pages are what runs up
+  // egress. Refresh without the spinner so the page does not blank out.
+  const refresh = () => {
+    void load(false);
+  };
+  useRealtimeSubscription({ table: "index_startups", filter: startup ? `id=eq.${startup.id}` : undefined }, refresh, !!startup);
+  useRealtimeSubscription(
+    { table: "index_funding_rounds", filter: startup ? `index_startup_id=eq.${startup.id}` : undefined },
+    refresh,
+    !!startup,
+  );
 
   const toggleFollow = async () => {
     if (!user) { toast.error("Sign in to follow"); return; }
