@@ -95,14 +95,22 @@ On **sparkxtalent**:
 
 ```sh
 supabase secrets set SPARKX_SSO_SHARED_SECRET="<the same secret>"
-supabase secrets set SPARKX_SSO_ALLOWED_REDIRECTS="https://sparkxglobal.net/auth/talent/callback"
+supabase secrets set SPARKX_SSO_ALLOWED_REDIRECTS="https://sparkxglobal.net/auth/talent/callback,https://www.sparkxglobal.net/auth/talent/callback"
 supabase functions deploy sso-issue-token
 ```
 
-`SPARKX_SSO_ALLOWED_REDIRECTS` is an **exact-match** allowlist — put the full
-callback URL of every host that may receive an assertion (production, and any
-preview/staging host you want to work). A prefix check would let a crafted
-`redirect_uri` carry the assertion somewhere you don't control.
+`SPARKX_SSO_ALLOWED_REDIRECTS` is an **exact-match** allowlist. A prefix check
+would let a crafted `redirect_uri` carry the assertion somewhere you don't
+control, so every acceptable URL must be listed in full.
+
+**Apex and `www` are different entries.** The callback URL is built from
+`window.location.origin`, so it is whichever host the visitor actually
+browsed. If both `sparkxglobal.net` and `www.sparkxglobal.net` serve this app,
+both need an entry — otherwise visitors on the missing one are rejected with
+"That sign-in destination is not allowed". Same for any preview or staging host.
+
+That rejection now names the exact URL it refused, so the fix is to copy that
+value into the allowlist and redeploy `sso-issue-token`.
 
 This app is served from **`https://sparkxglobal.net`**, so that is the origin the
 browser sends. The `*.vercel.app` deployment URL is not what users visit, and

@@ -86,7 +86,7 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="dark flex min-h-screen bg-gradient-hero">
+    <div className="dark flex min-h-screen bg-gradient-hero text-foreground">
       {/* Left decorative panel */}
       <div className="hidden w-1/2 items-center justify-center lg:flex">
         <motion.div
@@ -251,7 +251,7 @@ const AuthPage = () => {
           </div>
 
           <p className="mt-4 text-center text-xs text-muted-foreground">
-            By continuing, you agree to GSE's Terms of Service and Privacy Policy.
+            By continuing, you agree to SparkX Index's Terms of Service and Privacy Policy.
           </p>
         </motion.div>
       </div>
