@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface IndexStartup {
@@ -116,6 +117,16 @@ async function fetchStartupRounds(startupIds: string[]): Promise<Map<string, Fun
 }
 
 export function useIndexStartups(filters: StartupFilters) {
+  const queryClient = useQueryClient();
+
+  // The directory is admin-curated, so entries can change while people browse.
+  useRealtimeSubscription({ table: "index_startups" }, () =>
+    queryClient.invalidateQueries({ queryKey: ["indexStartups"] }),
+  );
+  useRealtimeSubscription({ table: "index_funding_rounds" }, () =>
+    queryClient.invalidateQueries({ queryKey: ["startupRounds"] }),
+  );
+
   return useQuery({
     queryKey: ["indexStartups", filters],
     queryFn: async (): Promise<IndexStartup[]> => {

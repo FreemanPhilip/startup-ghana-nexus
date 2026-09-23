@@ -28,6 +28,8 @@ import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
 import { parseDashboardPath } from "@/lib/roleRouting";
 import { useStartups } from "@/hooks/useStartups";
 import { buildFounderDashboardSummary } from "@/lib/dashboardMetrics";
+import { useMyMentorships } from "@/hooks/useMentorship";
+import { useOpenOpportunityCount } from "@/hooks/useEcosystemCounts";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -47,6 +49,8 @@ const FounderDashboardPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeIdentity, setActiveIdentity] = useState<PostingIdentity>({ type: "personal" });
   const { myStartups, loading: startupsLoading, refetch: refetchStartups } = useStartups();
+  const { active: activeMentorships } = useMyMentorships();
+  const { count: openOpportunities } = useOpenOpportunityCount();
   const [showFounderModal, setShowFounderModal] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
   const [founderModalShown, setFounderModalShown] = useState(false);
@@ -90,7 +94,11 @@ const FounderDashboardPage = () => {
   };
 
   const isWideTab = ["mentors", "investors", "network", "opportunities", "groups", "profile", "my-startups", "startup-profile", "mentor-briefing", "my-sessions", "public-profile", "settings"].includes(activeTab);
-  const founderSummary = buildFounderDashboardSummary({ startupCount: myStartups.length, mentorConnections: 0, opportunityCount: 0 });
+  const founderSummary = buildFounderDashboardSummary({
+    startupCount: myStartups.length,
+    mentorConnections: activeMentorships.length,
+    opportunityCount: openOpportunities,
+  });
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">

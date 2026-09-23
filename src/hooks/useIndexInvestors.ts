@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface IndexInvestor {
@@ -58,6 +59,12 @@ function formatCheckSize(amount: number | null): string {
 }
 
 export function useIndexInvestors(filters: InvestorFilters) {
+  const queryClient = useQueryClient();
+
+  useRealtimeSubscription({ table: "index_investors" }, () =>
+    queryClient.invalidateQueries({ queryKey: ["indexInvestors"] }),
+  );
+
   return useQuery({
     queryKey: ["indexInvestors", filters],
     queryFn: async (): Promise<IndexInvestor[]> => {

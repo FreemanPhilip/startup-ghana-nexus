@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 import {
   fetchStartupsByUser,
   createStartup,
@@ -21,6 +22,18 @@ export function useStartups() {
     queryFn: () => fetchStartupsByUser(user!.id),
     enabled: !!user,
   });
+
+  // Team changes and profile edits land without a refresh.
+  useRealtimeSubscription(
+    { table: "startups" },
+    () => queryClient.invalidateQueries({ queryKey: ["startups", user?.id] }),
+    !!user,
+  );
+  useRealtimeSubscription(
+    { table: "startup_members" },
+    () => queryClient.invalidateQueries({ queryKey: ["startups", user?.id] }),
+    !!user,
+  );
 
   const addStartup = useMutation({
     mutationFn: (input: Parameters<typeof createStartup>[0]) => createStartup(input),

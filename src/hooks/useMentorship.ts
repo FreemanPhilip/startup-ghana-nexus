@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 import { toast } from "@/hooks/use-toast";
 import {
   fetchCohort,
@@ -29,6 +30,13 @@ export function useCohort() {
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["cohort", user?.id] });
+
+  // A founder asking to join should show up for the mentor immediately.
+  useRealtimeSubscription(
+    { table: "mentor_mentees", filter: user ? `mentor_id=eq.${user.id}` : undefined },
+    invalidate,
+    !!user,
+  );
 
   const respond = useMutation({
     mutationFn: ({ id, accept }: { id: string; accept: boolean }) => respondToRequest(id, accept),
@@ -78,6 +86,12 @@ export function useMyMentorships() {
     queryFn: () => fetchMyMentorships(user!.id),
     enabled: !!user,
   });
+
+  useRealtimeSubscription(
+    { table: "mentor_mentees", filter: user ? `mentee_id=eq.${user.id}` : undefined },
+    () => queryClient.invalidateQueries({ queryKey: ["myMentorships", user?.id] }),
+    !!user,
+  );
 
   const leave = useMutation({
     mutationFn: (id: string) => endMentorship(id),
@@ -190,11 +204,19 @@ export function useMentorAssignment() {
 
 /** Admin: read any mentor's cohort. */
 export function useAdminCohort(mentorId: string | null) {
+  const queryClient = useQueryClient();
+
   const { data = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["adminCohort", mentorId],
     queryFn: () => fetchCohort(mentorId!),
     enabled: !!mentorId,
   });
+
+  useRealtimeSubscription(
+    { table: "mentor_mentees", filter: mentorId ? `mentor_id=eq.${mentorId}` : undefined },
+    () => queryClient.invalidateQueries({ queryKey: ["adminCohort", mentorId] }),
+    !!mentorId,
+  );
 
   return { cohort: data, loading: isLoading, isError, refetch };
 }

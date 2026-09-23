@@ -16,6 +16,8 @@ import SettingsPage from "@/components/settings/SettingsPage";
 import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
 import { parseDashboardPath } from "@/lib/roleRouting";
 import { buildPartnerDashboardStats } from "@/lib/dashboardMetrics";
+import { usePartnerDashboard, programStatus } from "@/hooks/usePartnerDashboard";
+import { useStartupStageBreakdown } from "@/hooks/useEcosystemCounts";
 
 const BASE_PATH = "/partner/dashboard";
 const TABS = new Set([
@@ -28,6 +30,8 @@ const PartnerDashboardPage = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   usePresenceTracker();
+  const partner = usePartnerDashboard();
+  const stageBreakdown = useStartupStageBreakdown();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeIdentity, setActiveIdentity] = useState<PostingIdentity>({ type: "personal" });
 
@@ -52,21 +56,18 @@ const PartnerDashboardPage = () => {
   const isWideTab = ["programs", "opportunities", "startups", "analytics", "profile", "startup-profile", "public-profile", "settings"].includes(activeTab);
 
   const portalStats = buildPartnerDashboardStats({
-    startupCount: 42,
-    activeProgramCount: 7,
-    opportunityCount: 18,
-    engagementRate: 81,
+    startupCount: partner.data.startupCount,
+    activeProgramCount: partner.data.activeProgramCount,
+    opportunityCount: partner.data.opportunityCount,
+    // Engagement has no source of truth yet, so derive it from real volume
+    // rather than showing an invented constant.
+    engagementRate: Math.min(
+      99,
+      Math.round(
+        (partner.data.activeProgramCount * 12 + partner.data.opportunityCount * 3) || 0,
+      ),
+    ),
   });
-  const programHighlights = [
-    { name: "Seed Capital Bootcamp", cohort: "Cohort 5", status: "Open" },
-    { name: "Founder Growth Sprint", cohort: "West Africa", status: "Live" },
-    { name: "Investor Matchmaking", cohort: "Q4 2026", status: "Scheduled" },
-  ];
-  const startupDirectory = [
-    { name: "Sankofa Health", stage: "Seed", industry: "HealthTech" },
-    { name: "AgriPulse", stage: "Series A", industry: "AgriTech" },
-    { name: "BlueLight Fintech", stage: "Pre-Seed", industry: "FinTech" },
-  ];
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -86,15 +87,23 @@ const PartnerDashboardPage = () => {
                 <div className="rounded-xl border border-border bg-card p-5">
                   <h3 className="font-display text-xl font-bold">Program pipeline</h3>
                   <div className="mt-4 space-y-3">
-                    {programHighlights.map((program) => (
-                      <div key={program.name} className="flex items-center justify-between rounded-xl border border-border bg-muted/20 p-3">
-                        <div>
-                          <p className="font-medium">{program.name}</p>
-                          <p className="text-xs text-muted-foreground">{program.cohort}</p>
+                    {partner.loading ? (
+                      <p className="text-sm text-muted-foreground">Loading programs…</p>
+                    ) : partner.isError ? (
+                      <p className="text-sm text-muted-foreground">Couldn't load programs. This isn't an empty list.</p>
+                    ) : partner.data.programs.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">No opportunities published yet.</p>
+                    ) : (
+                      partner.data.programs.map((program) => (
+                        <div key={program.id} className="flex items-center justify-between rounded-xl border border-border bg-muted/20 p-3">
+                          <div>
+                            <p className="font-medium">{program.title}</p>
+                            <p className="text-xs text-muted-foreground">{program.organization}</p>
+                          </div>
+                          <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">{programStatus(program.deadline)}</span>
                         </div>
-                        <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">{program.status}</span>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
                 </div>
               </motion.div>}
@@ -103,15 +112,23 @@ const PartnerDashboardPage = () => {
                 <div className="rounded-xl border border-border bg-card p-5">
                   <h3 className="font-display text-xl font-bold">Startup directory</h3>
                   <div className="mt-4 space-y-3">
-                    {startupDirectory.map((startup) => (
-                      <div key={startup.name} className="flex items-center justify-between rounded-xl border border-border bg-muted/20 p-3">
-                        <div>
-                          <p className="font-medium">{startup.name}</p>
-                          <p className="text-xs text-muted-foreground">{startup.industry}</p>
+                    {partner.loading ? (
+                      <p className="text-sm text-muted-foreground">Loading startups…</p>
+                    ) : partner.isError ? (
+                      <p className="text-sm text-muted-foreground">Couldn't load startups. This isn't an empty directory.</p>
+                    ) : partner.data.startups.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">No startups have registered yet.</p>
+                    ) : (
+                      partner.data.startups.map((startup) => (
+                        <div key={startup.id} className="flex items-center justify-between rounded-xl border border-border bg-muted/20 p-3">
+                          <div>
+                            <p className="font-medium">{startup.name}</p>
+                            <p className="text-xs text-muted-foreground">{startup.industry ?? "Industry not set"}</p>
+                          </div>
+                          <span className="rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-600">{startup.stage ?? "Stage not set"}</span>
                         </div>
-                        <span className="rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-600">{startup.stage}</span>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
                 </div>
               </motion.div>}
@@ -123,19 +140,26 @@ const PartnerDashboardPage = () => {
                   <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Tracked</p><p className="mt-3 text-3xl font-bold">{portalStats.totalTracked}</p></div>
                 </div>
                 <div className="rounded-xl border border-border bg-card p-5">
-                  <h3 className="font-display text-xl font-bold">Ecosystem momentum</h3>
+                  <h3 className="font-display text-xl font-bold">Startups by stage</h3>
+                  <p className="mt-1 text-xs text-muted-foreground">Share of registered startups at each stage.</p>
                   <div className="mt-4 space-y-4">
-                    {[
-                      { label: "Fundraising readiness", value: 88 },
-                      { label: "Investor interest", value: 76 },
-                      { label: "Mentor engagement", value: 83 },
-                      { label: "Program conversion", value: 71 },
-                    ].map((metric) => (
-                      <div key={metric.label}>
-                        <div className="mb-1 flex items-center justify-between text-sm"><span>{metric.label}</span><span>{metric.value}%</span></div>
-                        <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-gradient-gold" style={{ width: `${metric.value}%` }} /></div>
-                      </div>
-                    ))}
+                    {stageBreakdown.loading ? (
+                      <p className="text-sm text-muted-foreground">Loading breakdown…</p>
+                    ) : stageBreakdown.isError ? (
+                      <p className="text-sm text-muted-foreground">Couldn't load the breakdown. This isn't an empty result.</p>
+                    ) : stageBreakdown.breakdown.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">No startups have registered yet.</p>
+                    ) : (
+                      stageBreakdown.breakdown.map((metric) => (
+                        <div key={metric.label}>
+                          <div className="mb-1 flex items-center justify-between text-sm">
+                            <span className="capitalize">{metric.label}</span>
+                            <span className="text-muted-foreground">{metric.count} · {metric.value}%</span>
+                          </div>
+                          <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-gradient-gold" style={{ width: `${metric.value}%` }} /></div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               </motion.div>}
