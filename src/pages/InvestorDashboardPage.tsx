@@ -19,6 +19,8 @@ import SettingsPage from "@/components/settings/SettingsPage";
 import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
 import { parseDashboardPath } from "@/lib/roleRouting";
 import { buildInvestorDashboardSummary } from "@/lib/dashboardMetrics";
+import { useInvestorTracking } from "@/hooks/useInvestorTracking";
+import { useConnections } from "@/hooks/useConnections";
 
 const BASE_PATH = "/investor/dashboard";
 const TABS = new Set([
@@ -33,6 +35,8 @@ const InvestorDashboardPage = () => {
   usePresenceTracker();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeIdentity, setActiveIdentity] = useState<PostingIdentity>({ type: "personal" });
+  const { shortlisted } = useInvestorTracking();
+  const { pendingSent, connections } = useConnections();
 
   const { tab: rawTab, id } = parseDashboardPath(pathname, BASE_PATH);
   const activeTab = TABS.has(rawTab) ? rawTab : null;
@@ -49,9 +53,9 @@ const InvestorDashboardPage = () => {
 
   const isWideTab = ["discover", "saved", "portfolio", "profile", "startup-profile", "public-profile", "settings"].includes(activeTab);
   const investorSummary = buildInvestorDashboardSummary({
-    savedStartups: 0,
-    pendingRequests: 0,
-    portfolioCount: 0,
+    savedStartups: shortlisted.length,
+    pendingRequests: pendingSent.length,
+    portfolioCount: connections.size,
   });
 
   return (

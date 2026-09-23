@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import OpportunityCard, { type OpportunityData } from "./OpportunityCard";
@@ -52,6 +53,15 @@ const OpportunitiesPage = ({ initialOpportunityId, onDeepLinkConsumed }: Opportu
   }, [user]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  // New and edited opportunities appear without a refresh, and the "applied"
+  // badge updates as soon as an application is recorded.
+  useRealtimeSubscription({ table: "opportunities" }, fetchData);
+  useRealtimeSubscription(
+    { table: "opportunity_applications", filter: user ? `user_id=eq.${user.id}` : undefined },
+    fetchData,
+    !!user,
+  );
 
   // Handle deep-link from other pages (e.g. home feed)
   useEffect(() => {
