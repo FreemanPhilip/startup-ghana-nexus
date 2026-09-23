@@ -82,7 +82,7 @@ const TalentCallbackPage = () => {
   }, [navigate]);
 
   return (
-    <div className="dark flex min-h-screen items-center justify-center bg-gradient-hero px-6">
+    <div className="dark flex min-h-screen items-center justify-center bg-gradient-hero px-6 text-foreground">
       <div className="w-full max-w-md rounded-2xl border border-border/20 bg-card p-8 text-center shadow-2xl">
         {error ? (
           <>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Shield, Upload, Linkedin, FileText } from "lucide-react";
+import { Shield, Upload, Linkedin, FileText, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,10 +11,11 @@ import { toast } from "sonner";
 interface Props {
   onNext: () => void;
   onSkip: () => void;
+  onBack?: () => void;
   saving: boolean;
 }
 
-const OnboardingKYCStep = ({ onNext, onSkip, saving: parentSaving }: Props) => {
+const OnboardingKYCStep = ({ onNext, onSkip, onBack, saving: parentSaving }: Props) => {
   const { user } = useAuth();
   const [localSaving, setLocalSaving] = useState(false);
   const [linkedinUrl, setLinkedinUrl] = useState("");
@@ -69,6 +70,17 @@ const OnboardingKYCStep = ({ onNext, onSkip, saving: parentSaving }: Props) => {
 
   return (
     <div className="w-full max-w-md rounded-2xl border border-border/20 bg-card p-8 shadow-2xl">
+      {onBack && (
+        <button
+          type="button"
+          onClick={onBack}
+          disabled={isSaving}
+          className="mb-4 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Back to profile
+        </button>
+      )}
+
       <div className="flex items-center gap-3 mb-2">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gold/10">
           <Shield className="h-5 w-5 text-gold" />
@@ -80,7 +92,7 @@ const OnboardingKYCStep = ({ onNext, onSkip, saving: parentSaving }: Props) => {
       </div>
 
       <p className="mt-4 text-sm text-muted-foreground">
-        Submit your details for verification. This helps build trust with other members. You can skip this and complete it later.
+        This is the last step. Verification helps other members trust you — you can skip it now and complete it any time from your profile.
       </p>
 
       <div className="mt-6 space-y-5">
@@ -155,7 +167,7 @@ const OnboardingKYCStep = ({ onNext, onSkip, saving: parentSaving }: Props) => {
           disabled={isSaving || (!linkedinUrl.trim() && !docFile)}
           className="flex-1 bg-gradient-gold font-semibold text-navy hover:opacity-90"
         >
-          {isSaving ? "Submitting..." : "Submit & Continue →"}
+          {isSaving ? "Submitting..." : "Submit & finish"}
         </Button>
       </div>
     </div>

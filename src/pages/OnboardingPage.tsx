@@ -9,18 +9,21 @@ import { getPostAuthRoute, getPrimaryDashboardRole } from "@/lib/roleRouting";
 import OnboardingRoleStep from "@/components/onboarding/OnboardingRoleStep";
 import OnboardingProfileStep from "@/components/onboarding/OnboardingProfileStep";
 import OnboardingKYCStep from "@/components/onboarding/OnboardingKYCStep";
-import OnboardingMembershipStep from "@/components/onboarding/OnboardingMembershipStep";
+import OnboardingStepper from "@/components/onboarding/OnboardingStepper";
 import type { Database } from "@/integrations/supabase/types";
 
 type OnboardingStep = Database["public"]["Enums"]["onboarding_step"];
 
-const STEP_ORDER: OnboardingStep[] = ["role_selection", "profile_details", "kyc", "subscription", "completed"];
+// "subscription" is intentionally absent: membership selection was removed from
+// onboarding. The enum value still exists in the database, so anyone who was
+// parked on that step is migrated to "completed" below rather than stranded on
+// a screen that no longer renders.
+const STEP_ORDER: OnboardingStep[] = ["role_selection", "profile_details", "kyc", "completed"];
 
 const stepLabels: Record<string, string> = {
   role_selection: "Role",
   profile_details: "Profile",
   kyc: "Verification",
-  subscription: "Membership",
 };
 
 const OnboardingPage = () => {
@@ -29,6 +32,18 @@ const OnboardingPage = () => {
   const [saving, setSaving] = useState(false);
 
   const currentStep: OnboardingStep = profile?.onboarding_step || "role_selection";
+
+  // Membership was removed from onboarding. Anyone whose profile still points at
+  // that step would otherwise land on a screen that no longer renders, so finish
+  // the flow for them.
+  useEffect(() => {
+    if (!user || currentStep !== "subscription") return;
+    supabase
+      .from("profiles")
+      .update({ onboarding_step: "completed" })
+      .eq("user_id", user.id)
+      .then(() => refreshProfile());
+  }, [user, currentStep, refreshProfile]);
 
   // If roles already assigned (e.g. from old signup with primary_role metadata), skip role_selection
   useEffect(() => {
@@ -86,7 +101,7 @@ const OnboardingPage = () => {
       if (error) throw error;
       await refreshProfile();
       if (nextStep === "completed") {
-        toast.success("Welcome to GSE! 🎉");
+        toast.success("Welcome to SparkX Index! 🎉");
         const primary = getPrimaryDashboardRole(roles);
         if (primary) {
           navigate(getPostAuthRoute(roles, { onboarding_step: "completed" }), { replace: true });
@@ -102,8 +117,12 @@ const OnboardingPage = () => {
   const stepIndex = STEP_ORDER.indexOf(currentStep);
   const displaySteps = STEP_ORDER.filter(s => s !== "completed");
 
+  // Forced dark, matching AuthPage and the SSO callback: onboarding follows
+  // straight on from sign-up, so the surface should not change appearance
+  // halfway through. Without this the card rendered light on the dark gradient
+  // for anyone not already on the dark theme.
   return (
-    <div className="flex min-h-screen bg-gradient-hero">
+    <div className="dark flex min-h-screen bg-gradient-hero text-foreground">
       <div className="container flex flex-col items-center justify-center py-12">
         {/* Logo */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 flex items-center gap-2">
@@ -114,24 +133,11 @@ const OnboardingPage = () => {
         </motion.div>
 
         {/* Progress indicator */}
-        <div className="mb-8 flex items-center gap-2">
-          {displaySteps.map((step, i) => (
-            <div key={step} className="flex items-center gap-2">
-              <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                i <= stepIndex ? "bg-gold text-navy" : "bg-muted text-muted-foreground"
-              }`}>
-                {i + 1}
-              </div>
-              <span className={`hidden sm:inline text-xs font-medium ${
-                i <= stepIndex ? "text-gold" : "text-muted-foreground"
-              }`}>
-                {stepLabels[step]}
-              </span>
-              {i < displaySteps.length - 1 && (
-                <div className={`h-px w-8 ${i < stepIndex ? "bg-gold" : "bg-muted"}`} />
-              )}
-            </div>
-          ))}
+        <div className="mb-8 flex w-full justify-center">
+          <OnboardingStepper
+            steps={displaySteps.map((step) => ({ key: step, label: stepLabels[step] }))}
+            currentIndex={stepIndex}
+          />
         </div>
 
         {/* Step content */}
@@ -148,12 +154,7 @@ const OnboardingPage = () => {
           )}
           {currentStep === "kyc" && (
             <motion.div key="kyc" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-              <OnboardingKYCStep onNext={() => advanceStep("subscription")} onSkip={() => advanceStep("subscription")} saving={saving} />
-            </motion.div>
-          )}
-          {currentStep === "subscription" && (
-            <motion.div key="membership" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-              <OnboardingMembershipStep onNext={() => advanceStep("completed")} saving={saving} />
+              <OnboardingKYCStep onNext={() => advanceStep("completed")} onSkip={() => advanceStep("completed")} onBack={() => advanceStep("profile_details")} saving={saving} />
             </motion.div>
           )}
         </AnimatePresence>
