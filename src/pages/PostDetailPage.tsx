@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 import PostContentRenderer from "@/components/dashboard/PostContentRenderer";
 import ImageCarousel from "@/components/dashboard/ImageCarousel";
 import { formatDistanceToNow } from "date-fns";
@@ -34,6 +35,19 @@ const categoryLabels: Record<string, string> = {
   article: "Article",
 };
 
+const POST_SELECT =
+  "id, author_id, category, content, created_at, image_url, image_urls, video_url, author:public_profiles!posts_author_id_fkey(full_name, avatar_url)";
+
+async function fetchPost(postId: string): Promise<PublicPost | null> {
+  const { data, error } = await supabase
+    .from("posts")
+    .select(POST_SELECT)
+    .eq("id", postId)
+    .maybeSingle();
+  if (error || !data) return null;
+  return data as unknown as PublicPost;
+}
+
 const PostDetailPage = () => {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
@@ -49,24 +63,39 @@ const PostDetailPage = () => {
     }
 
     let cancelled = false;
-    (async () => {
-      const { data, error: fetchError } = await supabase
-        .from("posts")
-        .select("id, author_id, category, content, created_at, image_url, image_urls, video_url, author:public_profiles!posts_author_id_fkey(full_name, avatar_url)")
-        .eq("id", postId)
-        .maybeSingle();
-
+    void (async () => {
+      const data = await fetchPost(postId);
       if (cancelled) return;
-      if (fetchError || !data) {
+      if (!data) {
         setError("That post could not be found.");
       } else {
-        setPost(data as unknown as PublicPost);
+        setPost(data);
       }
       setLoading(false);
     })();
 
     return () => { cancelled = true; };
   }, [postId]);
+
+  // An author editing or deleting the post should be reflected for whoever is
+  // reading it. Filtered to this post so the page is not woken by every post
+  // on the platform.
+  useRealtimeSubscription(
+    { table: "posts", filter: postId ? `id=eq.${postId}` : undefined },
+    () => {
+      void (async () => {
+        const data = await fetchPost(postId!);
+        // A deleted post should say so rather than leaving stale content up.
+        if (!data) {
+          setPost(null);
+          setError("That post is no longer available.");
+          return;
+        }
+        setPost(data);
+      })();
+    },
+    !!postId,
+  );
 
   const allImages: string[] = [
     ...(post?.image_urls || []),

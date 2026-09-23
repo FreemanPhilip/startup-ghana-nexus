@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 import DataLoadError from "@/components/DataLoadError";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -40,8 +41,8 @@ const StartupsIndexPage = () => {
   const [location, setLocation] = useState("");
   const [raisingOnly, setRaisingOnly] = useState(false);
 
-  const loadStartups = useCallback(async () => {
-    setLoading(true);
+  const loadStartups = useCallback(async (showSpinner = true) => {
+    if (showSpinner) setLoading(true);
     setLoadError(false);
     const { data, error } = await supabase
       .from("index_startups")
@@ -60,6 +61,14 @@ const StartupsIndexPage = () => {
   useEffect(() => {
     void loadStartups();
   }, [loadStartups]);
+
+  // The directory is public and edited by admins while people browse it, so a
+  // newly published startup should appear without the visitor reloading.
+  // Refresh silently: flashing skeletons over a list someone is reading is
+  // worse than the row arriving a moment late.
+  useRealtimeSubscription({ table: "index_startups" }, () => {
+    void loadStartups(false);
+  });
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
