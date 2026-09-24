@@ -50,7 +50,7 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
           <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10">
             <Avatar className="h-20 w-20 border-4 border-card shadow-lg">
               <AvatarImage src={mentor.avatar_url || undefined} />
-              <AvatarFallback className="bg-gradient-gold text-2xl font-semibold text-primary-foreground">
+              <AvatarFallback className="bg-gradient-brand text-2xl font-semibold text-primary-foreground">
                 {initials}
               </AvatarFallback>
             </Avatar>

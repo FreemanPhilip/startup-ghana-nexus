@@ -174,7 +174,7 @@ const AISearchChat = () => {
               {/* Header */}
               <div className="flex items-center justify-between border-b border-border px-5 py-3">
                 <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-gold">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-brand">
                     <Sparkles className="h-3.5 w-3.5 text-navy" />
                   </div>
                   <div>
@@ -213,7 +213,7 @@ const AISearchChat = () => {
                 {messages.map((msg, i) => (
                   <div key={i} className={`flex gap-3 ${msg.role === "user" ? "justify-end" : ""}`}>
                     {msg.role === "assistant" && (
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-gold">
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-brand">
                         <Bot className="h-3.5 w-3.5 text-navy" />
                       </div>
                     )}
@@ -240,7 +240,7 @@ const AISearchChat = () => {
 
                 {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
                   <div className="flex gap-3">
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-gold">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-brand">
                       <Bot className="h-3.5 w-3.5 text-navy" />
                     </div>
                     <div className="rounded-xl bg-muted px-4 py-3">
@@ -265,7 +265,7 @@ const AISearchChat = () => {
                   type="submit"
                   size="icon"
                   disabled={!query.trim() || isLoading}
-                  className="bg-gradient-gold text-white hover:opacity-90 shrink-0"
+                  className="bg-gradient-brand text-white hover:opacity-90 shrink-0"
                 >
                   <Send className="h-4 w-4" />
                 </Button>

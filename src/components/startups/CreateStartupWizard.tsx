@@ -316,7 +316,7 @@ const CreateStartupWizard = ({ open, onOpenChange, onCreated }: CreateStartupWiz
               <Button variant="ghost" onClick={() => setStep(2)} className="gap-2">
                 <ArrowLeft className="h-4 w-4" /> Back
               </Button>
-              <Button onClick={handleSubmit} disabled={submitting} className="gap-2 bg-gradient-gold text-white font-semibold hover:opacity-90">
+              <Button onClick={handleSubmit} disabled={submitting} className="gap-2 bg-gradient-brand text-white font-semibold hover:opacity-90">
                 {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Building2 className="h-4 w-4" />}
                 {submitting ? "Creating..." : "Create Startup"}
               </Button>

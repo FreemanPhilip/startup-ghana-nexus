@@ -91,7 +91,7 @@ const PremiumUpgradeDialog = ({ open, onOpenChange }: PremiumUpgradeDialogProps)
         <div className="space-y-5 pt-2">
           {isPremium ? (
             <div className="rounded-xl border-2 border-primary bg-primary/5 p-4 text-center">
-              <Badge className="bg-gradient-gold text-primary-foreground border-0 mb-2">Your Plan</Badge>
+              <Badge className="bg-gradient-brand text-primary-foreground border-0 mb-2">Your Plan</Badge>
               <p className="text-sm font-semibold">Premium Member</p>
               {subscription.subscription_end && (
                 <p className="text-xs text-muted-foreground mt-1">
@@ -140,7 +140,7 @@ const PremiumUpgradeDialog = ({ open, onOpenChange }: PremiumUpgradeDialogProps)
               Manage Subscription
             </Button>
           ) : (
-            <Button className="w-full text-sm font-semibold gap-1.5 bg-gradient-gold hover:opacity-90 border-0" onClick={handleUpgrade} disabled={loading}>
+            <Button className="w-full text-sm font-semibold gap-1.5 bg-gradient-brand hover:opacity-90 border-0" onClick={handleUpgrade} disabled={loading}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Crown className="h-4 w-4" />}
               Upgrade to Premium — GH₵{STRIPE_CONFIG.premium.price}/mo
             </Button>

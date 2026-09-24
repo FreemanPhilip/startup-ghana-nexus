@@ -621,7 +621,7 @@ const MenteeCirclePage = () => {
             <div className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary">
               {mentorSummary.engagementScore}% engagement
             </div>
-            <Button size="sm" className="bg-gradient-gold text-white hover:opacity-90" onClick={handleCohortCta}>
+            <Button size="sm" className="bg-gradient-brand text-white hover:opacity-90" onClick={handleCohortCta}>
               {mentorSummary.actionLabel}
             </Button>
           </div>

@@ -37,8 +37,8 @@ const OnboardingStepper = ({ steps, currentIndex }: OnboardingStepperProps) => {
                   aria-current={current ? "step" : undefined}
                   className={[
                     "flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-all",
-                    done && "bg-gold/20 text-gold",
-                    current && "bg-gradient-gold text-white ring-4 ring-gold/20",
+                    done && "bg-brand/20 text-brand",
+                    current && "bg-gradient-brand text-white ring-4 ring-brand/20",
                     !done && !current && "bg-muted text-muted-foreground",
                   ]
                     .filter(Boolean)
@@ -52,7 +52,7 @@ const OnboardingStepper = ({ steps, currentIndex }: OnboardingStepperProps) => {
 
                 <span
                   className={`hidden text-xs font-medium sm:inline ${
-                    current ? "text-gold" : done ? "text-foreground/70" : "text-muted-foreground"
+                    current ? "text-brand" : done ? "text-foreground/70" : "text-muted-foreground"
                   }`}
                 >
                   {step.label}
@@ -63,7 +63,7 @@ const OnboardingStepper = ({ steps, currentIndex }: OnboardingStepperProps) => {
                 <div
                   aria-hidden
                   className={`mx-2 h-px w-6 rounded-full transition-colors sm:w-10 ${
-                    i < safeIndex ? "bg-gold" : "bg-border"
+                    i < safeIndex ? "bg-brand" : "bg-border"
                   }`}
                 />
               )}

@@ -21,10 +21,10 @@ const previews = [
     title: "Startup Profile",
     description: "Showcase your venture to investors and partners",
     icon: Building2,
-    gradient: "from-gold/20 via-gold/5 to-transparent",
-    iconColor: "text-gold",
+    gradient: "from-brand/20 via-brand/5 to-transparent",
+    iconColor: "text-brand",
     lines: [
-      { w: "50%", h: "8px", color: "bg-gold/20" },
+      { w: "50%", h: "8px", color: "bg-brand/20" },
       { w: "90%", h: "4px", color: "bg-muted" },
       { w: "75%", h: "4px", color: "bg-muted" },
       { w: "60%", h: "4px", color: "bg-muted" },
@@ -106,7 +106,7 @@ const PlatformPreview = () => {
             <motion.div
               key={item.title}
               variants={itemVariants}
-              className="group rounded-2xl border border-border bg-card overflow-hidden hover:border-gold/30 hover:shadow-lg transition-all duration-300"
+              className="group rounded-2xl border border-border bg-card overflow-hidden hover:border-brand/30 hover:shadow-lg transition-all duration-300"
             >
               <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-muted/30">
                 <div className="flex gap-1.5">

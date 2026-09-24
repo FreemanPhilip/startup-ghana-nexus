@@ -26,15 +26,15 @@ const AboutHero = () => (
         className="mx-auto max-w-3xl text-center"
       >
         <motion.span variants={fadeUp} custom={0}
-          className="mb-4 inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-sm font-medium text-gold"
+          className="mb-4 inline-block rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-sm font-medium text-brand"
         >
           About SparkX Index
         </motion.span>
         <motion.h1 variants={fadeUp} custom={1}
-          className="font-display text-4xl font-bold leading-tight text-foreground sm:text-5xl lg:text-6xl"
+          className="display-lg"
         >
           Empowering Africa's{" "}
-          <span className="text-gradient-gold">Startup Ecosystem</span>
+          <span className="text-gradient-brand">Startup Ecosystem</span>
         </motion.h1>
         <motion.p variants={fadeUp} custom={2}
           className="mt-6 text-lg text-muted-foreground sm:text-xl"
@@ -50,12 +50,12 @@ const AboutHero = () => (
       >
         {/* Large card left */}
         <motion.div variants={fadeUp} custom={0}
-          className="relative flex items-end overflow-hidden rounded-2xl bg-gradient-to-br from-emerald to-emerald-light p-8 text-primary-foreground md:col-span-3 md:row-span-2 min-h-[320px]"
+          className="relative flex items-end overflow-hidden rounded-2xl bg-gradient-brand p-8 text-primary-foreground md:col-span-3 md:row-span-2 min-h-[320px]"
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(245,183,0,0.15),transparent_60%)]" />
           <div className="relative z-10">
-            <Rocket className="mb-3 h-8 w-8 text-gold" />
-            <h3 className="font-display text-2xl font-bold sm:text-3xl">Building the Future of African Innovation</h3>
+            <Rocket className="mb-3 h-8 w-8 text-brand" />
+            <h3 className="display-md">Building the Future of African Innovation</h3>
             <p className="mt-2 max-w-md text-primary-foreground/80">
               From Lagos to Nairobi, Cape Town to Accra — we're uniting the continent's brightest minds under one platform.
             </p>
@@ -66,8 +66,8 @@ const AboutHero = () => (
         <motion.div variants={fadeUp} custom={1}
           className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card p-6 text-center md:col-span-2"
         >
-          <Zap className="mb-2 h-6 w-6 text-gold" />
-          <span className="font-display text-3xl font-bold text-foreground">90%</span>
+          <Zap className="mb-2 h-6 w-6 text-brand" />
+          <span className="stat-value text-3xl">90%</span>
           <span className="mt-1 text-sm text-muted-foreground">Faster Response Time</span>
         </motion.div>
 
@@ -76,7 +76,7 @@ const AboutHero = () => (
           className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card p-6 text-center md:col-span-2"
         >
           <TrendingUp className="mb-2 h-6 w-6 text-emerald" />
-          <span className="font-display text-3xl font-bold text-foreground">50%</span>
+          <span className="stat-value text-3xl">50%</span>
           <span className="mt-1 text-sm text-muted-foreground">Growth Efficiency</span>
         </motion.div>
       </motion.div>
@@ -99,7 +99,7 @@ const MissionVision = () => (
           <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-emerald/10">
             <Target className="h-6 w-6 text-emerald" />
           </div>
-          <h3 className="font-display text-2xl font-bold text-foreground">Our Mission</h3>
+          <h3 className="display-md">Our Mission</h3>
           <p className="mt-3 leading-relaxed text-muted-foreground">
             To democratize access to resources, capital, and mentorship for African startups — breaking barriers and creating pathways for founders to build world-class companies regardless of location or background.
           </p>
@@ -109,10 +109,10 @@ const MissionVision = () => (
         <motion.div variants={fadeUp} custom={1}
           className="rounded-2xl border border-border bg-card p-8 shadow-sm"
         >
-          <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gold/10">
-            <Globe className="h-6 w-6 text-gold" />
+          <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10">
+            <Globe className="h-6 w-6 text-brand" />
           </div>
-          <h3 className="font-display text-2xl font-bold text-foreground">Our Vision</h3>
+          <h3 className="display-md">Our Vision</h3>
           <p className="mt-3 leading-relaxed text-muted-foreground">
             To become the definitive digital infrastructure powering Africa's startup ecosystem — where every founder has the tools, networks, and funding to transform ideas into continent-shaping enterprises.
           </p>
@@ -138,9 +138,9 @@ const ImpactMetrics = () => (
         className="mx-auto mb-14 max-w-2xl text-center"
       >
         <motion.h2 variants={fadeUp} custom={0}
-          className="font-display text-3xl font-bold text-foreground sm:text-4xl"
+          className="display-lg"
         >
-          Making <span className="text-gradient-gold">SparkX Index</span> better for everyone
+          Making <span className="text-gradient-brand">SparkX Index</span> better for everyone
         </motion.h2>
       </motion.div>
 
@@ -152,8 +152,8 @@ const ImpactMetrics = () => (
           <motion.div key={m.label} variants={fadeUp} custom={i}
             className="flex flex-col items-center rounded-2xl border border-border bg-card p-6 text-center shadow-sm"
           >
-            <m.icon className="mb-3 h-6 w-6 text-gold" />
-            <span className="font-display text-3xl font-bold text-foreground sm:text-4xl">{m.value}</span>
+            <m.icon className="mb-3 h-6 w-6 text-brand" />
+            <span className="display-lg">{m.value}</span>
             <span className="mt-1 text-sm text-muted-foreground">{m.label}</span>
           </motion.div>
         ))}
@@ -171,10 +171,10 @@ const FounderMessage = () => (
         className="grid items-center gap-12 md:grid-cols-2"
       >
         <motion.div variants={fadeUp} custom={0}>
-          <span className="mb-3 inline-block text-sm font-medium uppercase tracking-wider text-gold">
+          <span className="mb-3 inline-block text-sm font-medium uppercase tracking-wider text-brand">
             A Word from the Founder
           </span>
-          <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl">
+          <h2 className="display-lg">
             Why I Built SparkX Index
           </h2>
           <p className="mt-6 leading-relaxed text-muted-foreground">
@@ -192,10 +192,10 @@ const FounderMessage = () => (
         <motion.div variants={fadeUp} custom={1}
           className="flex items-center justify-center"
         >
-          <div className="relative h-80 w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-emerald/20 to-gold/10">
+          <div className="relative h-80 w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-brand/20 to-brand/5">
             <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
-              <div className="mb-4 h-24 w-24 rounded-full bg-gradient-to-br from-emerald to-emerald-light" />
-              <Quote className="mb-2 h-8 w-8 text-gold/40" />
+              <div className="mb-4 h-24 w-24 rounded-full bg-gradient-brand" />
+              <Quote className="mb-2 h-8 w-8 text-brand/40" />
               <p className="text-sm italic text-muted-foreground">
                 "Building Africa's startup future, together."
               </p>
@@ -221,7 +221,7 @@ const PartnersSection = () => (
         className="mx-auto mb-12 max-w-2xl text-center"
       >
         <motion.h2 variants={fadeUp} custom={0}
-          className="font-display text-3xl font-bold text-foreground sm:text-4xl"
+          className="display-lg"
         >
           Trusted by Leading Institutions
         </motion.h2>
@@ -238,7 +238,7 @@ const PartnersSection = () => (
       >
         {partners.map((p, i) => (
           <motion.div key={p} variants={fadeUp} custom={i}
-            className="flex h-20 items-center justify-center rounded-2xl border border-border bg-card px-4 text-center transition-all hover:scale-105 hover:border-gold/40 hover:shadow-md"
+            className="flex h-20 items-center justify-center rounded-2xl border border-border bg-card px-4 text-center transition-all hover:scale-105 hover:border-brand/40 hover:shadow-md"
           >
             <span className="font-display text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground">
               {p}
@@ -264,7 +264,7 @@ const DarkVisionSection = () => (
       <div className="h-[400px] w-[400px] rounded-full bg-emerald/10 blur-[120px]" />
     </div>
     <div className="pointer-events-none absolute left-1/3 top-1/3">
-      <div className="h-[200px] w-[200px] rounded-full bg-gold/8 blur-[80px]" />
+      <div className="h-[200px] w-[200px] rounded-full bg-brand/8 blur-[80px]" />
     </div>
 
     <div className="container relative z-10">
@@ -273,15 +273,15 @@ const DarkVisionSection = () => (
         className="mx-auto mb-16 max-w-2xl text-center"
       >
         <motion.span variants={fadeUp} custom={0}
-          className="mb-4 inline-block rounded-full border border-gold/20 bg-gold/5 px-4 py-1.5 text-sm text-gold"
+          className="mb-4 inline-block rounded-full border border-brand/20 bg-brand/5 px-4 py-1.5 text-sm text-brand"
         >
           Our Approach
         </motion.span>
         <motion.h2 variants={fadeUp} custom={1}
-          className="font-display text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl"
+          className="display-lg"
         >
           We are value creators with{" "}
-          <span className="text-gradient-gold">hyperfocus</span>
+          <span className="text-gradient-brand">hyperfocus</span>
         </motion.h2>
       </motion.div>
 
@@ -291,10 +291,10 @@ const DarkVisionSection = () => (
       >
         {visionCards.map((c, i) => (
           <motion.div key={c.title} variants={fadeUp} custom={i}
-            className="group rounded-2xl border border-foreground/10 bg-foreground/5 p-8 backdrop-blur-md transition-all hover:border-gold/30 hover:bg-foreground/10"
+            className="group rounded-2xl border border-foreground/10 bg-foreground/5 p-8 backdrop-blur-md transition-all hover:border-brand/30 hover:bg-foreground/10"
           >
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gold/10">
-              <c.icon className="h-6 w-6 text-gold" />
+            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10">
+              <c.icon className="h-6 w-6 text-brand" />
             </div>
             <h3 className="font-display text-xl font-bold text-foreground">{c.title}</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{c.desc}</p>
@@ -321,7 +321,7 @@ const TeamSection = () => (
         className="mx-auto mb-14 max-w-2xl text-center"
       >
         <motion.h2 variants={fadeUp} custom={0}
-          className="font-display text-3xl font-bold text-foreground sm:text-4xl"
+          className="display-lg"
         >
           Meet the Team
         </motion.h2>
@@ -338,13 +338,13 @@ const TeamSection = () => (
       >
         {team.map((t, i) => (
           <motion.div key={t.name} variants={fadeUp} custom={i}
-            className="group overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:border-gold/30 hover:shadow-md"
+            className="group overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:border-brand/30 hover:shadow-md"
           >
-            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald/20 to-gold/10">
+            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand/20 to-brand/5">
               <Users className="h-8 w-8 text-emerald transition-transform group-hover:scale-110" />
             </div>
             <h3 className="text-center font-display text-lg font-bold text-foreground">{t.name}</h3>
-            <p className="mt-1 text-center text-sm font-medium text-gold">{t.role}</p>
+            <p className="mt-1 text-center text-sm font-medium text-brand">{t.role}</p>
             <p className="mt-3 text-center text-sm text-muted-foreground">{t.desc}</p>
           </motion.div>
         ))}
@@ -371,7 +371,7 @@ const ValuesSection = () => (
         className="mx-auto mb-14 max-w-2xl text-center"
       >
         <motion.h2 variants={fadeUp} custom={0}
-          className="font-display text-3xl font-bold text-foreground sm:text-4xl"
+          className="display-lg"
         >
           Our Core Values
         </motion.h2>
@@ -414,7 +414,7 @@ const TestimonialsSection = () => (
         className="mx-auto mb-14 max-w-2xl text-center"
       >
         <motion.h2 variants={fadeUp} custom={0}
-          className="font-display text-3xl font-bold text-foreground sm:text-4xl"
+          className="display-lg"
         >
           Trusted by the Best in the Industry
         </motion.h2>
@@ -428,7 +428,7 @@ const TestimonialsSection = () => (
           <motion.div key={t.name} variants={fadeUp} custom={i}
             className="rounded-2xl border border-border bg-card p-8 shadow-sm"
           >
-            <Quote className="mb-4 h-6 w-6 text-gold/40" />
+            <Quote className="mb-4 h-6 w-6 text-brand/40" />
             <p className="leading-relaxed text-muted-foreground">"{t.quote}"</p>
             <div className="mt-6 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald/10">
@@ -450,7 +450,7 @@ const TestimonialsSection = () => (
 const FinalCTA = () => (
   <section className="dark relative overflow-hidden bg-gradient-hero py-24">
     <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-      <div className="h-[300px] w-[300px] rounded-full bg-gold/10 blur-[100px]" />
+      <div className="h-[300px] w-[300px] rounded-full bg-brand/10 blur-[100px]" />
     </div>
     <div className="container relative z-10">
       <motion.div
@@ -458,7 +458,7 @@ const FinalCTA = () => (
         className="mx-auto max-w-2xl text-center"
       >
         <motion.h2 variants={fadeUp} custom={0}
-          className="font-display text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl"
+          className="display-lg"
         >
           Join Us in Building the Future
         </motion.h2>
@@ -469,7 +469,7 @@ const FinalCTA = () => (
         </motion.p>
         <motion.div variants={fadeUp} custom={2} className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Link to="/auth">
-            <Button size="lg" className="bg-gradient-gold px-8 text-base font-semibold text-white hover:opacity-90 glow-gold">
+            <Button size="lg" className="bg-gradient-brand px-8 text-base font-semibold text-white hover:opacity-90 glow-brand">
               Get Started <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>

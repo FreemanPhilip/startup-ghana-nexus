@@ -134,7 +134,7 @@ const PostDetailPage = () => {
 
         {loading && (
           <div className="flex items-center justify-center py-24">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gold border-t-transparent" />
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand border-t-transparent" />
           </div>
         )}
 
@@ -149,7 +149,7 @@ const PostDetailPage = () => {
               The link may have expired or the post was removed.
             </p>
             <Link to="/sparkx-index">
-              <Button className="mt-6 bg-gradient-gold font-semibold text-white hover:opacity-90">
+              <Button className="mt-6 bg-gradient-brand font-semibold text-white hover:opacity-90">
                 Explore the community
               </Button>
             </Link>

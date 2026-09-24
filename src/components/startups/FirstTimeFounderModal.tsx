@@ -24,7 +24,7 @@ const FirstTimeFounderModal = ({ open, onOpenChange, onCreateStartup }: FirstTim
         <div className="flex flex-col gap-3 mt-4">
           <Button
             onClick={() => { onOpenChange(false); onCreateStartup(); }}
-            className="gap-2 bg-gradient-gold text-white font-semibold hover:opacity-90"
+            className="gap-2 bg-gradient-brand text-white font-semibold hover:opacity-90"
           >
             <Building2 className="h-4 w-4" />
             Create Startup

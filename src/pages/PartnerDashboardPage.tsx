@@ -156,7 +156,7 @@ const PartnerDashboardPage = () => {
                             <span className="capitalize">{metric.label}</span>
                             <span className="text-muted-foreground">{metric.count} · {metric.value}%</span>
                           </div>
-                          <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-gradient-gold" style={{ width: `${metric.value}%` }} /></div>
+                          <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-gradient-brand" style={{ width: `${metric.value}%` }} /></div>
                         </div>
                       ))
                     )}

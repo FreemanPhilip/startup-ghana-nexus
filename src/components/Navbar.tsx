@@ -123,7 +123,7 @@ const Navbar = ({ overHero = false }: NavbarProps) => {
                         <p className="font-display text-base font-bold leading-tight text-white">
                           Fresh Perspectives,
                         </p>
-                        <p className="font-display text-base font-bold leading-tight text-gold">
+                        <p className="font-display text-base font-bold leading-tight text-brand">
                           Unmatched Solutions
                         </p>
                       </div>

@@ -56,12 +56,12 @@ const OnboardingRoleStep = ({ onNext, saving: parentSaving }: Props) => {
             onClick={() => setSelected(role.value)}
             className={`flex w-full items-center gap-4 rounded-xl border p-4 text-left transition-all ${
               selected === role.value
-                ? "border-gold bg-gold/10 ring-1 ring-gold/30"
-                : "border-border hover:border-gold/50 hover:bg-gold/5"
+                ? "border-brand bg-brand/10 ring-1 ring-brand/30"
+                : "border-border hover:border-brand/50 hover:bg-brand/5"
             }`}
           >
             <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${
-              selected === role.value ? "bg-gold/20 text-gold" : "bg-muted text-muted-foreground"
+              selected === role.value ? "bg-brand/20 text-brand" : "bg-muted text-muted-foreground"
             }`}>
               <role.icon className="h-5 w-5" />
             </div>
@@ -76,7 +76,7 @@ const OnboardingRoleStep = ({ onNext, saving: parentSaving }: Props) => {
       <Button
         onClick={handleContinue}
         disabled={!selected || isSaving}
-        className="mt-8 w-full bg-gradient-gold font-semibold text-white hover:opacity-90"
+        className="mt-8 w-full bg-gradient-brand font-semibold text-white hover:opacity-90"
       >
         {isSaving ? "Saving..." : "Continue →"}
       </Button>

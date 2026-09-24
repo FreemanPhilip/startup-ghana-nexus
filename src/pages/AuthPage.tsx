@@ -97,7 +97,7 @@ const AuthPage = () => {
           className="max-w-md px-12"
         >
           <SparkXLogo tone="dark" className="mb-8 h-10" />
-          <h1 className="font-display text-4xl font-bold leading-tight text-foreground">
+          <h1 className="display-lg">
             Join Africa's Startup Ecosystem
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">
@@ -107,7 +107,7 @@ const AuthPage = () => {
           <div className="mt-10 space-y-4">
             {["500+ Startups Connected", "200+ Active Investors", "$25M+ Funding Raised"].map((stat) => (
               <div key={stat} className="flex items-center gap-3 text-foreground/70">
-                <div className="h-2 w-2 rounded-full bg-gold" />
+                <div className="h-2 w-2 rounded-full bg-brand" />
                 <span className="text-sm">{stat}</span>
               </div>
             ))}
@@ -158,7 +158,7 @@ const AuthPage = () => {
               onClick={handleTalentAuth}
               disabled={loading}
             >
-              <Star className="h-4 w-4 text-gold" fill="currentColor" />
+              <Star className="h-4 w-4 text-brand" fill="currentColor" />
               Continue with SparkX Talent
             </Button>
 
@@ -229,7 +229,7 @@ const AuthPage = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-gold font-semibold text-white hover:opacity-90"
+                className="w-full bg-gradient-brand font-semibold text-white hover:opacity-90"
               >
                 {loading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
               </Button>
@@ -239,7 +239,7 @@ const AuthPage = () => {
               {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
               <button
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="font-semibold text-gold hover:underline"
+                className="font-semibold text-brand hover:underline"
               >
                 {isSignUp ? "Sign In" : "Sign Up"}
               </button>

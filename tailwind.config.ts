@@ -63,14 +63,6 @@ export default {
           strong: "hsl(var(--brand-strong))",
           soft: "hsl(var(--brand-soft))",
         },
-        /* Deprecated alias. Gold was retired as a theme colour; these map on
-           to the blue ramp so existing text-gold / bg-gold/10 call sites
-           follow the theme instead of each needing a hand edit. */
-        gold: {
-          DEFAULT: "hsl(var(--brand))",
-          light: "hsl(var(--brand))",
-          dark: "hsl(var(--brand-strong))",
-        },
         emerald: {
           DEFAULT: "hsl(var(--emerald))",
           light: "hsl(var(--emerald-light))",
