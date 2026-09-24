@@ -1,6 +1,6 @@
 import { LayoutDashboard, Users, Building2, FileText, Shield, BarChart3, LogOut, Menu, X, Briefcase, MessageSquare, UserPlus, ScrollText, GraduationCap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import SparkXLogo from "@/components/SparkXLogo";
@@ -51,13 +51,12 @@ const AdminSidebar = ({ activeTab, onTabChange, open, onClose, adminLevel }: Adm
   const content = (
     <>
       <div className="flex h-16 items-center justify-between border-b border-border px-5">
-        <div className="flex items-center gap-2">
-          <SparkXLogo variant="mark" className="h-7 w-7" alt="" />
-          <div>
-            <span className="font-display text-lg font-bold">Admin</span>
-            <p className="text-[10px] text-muted-foreground leading-none">SparkX Index</p>
-          </div>
-        </div>
+        <Link to="/" aria-label="SparkX home" className="flex items-center gap-2.5">
+          <SparkXLogo className="h-7" />
+          <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            Admin
+          </span>
+        </Link>
         <Button variant="ghost" size="icon" className="md:hidden h-8 w-8" onClick={onClose}>
           <X className="h-5 w-5" />
         </Button>
