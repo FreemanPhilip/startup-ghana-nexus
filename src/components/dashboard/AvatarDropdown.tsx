@@ -37,7 +37,7 @@ const AvatarDropdown = ({ onNavigate, onSignOut, activeIdentity, onIdentityChang
         <button className="flex items-center gap-2 rounded-full hover:bg-muted p-1 pr-2 transition-colors">
           <Avatar className="h-8 w-8">
             <AvatarImage src={currentAvatar || undefined} />
-            <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">{currentFallback}</AvatarFallback>
+            <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">{currentFallback}</AvatarFallback>
           </Avatar>
           <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
         </button>
@@ -71,7 +71,7 @@ const AvatarDropdown = ({ onNavigate, onSignOut, activeIdentity, onIdentityChang
             >
               <Avatar className="h-5 w-5">
                 <AvatarImage src={profile?.avatar_url || undefined} />
-                <AvatarFallback className="text-[9px] font-bold">{initials}</AvatarFallback>
+                <AvatarFallback className="text-[9px] font-semibold">{initials}</AvatarFallback>
               </Avatar>
               <span className="text-sm">{profile?.full_name || "Personal"}</span>
               {activeIdentity.type === "personal" && <span className="ml-auto text-xs text-primary">Active</span>}
@@ -84,7 +84,7 @@ const AvatarDropdown = ({ onNavigate, onSignOut, activeIdentity, onIdentityChang
               >
                 <Avatar className="h-5 w-5 rounded">
                   <AvatarImage src={startup.logo_url || undefined} />
-                  <AvatarFallback className="text-[9px] font-bold rounded">{startup.name.charAt(0)}</AvatarFallback>
+                  <AvatarFallback className="text-[9px] font-semibold rounded">{startup.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <span className="text-sm truncate">{startup.name}</span>
                 {activeIdentity.type === "startup" && activeIdentity.startup?.id === startup.id && (

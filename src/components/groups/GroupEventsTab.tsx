@@ -25,11 +25,11 @@ const GroupEventsTab = ({ events, loading, isMember, isAdmin, onRsvp, onDelete }
     const isGoing = event.my_rsvp === "going";
 
     return (
-      <div key={event.id} className="rounded-xl border border-border bg-card p-4 flex gap-4">
+      <div key={event.id} className="rounded-2xl border border-border bg-card p-4 flex gap-4">
         {/* Date block */}
         <div className="flex flex-col items-center justify-center rounded-lg bg-primary/10 text-primary w-14 h-14 shrink-0">
-          <span className="text-[10px] font-bold uppercase">{format(eventDate, "MMM")}</span>
-          <span className="text-lg font-bold leading-none">{format(eventDate, "dd")}</span>
+          <span className="text-[10px] font-semibold uppercase">{format(eventDate, "MMM")}</span>
+          <span className="text-lg font-semibold leading-none">{format(eventDate, "dd")}</span>
         </div>
 
         <div className="flex-1 min-w-0">
@@ -78,7 +78,7 @@ const GroupEventsTab = ({ events, loading, isMember, isAdmin, onRsvp, onDelete }
   return (
     <div className="space-y-5">
       {upcoming.length === 0 && past.length === 0 && (
-        <div className="rounded-xl border border-border bg-card p-12 text-center">
+        <div className="rounded-2xl border border-border bg-card p-12 text-center">
           <CalendarDays className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
           <p className="text-sm text-muted-foreground">No events yet.</p>
         </div>
@@ -86,14 +86,14 @@ const GroupEventsTab = ({ events, loading, isMember, isAdmin, onRsvp, onDelete }
 
       {upcoming.length > 0 && (
         <div>
-          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Upcoming Events</h3>
+          <h3 className="text-[12px] font-medium text-muted-foreground mb-3">Upcoming Events</h3>
           <div className="space-y-3">{upcoming.map(renderEvent)}</div>
         </div>
       )}
 
       {past.length > 0 && (
         <div>
-          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Past Events</h3>
+          <h3 className="text-[12px] font-medium text-muted-foreground mb-3">Past Events</h3>
           <div className="space-y-3 opacity-60">{past.map(renderEvent)}</div>
         </div>
       )}

@@ -21,7 +21,7 @@ export function IndexInvestorDetailModal({ investor, open, onOpenChange }: Index
             {investor.logo_url ? (
               <img src={investor.logo_url} alt={investor.name} className="w-14 h-14 rounded-xl object-cover border" />
             ) : (
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-500/10 flex items-center justify-center text-amber-600 font-bold text-lg">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-500/10 flex items-center justify-center text-amber-600 font-semibold text-lg">
                 {investor.name.split(" ").slice(0, 2).map(w => w[0]).join("").toUpperCase()}
               </div>
             )}
@@ -49,7 +49,7 @@ export function IndexInvestorDetailModal({ investor, open, onOpenChange }: Index
 
         {(investor.check_size_min || investor.check_size_max) && (
           <div className="mt-4 p-3 border rounded-lg">
-            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+            <h4 className="text-[12px] font-medium text-muted-foreground mb-2 flex items-center gap-1">
               <DollarSign className="h-3.5 w-3.5" />
               Check Size
             </h4>
@@ -61,7 +61,7 @@ export function IndexInvestorDetailModal({ investor, open, onOpenChange }: Index
 
         {investor.focus_sectors.length > 0 && (
           <div className="mt-4">
-            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+            <h4 className="text-[12px] font-medium text-muted-foreground mb-2 flex items-center gap-1">
               <TrendingUp className="h-3.5 w-3.5" />
               Focus Sectors
             </h4>
@@ -77,7 +77,7 @@ export function IndexInvestorDetailModal({ investor, open, onOpenChange }: Index
 
         {investor.stage_focus.length > 0 && (
           <div className="mt-4">
-            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+            <h4 className="text-[12px] font-medium text-muted-foreground mb-2">
               Stage Focus
             </h4>
             <div className="flex flex-wrap gap-1.5">

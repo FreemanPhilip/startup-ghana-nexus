@@ -15,12 +15,18 @@ const colorPresets = [
   "from-cyan-500 to-blue-600",
 ];
 
+/**
+ * Activity bands. The colours were light-theme Tailwind values, so on a dark
+ * card the emerald and blue sat too dark to read; and the labels were shouted
+ * in caps, which is a lot of emphasis for a soft signal about how busy a
+ * group is.
+ */
 function getActivityLabel(count: number) {
-  if (count >= 20) return { label: "VERY ACTIVE", color: "text-emerald-600" };
-  if (count >= 10) return { label: "HIGH ACTIVITY", color: "text-blue-600" };
-  if (count >= 3) return { label: "MODERATE", color: "text-amber-600" };
-  if (count >= 1) return { label: "STEADY", color: "text-muted-foreground" };
-  return { label: "NEW", color: "text-muted-foreground" };
+  if (count >= 20) return { label: "Very active", color: "text-emerald" };
+  if (count >= 10) return { label: "Active", color: "text-brand" };
+  if (count >= 3) return { label: "Moderate", color: "text-muted-foreground" };
+  if (count >= 1) return { label: "Steady", color: "text-muted-foreground" };
+  return { label: "New", color: "text-muted-foreground" };
 }
 
 interface GroupCardProps {
@@ -38,7 +44,7 @@ const GroupCard = ({ group, onJoin, onLeave, onView }: GroupCardProps) => {
   const activity = getActivityLabel(group.post_count_today);
 
   return (
-    <div className="flex flex-col rounded-xl border border-border bg-card overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer h-full" onClick={() => onView(group.id)}>
+    <div className="flex flex-col rounded-2xl border border-border bg-card overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer h-full" onClick={() => onView(group.id)}>
       {/* Cover */}
       <div className={`h-24 bg-gradient-to-br ${gradient} relative`}>
         <div className="absolute -bottom-5 left-4 flex h-10 w-10 items-center justify-center rounded-xl bg-card border border-border shadow-sm overflow-hidden">
@@ -58,13 +64,13 @@ const GroupCard = ({ group, onJoin, onLeave, onView }: GroupCardProps) => {
       {/* Content */}
       <div className="px-4 pt-7 pb-4 space-y-3 flex-1 flex flex-col">
         <div>
-          <h3 className="font-display font-bold text-sm truncate">{group.name}</h3>
+          <h3 className="font-display font-semibold text-sm truncate">{group.name}</h3>
           <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{group.description || "No description"}</p>
         </div>
 
         <div className="flex items-center justify-between text-xs">
           <div>
-            <span className="font-bold text-foreground">{group.member_count.toLocaleString()}</span>
+            <span className="font-semibold text-foreground">{group.member_count.toLocaleString()}</span>
             <span className="text-muted-foreground ml-1 uppercase text-[10px] tracking-wide">Members</span>
           </div>
           <div className="text-right">

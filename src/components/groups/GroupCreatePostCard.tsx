@@ -97,7 +97,7 @@ const GroupCreatePostCard = ({ onSubmit }: GroupCreatePostCardProps) => {
   };
 
   return (
-    <div className="rounded-xl border border-border bg-card">
+    <div className="rounded-2xl border border-border bg-card">
       <input ref={imageInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={handleImageSelect} />
       <input ref={videoInputRef} type="file" accept="video/mp4,video/webm" className="hidden" onChange={handleVideoSelect} />
 
@@ -105,7 +105,7 @@ const GroupCreatePostCard = ({ onSubmit }: GroupCreatePostCardProps) => {
       <div className="flex items-center gap-3 p-4">
         <Avatar className="h-10 w-10 shrink-0">
           <AvatarImage src={profile?.avatar_url || undefined} />
-          <AvatarFallback className="bg-muted text-xs font-bold">{initials}</AvatarFallback>
+          <AvatarFallback className="bg-muted text-xs font-semibold">{initials}</AvatarFallback>
         </Avatar>
         <button
           onClick={() => setExpanded(true)}

@@ -121,7 +121,7 @@ const MentorsPage = ({ onOpenMessages }: MentorsPageProps) => {
       <div>
         <div className="flex items-center gap-2 mb-1">
           <Users className="h-5 w-5 text-primary" />
-          <h1 className="font-display text-2xl font-bold text-foreground">Mentors</h1>
+          <h1 className="font-display text-2xl font-semibold text-foreground">Mentors</h1>
         </div>
         <p className="text-sm text-muted-foreground">
           Connect with experienced mentors across Ghana's startup ecosystem
@@ -151,7 +151,7 @@ const MentorsPage = ({ onOpenMessages }: MentorsPageProps) => {
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
       ) : filteredMentors.length === 0 ? (
-        <div className="rounded-xl border border-border bg-card p-12 text-center">
+        <div className="rounded-2xl border border-border bg-card p-12 text-center">
           <p className="text-sm font-medium text-muted-foreground">No mentors have been added yet</p>
           <p className="mt-1 text-xs text-muted-foreground">When mentor profiles are active in the network, they will appear here automatically.</p>
         </div>

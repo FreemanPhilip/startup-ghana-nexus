@@ -66,7 +66,7 @@ const AdminContactSubmissions = () => {
         </div>
       </div>
 
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-muted-foreground">Loading submissions...</div>
         ) : filtered.length === 0 ? (

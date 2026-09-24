@@ -95,7 +95,7 @@ const AIInvestorMatchDialog = ({ open, onOpenChange, onViewInvestor }: AIInvesto
               <Sparkles className="h-8 w-8 text-primary" />
             </div>
             <div>
-              <h3 className="text-base font-bold">Find Your Perfect Investors</h3>
+              <h3 className="text-base font-semibold">Find Your Perfect Investors</h3>
               <p className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">
                 Our AI analyzes your startup profile, industry, stage, and funding needs to rank
                 investors by compatibility and provide specific reasoning for each match.
@@ -154,8 +154,8 @@ const AIInvestorMatchDialog = ({ open, onOpenChange, onViewInvestor }: AIInvesto
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-muted-foreground">#{i + 1}</span>
-                        <h4 className="text-sm font-bold truncate">{match.investor_name}</h4>
+                        <span className="text-xs font-semibold text-muted-foreground">#{i + 1}</span>
+                        <h4 className="text-sm font-semibold truncate">{match.investor_name}</h4>
                       </div>
                       <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                         {match.reasoning}
@@ -172,7 +172,7 @@ const AIInvestorMatchDialog = ({ open, onOpenChange, onViewInvestor }: AIInvesto
                       )}
                     </div>
                     <div className="text-right shrink-0">
-                      <div className={`text-lg font-bold ${getMatchColor(match.match_percent)}`}>
+                      <div className={`text-lg font-semibold ${getMatchColor(match.match_percent)}`}>
                         {match.match_percent}%
                       </div>
                       <p className="text-[10px] text-muted-foreground">match</p>

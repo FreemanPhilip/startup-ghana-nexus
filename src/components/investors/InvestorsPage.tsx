@@ -198,7 +198,7 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
           {shortlistedInvestors.length === 0 ? (
             <Card className="p-8 text-center">
               <Star className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
-              <h3 className="font-display text-lg font-bold">No Shortlisted Investors</h3>
+              <h3 className="font-display text-lg font-semibold">No Shortlisted Investors</h3>
               <p className="mt-2 text-sm text-muted-foreground">
                 Click the ⭐ icon on any investor card to add them to your shortlist.
               </p>

@@ -47,7 +47,7 @@ class ErrorBoundary extends Component<Props, State> {
             This page hit an unexpected error. Reloading usually fixes it.
           </p>
 
-          <p className="mt-4 break-words rounded-lg bg-muted/40 p-3 text-left font-mono text-xs text-muted-foreground">
+          <p className="mt-4 break-words rounded-lg bg-muted/40 p-3 text-left numeric text-xs text-muted-foreground">
             {error.message || String(error)}
           </p>
 

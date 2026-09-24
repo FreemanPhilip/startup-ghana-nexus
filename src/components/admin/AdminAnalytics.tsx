@@ -116,7 +116,7 @@ const AdminAnalytics = () => {
     return (
       <div className="space-y-6">
         {[1, 2, 3].map(i => (
-          <div key={i} className="h-64 rounded-xl border border-border bg-card animate-pulse" />
+          <div key={i} className="h-64 rounded-2xl border border-border bg-card animate-pulse" />
         ))}
       </div>
     );
@@ -133,7 +133,7 @@ const AdminAnalytics = () => {
       </div>
 
       {/* User Growth Chart */}
-      <div className="rounded-xl border border-border bg-card p-5">
+      <div className="rounded-2xl border border-border bg-card p-5">
         <h3 className="font-semibold text-sm mb-4">Platform Growth (Last 6 Months)</h3>
         <ResponsiveContainer width="100%" height={280}>
           <AreaChart data={growthData}>
@@ -161,7 +161,7 @@ const AdminAnalytics = () => {
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Role Distribution Pie Chart */}
-        <div className="rounded-xl border border-border bg-card p-5">
+        <div className="rounded-2xl border border-border bg-card p-5">
           <h3 className="font-semibold text-sm mb-4">User Role Distribution</h3>
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
@@ -185,7 +185,7 @@ const AdminAnalytics = () => {
         </div>
 
         {/* Daily Signups Bar Chart */}
-        <div className="rounded-xl border border-border bg-card p-5">
+        <div className="rounded-2xl border border-border bg-card p-5">
           <h3 className="font-semibold text-sm mb-4">Daily Signups (Last 14 Days)</h3>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={recentSignups}>
@@ -200,7 +200,7 @@ const AdminAnalytics = () => {
       </div>
 
       {/* Engagement Trends */}
-      <div className="rounded-xl border border-border bg-card p-5">
+      <div className="rounded-2xl border border-border bg-card p-5">
         <h3 className="font-semibold text-sm mb-4">Engagement Trends (Last 6 Months)</h3>
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={engagementData}>
@@ -221,14 +221,14 @@ const AdminAnalytics = () => {
 
 // Helper: Summary card
 const SummaryCard = ({ icon: Icon, label, value, accent }: { icon: any; label: string; value: number; accent: string }) => (
-  <div className="rounded-xl border border-border bg-card p-4">
+  <div className="rounded-2xl border border-border bg-card p-4">
     <div className="flex items-center gap-3">
       <div className={`flex h-9 w-9 items-center justify-center rounded-lg bg-${accent}/10`}>
         <Icon className={`h-4 w-4 text-${accent}`} />
       </div>
       <div>
         <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="font-display text-xl font-bold">{value.toLocaleString()}</p>
+        <p className="stat-value">{value.toLocaleString()}</p>
       </div>
     </div>
   </div>

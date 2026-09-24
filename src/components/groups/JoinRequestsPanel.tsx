@@ -18,7 +18,7 @@ const JoinRequestsPanel = ({ requests, loading, onApprove, onReject }: JoinReque
   return (
     <div className="space-y-3">
       {requests.map(req => (
-        <div key={req.id} className="rounded-xl border border-border bg-card p-4 flex items-start gap-3">
+        <div key={req.id} className="rounded-2xl border border-border bg-card p-4 flex items-start gap-3">
           <Avatar className="h-10 w-10">
             <AvatarImage src={req.avatar_url || undefined} />
             <AvatarFallback className="bg-muted text-xs">{(req.full_name || "U").slice(0, 2).toUpperCase()}</AvatarFallback>
@@ -30,7 +30,7 @@ const JoinRequestsPanel = ({ requests, loading, onApprove, onReject }: JoinReque
             <p className="text-[10px] text-muted-foreground mt-1">{formatDistanceToNow(new Date(req.created_at), { addSuffix: true })}</p>
           </div>
           <div className="flex gap-1.5 shrink-0">
-            <Button size="icon" variant="ghost" className="h-8 w-8 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700" onClick={() => onApprove(req.id, req.user_id)}>
+            <Button size="icon" variant="ghost" className="h-8 w-8 text-emerald hover:bg-emerald/10" onClick={() => onApprove(req.id, req.user_id)}>
               <Check className="h-4 w-4" />
             </Button>
             <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => onReject(req.id)}>

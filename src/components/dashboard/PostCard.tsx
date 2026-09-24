@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MessageCircle, CheckCircle, MoreHorizontal, Globe, Building2, Rocket, TrendingUp, GraduationCap, Handshake } from "lucide-react";
+import { Heart, MessageCircle, CheckCircle, MoreHorizontal, Globe, Building2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,25 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import PostContentRenderer from "./PostContentRenderer";
 import ImageCarousel from "./ImageCarousel";
 import ShareMenu from "./ShareMenu";
-
-const roleConfig: Record<string, { label: string; className: string; icon: any }> = {
-  startup_founder: { label: "Founder", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400", icon: Rocket },
-  investor: { label: "Investor", className: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400", icon: TrendingUp },
-  mentor: { label: "Mentor", className: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400", icon: GraduationCap },
-  ecosystem_partner: { label: "Partner", className: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400", icon: Handshake },
-};
-
-const RoleBadge = ({ role }: { role: string }) => {
-  const config = roleConfig[role];
-  if (!config) return null;
-  const Icon = config.icon;
-  return (
-    <span className={`inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${config.className}`}>
-      <Icon className="h-2.5 w-2.5" />
-      {config.label}
-    </span>
-  );
-};
+import RoleBadge from "./RoleBadge";
 
 interface PostCardProps {
   post: PostWithDetails;
@@ -108,7 +90,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
   };
 
   return (
-    <div className="rounded-xl border border-border bg-card overflow-hidden">
+    <div className="rounded-2xl border border-border bg-card overflow-hidden">
       {/* Author header */}
       <div className="flex items-start justify-between p-5 pb-0">
         <div className="flex gap-3">
@@ -117,7 +99,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
             onClick={handleAuthorClick}
           >
             <AvatarImage src={displayAvatar || undefined} />
-            <AvatarFallback className={`bg-primary/10 text-xs font-bold text-primary ${isStartupPost ? "rounded-lg" : ""}`}>{initials}</AvatarFallback>
+            <AvatarFallback className={`bg-primary/10 text-xs font-semibold text-primary ${isStartupPost ? "rounded-lg" : ""}`}>{initials}</AvatarFallback>
           </Avatar>
           <div>
             <div className="flex items-center gap-1.5 flex-wrap">
@@ -139,13 +121,17 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
                 <CheckCircle className="h-4 w-4 text-primary fill-primary/20" />
               )}
             </div>
-            <p className="text-xs text-muted-foreground">
-              {isStartupPost ? "Company Page" : post.likes_count > 0 ? `${post.likes_count.toLocaleString()} followers` : "Member"}
+            {/* This line used to read "<likes_count> followers" — the post's
+                own like count presented as the author's follower count, which
+                is simply a different number. The headline was already being
+                fetched and had nowhere to go. */}
+            <p className="truncate text-xs text-muted-foreground">
+              {isStartupPost ? "Company page" : (post as { author_headline?: string | null }).author_headline || "Member"}
             </p>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <span>{timeAgo}</span>
-              <span>·</span>
-              <Globe className="h-3 w-3" />
+              <span aria-hidden="true">·</span>
+              <Globe className="h-3 w-3" aria-label="Public" />
             </div>
           </div>
         </div>
@@ -158,9 +144,9 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
           {!isOwnPost && !isStartupPost && onToggleFollow && (
             <Button
               size="sm"
-              variant={isFollowing ? "outline" : "default"}
+              variant={isFollowing ? "ghost" : "outline"}
               onClick={() => onToggleFollow?.(post.author_id)}
-              className={!isFollowing ? "bg-gradient-gold text-white font-semibold hover:opacity-90 h-7 text-xs" : "h-7 text-xs"}
+              className="h-7 rounded-full px-3.5 text-xs font-medium"
             >
               {isFollowing ? "Following" : "Follow"}
             </Button>
@@ -174,7 +160,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
       {/* Content */}
       <div className="px-5 py-3">
         {isArticle && articleTitle && (
-          <h3 className="text-lg font-bold mb-2">{articleTitle}</h3>
+          <h3 className="text-lg font-semibold mb-2">{articleTitle}</h3>
         )}
         <PostContentRenderer
           content={contentBody}
@@ -228,7 +214,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
                 <div key={c.id} className="flex gap-2">
                   <Avatar className="h-7 w-7">
                     <AvatarImage src={c.author_avatar || undefined} />
-                    <AvatarFallback className="text-[10px] font-bold bg-muted">
+                    <AvatarFallback className="text-[10px] font-semibold bg-muted">
                       {c.author_name.split(" ").map(n => n[0]).join("").slice(0, 2)}
                     </AvatarFallback>
                   </Avatar>

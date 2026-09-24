@@ -36,7 +36,7 @@ const OnboardingStepper = ({ steps, currentIndex }: OnboardingStepperProps) => {
                 <span
                   aria-current={current ? "step" : undefined}
                   className={[
-                    "flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all",
+                    "flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-all",
                     done && "bg-gold/20 text-gold",
                     current && "bg-gradient-gold text-white ring-4 ring-gold/20",
                     !done && !current && "bg-muted text-muted-foreground",

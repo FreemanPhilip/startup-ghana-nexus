@@ -238,7 +238,7 @@ const PartnersSection = () => (
       >
         {partners.map((p, i) => (
           <motion.div key={p} variants={fadeUp} custom={i}
-            className="flex h-20 items-center justify-center rounded-xl border border-border bg-card px-4 text-center transition-all hover:scale-105 hover:border-gold/40 hover:shadow-md"
+            className="flex h-20 items-center justify-center rounded-2xl border border-border bg-card px-4 text-center transition-all hover:scale-105 hover:border-gold/40 hover:shadow-md"
           >
             <span className="font-display text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground">
               {p}
@@ -383,7 +383,7 @@ const ValuesSection = () => (
       >
         {values.map((v, i) => (
           <motion.div key={v.title} variants={fadeUp} custom={i}
-            className="flex items-start gap-4 rounded-xl border border-border bg-card p-6 shadow-sm"
+            className="flex items-start gap-4 rounded-2xl border border-border bg-card p-6 shadow-sm"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald/10">
               <v.icon className="h-5 w-5 text-emerald" />

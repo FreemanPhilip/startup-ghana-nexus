@@ -142,7 +142,7 @@ const PostDetailPage = () => {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-xl border border-border bg-card p-12 text-center"
+            className="rounded-2xl border border-border bg-card p-12 text-center"
           >
             <h1 className="font-display text-xl font-bold">{error}</h1>
             <p className="mt-2 text-sm text-muted-foreground">
@@ -160,7 +160,7 @@ const PostDetailPage = () => {
           <motion.article
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-xl border border-border bg-card overflow-hidden"
+            className="rounded-2xl border border-border bg-card overflow-hidden"
           >
             <div className="flex items-start justify-between p-5 pb-0">
               <div className="flex gap-3">

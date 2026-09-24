@@ -59,23 +59,17 @@ const AdminStatsCards = () => {
   ];
 
   return (
-    <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+    <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border lg:grid-cols-4">
       {cards.map((card) => (
-        <div key={card.label} className="rounded-xl border border-border bg-card p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{card.label}</p>
-              <p className="mt-1 font-display text-2xl font-bold">
-                {loading ? "—" : card.value.toLocaleString()}
-              </p>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-              <card.icon className={`h-5 w-5 ${card.color}`} />
-            </div>
+        <div key={card.label} className="flex items-start justify-between gap-3 bg-card p-5">
+          <div className="min-w-0">
+            <dt className="text-[12px] text-muted-foreground">{card.label}</dt>
+            <dd className="stat-value mt-1.5">{loading ? "—" : card.value.toLocaleString()}</dd>
           </div>
+          <card.icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
         </div>
       ))}
-    </div>
+    </dl>
   );
 };
 

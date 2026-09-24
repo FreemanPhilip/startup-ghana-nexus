@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Sparkles, Rocket, TrendingUp, GraduationCap, Handshake } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFollows } from "@/hooks/useFollows";
+import RoleBadge from "./RoleBadge";
 
 interface Suggestion {
   user_id: string;
@@ -13,13 +14,6 @@ interface Suggestion {
   headline: string | null;
   role?: string | null;
 }
-
-const roleConfig: Record<string, { label: string; className: string; icon: any }> = {
-  startup_founder: { label: "Founder", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400", icon: Rocket },
-  investor: { label: "Investor", className: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400", icon: TrendingUp },
-  mentor: { label: "Mentor", className: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400", icon: GraduationCap },
-  ecosystem_partner: { label: "Partner", className: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400", icon: Handshake },
-};
 
 const RecommendedConnections = () => {
   const { user } = useAuth();
@@ -105,45 +99,46 @@ const RecommendedConnections = () => {
   if (suggestions.length === 0) return null;
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-bold">People in the Ecosystem</h3>
-        </div>
+    <div className="rounded-2xl border border-border bg-card p-4">
+      <div className="mb-3 flex items-center gap-2">
+        <Sparkles className="h-4 w-4 text-brand" aria-hidden="true" />
+        <h3 className="text-sm font-semibold">People to follow</h3>
       </div>
-      <div className="grid grid-cols-3 gap-3">
-        {suggestions.map(s => {
-          const initials = (s.full_name || "U").split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+
+      {/* Rows, not a three-across grid of stacked captions. A name, what they
+          do, and one action — the same shape as every follow list people
+          already know how to read. */}
+      <ul className="divide-y divide-border">
+        {suggestions.map((s) => {
+          const initials = (s.full_name || "U").split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
           const following = isFollowing(s.user_id);
-          const config = s.role ? roleConfig[s.role] : null;
-          const RoleIcon = config?.icon;
           return (
-            <div key={s.user_id} className="flex flex-col items-center rounded-lg border border-border p-4 text-center">
-              <Avatar className="h-12 w-12">
-                <AvatarImage src={s.avatar_url || undefined} />
-                <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">{initials}</AvatarFallback>
+            <li key={s.user_id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+              <Avatar className="h-10 w-10 shrink-0">
+                <AvatarImage src={s.avatar_url || undefined} alt="" />
+                <AvatarFallback className="bg-muted text-xs font-semibold">{initials}</AvatarFallback>
               </Avatar>
-              <p className="mt-2 text-xs font-semibold leading-tight truncate w-full">{s.full_name || "Unknown"}</p>
-              {config && (
-                <span className={`mt-1 inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${config.className}`}>
-                  {RoleIcon && <RoleIcon className="h-2 w-2" />}
-                  {config.label}
-                </span>
-              )}
-              <p className="mt-0.5 text-[10px] text-muted-foreground truncate w-full">{s.headline || "Member"}</p>
+
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5">
+                  <p className="truncate text-[13px] font-semibold">{s.full_name || "Member"}</p>
+                  <RoleBadge role={s.role} variant="inline" />
+                </div>
+                <p className="truncate text-[12px] text-muted-foreground">{s.headline || "Member"}</p>
+              </div>
+
               <Button
-                variant="outline"
+                variant={following ? "ghost" : "outline"}
                 size="sm"
-                className={`mt-3 h-7 w-full text-xs ${following ? "" : "text-primary border-primary hover:bg-primary/5"}`}
+                className="h-8 shrink-0 rounded-full px-4 text-[13px] font-medium"
                 onClick={() => toggleFollow(s.user_id)}
               >
-                {following ? "Following" : "Connect"}
+                {following ? "Following" : "Follow"}
               </Button>
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </div>
   );
 };

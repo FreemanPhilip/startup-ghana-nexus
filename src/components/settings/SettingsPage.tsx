@@ -186,7 +186,7 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-bold">Settings</h1>
+        <h1 className="font-display text-2xl font-semibold">Settings</h1>
         <p className="text-sm text-muted-foreground mt-1">Manage your account, preferences, and integrations.</p>
       </div>
 
@@ -214,8 +214,8 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
           {/* ===== APPEARANCE ===== */}
           {activeSection === "appearance" && (
             <>
-              <div className="rounded-xl border border-border bg-card p-6">
-                <h3 className="font-display font-bold text-base mb-1">Theme</h3>
+              <div className="rounded-2xl border border-border bg-card p-6">
+                <h3 className="font-display font-semibold text-base mb-1">Theme</h3>
                 <p className="text-xs text-muted-foreground mb-5">Choose how the platform looks for you. This applies globally.</p>
 
                 <div className="grid grid-cols-3 gap-3">
@@ -246,8 +246,8 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-border bg-card p-6">
-                <h3 className="font-display font-bold text-base mb-1">Display</h3>
+              <div className="rounded-2xl border border-border bg-card p-6">
+                <h3 className="font-display font-semibold text-base mb-1">Display</h3>
                 <p className="text-xs text-muted-foreground mb-5">Customize your viewing experience.</p>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -271,8 +271,8 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
 
           {/* ===== NOTIFICATIONS ===== */}
           {activeSection === "notifications" && (
-            <div className="rounded-xl border border-border bg-card p-6">
-              <h3 className="font-display font-bold text-base mb-1">Notification Preferences</h3>
+            <div className="rounded-2xl border border-border bg-card p-6">
+              <h3 className="font-display font-semibold text-base mb-1">Notification Preferences</h3>
               <p className="text-xs text-muted-foreground mb-5">Control how and when you receive notifications.</p>
               <div className="space-y-5">
                 {[
@@ -299,8 +299,8 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
 
           {/* ===== PRIVACY ===== */}
           {activeSection === "privacy" && (
-            <div className="rounded-xl border border-border bg-card p-6">
-              <h3 className="font-display font-bold text-base mb-1">Privacy Settings</h3>
+            <div className="rounded-2xl border border-border bg-card p-6">
+              <h3 className="font-display font-semibold text-base mb-1">Privacy Settings</h3>
               <p className="text-xs text-muted-foreground mb-5">Control your visibility and data sharing preferences.</p>
               <div className="space-y-5">
                 {[
@@ -326,8 +326,8 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
           {/* ===== INTEGRATIONS ===== */}
           {activeSection === "integrations" && (
             <>
-              <div className="rounded-xl border border-border bg-card p-6">
-                <h3 className="font-display font-bold text-base mb-1">Connected Apps</h3>
+              <div className="rounded-2xl border border-border bg-card p-6">
+                <h3 className="font-display font-semibold text-base mb-1">Connected Apps</h3>
                 <p className="text-xs text-muted-foreground mb-5">Connect your favorite tools to enhance your workflow.</p>
                 <div className="space-y-4">
                   {integrations.map(app => (
@@ -369,8 +369,8 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-border bg-card p-6">
-                <h3 className="font-display font-bold text-base mb-1">Calendar Sync</h3>
+              <div className="rounded-2xl border border-border bg-card p-6">
+                <h3 className="font-display font-semibold text-base mb-1">Calendar Sync</h3>
                 <p className="text-xs text-muted-foreground mb-4">Paste your booking link so others can schedule time with you.</p>
                 <div className="space-y-3">
                   <div className="space-y-2">
@@ -398,8 +398,8 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
           {/* ===== ACCOUNT ===== */}
           {activeSection === "account" && (
             <>
-              <div className="rounded-xl border border-border bg-card p-6">
-                <h3 className="font-display font-bold text-base mb-1">Account Details</h3>
+              <div className="rounded-2xl border border-border bg-card p-6">
+                <h3 className="font-display font-semibold text-base mb-1">Account Details</h3>
                 <p className="text-xs text-muted-foreground mb-5">Your account information and status.</p>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between py-2 border-b border-border">
@@ -488,7 +488,7 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
               </div>
 
               <div className="rounded-xl border border-destructive/30 bg-card p-6">
-                <h3 className="font-display font-bold text-base mb-1 text-destructive">Danger Zone</h3>
+                <h3 className="font-display font-semibold text-base mb-1 text-destructive">Danger Zone</h3>
                 <p className="text-xs text-muted-foreground mb-4">These actions are irreversible. Proceed with caution.</p>
                 <div className="flex gap-3">
                   <Button variant="outline" className="text-xs text-destructive border-destructive/30 hover:bg-destructive/10 gap-1.5" onClick={onSignOut}>

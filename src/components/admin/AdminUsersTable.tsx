@@ -227,7 +227,7 @@ const AdminUsersTable = ({ adminLevel }: AdminUsersTableProps) => {
         </Button>
       </div>
 
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -403,7 +403,7 @@ const AdminUsersTable = ({ adminLevel }: AdminUsersTableProps) => {
                   <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-2">
                     <p className="text-sm font-medium">New temporary password:</p>
                     <div className="flex items-center justify-between rounded-md bg-background px-3 py-2 border">
-                      <p className="text-sm font-mono font-medium">{showGenPassword ? generatedPassword : "••••••••••••"}</p>
+                      <p className="text-sm numeric font-medium">{showGenPassword ? generatedPassword : "••••••••••••"}</p>
                       <div className="flex gap-1">
                         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowGenPassword(!showGenPassword)}>
                           {showGenPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}

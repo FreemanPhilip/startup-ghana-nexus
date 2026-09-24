@@ -30,7 +30,7 @@ export function IndexStartupCard({ startup, onClick }: IndexStartupCardProps) {
               className="w-12 h-12 rounded-lg object-cover border"
             />
           ) : (
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
               {initials}
             </div>
           )}
@@ -62,8 +62,8 @@ export function IndexStartupCard({ startup, onClick }: IndexStartupCardProps) {
           </div>
           {startup.sparkx_score != null && (
             <div className="text-right shrink-0">
-              <div className="text-lg font-bold text-primary">{startup.sparkx_score}</div>
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Score</div>
+              <div className="text-lg font-semibold text-primary">{startup.sparkx_score}</div>
+              <div className="text-[12px] text-muted-foreground">Score</div>
             </div>
           )}
         </div>

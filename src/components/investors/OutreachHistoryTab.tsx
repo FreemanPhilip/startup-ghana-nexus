@@ -101,7 +101,7 @@ const OutreachHistoryTab = () => {
     return (
       <Card className="p-8 text-center">
         <Send className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
-        <h3 className="font-display text-lg font-bold">No Investor Outreach Yet</h3>
+        <h3 className="font-display text-lg font-semibold">No Investor Outreach Yet</h3>
         <p className="mt-2 text-sm text-muted-foreground">
           Connection requests you send to investors will appear here with their status.
         </p>
@@ -118,10 +118,10 @@ const OutreachHistoryTab = () => {
         const StatusIcon = config.icon;
 
         return (
-          <div key={req.id} className="flex items-center gap-4 rounded-xl border border-border bg-card p-4">
+          <div key={req.id} className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
             <Avatar className="h-11 w-11 shrink-0">
               <AvatarImage src={profile?.avatar_url || undefined} />
-              <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">{initials}</AvatarFallback>
+              <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{initials}</AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold truncate">{profile?.full_name || "Unknown User"}</p>
@@ -129,7 +129,7 @@ const OutreachHistoryTab = () => {
               {req.message && <p className="text-xs mt-1 text-foreground/70 italic line-clamp-1">"{req.message}"</p>}
             </div>
             <div className="flex flex-col items-end gap-1 shrink-0">
-              <Badge variant="outline" className={`text-[10px] font-bold gap-1 ${config.className}`}>
+              <Badge variant="outline" className={`text-[10px] font-semibold gap-1 ${config.className}`}>
                 <StatusIcon className="h-3 w-3" />
                 {config.label}
               </Badge>

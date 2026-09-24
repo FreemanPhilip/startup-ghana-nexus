@@ -181,8 +181,8 @@ const StartupTeamManagement = ({ startupId, team, onTeamUpdated }: StartupTeamMa
     <div className="space-y-5">
       {/* Invite new member */}
       {isAdmin && (
-        <div className="rounded-xl border border-border bg-card p-5">
-          <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+        <div className="rounded-2xl border border-border bg-card p-5">
+          <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
             <Plus className="h-4 w-4 text-primary" /> Invite Team Member
           </h3>
           <div className="flex flex-col sm:flex-row gap-2">
@@ -218,8 +218,8 @@ const StartupTeamManagement = ({ startupId, team, onTeamUpdated }: StartupTeamMa
       )}
 
       {/* Active team members */}
-      <div className="rounded-xl border border-border bg-card p-5">
-        <h3 className="font-display font-bold text-sm mb-4 flex items-center gap-2">
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <h3 className="font-display font-semibold text-sm mb-4 flex items-center gap-2">
           <Users className="h-4 w-4 text-primary" /> Active Members ({confirmedTeam.length})
         </h3>
         {confirmedTeam.length === 0 ? (
@@ -236,7 +236,7 @@ const StartupTeamManagement = ({ startupId, team, onTeamUpdated }: StartupTeamMa
                 <div key={m.id} className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={m.profile?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">{initials}</AvatarFallback>
+                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{initials}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
@@ -288,8 +288,8 @@ const StartupTeamManagement = ({ startupId, team, onTeamUpdated }: StartupTeamMa
 
       {/* Pending confirmations */}
       {pendingMembers.length > 0 && (
-        <div className="rounded-xl border border-border bg-card p-5">
-          <h3 className="font-display font-bold text-sm mb-4 flex items-center gap-2">
+        <div className="rounded-2xl border border-border bg-card p-5">
+          <h3 className="font-display font-semibold text-sm mb-4 flex items-center gap-2">
             <Clock className="h-4 w-4 text-destructive/70" /> Pending Confirmation ({pendingMembers.length})
           </h3>
           <div className="space-y-2">
@@ -299,7 +299,7 @@ const StartupTeamManagement = ({ startupId, team, onTeamUpdated }: StartupTeamMa
                 <div key={m.id} className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-border">
                   <Avatar className="h-10 w-10 opacity-60">
                     <AvatarImage src={m.profile?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-muted text-muted-foreground text-xs font-bold">{initials}</AvatarFallback>
+                    <AvatarFallback className="bg-muted text-muted-foreground text-xs font-semibold">{initials}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate text-muted-foreground">{m.profile?.full_name || "Unknown"}</p>
@@ -324,8 +324,8 @@ const StartupTeamManagement = ({ startupId, team, onTeamUpdated }: StartupTeamMa
       )}
 
       {/* Invitations */}
-      <div className="rounded-xl border border-border bg-card p-5">
-        <h3 className="font-display font-bold text-sm mb-4 flex items-center gap-2">
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <h3 className="font-display font-semibold text-sm mb-4 flex items-center gap-2">
           <Mail className="h-4 w-4 text-primary" /> Invitations ({invitations.length})
         </h3>
         {loadingInvitations ? (

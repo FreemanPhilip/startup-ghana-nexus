@@ -187,7 +187,7 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
   const eligibleStartups = myStartups.filter(s => ["owner", "admin", "editor"].includes(s.my_role));
 
   return (
-    <div className="rounded-xl border border-border bg-card">
+    <div className="rounded-2xl border border-border bg-card">
       <input ref={imageInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={handleImageSelect} multiple />
       <input ref={videoInputRef} type="file" accept="video/mp4,video/webm" className="hidden" onChange={handleVideoSelect} />
 
@@ -199,7 +199,7 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
               <button className="flex items-center gap-2 rounded-full border border-border bg-muted/50 px-3 py-1.5 text-xs font-medium hover:bg-muted transition-colors">
                 <Avatar className={`h-5 w-5 ${isStartup ? "rounded" : ""}`}>
                   <AvatarImage src={displayAvatar || undefined} />
-                  <AvatarFallback className={`text-[9px] font-bold ${isStartup ? "rounded" : ""}`}>{initials}</AvatarFallback>
+                  <AvatarFallback className={`text-[9px] font-semibold ${isStartup ? "rounded" : ""}`}>{initials}</AvatarFallback>
                 </Avatar>
                 <span>Posting as <span className="font-semibold">{displayName || "You"}</span></span>
                 <ChevronDown className="h-3 w-3 text-muted-foreground" />
@@ -209,7 +209,7 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
               <DropdownMenuItem onClick={() => onIdentityChange({ type: "personal" })} className="gap-2 cursor-pointer">
                 <Avatar className="h-5 w-5">
                   <AvatarImage src={profile?.avatar_url || undefined} />
-                  <AvatarFallback className="text-[9px] font-bold">{profile?.full_name?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "U"}</AvatarFallback>
+                  <AvatarFallback className="text-[9px] font-semibold">{profile?.full_name?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "U"}</AvatarFallback>
                 </Avatar>
                 {profile?.full_name || "Personal Profile"}
               </DropdownMenuItem>
@@ -217,7 +217,7 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
                 <DropdownMenuItem key={s.id} onClick={() => onIdentityChange({ type: "startup", startup: s })} className="gap-2 cursor-pointer">
                   <Avatar className="h-5 w-5 rounded">
                     <AvatarImage src={s.logo_url || undefined} />
-                    <AvatarFallback className="text-[9px] font-bold rounded">{s.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback className="text-[9px] font-semibold rounded">{s.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                   {s.name}
                 </DropdownMenuItem>
@@ -231,7 +231,7 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
       <div className="flex items-center gap-3 p-4">
         <Avatar className={`h-10 w-10 shrink-0 ${isStartup ? "rounded-lg" : ""}`}>
           <AvatarImage src={displayAvatar || undefined} />
-          <AvatarFallback className={`bg-muted text-xs font-bold ${isStartup ? "rounded-lg" : ""}`}>{initials}</AvatarFallback>
+          <AvatarFallback className={`bg-muted text-xs font-semibold ${isStartup ? "rounded-lg" : ""}`}>{initials}</AvatarFallback>
         </Avatar>
         <button
           onClick={() => { setExpanded(true); setMode("default"); }}
@@ -243,20 +243,20 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
 
       {/* Action buttons row */}
       <div className="flex items-center justify-around border-t border-border px-4 py-2">
-        <button onClick={() => { openMode("photo"); imageInputRef.current?.click(); }} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted transition-colors">
-          <ImageIcon className="h-4 w-4 text-primary" />
+        <button onClick={() => { openMode("photo"); imageInputRef.current?.click(); }} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+          <ImageIcon className="h-4 w-4" />
           Photo
         </button>
-        <button onClick={() => { openMode("video"); videoInputRef.current?.click(); }} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted transition-colors">
-          <Video className="h-4 w-4 text-destructive" />
+        <button onClick={() => { openMode("video"); videoInputRef.current?.click(); }} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+          <Video className="h-4 w-4" />
           Video
         </button>
-        <button onClick={() => openMode("event")} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted transition-colors">
-          <CalendarDays className="h-4 w-4 text-secondary" />
+        <button onClick={() => openMode("event")} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+          <CalendarDays className="h-4 w-4" />
           Event
         </button>
-        <button onClick={() => openMode("article")} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted transition-colors">
-          <FileText className="h-4 w-4 text-accent" />
+        <button onClick={() => openMode("article")} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+          <FileText className="h-4 w-4" />
           Write article
         </button>
       </div>

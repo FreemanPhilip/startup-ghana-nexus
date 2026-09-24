@@ -67,21 +67,21 @@ const MentorDashboardPage = () => {
               {activeTab === "messages" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><MessagesPage onViewProfile={handleViewProfile} /></motion.div>}
               {activeTab === "reviews" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                 <div className="grid gap-4 md:grid-cols-3">
-                  <div className="rounded-xl border border-border bg-card p-5">
+                  <div className="rounded-2xl border border-border bg-card p-5">
                     <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Average rating</p>
                     <p className="mt-3 text-3xl font-bold">{reviewSummary.averageRating.toFixed(2)}</p>
                   </div>
-                  <div className="rounded-xl border border-border bg-card p-5">
+                  <div className="rounded-2xl border border-border bg-card p-5">
                     <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Total reviews</p>
                     <p className="mt-3 text-3xl font-bold">{reviewSummary.totalReviews}</p>
                   </div>
-                  <div className="rounded-xl border border-border bg-card p-5">
+                  <div className="rounded-2xl border border-border bg-card p-5">
                     <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">5-star feedback</p>
                     <p className="mt-3 text-3xl font-bold">{reviewSummary.fiveStarCount}</p>
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-border bg-card p-5">
+                <div className="rounded-2xl border border-border bg-card p-5">
                   <h3 className="font-display text-xl font-bold">Recent feedback</h3>
                   <div className="mt-4 space-y-4">
                     {mentorReviews.map((review) => (

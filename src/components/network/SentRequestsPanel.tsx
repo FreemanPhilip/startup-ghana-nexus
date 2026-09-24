@@ -35,7 +35,7 @@ const SentRequestsPanel = ({ requests, loading }: SentRequestsPanelProps) => {
         const profile = req.receiver_profile;
         const initials = profile?.full_name?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "U";
         return (
-          <div key={req.id} className="flex items-center gap-4 rounded-xl border border-border bg-card p-4">
+          <div key={req.id} className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
             <Avatar className="h-11 w-11 shrink-0">
               <AvatarImage src={profile?.avatar_url || undefined} />
               <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">{initials}</AvatarFallback>

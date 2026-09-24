@@ -114,7 +114,7 @@ const PlatformPreview = () => {
                   <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/70" />
                   <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
                 </div>
-                <span className="text-[10px] text-muted-foreground font-mono ml-2">sparkx.global</span>
+                <span className="text-[10px] text-muted-foreground numeric ml-2">sparkx.global</span>
               </div>
 
               <div className={`relative p-8 bg-gradient-to-br ${item.gradient} min-h-[200px] flex flex-col items-center justify-center`}>

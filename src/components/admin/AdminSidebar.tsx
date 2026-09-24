@@ -66,7 +66,7 @@ const AdminSidebar = ({ activeTab, onTabChange, open, onClose, adminLevel }: Adm
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10">
             <AvatarImage src={profile?.avatar_url || undefined} />
-            <AvatarFallback className="bg-muted text-xs font-bold">{initials}</AvatarFallback>
+            <AvatarFallback className="bg-muted text-xs font-semibold">{initials}</AvatarFallback>
           </Avatar>
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold">{profile?.full_name || "Admin"}</p>

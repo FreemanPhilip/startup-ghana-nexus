@@ -92,7 +92,7 @@ const OnboardingProfileStep = ({ onNext, saving: parentSaving }: Props) => {
 
   return (
     <div className="w-full max-w-md rounded-2xl border border-border/20 bg-card p-8 shadow-2xl">
-      <h2 className="font-display text-2xl font-bold">Complete your profile</h2>
+      <h2 className="font-display text-2xl font-semibold">Complete your profile</h2>
       <p className="mt-1 text-sm text-muted-foreground">Just a few details to get you started</p>
 
       <div className="mt-6 space-y-5">
@@ -101,7 +101,7 @@ const OnboardingProfileStep = ({ onNext, saving: parentSaving }: Props) => {
           <label htmlFor="avatar-upload" className="cursor-pointer group relative">
             <Avatar className="h-20 w-20">
               <AvatarImage src={avatarPreview || undefined} />
-              <AvatarFallback className="bg-muted text-lg font-bold">{initials}</AvatarFallback>
+              <AvatarFallback className="bg-muted text-lg font-semibold">{initials}</AvatarFallback>
             </Avatar>
             <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
               <Camera className="h-5 w-5 text-white" />

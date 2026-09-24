@@ -3,6 +3,7 @@ import { Calendar, Video, CheckSquare, BarChart3, Sparkles, Loader2 } from "luci
 import BrowseMentorsDialog from "./BrowseMentorsDialog";
 import AIMatchDialog from "./AIMatchDialog";
 import ActiveMembers from "./ActiveMembers";
+import RecommendedConnections from "./RecommendedConnections";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card } from "@/components/ui/card";
@@ -92,160 +93,119 @@ const DashboardRightSidebar = ({ onNavigate }: DashboardRightSidebarProps) => {
   });
 
   return (
-    <aside className="hidden w-72 shrink-0 space-y-5 overflow-y-auto border-l border-border bg-card p-4 xl:block">
-      {/* Upcoming Sessions */}
-      <Card className="p-5">
+    <aside className="hidden w-72 shrink-0 space-y-4 overflow-y-auto border-l border-border bg-card p-4 xl:block">
+      {/* Sessions */}
+      <Card className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
-              <Calendar className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+            <div className="a-mentor accent-tile h-7 w-7">
+              <Calendar className="h-3.5 w-3.5" />
             </div>
-            <h3 className="text-sm font-bold">Upcoming Sessions</h3>
+            <h3 className="text-[13px] font-semibold">Upcoming</h3>
           </div>
-          <Button
-            variant="link"
-            size="sm"
-            className="h-auto p-0 text-[10px] font-bold text-primary uppercase tracking-wider"
+          <button
+            className="text-[12px] text-muted-foreground transition-colors hover:text-foreground"
             onClick={() => onNavigate?.("my-sessions")}
           >
-            View Calendar
-          </Button>
+            All
+          </button>
         </div>
 
-        <div className="mt-4 space-y-3">
+        <div className="mt-3 space-y-2">
           {loading ? (
-            <div className="flex items-center justify-center py-6">
-              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            <div className="flex items-center justify-center py-5">
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
             </div>
           ) : upcomingSessions.length === 0 ? (
-            <p className="text-xs text-muted-foreground text-center py-4">
-              No upcoming sessions
-            </p>
+            <p className="py-3 text-center text-[12px] text-muted-foreground">Nothing booked</p>
           ) : (
             upcomingSessions.slice(0, 2).map((session) => {
               const date = parseISO(session.booking_date);
-              const monthStr = format(date, "MMM").toUpperCase();
-              const dayStr = format(date, "d");
-              const timeStr = format(
-                new Date(`2000-01-01T${session.start_time}`),
-                "h:mm a"
-              );
-
+              const timeStr = format(new Date(`2000-01-01T${session.start_time}`), "h:mm a");
               return (
-                <div
-                  key={session.id}
-                  className="flex items-center gap-3 rounded-lg border border-border p-2.5"
-                >
-                  <div className="text-center min-w-[40px]">
-                    <p className="text-[9px] font-bold uppercase text-primary">
-                      {monthStr}
-                    </p>
-                    <p className="text-lg font-bold leading-none">{dayStr}</p>
+                <div key={session.id} className="flex items-center gap-3 rounded-lg border border-border p-2.5">
+                  <div className="min-w-[34px] text-center">
+                    <p className="a-mentor accent-text text-[9px] font-semibold uppercase">{format(date, "MMM")}</p>
+                    <p className="text-base font-semibold leading-none tabular-nums">{format(date, "d")}</p>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="truncate text-xs font-semibold">
-                      {session.notes?.slice(0, 30) || "Mentorship Session"}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[12px] font-medium">
+                      {session.other_user?.full_name || "Session"}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">
-                      {session.mentor_id === user?.id ? "Mentee" : "Mentor"}: {session.other_user?.full_name || "User"} · {timeStr}
-                    </p>
+                    <p className="text-[11px] text-muted-foreground">{timeStr}</p>
                   </div>
-                  <Video className="h-4 w-4 shrink-0 text-primary" />
+                  <Video className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
                 </div>
               );
             })
           )}
         </div>
 
-        <Button
-          variant="outline"
-          size="sm"
-          className="mt-3 w-full text-xs border-dashed"
-          onClick={() => setBrowseMentorsOpen(true)}
-        >
-          Browse All Mentors
-        </Button>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-full text-[12px] font-medium"
+            onClick={() => setBrowseMentorsOpen(true)}
+          >
+            Browse
+          </Button>
+          <Button
+            size="sm"
+            className="rounded-full text-[12px] font-medium"
+            onClick={() => setAiMatchOpen(true)}
+          >
+            <Sparkles className="mr-1 h-3.5 w-3.5" />
+            Match me
+          </Button>
+        </div>
       </Card>
 
-      {/* Mentorship Progress */}
-      <Card className="p-5">
+      {/* Progress. Two figures and a bar — the badge-name paragraph that used
+          to sit under them explained a reward the member had not asked about. */}
+      <Card className="p-4">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-            <BarChart3 className="h-4 w-4 text-primary" />
+          <div className="a-funding accent-tile h-7 w-7">
+            <BarChart3 className="h-3.5 w-3.5" />
           </div>
-          <h3 className="text-sm font-bold">Mentorship Progress</h3>
+          <h3 className="text-[13px] font-semibold">Progress</h3>
         </div>
 
-        <div className="mt-4">
-          <div className="flex items-center justify-between text-xs mb-1.5">
-            <span className="font-bold uppercase tracking-wider text-primary text-[10px]">
-              Hours Completed
-            </span>
-            <span className="font-bold">
+        <div className="mt-3">
+          <div className="mb-1.5 flex items-baseline justify-between text-[12px]">
+            <span className="text-muted-foreground">Hours</span>
+            <span className="font-semibold tabular-nums">
               {hoursCompleted} / {hourGoal}
             </span>
           </div>
-          <Progress value={hoursProgress} className="h-2" />
+          <Progress value={hoursProgress} className="h-1.5" />
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <div className="rounded-lg border border-border p-3 text-center">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              Sessions
-            </p>
-            <p className="text-2xl font-bold mt-1">{totalSessions}</p>
+        <dl className="mt-3 grid grid-cols-2 gap-3 border-t border-border pt-3">
+          <div>
+            <dd className="text-xl font-semibold tabular-nums">{totalSessions}</dd>
+            <dt className="text-[11px] text-muted-foreground">Sessions</dt>
           </div>
-          <div className="rounded-lg border border-border p-3 text-center">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              Expertise
-            </p>
-            <p className="text-2xl font-bold mt-1">{uniqueExpertise.size}</p>
+          <div>
+            <dd className="text-xl font-semibold tabular-nums">{uniqueExpertise.size}</dd>
+            <dt className="text-[11px] text-muted-foreground">Skill areas</dt>
           </div>
-        </div>
-
-        {/* Next Milestone */}
-        <div className="mt-4 rounded-lg bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/30 p-3">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-            Next Milestone
-          </p>
-          <p className="text-xs mt-1 text-foreground">
-            {completedSessions < 5
-              ? `Complete ${5 - completedSessions} more session${5 - completedSessions > 1 ? "s" : ""} to earn the "Active Learner" badge.`
-              : completedSessions < 10
-              ? `Complete ${10 - completedSessions} more session${10 - completedSessions > 1 ? "s" : ""} to earn the "GTM Strategist" badge.`
-              : "You're a mentorship champion! 🏆"}
-          </p>
-        </div>
+        </dl>
       </Card>
 
-      {/* AI Matching CTA */}
-      <Card className="p-5 bg-foreground text-background border-0">
-        <h3 className="text-sm font-bold">Need a specific mentor?</h3>
-        <p className="text-xs mt-2 opacity-80 leading-relaxed">
-          Our AI matches you with the best industry experts based on your startup's current challenges.
-        </p>
-        <Button
-          className="mt-4 w-full bg-amber-500 hover:bg-amber-600 text-foreground font-semibold text-xs"
-          onClick={() => setAiMatchOpen(true)}
-        >
-          <Sparkles className="h-3.5 w-3.5 mr-1.5" />
-          Get AI Matching
-        </Button>
-      </Card>
+      <RecommendedConnections />
 
-      {/* Active Members across ecosystem */}
       <ActiveMembers />
 
-      {/* Dialogs */}
       <BrowseMentorsDialog
         open={browseMentorsOpen}
         onOpenChange={setBrowseMentorsOpen}
-        onSelectMentor={(id) => onNavigate?.("mentors")}
+        onSelectMentor={() => onNavigate?.("mentors")}
       />
       <AIMatchDialog
         open={aiMatchOpen}
         onOpenChange={setAiMatchOpen}
-        onSelectMentor={(id) => onNavigate?.("mentors")}
+        onSelectMentor={() => onNavigate?.("mentors")}
       />
     </aside>
   );

@@ -247,7 +247,7 @@ const BookSessionDialog = ({ open, onClose, mentor }: BookSessionDialogProps) =>
           <div className="space-y-4 pt-2">
             {/* Step 1: Pick a date */}
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+              <p className="text-[12px] text-muted-foreground mb-2 flex items-center gap-1.5">
                 <CalendarIcon className="h-3 w-3" /> Select a Date
               </p>
               <div className="flex justify-center">
@@ -270,7 +270,7 @@ const BookSessionDialog = ({ open, onClose, mentor }: BookSessionDialogProps) =>
             {/* Step 2: Pick a time */}
             {selectedDate && (
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                <p className="text-[12px] text-muted-foreground mb-2 flex items-center gap-1.5">
                   <Clock className="h-3 w-3" /> Select a Time
                 </p>
                 {timeSlots.length === 0 ? (
@@ -305,7 +305,7 @@ const BookSessionDialog = ({ open, onClose, mentor }: BookSessionDialogProps) =>
             {selectedSlot && (
               <div className="space-y-3">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5">Notes (optional)</p>
+                  <p className="text-[12px] text-muted-foreground mb-1.5">Notes (optional)</p>
                   <Textarea
                     placeholder="What would you like to discuss?"
                     value={notes}

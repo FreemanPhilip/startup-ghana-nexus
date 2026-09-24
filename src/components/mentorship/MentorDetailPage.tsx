@@ -50,7 +50,7 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
           <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10">
             <Avatar className="h-20 w-20 border-4 border-card shadow-lg">
               <AvatarImage src={mentor.avatar_url || undefined} />
-              <AvatarFallback className="bg-gradient-gold text-2xl font-bold text-primary-foreground">
+              <AvatarFallback className="bg-gradient-gold text-2xl font-semibold text-primary-foreground">
                 {initials}
               </AvatarFallback>
             </Avatar>
@@ -59,7 +59,7 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="font-display text-xl font-bold">{mentor.full_name}</h1>
+                    <h1 className="font-display text-xl font-semibold">{mentor.full_name}</h1>
                     <CheckCircle2 className="h-5 w-5 text-primary fill-primary/20" />
                   </div>
                   <p className="text-sm text-muted-foreground mt-0.5">
@@ -87,8 +87,8 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
         {/* Main content */}
         <div className="flex-1 min-w-0 space-y-5">
           {/* Bio */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-primary" /> About
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
@@ -98,8 +98,8 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
 
           {/* Expertise */}
           {mentor.expertise && mentor.expertise.length > 0 && (
-            <div className="rounded-xl border border-border bg-card p-5">
-              <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+            <div className="rounded-2xl border border-border bg-card p-5">
+              <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
                 <Award className="h-4 w-4 text-primary" /> Areas of Expertise
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -113,8 +113,8 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
           )}
 
           {/* Reviews */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-4 flex items-center gap-2">
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-4 flex items-center gap-2">
               <Star className="h-4 w-4 text-primary" /> Founder feedback
             </h3>
             <div className="space-y-3">
@@ -134,22 +134,22 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
         {/* Right sidebar */}
         <div className="lg:w-72 shrink-0 space-y-5">
           {/* Stats Card */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-4">Mentor Stats</h3>
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-4">Mentor Stats</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Sessions</span>
-                <span className="text-sm font-bold text-primary">{mentor.sessions_count}</span>
+                <span className="text-[12px] text-muted-foreground">Sessions</span>
+                <span className="text-sm font-semibold text-primary">{mentor.sessions_count}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Reviews</span>
-                <span className="text-sm font-bold text-foreground">{mentor.reviews_count}</span>
+                <span className="text-[12px] text-muted-foreground">Reviews</span>
+                <span className="text-sm font-semibold text-foreground">{mentor.reviews_count}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Rating</span>
+                <span className="text-[12px] text-muted-foreground">Rating</span>
                 <div className="flex items-center gap-1">
                   <Star className="h-3.5 w-3.5 text-primary fill-primary" />
-                  <span className="text-sm font-bold text-foreground">{mentor.rating}</span>
+                  <span className="text-sm font-semibold text-foreground">{mentor.rating}</span>
                 </div>
               </div>
               <div>
@@ -163,8 +163,8 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
           </div>
 
           {/* Availability */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-3">Availability</h3>
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-3">Availability</h3>
             <div className="flex items-center gap-2">
               {mentor.availability === "available_now" ? (
                 <>
@@ -181,8 +181,8 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
           </div>
 
           {/* Info */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-3">Details</h3>
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-3">Details</h3>
             <div className="space-y-3">
               {mentor.location && (
                 <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
@@ -204,7 +204,7 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
 
           {/* CTA */}
           <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 text-center">
-            <h3 className="font-display font-bold text-sm mb-2">Ready to grow?</h3>
+            <h3 className="font-display font-semibold text-sm mb-2">Ready to grow?</h3>
             <p className="text-xs text-muted-foreground mb-3">
               Book a 1:1 session with {mentor.full_name?.split(" ")[0]}
             </p>

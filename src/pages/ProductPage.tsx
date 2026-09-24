@@ -233,7 +233,7 @@ const ProductPage = () => {
             {/* Stats Grid */}
             <motion.div initial="hidden" animate="visible" custom={1} variants={fadeUp} className="grid grid-cols-2 gap-4">
               {product.stats.map((stat, i) => (
-                <div key={i} className="rounded-xl border border-border bg-card p-6 text-center shadow-sm">
+                <div key={i} className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
                   <p className="font-display text-3xl font-bold text-primary">{stat.value}</p>
                   <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
                 </div>

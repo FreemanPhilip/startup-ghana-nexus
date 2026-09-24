@@ -161,7 +161,7 @@ const NewConversationDialog = ({ open, onOpenChange, onStartConversation }: NewC
                   <div className="relative">
                     <Avatar className="h-11 w-11">
                       <AvatarImage src={contact.avatar_url || undefined} />
-                      <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                      <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
                         {getInitials(contact.full_name)}
                       </AvatarFallback>
                     </Avatar>

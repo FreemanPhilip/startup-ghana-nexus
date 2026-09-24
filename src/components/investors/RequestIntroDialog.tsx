@@ -155,7 +155,7 @@ const RequestIntroDialog = ({ open, onOpenChange, investorName, onSend, startups
         {sent ? (
           <div className="py-8 text-center">
             <div className="mx-auto h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center mb-3">
-              <Send className="h-5 w-5 text-emerald-600" />
+              <Send className="h-5 w-5 text-emerald" />
             </div>
             <p className="font-semibold">Intro Request Sent!</p>
             <p className="text-sm text-muted-foreground mt-1">You'll be notified when they respond.</p>
@@ -208,7 +208,7 @@ const RequestIntroDialog = ({ open, onOpenChange, investorName, onSend, startups
                     </div>
                   ) : existingDecks.length > 0 ? (
                     <div className="space-y-1.5">
-                      <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Your Uploaded Decks</p>
+                      <p className="text-[12px] text-muted-foreground">Your Uploaded Decks</p>
                       <div className="max-h-32 overflow-y-auto space-y-1">
                         {existingDecks.map(deck => (
                           <button

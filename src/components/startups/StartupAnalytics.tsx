@@ -166,18 +166,18 @@ const StartupAnalytics = ({ startupId }: StartupAnalyticsProps) => {
           { label: "Total Comments", value: totalComments, icon: MessageSquare, color: "text-primary" },
           { label: "Team Size", value: teamSize, icon: Users, color: "text-secondary" },
         ].map(stat => (
-          <div key={stat.label} className="rounded-xl border border-border bg-card p-4 text-center">
+          <div key={stat.label} className="rounded-2xl border border-border bg-card p-4 text-center">
             <stat.icon className={`h-5 w-5 mx-auto mb-1.5 ${stat.color}`} />
-            <p className="text-2xl font-bold">{stat.value}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{stat.label}</p>
+            <p className="text-2xl font-semibold">{stat.value}</p>
+            <p className="text-[12px] text-muted-foreground">{stat.label}</p>
           </div>
         ))}
       </div>
 
       {/* Engagement Rate */}
-      <div className="rounded-xl border border-border bg-card p-5">
+      <div className="rounded-2xl border border-border bg-card p-5">
         <div className="flex items-center justify-between mb-1">
-          <h3 className="font-display font-bold text-sm flex items-center gap-2">
+          <h3 className="font-display font-semibold text-sm flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-primary" /> Post Engagement (30 days)
           </h3>
           <span className="text-xs text-muted-foreground">Avg {avgEngagement} / post</span>
@@ -217,8 +217,8 @@ const StartupAnalytics = ({ startupId }: StartupAnalyticsProps) => {
       </div>
 
       {/* Team Growth */}
-      <div className="rounded-xl border border-border bg-card p-5">
-        <h3 className="font-display font-bold text-sm flex items-center gap-2 mb-4">
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <h3 className="font-display font-semibold text-sm flex items-center gap-2 mb-4">
           <Users className="h-4 w-4 text-primary" /> Team Growth (30 days)
         </h3>
         <div className="relative h-32">
@@ -245,28 +245,28 @@ const StartupAnalytics = ({ startupId }: StartupAnalyticsProps) => {
       </div>
 
       {/* Community Reach */}
-      <div className="rounded-xl border border-border bg-card p-5">
+      <div className="rounded-2xl border border-border bg-card p-5">
         <div className="flex items-center justify-between">
-          <h3 className="font-display font-bold text-sm flex items-center gap-2">
+          <h3 className="font-display font-semibold text-sm flex items-center gap-2">
             <Eye className="h-4 w-4 text-primary" /> Community Reach
           </h3>
           <span className="text-xs text-muted-foreground">{reachSummary.engagementRate}% engagement</span>
         </div>
 
-        <p className="mt-3 text-2xl font-bold">{reachSummary.communityReach.toLocaleString()}</p>
+        <p className="mt-3 text-2xl font-semibold">{reachSummary.communityReach.toLocaleString()}</p>
         <p className="mt-1 text-sm text-muted-foreground">{reachSummary.reachLabel}</p>
 
         <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
           <div className="rounded-md bg-muted/40 p-2">
-            <p className="font-bold text-foreground">{founderFollowerCount}</p>
+            <p className="font-semibold text-foreground">{founderFollowerCount}</p>
             <span className="text-muted-foreground">Followers</span>
           </div>
           <div className="rounded-md bg-muted/40 p-2">
-            <p className="font-bold text-foreground">{teamSize}</p>
+            <p className="font-semibold text-foreground">{teamSize}</p>
             <span className="text-muted-foreground">Team</span>
           </div>
           <div className="rounded-md bg-muted/40 p-2">
-            <p className="font-bold text-foreground">{totalPosts}</p>
+            <p className="font-semibold text-foreground">{totalPosts}</p>
             <span className="text-muted-foreground">Posts</span>
           </div>
         </div>

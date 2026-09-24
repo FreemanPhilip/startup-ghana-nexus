@@ -66,7 +66,7 @@ const AdminVerificationRequests = ({ adminLevel }: AdminVerificationRequestsProp
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-muted-foreground">Loading...</div>
         ) : requests.length === 0 ? (

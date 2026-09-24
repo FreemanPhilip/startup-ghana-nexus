@@ -121,7 +121,7 @@ const PublicProfilePage = ({ userId, onBack, onMessage }: PublicProfilePageProps
         <Button variant="ghost" size="sm" className="gap-1.5 text-xs" onClick={onBack}>
           <ArrowLeft className="h-4 w-4" /> Back
         </Button>
-        <div className="rounded-xl border border-border bg-card p-12 text-center">
+        <div className="rounded-2xl border border-border bg-card p-12 text-center">
           <p className="text-sm text-muted-foreground">Profile not found.</p>
         </div>
       </div>
@@ -154,14 +154,14 @@ const PublicProfilePage = ({ userId, onBack, onMessage }: PublicProfilePageProps
         <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-12">
           <Avatar className="h-24 w-24 border-4 border-card shadow-lg">
             <AvatarImage src={profile.avatar_url || undefined} />
-            <AvatarFallback className="bg-muted text-xl font-bold">{initials}</AvatarFallback>
+            <AvatarFallback className="bg-muted text-xl font-semibold">{initials}</AvatarFallback>
           </Avatar>
 
           <div className="flex-1 sm:pb-1">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="font-display text-xl font-bold">{profile.full_name || "Anonymous"}</h1>
+                  <h1 className="font-display text-xl font-semibold">{profile.full_name || "Anonymous"}</h1>
                   {profile.verification === "verified" && (
                     <CheckCircle className="h-5 w-5 text-primary fill-primary/20" />
                   )}
@@ -209,8 +209,8 @@ const PublicProfilePage = ({ userId, onBack, onMessage }: PublicProfilePageProps
                 { label: "Following", value: followStats.following },
               ].map(s => (
                 <div key={s.label} className="text-center">
-                  <p className="text-sm font-bold">{s.value}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{s.label}</p>
+                  <p className="text-sm font-semibold">{s.value}</p>
+                  <p className="text-[12px] text-muted-foreground">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -238,40 +238,40 @@ const PublicProfilePage = ({ userId, onBack, onMessage }: PublicProfilePageProps
         {activeTab === "about" && (
           <>
             <div className="flex-1 space-y-5">
-              <div className="rounded-xl border border-border bg-card p-5">
-                <h3 className="font-display font-bold text-sm mb-3">About</h3>
+              <div className="rounded-2xl border border-border bg-card p-5">
+                <h3 className="font-display font-semibold text-sm mb-3">About</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {profile.bio || "This user hasn't added a bio yet."}
                 </p>
               </div>
 
               {(profile.company_name || profile.industry) && (
-                <div className="rounded-xl border border-border bg-card p-5">
-                  <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+                <div className="rounded-2xl border border-border bg-card p-5">
+                  <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
                     <Building2 className="h-4 w-4 text-primary" /> Company
                   </h3>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     {profile.company_name && (
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Name</p>
+                        <p className="text-[12px] text-muted-foreground">Name</p>
                         <p className="font-medium mt-0.5">{profile.company_name}</p>
                       </div>
                     )}
                     {profile.industry && (
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Industry</p>
+                        <p className="text-[12px] text-muted-foreground">Industry</p>
                         <p className="font-medium mt-0.5">{profile.industry}</p>
                       </div>
                     )}
                     {profile.company_stage && (
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Stage</p>
+                        <p className="text-[12px] text-muted-foreground">Stage</p>
                         <p className="font-medium mt-0.5 capitalize">{profile.company_stage}</p>
                       </div>
                     )}
                     {profile.team_size && (
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Team Size</p>
+                        <p className="text-[12px] text-muted-foreground">Team Size</p>
                         <p className="font-medium mt-0.5">{profile.team_size} people</p>
                       </div>
                     )}
@@ -280,8 +280,8 @@ const PublicProfilePage = ({ userId, onBack, onMessage }: PublicProfilePageProps
               )}
 
               {profile.expertise && profile.expertise.length > 0 && (
-                <div className="rounded-xl border border-border bg-card p-5">
-                  <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+                <div className="rounded-2xl border border-border bg-card p-5">
+                  <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
                     <Award className="h-4 w-4 text-primary" /> Expertise
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -295,8 +295,8 @@ const PublicProfilePage = ({ userId, onBack, onMessage }: PublicProfilePageProps
 
             {/* Right sidebar */}
             <div className="lg:w-64 shrink-0 space-y-5">
-              <div className="rounded-xl border border-border bg-card p-5">
-                <h3 className="font-display font-bold text-sm mb-3">Links</h3>
+              <div className="rounded-2xl border border-border bg-card p-5">
+                <h3 className="font-display font-semibold text-sm mb-3">Links</h3>
                 <div className="space-y-3">
                   {profile.website_url && (
                     <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
@@ -316,8 +316,8 @@ const PublicProfilePage = ({ userId, onBack, onMessage }: PublicProfilePageProps
                 </div>
               </div>
 
-              <div className="rounded-xl border border-border bg-card p-5">
-                <h3 className="font-display font-bold text-sm mb-3">Roles</h3>
+              <div className="rounded-2xl border border-border bg-card p-5">
+                <h3 className="font-display font-semibold text-sm mb-3">Roles</h3>
                 <div className="flex flex-wrap gap-2">
                   {roles.map(r => (
                     <Badge key={r} variant="outline" className="text-[10px] capitalize">{roleLabelMap[r] || r}</Badge>
@@ -325,8 +325,8 @@ const PublicProfilePage = ({ userId, onBack, onMessage }: PublicProfilePageProps
                 </div>
               </div>
 
-              <div className="rounded-xl border border-border bg-card p-5">
-                <h3 className="font-display font-bold text-sm mb-3">Member Since</h3>
+              <div className="rounded-2xl border border-border bg-card p-5">
+                <h3 className="font-display font-semibold text-sm mb-3">Member Since</h3>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Calendar className="h-3.5 w-3.5" />
                   <span>{new Date(profile.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</span>
@@ -339,12 +339,12 @@ const PublicProfilePage = ({ userId, onBack, onMessage }: PublicProfilePageProps
         {activeTab === "posts" && (
           <div className="flex-1 space-y-4">
             {posts.length === 0 ? (
-              <div className="rounded-xl border border-border bg-card p-12 text-center">
+              <div className="rounded-2xl border border-border bg-card p-12 text-center">
                 <p className="text-sm text-muted-foreground">No posts yet.</p>
               </div>
             ) : (
               posts.map(post => (
-                <div key={post.id} className="rounded-xl border border-border bg-card p-5 space-y-3">
+                <div key={post.id} className="rounded-2xl border border-border bg-card p-5 space-y-3">
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="text-[10px] capitalize">{post.category}</Badge>
                     <span className="text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>

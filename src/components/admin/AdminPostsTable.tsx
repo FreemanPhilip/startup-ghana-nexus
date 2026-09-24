@@ -43,7 +43,7 @@ const AdminPostsTable = () => {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input placeholder="Search posts..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
       </div>
-      <div className="rounded-xl border border-border bg-card overflow-hidden divide-y divide-border">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border">
         {loading ? (
           <div className="p-8 text-center text-muted-foreground">Loading...</div>
         ) : filtered.length === 0 ? (

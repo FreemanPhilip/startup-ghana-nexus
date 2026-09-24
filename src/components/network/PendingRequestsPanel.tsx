@@ -26,7 +26,7 @@ const PendingRequestsPanel = ({ requests, loading, onAccept, onReject }: Pending
   };
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 space-y-3">
+    <div className="rounded-2xl border border-border bg-card p-4 space-y-3">
       <div className="flex items-center gap-2 mb-1">
         <UserPlus className="h-4 w-4 text-primary" />
         <h3 className="text-sm font-bold">Connection Requests ({requests.length})</h3>
@@ -50,7 +50,7 @@ const PendingRequestsPanel = ({ requests, loading, onAccept, onReject }: Pending
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
+                className="h-8 w-8 text-emerald hover:bg-emerald/10 hover:text-emerald"
                 disabled={processing === req.id}
                 onClick={() => handleAction(req.id, "accept")}
               >

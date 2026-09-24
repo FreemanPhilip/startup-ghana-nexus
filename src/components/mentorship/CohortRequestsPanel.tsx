@@ -37,12 +37,12 @@ const CohortRequestsPanel = ({ requests, onRespond, busy }: CohortRequestsPanelP
         {requests.map((request) => (
           <div
             key={request.id}
-            className="rounded-xl border border-border bg-card p-3"
+            className="rounded-2xl border border-border bg-card p-3"
           >
             <div className="flex items-start gap-3">
               <Avatar className="h-10 w-10">
                 <AvatarImage src={request.avatar_url ?? undefined} />
-                <AvatarFallback className="bg-muted text-xs font-bold">
+                <AvatarFallback className="bg-muted text-xs font-semibold">
                   {initials(request.full_name)}
                 </AvatarFallback>
               </Avatar>

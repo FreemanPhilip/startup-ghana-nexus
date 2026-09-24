@@ -23,7 +23,7 @@ export function IndexInvestorListItem({ investor, onClick }: IndexInvestorListIt
       {investor.logo_url ? (
         <img src={investor.logo_url} alt={investor.name} className="w-10 h-10 rounded-lg object-cover border shrink-0" />
       ) : (
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-500/10 flex items-center justify-center text-amber-600 font-bold text-xs shrink-0">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-500/10 flex items-center justify-center text-amber-600 font-semibold text-xs shrink-0">
           {initials}
         </div>
       )}
