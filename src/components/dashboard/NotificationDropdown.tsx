@@ -117,7 +117,7 @@ const ConnectionRequestItem = ({
     <div className="flex gap-3 p-3 hover:bg-muted/50 transition-colors">
       <Avatar className="h-9 w-9 shrink-0">
         <AvatarImage src={profile?.avatar_url || undefined} />
-        <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">{initials}</AvatarFallback>
+        <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-semibold">{initials}</AvatarFallback>
       </Avatar>
       <div className="flex-1 min-w-0">
         <p className="text-xs font-semibold text-foreground">{profile?.full_name || "Someone"}</p>
@@ -208,7 +208,7 @@ const NotificationDropdown = () => {
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           {totalBadge > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
+            <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
               {totalBadge > 99 ? "99+" : totalBadge}
             </span>
           )}
@@ -224,7 +224,7 @@ const NotificationDropdown = () => {
               >
                 Notifications
                 {unreadCount > 0 && (
-                  <span className="ml-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold text-destructive-foreground">
+                  <span className="ml-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-semibold text-destructive-foreground">
                     {unreadCount}
                   </span>
                 )}
@@ -235,7 +235,7 @@ const NotificationDropdown = () => {
               >
                 Requests
                 {pendingCount > 0 && (
-                  <span className="ml-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">
+                  <span className="ml-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-semibold text-primary-foreground">
                     {pendingCount}
                   </span>
                 )}

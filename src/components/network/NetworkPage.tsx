@@ -112,7 +112,7 @@ const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
   return (
     <div className="space-y-5">
       {/* Stats bar */}
-      <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border bg-card p-4">
+      <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-border bg-card p-4">
         <div className="text-center px-4">
           <p className="text-lg font-bold">{connections.size}</p>
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Connections</p>
@@ -242,7 +242,7 @@ const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
               ))}
             </div>
           ) : (
-            <div className="rounded-xl border border-border bg-card p-12 text-center">
+            <div className="rounded-2xl border border-border bg-card p-12 text-center">
               <p className="text-sm text-muted-foreground">
                 {activeTab === "connections"
                   ? "No connections yet. Start connecting with people in the ecosystem!"

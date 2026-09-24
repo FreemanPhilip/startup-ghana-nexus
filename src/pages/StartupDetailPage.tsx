@@ -181,7 +181,7 @@ const StartupDetailPage = () => {
       <div className="min-h-screen bg-background">
         <Navbar />
         <main className="container mx-auto px-4 pt-28 pb-16">
-          <div className="h-64 animate-pulse rounded-xl border border-border bg-card" />
+          <div className="h-64 animate-pulse rounded-2xl border border-border bg-card" />
         </main>
         <Footer />
       </div>
@@ -289,7 +289,7 @@ const StartupDetailPage = () => {
             ) : (
               <div className="space-y-3">
                 {rounds.map(r => (
-                  <div key={r.id} className="rounded-xl border border-border bg-card p-5">
+                  <div key={r.id} className="rounded-2xl border border-border bg-card p-5">
                     <div className="flex flex-wrap items-baseline justify-between gap-2">
                       <div>
                         <Badge variant="secondary">{prettify(r.round_type)}</Badge>
@@ -335,7 +335,7 @@ const StartupDetailPage = () => {
             ) : (
               <div className="space-y-3">
                 {posts.map(p => (
-                  <div key={p.id} className="rounded-xl border border-border bg-card p-4">
+                  <div key={p.id} className="rounded-2xl border border-border bg-card p-4">
                     <div className="flex items-center gap-2">
                       {p.author_avatar ? (
                         <img src={p.author_avatar} alt="" className="h-7 w-7 rounded-full object-cover" />

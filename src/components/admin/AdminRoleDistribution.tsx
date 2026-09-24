@@ -42,7 +42,7 @@ const AdminRoleDistribution = () => {
   };
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <div className="rounded-2xl border border-border bg-card p-5">
       <h3 className="font-semibold text-sm mb-4">Role Distribution</h3>
       {loading ? (
         <p className="text-muted-foreground text-sm">Loading...</p>

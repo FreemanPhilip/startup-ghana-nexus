@@ -100,12 +100,12 @@ const DashboardRightSidebar = ({ onNavigate }: DashboardRightSidebarProps) => {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
               <Calendar className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             </div>
-            <h3 className="text-sm font-bold">Upcoming Sessions</h3>
+            <h3 className="text-sm font-semibold">Upcoming Sessions</h3>
           </div>
           <Button
             variant="link"
             size="sm"
-            className="h-auto p-0 text-[10px] font-bold text-primary uppercase tracking-wider"
+            className="h-auto p-0 text-[10px] font-semibold text-primary uppercase tracking-wider"
             onClick={() => onNavigate?.("my-sessions")}
           >
             View Calendar
@@ -137,10 +137,10 @@ const DashboardRightSidebar = ({ onNavigate }: DashboardRightSidebarProps) => {
                   className="flex items-center gap-3 rounded-lg border border-border p-2.5"
                 >
                   <div className="text-center min-w-[40px]">
-                    <p className="text-[9px] font-bold uppercase text-primary">
+                    <p className="text-[9px] font-semibold uppercase text-primary">
                       {monthStr}
                     </p>
-                    <p className="text-lg font-bold leading-none">{dayStr}</p>
+                    <p className="text-lg font-semibold leading-none">{dayStr}</p>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="truncate text-xs font-semibold">
@@ -173,15 +173,15 @@ const DashboardRightSidebar = ({ onNavigate }: DashboardRightSidebarProps) => {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
             <BarChart3 className="h-4 w-4 text-primary" />
           </div>
-          <h3 className="text-sm font-bold">Mentorship Progress</h3>
+          <h3 className="text-sm font-semibold">Mentorship Progress</h3>
         </div>
 
         <div className="mt-4">
           <div className="flex items-center justify-between text-xs mb-1.5">
-            <span className="font-bold uppercase tracking-wider text-primary text-[10px]">
+            <span className="font-semibold uppercase tracking-wider text-primary text-[10px]">
               Hours Completed
             </span>
-            <span className="font-bold">
+            <span className="font-semibold">
               {hoursCompleted} / {hourGoal}
             </span>
           </div>
@@ -190,22 +190,22 @@ const DashboardRightSidebar = ({ onNavigate }: DashboardRightSidebarProps) => {
 
         <div className="mt-4 grid grid-cols-2 gap-3">
           <div className="rounded-lg border border-border p-3 text-center">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               Sessions
             </p>
-            <p className="text-2xl font-bold mt-1">{totalSessions}</p>
+            <p className="text-2xl font-semibold mt-1">{totalSessions}</p>
           </div>
           <div className="rounded-lg border border-border p-3 text-center">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               Expertise
             </p>
-            <p className="text-2xl font-bold mt-1">{uniqueExpertise.size}</p>
+            <p className="text-2xl font-semibold mt-1">{uniqueExpertise.size}</p>
           </div>
         </div>
 
         {/* Next Milestone */}
         <div className="mt-4 rounded-lg bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/30 p-3">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
             Next Milestone
           </p>
           <p className="text-xs mt-1 text-foreground">
@@ -220,7 +220,7 @@ const DashboardRightSidebar = ({ onNavigate }: DashboardRightSidebarProps) => {
 
       {/* AI Matching CTA */}
       <Card className="p-5 bg-foreground text-background border-0">
-        <h3 className="text-sm font-bold">Need a specific mentor?</h3>
+        <h3 className="text-sm font-semibold">Need a specific mentor?</h3>
         <p className="text-xs mt-2 opacity-80 leading-relaxed">
           Our AI matches you with the best industry experts based on your startup's current challenges.
         </p>

@@ -108,7 +108,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
   };
 
   return (
-    <div className="rounded-xl border border-border bg-card overflow-hidden">
+    <div className="rounded-2xl border border-border bg-card overflow-hidden">
       {/* Author header */}
       <div className="flex items-start justify-between p-5 pb-0">
         <div className="flex gap-3">
@@ -117,7 +117,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
             onClick={handleAuthorClick}
           >
             <AvatarImage src={displayAvatar || undefined} />
-            <AvatarFallback className={`bg-primary/10 text-xs font-bold text-primary ${isStartupPost ? "rounded-lg" : ""}`}>{initials}</AvatarFallback>
+            <AvatarFallback className={`bg-primary/10 text-xs font-semibold text-primary ${isStartupPost ? "rounded-lg" : ""}`}>{initials}</AvatarFallback>
           </Avatar>
           <div>
             <div className="flex items-center gap-1.5 flex-wrap">
@@ -174,7 +174,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
       {/* Content */}
       <div className="px-5 py-3">
         {isArticle && articleTitle && (
-          <h3 className="text-lg font-bold mb-2">{articleTitle}</h3>
+          <h3 className="text-lg font-semibold mb-2">{articleTitle}</h3>
         )}
         <PostContentRenderer
           content={contentBody}
@@ -228,7 +228,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
                 <div key={c.id} className="flex gap-2">
                   <Avatar className="h-7 w-7">
                     <AvatarImage src={c.author_avatar || undefined} />
-                    <AvatarFallback className="text-[10px] font-bold bg-muted">
+                    <AvatarFallback className="text-[10px] font-semibold bg-muted">
                       {c.author_name.split(" ").map(n => n[0]).join("").slice(0, 2)}
                     </AvatarFallback>
                   </Avatar>

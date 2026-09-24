@@ -179,7 +179,7 @@ const CreateStartupWizard = ({ open, onOpenChange, onCreated }: CreateStartupWiz
         <div className="flex items-center gap-2 py-2">
           {[1, 2, 3].map(s => (
             <div key={s} className="flex items-center gap-2 flex-1">
-              <div className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
+              <div className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
                 step >= s ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
               }`}>
                 {step > s ? <CheckCircle className="h-4 w-4" /> : s}

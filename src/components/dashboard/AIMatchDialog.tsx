@@ -112,7 +112,7 @@ const AIMatchDialog = ({ open, onOpenChange, onSelectMentor }: AIMatchDialogProp
               </Button>
 
               <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Quick Prompts
                 </p>
                 {quickPrompts.map((prompt, i) => (
@@ -136,14 +136,14 @@ const AIMatchDialog = ({ open, onOpenChange, onSelectMentor }: AIMatchDialogProp
             <div className="space-y-4">
               {/* User's challenge */}
               <div className="rounded-lg bg-muted/50 p-3">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">Your Challenge</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Your Challenge</p>
                 <p className="text-xs text-foreground">{challenge}</p>
               </div>
 
               {/* AI advice */}
               {advice && (
                 <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1">AI Advice</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-primary mb-1">AI Advice</p>
                   <p className="text-xs text-foreground">{advice}</p>
                 </div>
               )}
@@ -151,7 +151,7 @@ const AIMatchDialog = ({ open, onOpenChange, onSelectMentor }: AIMatchDialogProp
               {/* Matches */}
               {matches.length > 0 ? (
                 <div className="space-y-2">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Recommended Mentors ({matches.length})
                   </p>
                   {matches.map((match, i) => (
@@ -166,7 +166,7 @@ const AIMatchDialog = ({ open, onOpenChange, onSelectMentor }: AIMatchDialogProp
                     >
                       <Avatar className="h-11 w-11 shrink-0">
                         <AvatarImage src={match.avatar_url || undefined} />
-                        <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">
+                        <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
                           {getInitials(match.name)}
                         </AvatarFallback>
                       </Avatar>

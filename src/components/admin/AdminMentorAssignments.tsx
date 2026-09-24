@@ -169,7 +169,7 @@ const AdminMentorAssignments = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-bold">Mentor assignments</h1>
+        <h1 className="font-display text-2xl font-semibold">Mentor assignments</h1>
         <p className="text-sm text-muted-foreground">
           Assign mentees to a mentor in bulk. Both sides are notified.
         </p>
@@ -216,7 +216,7 @@ const AdminMentorAssignments = () => {
                   >
                     <Avatar className="h-9 w-9">
                       <AvatarImage src={mentor.avatar_url ?? undefined} />
-                      <AvatarFallback className="bg-muted text-xs font-bold">
+                      <AvatarFallback className="bg-muted text-xs font-semibold">
                         {initials(mentor.full_name)}
                       </AvatarFallback>
                     </Avatar>
@@ -294,7 +294,7 @@ const AdminMentorAssignments = () => {
                       assignableMentees.map((mentee) => (
                         <label
                           key={mentee.user_id}
-                          className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-card p-3 hover:bg-muted/60"
+                          className="flex cursor-pointer items-center gap-3 rounded-2xl border border-border bg-card p-3 hover:bg-muted/60"
                         >
                           <Checkbox
                             checked={selected.has(mentee.user_id)}
@@ -302,7 +302,7 @@ const AdminMentorAssignments = () => {
                           />
                           <Avatar className="h-9 w-9">
                             <AvatarImage src={mentee.avatar_url ?? undefined} />
-                            <AvatarFallback className="bg-muted text-xs font-bold">
+                            <AvatarFallback className="bg-muted text-xs font-semibold">
                               {initials(mentee.full_name)}
                             </AvatarFallback>
                           </Avatar>
@@ -367,11 +367,11 @@ const AdminMentorAssignments = () => {
                     {cohort.map((member) => (
                       <div
                         key={member.id}
-                        className="flex items-center gap-3 rounded-xl border border-border bg-card p-3"
+                        className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3"
                       >
                         <Avatar className="h-9 w-9">
                           <AvatarImage src={member.avatar_url ?? undefined} />
-                          <AvatarFallback className="bg-muted text-xs font-bold">
+                          <AvatarFallback className="bg-muted text-xs font-semibold">
                             {initials(member.full_name)}
                           </AvatarFallback>
                         </Avatar>

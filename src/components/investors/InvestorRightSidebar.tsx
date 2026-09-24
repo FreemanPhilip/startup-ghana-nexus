@@ -72,7 +72,7 @@ const InvestorRightSidebar = ({ onViewInvestor }: InvestorRightSidebarProps) => 
       <Card className="p-5">
         <div className="flex items-center gap-2 mb-4">
           <Clock className="h-4 w-4 text-muted-foreground" />
-          <h3 className="text-sm font-bold">Recently Viewed</h3>
+          <h3 className="text-sm font-semibold">Recently Viewed</h3>
         </div>
         {loading ? (
           <div className="flex justify-center py-4">
@@ -103,7 +103,7 @@ const InvestorRightSidebar = ({ onViewInvestor }: InvestorRightSidebarProps) => 
         {recentViews.length > 0 && (
           <button
             onClick={() => clearHistory()}
-            className="mt-4 w-full text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground"
+            className="mt-4 w-full text-center text-[10px] font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground"
           >
             Clear History
           </button>
@@ -115,7 +115,7 @@ const InvestorRightSidebar = ({ onViewInvestor }: InvestorRightSidebarProps) => 
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5" />
           <div>
-            <p className="text-sm font-bold">Matching AI</p>
+            <p className="text-sm font-semibold">Matching AI</p>
             <p className="text-[10px] font-semibold uppercase tracking-wider opacity-80">
               {matchCount > 0 ? `${matchCount} Shortlisted` : "Ready to Match"}
             </p>
@@ -139,19 +139,19 @@ const InvestorRightSidebar = ({ onViewInvestor }: InvestorRightSidebarProps) => 
 
       {/* Ecosystem Insights */}
       <Card className="p-5">
-        <h3 className="text-sm font-bold">Ecosystem Insights</h3>
+        <h3 className="text-sm font-semibold">Ecosystem Insights</h3>
         <div className="mt-3 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">Active Investors</span>
-            <span className="text-sm font-bold text-primary">{ecosystemStats.activeInvestors}</span>
+            <span className="text-sm font-semibold text-primary">{ecosystemStats.activeInvestors}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">Registered Startups</span>
-            <span className="text-sm font-bold text-primary">{ecosystemStats.totalStartups}</span>
+            <span className="text-sm font-semibold text-primary">{ecosystemStats.totalStartups}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">Shortlisted</span>
-            <span className="text-sm font-bold text-primary">{matchCount}</span>
+            <span className="text-sm font-semibold text-primary">{matchCount}</span>
           </div>
         </div>
         <div className="mt-3">

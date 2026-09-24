@@ -56,7 +56,7 @@ const MentorCard = ({ mentor, onBookSession, onViewProfile }: MentorCardProps) =
   };
 
   return (
-    <div className="group flex flex-col rounded-xl border border-border bg-card overflow-hidden transition-shadow hover:shadow-lg hover:border-primary/30 cursor-pointer h-full" onClick={onViewProfile}>
+    <div className="group flex flex-col rounded-2xl border border-border bg-card overflow-hidden transition-shadow hover:shadow-lg hover:border-primary/30 cursor-pointer h-full" onClick={onViewProfile}>
       {/* Avatar / Image area */}
       <div className="relative aspect-[4/3] bg-muted overflow-hidden">
         {mentor.avatar_url ? (
@@ -67,7 +67,7 @@ const MentorCard = ({ mentor, onBookSession, onViewProfile }: MentorCardProps) =
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-gold">
-            <span className="text-4xl font-display font-bold text-primary-foreground">{initials}</span>
+            <span className="text-4xl font-display font-semibold text-primary-foreground">{initials}</span>
           </div>
         )}
         {availabilityBadge()}
@@ -76,7 +76,7 @@ const MentorCard = ({ mentor, onBookSession, onViewProfile }: MentorCardProps) =
       {/* Info */}
       <div className="p-4 space-y-3 flex-1 flex flex-col">
         <div>
-          <h3 className="font-display font-bold text-sm text-foreground truncate">
+          <h3 className="font-display font-semibold text-sm text-foreground truncate">
             {mentor.full_name}
           </h3>
           <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
@@ -95,13 +95,13 @@ const MentorCard = ({ mentor, onBookSession, onViewProfile }: MentorCardProps) =
         <div className="flex items-center justify-between pt-2 border-t border-border">
           <div>
             <p className="text-[10px] text-muted-foreground">Experience</p>
-            <p className="text-sm font-bold text-foreground">
+            <p className="text-sm font-semibold text-foreground">
               {mentor.years_experience || "—"} years
             </p>
           </div>
           <div className="text-right">
             <p className="text-[10px] text-muted-foreground">Avg. Attendance</p>
-            <p className="text-sm font-bold text-foreground">{mentor.attendance_rate}%</p>
+            <p className="text-sm font-semibold text-foreground">{mentor.attendance_rate}%</p>
           </div>
         </div>
 

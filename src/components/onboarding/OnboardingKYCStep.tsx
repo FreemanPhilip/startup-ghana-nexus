@@ -86,7 +86,7 @@ const OnboardingKYCStep = ({ onNext, onSkip, onBack, saving: parentSaving }: Pro
           <Shield className="h-5 w-5 text-gold" />
         </div>
         <div>
-          <h2 className="font-display text-2xl font-bold">Identity Verification</h2>
+          <h2 className="font-display text-2xl font-semibold">Identity Verification</h2>
           <p className="text-sm text-muted-foreground">Build trust in the ecosystem</p>
         </div>
       </div>

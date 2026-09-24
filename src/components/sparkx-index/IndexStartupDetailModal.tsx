@@ -25,7 +25,7 @@ export function IndexStartupDetailModal({ startup, rounds, open, onOpenChange }:
             {startup.logo_url ? (
               <img src={startup.logo_url} alt={startup.name} className="w-16 h-16 rounded-xl object-cover border" />
             ) : (
-              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-bold text-xl">
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-semibold text-xl">
                 {startup.name.split(" ").slice(0, 2).map(w => w[0]).join("").toUpperCase()}
               </div>
             )}
@@ -57,7 +57,7 @@ export function IndexStartupDetailModal({ startup, rounds, open, onOpenChange }:
             </div>
             {startup.sparkx_score != null && (
               <div className="text-right shrink-0">
-                <div className="text-2xl font-bold text-primary">{startup.sparkx_score}</div>
+                <div className="text-2xl font-semibold text-primary">{startup.sparkx_score}</div>
                 <div className="text-[10px] text-muted-foreground uppercase tracking-wider">SparkX Score</div>
               </div>
             )}

@@ -39,7 +39,7 @@ const ConversationList = ({
       {/* Header */}
       <div className="border-b border-border p-4">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-display text-lg font-bold">Messaging Center</h2>
+          <h2 className="font-display text-lg font-semibold">Messaging Center</h2>
           {onNewConversation && (
             <Button
               size="icon"
@@ -97,7 +97,7 @@ const ConversationList = ({
                 <div className="relative">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={c.other_user?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-muted text-xs font-bold">
+                    <AvatarFallback className="bg-muted text-xs font-semibold">
                       {getInitials(c.other_user?.full_name)}
                     </AvatarFallback>
                   </Avatar>

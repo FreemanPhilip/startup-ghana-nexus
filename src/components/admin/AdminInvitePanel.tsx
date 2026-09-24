@@ -171,7 +171,7 @@ const AdminInvitePanel = ({ adminLevel }: AdminInvitePanelProps) => {
                       <div className="flex items-center justify-between rounded-md bg-background px-3 py-2 border">
                         <div>
                           <p className="text-xs text-muted-foreground">Email</p>
-                          <p className="text-sm font-mono font-medium">{createdCredentials.email}</p>
+                          <p className="text-sm numeric font-medium">{createdCredentials.email}</p>
                         </div>
                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => copyToClipboard(createdCredentials.email, "Email")}>
                           {copiedField === "Email" ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
@@ -181,7 +181,7 @@ const AdminInvitePanel = ({ adminLevel }: AdminInvitePanelProps) => {
                       <div className="flex items-center justify-between rounded-md bg-background px-3 py-2 border">
                         <div>
                           <p className="text-xs text-muted-foreground">Temporary Password</p>
-                          <p className="text-sm font-mono font-medium">{createdCredentials.password}</p>
+                          <p className="text-sm numeric font-medium">{createdCredentials.password}</p>
                         </div>
                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => copyToClipboard(createdCredentials.password, "Password")}>
                           {copiedField === "Password" ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
@@ -191,7 +191,7 @@ const AdminInvitePanel = ({ adminLevel }: AdminInvitePanelProps) => {
                       <div className="flex items-center justify-between rounded-md bg-background px-3 py-2 border">
                         <div>
                           <p className="text-xs text-muted-foreground">Login URL</p>
-                          <p className="text-sm font-mono font-medium truncate max-w-[250px]">{window.location.origin}/admin/login</p>
+                          <p className="text-sm numeric font-medium truncate max-w-[250px]">{window.location.origin}/admin/login</p>
                         </div>
                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => copyToClipboard(`${window.location.origin}/admin/login`, "URL")}>
                           {copiedField === "URL" ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
@@ -261,7 +261,7 @@ const AdminInvitePanel = ({ adminLevel }: AdminInvitePanelProps) => {
         </div>
       </div>
 
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
         {loading ? (
           <div className="p-6 text-center text-muted-foreground text-sm">Loading...</div>
         ) : invitations.length === 0 ? (

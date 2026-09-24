@@ -58,7 +58,7 @@ const PartnersSection = () => {
             <motion.div
               key={p.abbr}
               variants={itemVariants}
-              className="group flex items-center gap-3 rounded-xl border border-border bg-card px-6 py-4 hover:border-gold/30 hover:bg-card/80 hover:shadow-md transition-all duration-300 cursor-default"
+              className="group flex items-center gap-3 rounded-2xl border border-border bg-card px-6 py-4 hover:border-gold/30 hover:bg-card/80 hover:shadow-md transition-all duration-300 cursor-default"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-sm font-display font-bold text-muted-foreground group-hover:bg-gold/10 group-hover:text-gold transition-colors duration-300">
                 {p.abbr}

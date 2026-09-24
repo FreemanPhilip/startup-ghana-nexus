@@ -22,7 +22,7 @@ const GroupPostFeedCard = ({ item, onToggleLike, onViewGroup }: GroupPostFeedCar
   ].filter(Boolean) as string[];
 
   return (
-    <div className="rounded-xl border border-border bg-card overflow-hidden">
+    <div className="rounded-2xl border border-border bg-card overflow-hidden">
       {/* Group badge header */}
       <button
         onClick={() => item.group_id && onViewGroup?.(item.group_id)}
@@ -40,7 +40,7 @@ const GroupPostFeedCard = ({ item, onToggleLike, onViewGroup }: GroupPostFeedCar
       <div className="flex items-start gap-3 px-5 pt-2 pb-0">
         <Avatar className="h-10 w-10">
           <AvatarImage src={item.author_avatar || undefined} />
-          <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">{initials}</AvatarFallback>
+          <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">{initials}</AvatarFallback>
         </Avatar>
         <div>
           <p className="text-sm font-semibold">{item.author_name}</p>

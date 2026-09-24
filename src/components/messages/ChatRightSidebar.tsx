@@ -59,13 +59,13 @@ const ChatRightSidebar = ({ conversation, messages, onViewProfile }: ChatRightSi
           <div className="relative">
             <Avatar className="h-20 w-20">
               <AvatarImage src={other.avatar_url || undefined} />
-              <AvatarFallback className="bg-muted text-lg font-bold">{initials}</AvatarFallback>
+              <AvatarFallback className="bg-muted text-lg font-semibold">{initials}</AvatarFallback>
             </Avatar>
             {other.verification === "verified" && (
               <div className="absolute bottom-0 right-0 h-5 w-5 rounded-full bg-primary border-2 border-card" />
             )}
           </div>
-          <h3 className="mt-3 font-display text-base font-bold">{other.full_name}</h3>
+          <h3 className="mt-3 font-display text-base font-semibold">{other.full_name}</h3>
           <p className="text-xs text-muted-foreground text-center mt-0.5">
             {other.headline || `${other.industry || "Professional"}${other.company_name ? ` @ ${other.company_name}` : ""}`}
           </p>

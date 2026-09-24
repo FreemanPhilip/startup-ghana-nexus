@@ -103,7 +103,7 @@ const OpportunityDetailPage = ({ opportunityId, onBack }: OpportunityDetailPageP
       </Button>
 
       {/* Hero Header Card */}
-      <div className="rounded-xl border border-border bg-card p-6">
+      <div className="rounded-2xl border border-border bg-card p-6">
         <div className="flex items-start justify-between gap-6">
           <div className="flex items-start gap-4 flex-1">
             {/* Icon */}
@@ -121,18 +121,18 @@ const OpportunityDetailPage = ({ opportunityId, onBack }: OpportunityDetailPageP
                   <CheckCircle2 className="h-4 w-4 text-primary" />
                 )}
                 {!isExpired && daysLeft !== null && daysLeft <= 14 && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 text-destructive px-2.5 py-0.5 text-[11px] font-bold uppercase">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 text-destructive px-2.5 py-0.5 text-[11px] font-semibold uppercase">
                     <Clock className="h-3 w-3" />
                     {daysLeft} days left
                   </span>
                 )}
                 {isExpired && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 text-destructive px-2.5 py-0.5 text-[11px] font-bold uppercase">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 text-destructive px-2.5 py-0.5 text-[11px] font-semibold uppercase">
                     <AlertTriangle className="h-3 w-3" /> Closed
                   </span>
                 )}
               </div>
-              <h1 className="text-2xl font-bold leading-tight text-foreground">{opportunity.title}</h1>
+              <h1 className="text-2xl font-semibold leading-tight text-foreground">{opportunity.title}</h1>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 {opportunity.location && (
                   <span className="flex items-center gap-1">
@@ -177,8 +177,8 @@ const OpportunityDetailPage = ({ opportunityId, onBack }: OpportunityDetailPageP
         {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
           {/* Overview */}
-          <div className="rounded-xl border border-border bg-card p-6 space-y-4">
-            <h2 className="text-lg font-bold flex items-center gap-2">
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
               <FileText className="h-5 w-5 text-primary" />
               Overview
             </h2>
@@ -189,8 +189,8 @@ const OpportunityDetailPage = ({ opportunityId, onBack }: OpportunityDetailPageP
 
           {/* Eligibility Criteria */}
           {opportunity.eligibility && (
-            <div className="rounded-xl border border-border bg-card p-6 space-y-4">
-              <h2 className="text-lg font-bold flex items-center gap-2">
+            <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
                 <span>📋</span>
                 Eligibility Criteria
               </h2>
@@ -210,8 +210,8 @@ const OpportunityDetailPage = ({ opportunityId, onBack }: OpportunityDetailPageP
           )}
 
           {/* Application Requirements */}
-          <div className="rounded-xl border border-border bg-card p-6 space-y-4">
-            <h2 className="text-lg font-bold flex items-center gap-2">
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
               <span className="text-destructive">📌</span>
               Application Requirements
             </h2>
@@ -266,8 +266,8 @@ const OpportunityDetailPage = ({ opportunityId, onBack }: OpportunityDetailPageP
 
           {/* Tags */}
           {opportunity.tags && opportunity.tags.length > 0 && (
-            <div className="rounded-xl border border-border bg-card p-6 space-y-4">
-              <h2 className="text-lg font-bold flex items-center gap-2">
+            <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
                 <Tag className="h-4 w-4" /> Tags
               </h2>
               <div className="flex flex-wrap gap-2">
@@ -282,15 +282,15 @@ const OpportunityDetailPage = ({ opportunityId, onBack }: OpportunityDetailPageP
         {/* Right Sidebar */}
         <div className="space-y-6">
           {/* Details Card */}
-          <div className="rounded-xl border border-border bg-card p-6 space-y-1">
-            <h3 className="text-base font-bold mb-4">
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-1">
+            <h3 className="text-base font-semibold mb-4">
               {opportunity.type === "job" ? "Job Details" : opportunity.type === "accelerator" ? "Program Details" : "Grant Details"}
             </h3>
             {opportunity.amount && (
               <>
                 <div className="flex items-center justify-between py-3">
                   <span className="text-sm text-muted-foreground">Funding Amount</span>
-                  <span className="text-sm font-bold text-primary">{opportunity.amount}</span>
+                  <span className="text-sm font-semibold text-primary">{opportunity.amount}</span>
                 </div>
                 <Separator />
               </>
@@ -327,8 +327,8 @@ const OpportunityDetailPage = ({ opportunityId, onBack }: OpportunityDetailPageP
           </div>
 
           {/* About the Provider */}
-          <div className="rounded-xl border border-border bg-card p-6 space-y-4">
-            <h3 className="text-base font-bold">About the Provider</h3>
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+            <h3 className="text-base font-semibold">About the Provider</h3>
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 {opportunity.organization_logo ? (
@@ -359,10 +359,10 @@ const OpportunityDetailPage = ({ opportunityId, onBack }: OpportunityDetailPageP
           <div className="rounded-xl border border-border bg-primary p-6 text-primary-foreground space-y-3">
             <div className="flex items-center gap-2">
               <Users className="h-5 w-5" />
-              <h3 className="text-base font-bold">Application Stats</h3>
+              <h3 className="text-base font-semibold">Application Stats</h3>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-bold">{applicantCount}</span>
+              <span className="text-3xl font-semibold">{applicantCount}</span>
               <span className="text-sm opacity-80">applicant{applicantCount !== 1 ? "s" : ""} so far</span>
             </div>
             {!isExpired && daysLeft !== null && (

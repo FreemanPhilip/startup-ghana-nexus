@@ -11,7 +11,7 @@ import { CURRENT_PLATFORM, platforms, type Platform, type PlatformId } from "@/l
 const Mark = ({ platform }: { platform: Platform }) => (
   <span
     aria-hidden="true"
-    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${platform.markClass}`}
+    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-semibold ${platform.markClass}`}
   >
     {platform.id === "index" ? <SparkXLogo variant="mark" className="h-4 w-4" alt="" /> : platform.monogram}
   </span>

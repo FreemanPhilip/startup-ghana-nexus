@@ -102,7 +102,7 @@ const PremiumUpgradeDialog = ({ open, onOpenChange }: PremiumUpgradeDialogProps)
           ) : (
             <div className="text-center">
               <div className="inline-flex items-baseline gap-1 mb-2">
-                <span className="text-3xl font-display font-bold">GH₵{STRIPE_CONFIG.premium.price}</span>
+                <span className="text-3xl font-display font-semibold">GH₵{STRIPE_CONFIG.premium.price}</span>
                 <span className="text-sm text-muted-foreground">/month</span>
               </div>
               <p className="text-xs text-muted-foreground">Unlock the full potential of the ecosystem</p>
@@ -129,8 +129,8 @@ const PremiumUpgradeDialog = ({ open, onOpenChange }: PremiumUpgradeDialogProps)
               </div>
             ))}
             <div className="flex justify-end gap-6 px-2.5 pb-1">
-              <span className="w-16 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Standard</span>
-              <span className="w-16 text-center text-[10px] font-bold uppercase tracking-wider text-primary">Premium</span>
+              <span className="w-16 text-center text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Standard</span>
+              <span className="w-16 text-center text-[10px] font-semibold uppercase tracking-wider text-primary">Premium</span>
             </div>
           </div>
 

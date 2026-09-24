@@ -150,6 +150,41 @@
     line-height: 1.12;
     letter-spacing: -0.025em;
   }
+  /* ---- Dashboard scale -------------------------------------------------
+     The product side had grown its own vocabulary: 160 panels at rounded-xl
+     next to 12 at rounded-2xl, seven padding values, and font-bold on small
+     UI labels where the marketing side uses semibold. These are the shared
+     pieces so both halves of the platform read as one product. */
+  .panel {
+    @apply rounded-2xl border border-border bg-card;
+  }
+  .page-title {
+    @apply font-display font-semibold;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    letter-spacing: -0.022em;
+  }
+  .stat-value {
+    @apply font-display font-semibold;
+    font-size: 1.75rem;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .label-xs {
+    @apply text-xs font-medium uppercase text-muted-foreground;
+    letter-spacing: 0.08em;
+  }
+
+  /* What font-mono used to be for: credentials, IDs, keycaps and figures
+     that must line up or be read character by character. Inter covers all of
+     it — tabular figures for alignment, plus the slashed zero and
+     disambiguating l/i/g variants — so none of it needs a second typeface. */
+  .numeric {
+    font-variant-numeric: tabular-nums slashed-zero;
+    font-feature-settings: "tnum", "zero", "cv05", "cv08", "ss02";
+    letter-spacing: 0.01em;
+  }
   .lede {
     @apply text-muted-foreground;
     font-size: clamp(1.0625rem, 1.35vw, 1.3125rem);

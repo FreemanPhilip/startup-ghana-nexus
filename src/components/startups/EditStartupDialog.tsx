@@ -131,7 +131,7 @@ const EditStartupDialog = ({ open, onOpenChange, startup, onUpdated }: EditStart
           <div className="flex items-center gap-4">
             <Avatar className="h-16 w-16 rounded-xl cursor-pointer" onClick={() => fileRef.current?.click()}>
               <AvatarImage src={logoUrl || undefined} />
-              <AvatarFallback className="rounded-xl bg-primary/10 text-primary text-xl font-bold">
+              <AvatarFallback className="rounded-xl bg-primary/10 text-primary text-xl font-semibold">
                 {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : name.charAt(0)}
               </AvatarFallback>
             </Avatar>

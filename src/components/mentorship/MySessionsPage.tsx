@@ -222,7 +222,7 @@ const MySessionsPage = () => {
         <div className="flex items-start gap-2 sm:gap-3">
           <Avatar className="h-9 w-9 sm:h-10 sm:w-10 shrink-0">
             <AvatarImage src={booking.other_user?.avatar_url || undefined} />
-            <AvatarFallback className="bg-muted text-xs font-bold">
+            <AvatarFallback className="bg-muted text-xs font-semibold">
               {getInitials(booking.other_user?.full_name)}
             </AvatarFallback>
           </Avatar>
@@ -315,7 +315,7 @@ const MySessionsPage = () => {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-xl sm:text-2xl font-display font-bold">My Sessions</h1>
+        <h1 className="text-xl sm:text-2xl font-display font-semibold">My Sessions</h1>
         <p className="text-xs sm:text-sm text-muted-foreground">
           {viewerIsMentor ? "View and manage sessions with your mentees." : "View and manage your mentorship sessions."}
         </p>
@@ -327,21 +327,21 @@ const MySessionsPage = () => {
         <Card className="p-4">
           <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Mentor updates</p>
           <div className="mt-2 flex items-end justify-between">
-            <span className="text-2xl font-bold">{briefingSummary.total}</span>
+            <span className="text-2xl font-semibold">{briefingSummary.total}</span>
             <Badge variant="outline">Total</Badge>
           </div>
         </Card>
         <Card className="p-4">
           <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Meetings</p>
           <div className="mt-2 flex items-end justify-between">
-            <span className="text-2xl font-bold">{briefingSummary.meetingCount}</span>
+            <span className="text-2xl font-semibold">{briefingSummary.meetingCount}</span>
             <Badge variant="default">Booked</Badge>
           </div>
         </Card>
         <Card className="p-4">
           <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Tasks</p>
           <div className="mt-2 flex items-end justify-between">
-            <span className="text-2xl font-bold">{briefingSummary.taskCount}</span>
+            <span className="text-2xl font-semibold">{briefingSummary.taskCount}</span>
             <Badge variant="secondary">Action</Badge>
           </div>
         </Card>
@@ -407,7 +407,7 @@ const MySessionsPage = () => {
           {/* Sessions for selected date */}
           {selectedDate && (
             <Card className="p-4">
-              <h3 className="text-sm font-bold flex items-center gap-2 mb-3">
+              <h3 className="text-sm font-semibold flex items-center gap-2 mb-3">
                 <CalendarIcon className="h-4 w-4 text-primary" />
                 {format(selectedDate, "MMMM d, yyyy")}
               </h3>
@@ -419,7 +419,7 @@ const MySessionsPage = () => {
                     <div key={b.id} className="flex items-center gap-2 rounded-lg border border-border p-2.5">
                       <Avatar className="h-7 w-7 shrink-0">
                         <AvatarImage src={b.other_user?.avatar_url || undefined} />
-                        <AvatarFallback className="bg-muted text-[10px] font-bold">
+                        <AvatarFallback className="bg-muted text-[10px] font-semibold">
                           {getInitials(b.other_user?.full_name)}
                         </AvatarFallback>
                       </Avatar>

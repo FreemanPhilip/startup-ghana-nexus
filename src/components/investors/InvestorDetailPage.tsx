@@ -287,9 +287,9 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="font-display text-xl font-bold">{investor.name}</h1>
+                    <h1 className="font-display text-xl font-semibold">{investor.name}</h1>
                     <CheckCircle2 className="h-5 w-5 text-primary fill-primary/20" />
-                    <span className={`inline-block rounded-full border px-2.5 py-0.5 text-xs font-bold ${getMatchColor(investor.matchPercent)}`}>
+                    <span className={`inline-block rounded-full border px-2.5 py-0.5 text-xs font-semibold ${getMatchColor(investor.matchPercent)}`}>
                       {investor.matchPercent}% Match
                     </span>
                   </div>
@@ -323,16 +323,16 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
         {/* Main content */}
         <div className="flex-1 min-w-0 space-y-5">
           {/* Investment Thesis */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
               <Target className="h-4 w-4 text-primary" /> Investment Thesis
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">{detail.thesis}</p>
           </div>
 
           {/* Investment Criteria */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary" /> What They Look For
             </h3>
             <ul className="space-y-2">
@@ -346,9 +346,9 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
           </div>
 
           {/* Portfolio Companies — Enhanced */}
-          <div className="rounded-xl border border-border bg-card p-5">
+          <div className="rounded-2xl border border-border bg-card p-5">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-display font-bold text-sm flex items-center gap-2">
+              <h3 className="font-display font-semibold text-sm flex items-center gap-2">
                 <BarChart3 className="h-4 w-4 text-primary" /> Portfolio ({allPortfolioItems.length})
               </h3>
               {platformStartups.length > 0 && (
@@ -386,7 +386,7 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
                         {startup?.logo_url ? (
                           <Avatar className="h-10 w-10 rounded-lg shrink-0">
                             <AvatarImage src={startup.logo_url} className="object-cover" />
-                            <AvatarFallback className="rounded-lg bg-primary/10 text-primary text-xs font-bold">
+                            <AvatarFallback className="rounded-lg bg-primary/10 text-primary text-xs font-semibold">
                               {co.name.slice(0, 2).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
@@ -458,8 +458,8 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
           </div>
 
           {/* Recent Activity */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-primary" /> Recent Activity
             </h3>
             <div className="space-y-3">
@@ -479,29 +479,29 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
         {/* Right sidebar */}
         <div className="lg:w-72 shrink-0 space-y-5">
           {/* Key Metrics */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-4">Key Metrics</h3>
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-4">Key Metrics</h3>
             <div className="space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fund Size</span>
-                  <span className="text-sm font-bold text-primary">{detail.fundSize}</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Fund Size</span>
+                  <span className="text-sm font-semibold text-primary">{detail.fundSize}</span>
                 </div>
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Avg Ticket</span>
-                  <span className="text-sm font-bold text-primary">{investor.avgTicket}</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Avg Ticket</span>
+                  <span className="text-sm font-semibold text-primary">{investor.avgTicket}</span>
                 </div>
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Portfolio</span>
-                  <span className="text-sm font-bold text-foreground">{allPortfolioItems.length} companies</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Portfolio</span>
+                  <span className="text-sm font-semibold text-foreground">{allPortfolioItems.length} companies</span>
                 </div>
               </div>
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Investment Stages</span>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Investment Stages</span>
                 <div className="flex flex-wrap gap-1.5 mt-1.5">
                   {detail.investmentStage.map(s => (
                     <Badge key={s} variant="outline" className="text-[10px]">{s}</Badge>
@@ -512,8 +512,8 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
           </div>
 
           {/* Match Breakdown */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" /> Match Breakdown
             </h3>
             <div className="space-y-3">
@@ -535,8 +535,8 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
           </div>
 
           {/* Contact Info */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-3">Contact</h3>
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-3">Contact</h3>
             <div className="space-y-3">
               <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
                 <MapPin className="h-3.5 w-3.5 shrink-0" />
@@ -558,13 +558,13 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
           </div>
 
           {/* Team */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-3">Investment Team</h3>
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-3">Investment Team</h3>
             <div className="space-y-3">
               {detail.teamMembers.map((m, i) => (
                 <div key={i} className="flex items-center gap-2.5">
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">{m.initials}</AvatarFallback>
+                    <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-semibold">{m.initials}</AvatarFallback>
                   </Avatar>
                   <div className="min-w-0">
                     <p className="text-xs font-semibold truncate">{m.name}</p>
@@ -576,8 +576,8 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
           </div>
 
           {/* Sector Focus */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-3">Sector Focus</h3>
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-3">Sector Focus</h3>
             <div className="flex flex-wrap gap-1.5">
               {detail.sectors.map(s => (
                 <Badge key={s} className="text-[10px] bg-primary/10 text-primary border-0">{s}</Badge>

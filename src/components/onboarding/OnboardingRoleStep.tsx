@@ -46,7 +46,7 @@ const OnboardingRoleStep = ({ onNext, saving: parentSaving }: Props) => {
 
   return (
     <div className="w-full max-w-md rounded-2xl border border-border/20 bg-card p-8 shadow-2xl">
-      <h2 className="font-display text-2xl font-bold">How will you use SparkX Index?</h2>
+      <h2 className="font-display text-2xl font-semibold">How will you use SparkX Index?</h2>
       <p className="mt-1 text-sm text-muted-foreground">Select your role in the ecosystem</p>
 
       <div className="mt-6 space-y-3">
@@ -66,7 +66,7 @@ const OnboardingRoleStep = ({ onNext, saving: parentSaving }: Props) => {
               <role.icon className="h-5 w-5" />
             </div>
             <div>
-              <p className="font-display text-sm font-bold">{role.label}</p>
+              <p className="font-display text-sm font-semibold">{role.label}</p>
               <p className="text-xs text-muted-foreground">{role.description}</p>
             </div>
           </button>

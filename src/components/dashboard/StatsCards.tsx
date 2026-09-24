@@ -7,28 +7,23 @@ const StatsCards = () => {
   const { followerCount, followingCount } = useFollows();
 
   const stats = [
-    { label: "Followers", value: followerCount.toString(), icon: Users, change: "" },
-    { label: "Following", value: followingCount.toString(), icon: Handshake, change: "" },
-    { label: "Role", value: roles[0]?.replace("_", " ") || "Member", icon: Star, change: "" },
-    { label: "Membership", value: profile?.membership || "standard", icon: Eye, change: "" },
+    { label: "Followers", value: followerCount.toString(), icon: Users },
+    { label: "Following", value: followingCount.toString(), icon: Handshake },
+    { label: "Role", value: roles[0]?.replace("_", " ") || "Member", icon: Star },
+    { label: "Membership", value: profile?.membership || "standard", icon: Eye },
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {stats.map(stat => (
-        <div key={stat.label} className="rounded-xl border border-border bg-card p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{stat.label}</p>
-              <p className="mt-1 font-display text-2xl font-bold capitalize">{stat.value}</p>
-              {stat.change && (
-                <p className="mt-0.5 text-xs font-medium text-emerald">{stat.change}</p>
-              )}
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-              <stat.icon className="h-5 w-5 text-primary" />
-            </div>
+    // One hairline-separated group rather than four detached cards — these are
+    // four readings of the same account, so they should look like one object.
+    <div className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+      {stats.map((stat) => (
+        <div key={stat.label} className="flex items-start justify-between gap-3 bg-card p-5">
+          <div className="min-w-0">
+            <p className="label-xs">{stat.label}</p>
+            <p className="stat-value mt-2 truncate capitalize">{stat.value}</p>
           </div>
+          <stat.icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
         </div>
       ))}
     </div>

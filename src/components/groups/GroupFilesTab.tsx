@@ -140,7 +140,7 @@ const GroupFilesTab = ({ groupId, isMember, isAdmin }: GroupFilesTabProps) => {
       )}
 
       {files.length === 0 ? (
-        <div className="rounded-xl border border-border bg-card p-12 text-center">
+        <div className="rounded-2xl border border-border bg-card p-12 text-center">
           <FileText className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
           <p className="text-sm text-muted-foreground">No files shared yet.</p>
         </div>
@@ -149,7 +149,7 @@ const GroupFilesTab = ({ groupId, isMember, isAdmin }: GroupFilesTabProps) => {
           {files.map(file => {
             const Icon = getFileIcon(file.file_type);
             return (
-              <div key={file.id} className="rounded-xl border border-border bg-card p-3 flex items-center gap-3">
+              <div key={file.id} className="rounded-2xl border border-border bg-card p-3 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
                   <Icon className="h-5 w-5 text-muted-foreground" />
                 </div>

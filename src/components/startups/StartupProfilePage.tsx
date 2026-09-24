@@ -239,7 +239,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
           <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10">
             <Avatar className="h-20 w-20 rounded-xl border-4 border-card shadow-lg">
               <AvatarImage src={startup.logo_url || undefined} />
-              <AvatarFallback className="rounded-xl bg-primary/10 text-primary text-2xl font-bold">
+              <AvatarFallback className="rounded-xl bg-primary/10 text-primary text-2xl font-semibold">
                 {startup.name.charAt(0)}
               </AvatarFallback>
             </Avatar>
@@ -248,7 +248,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="font-display text-xl font-bold">{startup.name}</h1>
+                    <h1 className="font-display text-xl font-semibold">{startup.name}</h1>
                     {verificationBadge(startup.verification_status)}
                     {teamVerified && (
                       <Badge className="bg-secondary/10 text-secondary gap-1 border-0">
@@ -312,8 +312,8 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
 
         <TabsContent value="about" className="mt-4 space-y-5">
           {/* Description */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
               <Building2 className="h-4 w-4 text-primary" /> About
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
@@ -325,16 +325,16 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
           {(startup.mission || startup.vision) && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {startup.mission && (
-                <div className="rounded-xl border border-border bg-card p-5">
-                  <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+                <div className="rounded-2xl border border-border bg-card p-5">
+                  <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
                     <Target className="h-4 w-4 text-primary" /> Our Mission
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{startup.mission}</p>
                 </div>
               )}
               {startup.vision && (
-                <div className="rounded-xl border border-border bg-card p-5">
-                  <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+                <div className="rounded-2xl border border-border bg-card p-5">
+                  <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
                     <Eye className="h-4 w-4 text-primary" /> Our Vision
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{startup.vision}</p>
@@ -345,8 +345,8 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
 
           {/* Details Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="rounded-xl border border-border bg-card p-5 space-y-3">
-              <h3 className="font-display font-bold text-sm">Details</h3>
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+              <h3 className="font-display font-semibold text-sm">Details</h3>
               <div className="space-y-2.5">
                 {startup.industry && (
                   <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
@@ -373,15 +373,15 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-card p-5 space-y-3">
-              <h3 className="font-display font-bold text-sm">Quick Stats</h3>
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+              <h3 className="font-display font-semibold text-sm">Quick Stats</h3>
               <div className="grid grid-cols-2 gap-3">
                 <div className="text-center p-3 rounded-lg bg-muted/50">
-                  <p className="text-lg font-bold text-foreground">{confirmedTeam.length}</p>
+                  <p className="text-lg font-semibold text-foreground">{confirmedTeam.length}</p>
                   <p className="text-[10px] text-muted-foreground">Team Members</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-muted/50">
-                  <p className="text-lg font-bold text-foreground">{posts.length}</p>
+                  <p className="text-lg font-semibold text-foreground">{posts.length}</p>
                   <p className="text-[10px] text-muted-foreground">Posts</p>
                 </div>
               </div>
@@ -390,8 +390,8 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
 
           {/* Social Links card */}
           {hasSocials && (
-            <div className="rounded-xl border border-border bg-card p-5">
-              <h3 className="font-display font-bold text-sm mb-3">Connect With Us</h3>
+            <div className="rounded-2xl border border-border bg-card p-5">
+              <h3 className="font-display font-semibold text-sm mb-3">Connect With Us</h3>
               <div className="flex flex-wrap gap-2">
                 {startup.website_url && (
                   <Button variant="outline" size="sm" className="text-xs gap-1.5" asChild>
@@ -436,8 +436,8 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
         </TabsContent>
 
         <TabsContent value="team" className="mt-4">
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-display font-bold text-sm mb-4 flex items-center gap-2">
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-display font-semibold text-sm mb-4 flex items-center gap-2">
               <Users className="h-4 w-4 text-primary" /> Team Members
             </h3>
             {confirmedTeam.length === 0 ? (
@@ -450,7 +450,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
                     <div key={m.id} className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors">
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={m.profile?.avatar_url || undefined} />
-                        <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">{initials}</AvatarFallback>
+                        <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{initials}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold truncate">{m.profile?.full_name || "Unknown"}</p>
@@ -469,7 +469,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
 
         <TabsContent value="posts" className="mt-4 space-y-4">
           {posts.length === 0 ? (
-            <div className="rounded-xl border border-border bg-card p-12 text-center">
+            <div className="rounded-2xl border border-border bg-card p-12 text-center">
               <p className="text-sm text-muted-foreground">No posts yet from this startup.</p>
             </div>
           ) : (

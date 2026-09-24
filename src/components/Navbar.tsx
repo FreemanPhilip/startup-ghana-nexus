@@ -109,7 +109,7 @@ const Navbar = ({ overHero = false }: NavbarProps) => {
                   transition={{ duration: 0.18 }}
                   className="absolute left-1/2 top-full -translate-x-1/2 pt-3"
                 >
-                  <div className="flex w-[620px] overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
+                  <div className="flex w-[620px] overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
                     {/* Left: Image + tagline */}
                     <div className="relative w-[200px] shrink-0 overflow-hidden">
                       <img

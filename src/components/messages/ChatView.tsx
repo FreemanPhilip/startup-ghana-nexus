@@ -242,7 +242,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
     return (
       <div className="flex flex-1 flex-col items-center justify-center bg-background text-center p-8">
         <div className="rounded-2xl border border-border bg-card p-10 max-w-sm">
-          <h3 className="font-display text-lg font-bold mb-2">Select a conversation</h3>
+          <h3 className="font-display text-lg font-semibold mb-2">Select a conversation</h3>
           <p className="text-sm text-muted-foreground">
             Choose a conversation from the sidebar or start a new one from the Network tab.
           </p>
@@ -283,7 +283,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
           <div className="relative">
             <Avatar className="h-9 w-9">
               <AvatarImage src={otherUser?.avatar_url || undefined} />
-              <AvatarFallback className="bg-muted text-xs font-bold">
+              <AvatarFallback className="bg-muted text-xs font-semibold">
                 {getInitials(otherUser?.full_name)}
               </AvatarFallback>
             </Avatar>
@@ -445,7 +445,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
                         {!isMe && (
                           <Avatar className="h-8 w-8 shrink-0 mt-1">
                             <AvatarImage src={otherUser?.avatar_url || undefined} />
-                            <AvatarFallback className="bg-muted text-[10px] font-bold">
+                            <AvatarFallback className="bg-muted text-[10px] font-semibold">
                               {getInitials(otherUser?.full_name)}
                             </AvatarFallback>
                           </Avatar>
@@ -523,7 +523,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
                         </div>
                         {isMe && (
                           <Avatar className="h-8 w-8 shrink-0 mt-1">
-                            <AvatarFallback className="bg-primary/10 text-[10px] font-bold text-primary">
+                            <AvatarFallback className="bg-primary/10 text-[10px] font-semibold text-primary">
                               You
                             </AvatarFallback>
                           </Avatar>
@@ -542,7 +542,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
           <div className="px-4 pb-2 flex items-center gap-2">
             <Avatar className="h-6 w-6">
               <AvatarImage src={otherUser?.avatar_url || undefined} />
-              <AvatarFallback className="bg-muted text-[8px] font-bold">
+              <AvatarFallback className="bg-muted text-[8px] font-semibold">
                 {getInitials(otherUser?.full_name)}
               </AvatarFallback>
             </Avatar>

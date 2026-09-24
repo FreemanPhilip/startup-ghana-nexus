@@ -116,7 +116,7 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
             {(group as any).icon_url ? (
               <img src={(group as any).icon_url} alt={group.name} className="h-full w-full object-cover" />
             ) : (
-              <span className="text-white text-2xl font-bold font-display">{group.name.slice(0, 2).toUpperCase()}</span>
+              <span className="text-white text-2xl font-semibold font-display">{group.name.slice(0, 2).toUpperCase()}</span>
             )}
           </div>
         </div>
@@ -124,7 +124,7 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="font-display text-xl font-bold">{group.name}</h1>
+              <h1 className="font-display text-xl font-semibold">{group.name}</h1>
               <Badge variant="outline" className="text-[10px] gap-1">
                 {group.is_private ? <><Lock className="h-3 w-3" /> Private</> : <><Globe className="h-3 w-3" /> Public</>}
               </Badge>
@@ -186,8 +186,8 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
       <div className="flex flex-col lg:flex-row gap-5 mt-5">
         {/* Left sidebar - About */}
         <div className="lg:w-60 shrink-0 space-y-4">
-          <div className="rounded-xl border border-border bg-card p-4">
-            <h3 className="font-display font-bold text-sm mb-2">About Group</h3>
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <h3 className="font-display font-semibold text-sm mb-2">About Group</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">{group.description || "No description provided."}</p>
             <div className="mt-3 space-y-2 text-xs text-muted-foreground">
               <div className="flex items-center gap-2">
@@ -202,8 +202,8 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
           </div>
 
           {/* Admin team */}
-          <div className="rounded-xl border border-border bg-card p-4">
-            <h3 className="font-display font-bold text-sm mb-3">Admin Team</h3>
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <h3 className="font-display font-semibold text-sm mb-3">Admin Team</h3>
             <div className="space-y-2">
               {members.filter(m => m.role === "admin").map(m => (
                 <div key={m.user_id} className="flex items-center gap-2">
@@ -232,12 +232,12 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
 
               {/* Posts */}
               {posts.length === 0 ? (
-                <div className="rounded-xl border border-border bg-card p-12 text-center">
+                <div className="rounded-2xl border border-border bg-card p-12 text-center">
                   <p className="text-sm text-muted-foreground">No posts yet. Be the first to share!</p>
                 </div>
               ) : (
                 posts.map(post => (
-                  <div key={post.id} className="rounded-xl border border-border bg-card p-4 space-y-3">
+                  <div key={post.id} className="rounded-2xl border border-border bg-card p-4 space-y-3">
                     <div className="flex items-start gap-3">
                       <Avatar className="h-9 w-9">
                         <AvatarImage src={post.author_avatar || undefined} />
@@ -289,7 +289,7 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
           {activeTab === "members" && (
             <div className="space-y-3">
               {members.map(m => (
-                <div key={m.user_id} className="rounded-xl border border-border bg-card p-4 flex items-center gap-3">
+                <div key={m.user_id} className="rounded-2xl border border-border bg-card p-4 flex items-center gap-3">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={m.avatar_url || undefined} />
                     <AvatarFallback className="bg-muted text-xs">{(m.full_name || "U").slice(0, 2).toUpperCase()}</AvatarFallback>
@@ -363,8 +363,8 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
 
         {/* Right sidebar - Members preview */}
         <div className="hidden lg:block w-56 shrink-0 space-y-4">
-          <div className="rounded-xl border border-border bg-card p-4">
-            <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
               <Users className="h-4 w-4 text-primary" /> Members ({group.member_count})
             </h3>
             <div className="space-y-2.5">
@@ -390,8 +390,8 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
 
           {/* Upcoming Events widget */}
           {eventsHook.events.filter(e => new Date(e.event_date) >= new Date()).length > 0 && (
-            <div className="rounded-xl border border-border bg-card p-4">
-              <h3 className="font-display font-bold text-sm mb-3">Upcoming Events</h3>
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <h3 className="font-display font-semibold text-sm mb-3">Upcoming Events</h3>
               <div className="space-y-3">
                 {eventsHook.events
                   .filter(e => new Date(e.event_date) >= new Date())
@@ -401,8 +401,8 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
                     return (
                       <div key={e.id} className="flex gap-2.5">
                         <div className="flex flex-col items-center rounded bg-primary/10 text-primary w-10 h-10 shrink-0 justify-center">
-                          <span className="text-[8px] font-bold uppercase leading-none">{d.toLocaleDateString("en", { month: "short" })}</span>
-                          <span className="text-sm font-bold leading-none">{d.getDate()}</span>
+                          <span className="text-[8px] font-semibold uppercase leading-none">{d.toLocaleDateString("en", { month: "short" })}</span>
+                          <span className="text-sm font-semibold leading-none">{d.getDate()}</span>
                         </div>
                         <div className="min-w-0">
                           <p className="text-xs font-medium truncate">{e.title}</p>
@@ -417,8 +417,8 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
           )}
 
           {/* Quick stats */}
-          <div className="rounded-xl border border-border bg-card p-4">
-            <h3 className="font-display font-bold text-sm mb-3">Activity</h3>
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <h3 className="font-display font-semibold text-sm mb-3">Activity</h3>
             <div className="space-y-2 text-xs text-muted-foreground">
               <div className="flex justify-between">
                 <span>Posts today</span>

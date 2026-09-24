@@ -103,7 +103,7 @@ const QuickChatDialog = ({
           <div className="flex items-center gap-2">
             <Avatar className="h-9 w-9">
               <AvatarImage src={targetUserAvatar || undefined} />
-              <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">
+              <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
                 {initials}
               </AvatarFallback>
             </Avatar>

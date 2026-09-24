@@ -21,7 +21,7 @@ export function IndexInvestorDetailModal({ investor, open, onOpenChange }: Index
             {investor.logo_url ? (
               <img src={investor.logo_url} alt={investor.name} className="w-14 h-14 rounded-xl object-cover border" />
             ) : (
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-500/10 flex items-center justify-center text-amber-600 font-bold text-lg">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-500/10 flex items-center justify-center text-amber-600 font-semibold text-lg">
                 {investor.name.split(" ").slice(0, 2).map(w => w[0]).join("").toUpperCase()}
               </div>
             )}

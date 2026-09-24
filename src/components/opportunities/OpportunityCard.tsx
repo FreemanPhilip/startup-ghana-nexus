@@ -49,16 +49,16 @@ const OpportunityCard = ({ opportunity, onApply }: OpportunityCardProps) => {
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${typeColors[opportunity.type] || typeColors.grant}`}>
+            <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${typeColors[opportunity.type] || typeColors.grant}`}>
               {typeLabels[opportunity.type] || opportunity.type}
             </span>
             {opportunity.is_featured && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-primary to-primary/80 px-2.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+              <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-primary to-primary/80 px-2.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
                 ★ Featured
               </span>
             )}
           </div>
-          <h3 className="mt-2 text-base font-bold leading-tight">{opportunity.title}</h3>
+          <h3 className="mt-2 text-base font-semibold leading-tight">{opportunity.title}</h3>
           <p className="mt-0.5 text-xs font-medium text-muted-foreground">{opportunity.organization}</p>
         </div>
         <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">

@@ -18,7 +18,7 @@ const JoinRequestsPanel = ({ requests, loading, onApprove, onReject }: JoinReque
   return (
     <div className="space-y-3">
       {requests.map(req => (
-        <div key={req.id} className="rounded-xl border border-border bg-card p-4 flex items-start gap-3">
+        <div key={req.id} className="rounded-2xl border border-border bg-card p-4 flex items-start gap-3">
           <Avatar className="h-10 w-10">
             <AvatarImage src={req.avatar_url || undefined} />
             <AvatarFallback className="bg-muted text-xs">{(req.full_name || "U").slice(0, 2).toUpperCase()}</AvatarFallback>

@@ -147,7 +147,7 @@ const AISearchChat = () => {
       >
         <Sparkles className="h-4 w-4 text-primary" />
         <span className="flex-1 text-left">Ask SparkX AI anything...</span>
-        <kbd className="hidden rounded bg-muted px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground sm:inline">⌘K</kbd>
+        <kbd className="hidden rounded bg-muted px-1.5 py-0.5 text-[10px] numeric text-muted-foreground sm:inline">⌘K</kbd>
       </button>
 
       {/* Chat overlay */}

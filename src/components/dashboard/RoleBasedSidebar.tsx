@@ -155,7 +155,7 @@ const RoleBasedSidebar = ({ activeTab, onTabChange, open, onClose, role }: RoleB
         >
           <Avatar className="h-10 w-10">
             <AvatarImage src={profile?.avatar_url || undefined} />
-            <AvatarFallback className="bg-muted text-xs font-bold">{initials}</AvatarFallback>
+            <AvatarFallback className="bg-muted text-xs font-semibold">{initials}</AvatarFallback>
           </Avatar>
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold">{profile?.full_name || "User"}</p>
@@ -171,13 +171,17 @@ const RoleBasedSidebar = ({ activeTab, onTabChange, open, onClose, role }: RoleB
           <button
             key={item.id}
             onClick={() => handleTabChange(item.id)}
-            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+            aria-current={activeTab === item.id ? "page" : undefined}
+            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
               activeTab === item.id
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                ? "bg-muted font-medium text-foreground"
+                : "font-normal text-muted-foreground hover:bg-muted/60 hover:text-foreground"
             }`}
           >
-            <item.icon className="h-4 w-4" />
+            {/* A saturated fill on the active row shouted over the content it
+                was meant to introduce. The tint carries the state and the
+                brand shows only in the icon. */}
+            <item.icon className={`h-4 w-4 ${activeTab === item.id ? "text-brand" : ""}`} />
             <span className="flex-1 text-left">{item.label}</span>
             {item.id === "messages" && totalUnread > 0 && (
               <Badge className="h-5 min-w-5 rounded-full px-1.5 py-0 flex items-center justify-center text-[10px] bg-destructive text-destructive-foreground border-0">
@@ -191,7 +195,7 @@ const RoleBasedSidebar = ({ activeTab, onTabChange, open, onClose, role }: RoleB
       <div className="border-t border-border p-3 space-y-1">
         {showPitchDeck && (
           <Button
-            className="w-full bg-primary text-primary-foreground font-semibold gap-2 text-sm hover:opacity-90"
+            className="w-full gap-2 text-sm font-medium"
             onClick={() => setPitchDeckOpen(true)}
           >
             <Upload className="h-4 w-4" />

@@ -151,22 +151,22 @@ const IncomingRequestsTab = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <Card className="p-4 text-center cursor-pointer hover:shadow-sm transition-shadow" onClick={() => setFilter("all")}>
           <Users className="h-5 w-5 mx-auto text-primary mb-1" />
-          <p className="text-2xl font-bold">{counts.all}</p>
+          <p className="text-2xl font-semibold">{counts.all}</p>
           <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Total</p>
         </Card>
         <Card className="p-4 text-center cursor-pointer hover:shadow-sm transition-shadow" onClick={() => setFilter("pending")}>
           <Clock className="h-5 w-5 mx-auto text-amber-500 mb-1" />
-          <p className="text-2xl font-bold">{counts.pending}</p>
+          <p className="text-2xl font-semibold">{counts.pending}</p>
           <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Pending</p>
         </Card>
         <Card className="p-4 text-center cursor-pointer hover:shadow-sm transition-shadow" onClick={() => setFilter("accepted")}>
           <CheckCircle2 className="h-5 w-5 mx-auto text-emerald-500 mb-1" />
-          <p className="text-2xl font-bold">{counts.accepted}</p>
+          <p className="text-2xl font-semibold">{counts.accepted}</p>
           <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Accepted</p>
         </Card>
         <Card className="p-4 text-center cursor-pointer hover:shadow-sm transition-shadow" onClick={() => setFilter("rejected")}>
           <XCircle className="h-5 w-5 mx-auto text-destructive mb-1" />
-          <p className="text-2xl font-bold">{counts.rejected}</p>
+          <p className="text-2xl font-semibold">{counts.rejected}</p>
           <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Declined</p>
         </Card>
       </div>
@@ -191,7 +191,7 @@ const IncomingRequestsTab = () => {
       {filtered.length === 0 ? (
         <Card className="p-8 text-center">
           <Inbox className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
-          <h3 className="font-display text-lg font-bold">
+          <h3 className="font-display text-lg font-semibold">
             {filter === "all" ? "No Connection Requests Yet" : `No ${filter === "rejected" ? "Declined" : filter} Requests`}
           </h3>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -220,13 +220,13 @@ const IncomingRequestsTab = () => {
                 >
                   <Avatar className="h-12 w-12 shrink-0">
                     <AvatarImage src={profile?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold">{initials}</AvatarFallback>
+                    <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">{initials}</AvatarFallback>
                   </Avatar>
 
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="text-sm font-semibold">{name}</p>
-                      <Badge variant="outline" className={`text-[10px] font-bold gap-1 ${config.className}`}>
+                      <Badge variant="outline" className={`text-[10px] font-semibold gap-1 ${config.className}`}>
                         <StatusIcon className="h-3 w-3" />
                         {config.label}
                       </Badge>

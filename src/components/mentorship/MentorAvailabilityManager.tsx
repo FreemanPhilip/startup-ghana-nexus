@@ -114,8 +114,8 @@ const MentorAvailabilityManager = () => {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-xl border border-border bg-card p-5">
-        <h3 className="font-display font-bold text-sm mb-4 flex items-center gap-2">
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <h3 className="font-display font-semibold text-sm mb-4 flex items-center gap-2">
           <Clock className="h-4 w-4 text-primary" /> Add Availability Slot
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -184,8 +184,8 @@ const MentorAvailabilityManager = () => {
       </div>
 
       {/* Existing slots grouped by day */}
-      <div className="rounded-xl border border-border bg-card p-5">
-        <h3 className="font-display font-bold text-sm mb-4">Your Availability</h3>
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <h3 className="font-display font-semibold text-sm mb-4">Your Availability</h3>
         {slots.length === 0 ? (
           <p className="text-xs text-muted-foreground">No availability slots set. Add your first slot above.</p>
         ) : (
@@ -195,7 +195,7 @@ const MentorAvailabilityManager = () => {
               if (daySlots.length === 0) return null;
               return (
                 <div key={dayIndex}>
-                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">{day}</p>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{day}</p>
                   <div className="space-y-2">
                     {daySlots.map(slot => (
                       <div key={slot.id} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/50 border border-border">

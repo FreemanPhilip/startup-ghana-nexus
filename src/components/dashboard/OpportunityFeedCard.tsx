@@ -21,7 +21,7 @@ const OpportunityFeedCard = ({ item, onViewDetail }: OpportunityFeedCardProps) =
   const deadline = item.deadline ? new Date(item.deadline) : null;
 
   return (
-    <div className="rounded-xl border border-border bg-card overflow-hidden">
+    <div className="rounded-2xl border border-border bg-card overflow-hidden">
       <div className="flex items-center gap-2 px-5 pt-4 pb-2">
         <div className={`h-5 w-5 rounded flex items-center justify-center ${config.color}`}>
           <Icon className="h-3 w-3" />
@@ -31,7 +31,7 @@ const OpportunityFeedCard = ({ item, onViewDetail }: OpportunityFeedCardProps) =
         </span>
       </div>
       <div className="px-5 pb-4 space-y-2">
-        <h3 className="text-sm font-bold">{item.title}</h3>
+        <h3 className="text-sm font-semibold">{item.title}</h3>
         <p className="text-xs text-muted-foreground">{item.organization}</p>
         <p className="text-xs text-muted-foreground line-clamp-2">{item.description}</p>
         <div className="flex items-center gap-3 flex-wrap">

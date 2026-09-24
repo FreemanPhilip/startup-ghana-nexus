@@ -139,7 +139,7 @@ const RescheduleSessionDialog = ({ open, onClose, bookingId, mentorId, mentorNam
         ) : (
           <div className="space-y-4 pt-2">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
                 <CalendarIcon className="h-3 w-3" /> Select New Date
               </p>
               <div className="flex justify-center">
@@ -156,7 +156,7 @@ const RescheduleSessionDialog = ({ open, onClose, bookingId, mentorId, mentorNam
 
             {selectedDate && (
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
                   <Clock className="h-3 w-3" /> Select New Time
                 </p>
                 {timeSlots.length === 0 ? (

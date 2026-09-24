@@ -50,7 +50,7 @@ const InvestorCard = ({ investor, onConnect, onView, isConnected }: InvestorCard
 
   return (
     <div
-      className="group flex flex-col justify-between rounded-xl border border-border bg-card p-5 transition-shadow hover:shadow-md cursor-pointer h-full"
+      className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-5 transition-shadow hover:shadow-md cursor-pointer h-full"
       onClick={() => onView?.()}
     >
       {/* Header */}
@@ -59,7 +59,7 @@ const InvestorCard = ({ investor, onConnect, onView, isConnected }: InvestorCard
           {investor.isRealUser ? (
             <Avatar className="h-12 w-12">
               <AvatarImage src={investor.avatar_url || undefined} />
-              <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold">{initials}</AvatarFallback>
+              <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">{initials}</AvatarFallback>
             </Avatar>
           ) : (
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
@@ -67,14 +67,14 @@ const InvestorCard = ({ investor, onConnect, onView, isConnected }: InvestorCard
             </div>
           )}
           <div className="text-right">
-            <span className={`inline-block rounded-full border px-2.5 py-0.5 text-xs font-bold ${getMatchColor(investor.matchPercent)}`}>
+            <span className={`inline-block rounded-full border px-2.5 py-0.5 text-xs font-semibold ${getMatchColor(investor.matchPercent)}`}>
               {investor.matchPercent}% Match
             </span>
             <p className="mt-0.5 text-[10px] text-muted-foreground">{investor.status}</p>
           </div>
         </div>
 
-        <h3 className="mt-4 text-base font-bold leading-tight">{investor.name}</h3>
+        <h3 className="mt-4 text-base font-semibold leading-tight">{investor.name}</h3>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground line-clamp-2">
           {investor.description}
         </p>
@@ -93,7 +93,7 @@ const InvestorCard = ({ investor, onConnect, onView, isConnected }: InvestorCard
       <div className="mt-5 flex items-center justify-between">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">AVG TICKET</p>
-          <p className="text-sm font-bold text-primary">{investor.avgTicket}</p>
+          <p className="text-sm font-semibold text-primary">{investor.avgTicket}</p>
         </div>
         <Button
           size="sm"

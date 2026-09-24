@@ -105,11 +105,11 @@ const RecommendedConnections = () => {
   if (suggestions.length === 0) return null;
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <div className="rounded-2xl border border-border bg-card p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-bold">People in the Ecosystem</h3>
+          <h3 className="text-sm font-semibold">People in the Ecosystem</h3>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-3">
@@ -122,7 +122,7 @@ const RecommendedConnections = () => {
             <div key={s.user_id} className="flex flex-col items-center rounded-lg border border-border p-4 text-center">
               <Avatar className="h-12 w-12">
                 <AvatarImage src={s.avatar_url || undefined} />
-                <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">{initials}</AvatarFallback>
+                <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">{initials}</AvatarFallback>
               </Avatar>
               <p className="mt-2 text-xs font-semibold leading-tight truncate w-full">{s.full_name || "Unknown"}</p>
               {config && (

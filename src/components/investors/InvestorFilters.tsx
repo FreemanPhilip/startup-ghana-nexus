@@ -18,11 +18,11 @@ const InvestorFilters = ({
   const hasFilters = industry !== "all" || ticketSize !== "all" || region !== "all";
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <div className="rounded-2xl border border-border bg-card p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
-          <h3 className="text-sm font-bold">Refine Search</h3>
+          <h3 className="text-sm font-semibold">Refine Search</h3>
         </div>
         {hasFilters && (
           <button onClick={onClear} className="text-xs font-medium text-primary hover:underline">
@@ -33,7 +33,7 @@ const InvestorFilters = ({
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
-          <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          <label className="mb-1.5 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             Industry Sector
           </label>
           <Select value={industry} onValueChange={onIndustryChange}>
@@ -54,7 +54,7 @@ const InvestorFilters = ({
         </div>
 
         <div>
-          <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          <label className="mb-1.5 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             Ticket Size
           </label>
           <Select value={ticketSize} onValueChange={onTicketSizeChange}>
@@ -72,7 +72,7 @@ const InvestorFilters = ({
         </div>
 
         <div>
-          <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          <label className="mb-1.5 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             Region
           </label>
           <Select value={region} onValueChange={onRegionChange}>

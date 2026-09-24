@@ -123,7 +123,7 @@ const ContactPage = () => {
                 viewport={{ once: true }}
                 custom={i}
                 variants={fadeUp}
-                className="rounded-xl border border-border bg-card p-6"
+                className="rounded-2xl border border-border bg-card p-6"
               >
                 <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   {info.icon}
@@ -257,7 +257,7 @@ const ContactPage = () => {
                 </h3>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {offices.map((office, i) => (
-                    <div key={i} className="rounded-xl border border-border bg-card p-4">
+                    <div key={i} className="rounded-2xl border border-border bg-card p-4">
                       <div className="flex items-start gap-3">
                         <Building className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                         <div>

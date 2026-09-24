@@ -98,7 +98,7 @@ const BrowseMentorsDialog = ({ open, onOpenChange, onSelectMentor }: BrowseMento
                 >
                   <Avatar className="h-11 w-11 shrink-0">
                     <AvatarImage src={mentor.avatar_url || undefined} />
-                    <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">
+                    <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
                       {getInitials(mentor.full_name)}
                     </AvatarFallback>
                   </Avatar>

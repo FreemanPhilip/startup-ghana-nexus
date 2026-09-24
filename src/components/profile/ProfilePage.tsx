@@ -219,7 +219,7 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
           <div className="relative">
             <Avatar className="h-24 w-24 border-4 border-card shadow-lg">
               <AvatarImage src={profile?.avatar_url || undefined} />
-              <AvatarFallback className="bg-muted text-xl font-bold">{initials}</AvatarFallback>
+              <AvatarFallback className="bg-muted text-xl font-semibold">{initials}</AvatarFallback>
             </Avatar>
             <button
               onClick={() => fileRef.current?.click()}
@@ -234,7 +234,7 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="font-display text-xl font-bold">{profile?.full_name || "Your Name"}</h1>
+                  <h1 className="font-display text-xl font-semibold">{profile?.full_name || "Your Name"}</h1>
                   {profile?.verification === "verified" && (
                     <CheckCircle className="h-5 w-5 text-primary fill-primary/20" />
                   )}
@@ -278,7 +278,7 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
                 { label: "Following", value: followStats.following },
               ].map(s => (
                 <div key={s.label} className="text-center">
-                  <p className="text-sm font-bold">{s.value}</p>
+                  <p className="text-sm font-semibold">{s.value}</p>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{s.label}</p>
                 </div>
               ))}
@@ -309,8 +309,8 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
             <div className="flex-1 space-y-5">
               {editing ? (
                 /* Edit form */
-                <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-                  <h3 className="font-display font-bold text-sm">Edit Profile Details</h3>
+                <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
+                  <h3 className="font-display font-semibold text-sm">Edit Profile Details</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Full Name</Label>
@@ -395,40 +395,40 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
               ) : (
                 /* View mode */
                 <>
-                  <div className="rounded-xl border border-border bg-card p-5">
-                    <h3 className="font-display font-bold text-sm mb-3">About</h3>
+                  <div className="rounded-2xl border border-border bg-card p-5">
+                    <h3 className="font-display font-semibold text-sm mb-3">About</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       {profile?.bio || "No bio added yet. Click 'Edit Profile' to add one."}
                     </p>
                   </div>
 
                   {(profile?.company_name || profile?.industry) && (
-                    <div className="rounded-xl border border-border bg-card p-5">
-                      <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+                    <div className="rounded-2xl border border-border bg-card p-5">
+                      <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
                         <Building2 className="h-4 w-4 text-primary" /> Company
                       </h3>
                       <div className="grid grid-cols-2 gap-3 text-sm">
                         {profile?.company_name && (
                           <div>
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Name</p>
+                            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Name</p>
                             <p className="font-medium mt-0.5">{profile.company_name}</p>
                           </div>
                         )}
                         {profile?.industry && (
                           <div>
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Industry</p>
+                            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Industry</p>
                             <p className="font-medium mt-0.5">{profile.industry}</p>
                           </div>
                         )}
                         {profile?.company_stage && (
                           <div>
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Stage</p>
+                            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Stage</p>
                             <p className="font-medium mt-0.5 capitalize">{profile.company_stage}</p>
                           </div>
                         )}
                         {profile?.team_size && (
                           <div>
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Team Size</p>
+                            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Team Size</p>
                             <p className="font-medium mt-0.5">{profile.team_size} people</p>
                           </div>
                         )}
@@ -437,8 +437,8 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
                   )}
 
                   {profile?.expertise && profile.expertise.length > 0 && (
-                    <div className="rounded-xl border border-border bg-card p-5">
-                      <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+                    <div className="rounded-2xl border border-border bg-card p-5">
+                      <h3 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
                         <Award className="h-4 w-4 text-primary" /> Expertise
                       </h3>
                       <div className="flex flex-wrap gap-2">
@@ -454,8 +454,8 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
 
             {/* Right sidebar - contact & roles */}
             <div className="lg:w-64 shrink-0 space-y-5">
-              <div className="rounded-xl border border-border bg-card p-5">
-                <h3 className="font-display font-bold text-sm mb-3">Contact</h3>
+              <div className="rounded-2xl border border-border bg-card p-5">
+                <h3 className="font-display font-semibold text-sm mb-3">Contact</h3>
                 <div className="space-y-3">
                   {user?.email && (
                     <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
@@ -484,8 +484,8 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-border bg-card p-5">
-                <h3 className="font-display font-bold text-sm mb-3">Roles</h3>
+              <div className="rounded-2xl border border-border bg-card p-5">
+                <h3 className="font-display font-semibold text-sm mb-3">Roles</h3>
                 <div className="flex flex-wrap gap-2">
                   {roles.length === 0 ? (
                     <p className="text-xs text-muted-foreground">No roles assigned</p>
@@ -497,8 +497,8 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-border bg-card p-5">
-                <h3 className="font-display font-bold text-sm mb-3">Member Since</h3>
+              <div className="rounded-2xl border border-border bg-card p-5">
+                <h3 className="font-display font-semibold text-sm mb-3">Member Since</h3>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Calendar className="h-3.5 w-3.5" />
                   <span>{profile ? new Date(profile.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "—"}</span>
@@ -519,13 +519,13 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             ) : posts.length === 0 ? (
-              <div className="rounded-xl border border-border bg-card p-12 text-center">
+              <div className="rounded-2xl border border-border bg-card p-12 text-center">
                 <p className="text-sm font-medium text-muted-foreground">No posts yet</p>
                 <p className="text-xs text-muted-foreground mt-1">Your posts from the ecosystem feed will appear here.</p>
               </div>
             ) : (
               posts.map(post => (
-                <div key={post.id} className="rounded-xl border border-border bg-card p-5 space-y-3">
+                <div key={post.id} className="rounded-2xl border border-border bg-card p-5 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-[10px] capitalize">{post.category}</Badge>
@@ -557,8 +557,8 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
         {activeTab === "settings" && (
           <div className="flex-1 space-y-5">
             {/* Verification */}
-            <div className="rounded-xl border border-border bg-card p-5">
-              <h3 className="font-display font-bold text-sm mb-2 flex items-center gap-2">
+            <div className="rounded-2xl border border-border bg-card p-5">
+              <h3 className="font-display font-semibold text-sm mb-2 flex items-center gap-2">
                 <Shield className="h-4 w-4 text-primary" /> Verification
               </h3>
               <p className="text-xs text-muted-foreground mb-4">Get verified to increase trust and visibility in the ecosystem.</p>
@@ -587,7 +587,7 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
             {/* Membership Upgrade — only for startup founders */}
             {roles.includes("startup_founder") && (
               <div className={`rounded-xl border ${isPremium ? "border-primary" : "border-border"} bg-card p-5`}>
-                <h3 className="font-display font-bold text-sm mb-2 flex items-center gap-2">
+                <h3 className="font-display font-semibold text-sm mb-2 flex items-center gap-2">
                   <Crown className="h-4 w-4 text-primary" /> Membership
                 </h3>
                 <p className="text-xs text-muted-foreground mb-4">
@@ -613,8 +613,8 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
             )}
 
             {/* Account */}
-            <div className="rounded-xl border border-border bg-card p-5">
-              <h3 className="font-display font-bold text-sm mb-2">Account</h3>
+            <div className="rounded-2xl border border-border bg-card p-5">
+              <h3 className="font-display font-semibold text-sm mb-2">Account</h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between py-2 border-b border-border">
                   <div>
@@ -634,7 +634,7 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
             </div>
 
             <div className="rounded-xl border border-destructive/30 bg-card p-5">
-              <h3 className="font-display font-bold text-sm mb-2 text-destructive">Danger Zone</h3>
+              <h3 className="font-display font-semibold text-sm mb-2 text-destructive">Danger Zone</h3>
               <p className="text-xs text-muted-foreground mb-4">These actions are irreversible.</p>
               <Button variant="outline" className="text-xs text-destructive border-destructive/30 hover:bg-destructive/10 gap-1.5" onClick={onSignOut}>
                 <LogOut className="h-3.5 w-3.5" /> Sign Out

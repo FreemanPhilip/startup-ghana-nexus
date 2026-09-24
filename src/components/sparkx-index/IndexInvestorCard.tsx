@@ -26,7 +26,7 @@ export function IndexInvestorCard({ investor, onClick }: IndexInvestorCardProps)
           {investor.logo_url ? (
             <img src={investor.logo_url} alt={investor.name} className="w-12 h-12 rounded-lg object-cover border" />
           ) : (
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-500/10 flex items-center justify-center text-amber-600 font-bold text-sm">
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-500/10 flex items-center justify-center text-amber-600 font-semibold text-sm">
               {initials}
             </div>
           )}

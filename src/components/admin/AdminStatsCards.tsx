@@ -61,11 +61,11 @@ const AdminStatsCards = () => {
   return (
     <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
       {cards.map((card) => (
-        <div key={card.label} className="rounded-xl border border-border bg-card p-5">
+        <div key={card.label} className="rounded-2xl border border-border bg-card p-5">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{card.label}</p>
-              <p className="mt-1 font-display text-2xl font-bold">
+              <p className="mt-1 font-display text-2xl font-semibold">
                 {loading ? "—" : card.value.toLocaleString()}
               </p>
             </div>

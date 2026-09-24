@@ -80,11 +80,11 @@ const PartnerDashboardPage = () => {
               {activeTab === "home" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><EcosystemFeed onViewOpportunity={handleViewOpportunity} onViewGroup={() => {}} onViewStartup={handleViewStartup} activeIdentity={activeIdentity} onIdentityChange={setActiveIdentity} /></motion.div>}
               {activeTab === "programs" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                 <div className="grid gap-4 md:grid-cols-3">
-                  <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Active programs</p><p className="mt-3 text-3xl font-bold">{portalStats.activeProgramCount}</p></div>
-                  <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Open opportunities</p><p className="mt-3 text-3xl font-bold">{portalStats.opportunityCount}</p></div>
-                  <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Engagement</p><p className="mt-3 text-3xl font-bold">{portalStats.engagementRate}%</p></div>
+                  <div className="rounded-2xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Active programs</p><p className="mt-3 text-3xl font-bold">{portalStats.activeProgramCount}</p></div>
+                  <div className="rounded-2xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Open opportunities</p><p className="mt-3 text-3xl font-bold">{portalStats.opportunityCount}</p></div>
+                  <div className="rounded-2xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Engagement</p><p className="mt-3 text-3xl font-bold">{portalStats.engagementRate}%</p></div>
                 </div>
-                <div className="rounded-xl border border-border bg-card p-5">
+                <div className="rounded-2xl border border-border bg-card p-5">
                   <h3 className="font-display text-xl font-bold">Program pipeline</h3>
                   <div className="mt-4 space-y-3">
                     {partner.loading ? (
@@ -109,7 +109,7 @@ const PartnerDashboardPage = () => {
               </motion.div>}
               {activeTab === "opportunities" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><OpportunitiesPage initialOpportunityId={deepLinkOpportunityId} onDeepLinkConsumed={() => navigate(`${BASE_PATH}/opportunities`, { replace: true })} /></motion.div>}
               {activeTab === "startups" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                <div className="rounded-xl border border-border bg-card p-5">
+                <div className="rounded-2xl border border-border bg-card p-5">
                   <h3 className="font-display text-xl font-bold">Startup directory</h3>
                   <div className="mt-4 space-y-3">
                     {partner.loading ? (
@@ -134,12 +134,12 @@ const PartnerDashboardPage = () => {
               </motion.div>}
               {activeTab === "analytics" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                 <div className="grid gap-4 md:grid-cols-4">
-                  <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Startups</p><p className="mt-3 text-3xl font-bold">{portalStats.startupCount}</p></div>
-                  <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Programs</p><p className="mt-3 text-3xl font-bold">{portalStats.activeProgramCount}</p></div>
-                  <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Opportunities</p><p className="mt-3 text-3xl font-bold">{portalStats.opportunityCount}</p></div>
-                  <div className="rounded-xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Tracked</p><p className="mt-3 text-3xl font-bold">{portalStats.totalTracked}</p></div>
+                  <div className="rounded-2xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Startups</p><p className="mt-3 text-3xl font-bold">{portalStats.startupCount}</p></div>
+                  <div className="rounded-2xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Programs</p><p className="mt-3 text-3xl font-bold">{portalStats.activeProgramCount}</p></div>
+                  <div className="rounded-2xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Opportunities</p><p className="mt-3 text-3xl font-bold">{portalStats.opportunityCount}</p></div>
+                  <div className="rounded-2xl border border-border bg-card p-5"><p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Tracked</p><p className="mt-3 text-3xl font-bold">{portalStats.totalTracked}</p></div>
                 </div>
-                <div className="rounded-xl border border-border bg-card p-5">
+                <div className="rounded-2xl border border-border bg-card p-5">
                   <h3 className="font-display text-xl font-bold">Startups by stage</h3>
                   <p className="mt-1 text-xs text-muted-foreground">Share of registered startups at each stage.</p>
                   <div className="mt-4 space-y-4">

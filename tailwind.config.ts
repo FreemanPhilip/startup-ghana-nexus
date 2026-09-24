@@ -15,8 +15,14 @@ export default {
     },
     extend: {
       fontFamily: {
+        /* One family, precisely. `sans` is the default for everything;
+           `display` and `body` are kept as aliases so existing font-display /
+           font-body classes resolve, and `mono` is deliberately mapped to
+           Inter too so a stray font-mono cannot reintroduce a second face. */
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
         display: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
         body: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

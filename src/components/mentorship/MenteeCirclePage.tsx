@@ -602,7 +602,7 @@ const MenteeCirclePage = () => {
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary">Mentorship</p>
-          <h1 className="mt-1 font-display text-2xl font-bold">Mentee Circle</h1>
+          <h1 className="mt-1 font-display text-2xl font-semibold">Mentee Circle</h1>
         </div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Users className="h-4 w-4" />
@@ -614,7 +614,7 @@ const MenteeCirclePage = () => {
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Mentorship snapshot</p>
-            <h2 className="mt-1 font-display text-xl font-bold">{mentorSummary.title}</h2>
+            <h2 className="mt-1 font-display text-xl font-semibold">{mentorSummary.title}</h2>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{mentorSummary.description}</p>
           </div>
           <div className="flex items-center gap-3">
@@ -631,15 +631,15 @@ const MenteeCirclePage = () => {
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="p-4">
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Active mentees</p>
-          <p className="mt-3 text-3xl font-bold">{mentees.length}</p>
+          <p className="mt-3 text-3xl font-semibold">{mentees.length}</p>
         </Card>
         <Card className="p-4">
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">This month</p>
-          <p className="mt-3 text-3xl font-bold">{meetings.filter((meeting) => meeting.date >= new Date().toISOString().slice(0, 10)).length}</p>
+          <p className="mt-3 text-3xl font-semibold">{meetings.filter((meeting) => meeting.date >= new Date().toISOString().slice(0, 10)).length}</p>
         </Card>
         <Card className="p-4">
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Open tasks</p>
-          <p className="mt-3 text-3xl font-bold">{openTaskCount}</p>
+          <p className="mt-3 text-3xl font-semibold">{openTaskCount}</p>
         </Card>
       </div>
 
@@ -675,7 +675,7 @@ const MenteeCirclePage = () => {
                   >
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={mentee.avatarUrl ?? undefined} />
-                      <AvatarFallback className="bg-muted text-xs font-bold">
+                      <AvatarFallback className="bg-muted text-xs font-semibold">
                         {mentee.fullName
                           .split(" ")
                           .map((part) => part[0])
@@ -706,7 +706,7 @@ const MenteeCirclePage = () => {
                 <div className="flex items-center gap-3">
                   <Avatar className="h-12 w-12">
                     <AvatarImage src={selectedMentee.avatarUrl ?? undefined} />
-                    <AvatarFallback className="bg-muted text-sm font-bold">
+                    <AvatarFallback className="bg-muted text-sm font-semibold">
                       {selectedMentee.fullName
                         .split(" ")
                         .map((part) => part[0])
@@ -716,7 +716,7 @@ const MenteeCirclePage = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h2 className="font-display text-xl font-bold">{selectedMentee.fullName}</h2>
+                    <h2 className="font-display text-xl font-semibold">{selectedMentee.fullName}</h2>
                     <p className="text-sm text-muted-foreground">{selectedMentee.headline}</p>
                   </div>
                 </div>
@@ -865,7 +865,7 @@ const MenteeCirclePage = () => {
                     </div>
                   ) : (
                     selectedMeetings.map((meeting) => (
-                      <div key={meeting.id} className="rounded-xl border border-border bg-card p-3">
+                      <div key={meeting.id} className="rounded-2xl border border-border bg-card p-3">
                         <div className="flex items-center justify-between gap-3">
                           <div>
                             <p className="font-medium">{meeting.title}</p>
@@ -908,7 +908,7 @@ const MenteeCirclePage = () => {
                     </div>
                   ) : (
                     selectedTasks.map((task) => (
-                      <div key={task.id} className="rounded-xl border border-border bg-card p-3">
+                      <div key={task.id} className="rounded-2xl border border-border bg-card p-3">
                         <div className="flex items-start justify-between gap-3">
                           <div>
                             <p className="font-medium">{task.title}</p>

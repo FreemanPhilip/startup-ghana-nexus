@@ -77,7 +77,7 @@ const EcosystemFeed = ({ onViewOpportunity, onViewGroup, onViewStartup, activeId
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-xl border border-border bg-card p-12 text-center">
+        <div className="rounded-2xl border border-border bg-card p-12 text-center">
           <p className="text-sm font-medium text-muted-foreground">No posts yet</p>
           <p className="mt-1 text-xs text-muted-foreground">Be the first to share an update!</p>
         </div>

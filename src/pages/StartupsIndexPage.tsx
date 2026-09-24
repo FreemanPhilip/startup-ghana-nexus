@@ -101,7 +101,7 @@ const StartupsIndexPage = () => {
         </header>
 
         {/* Filters */}
-        <div className="mb-8 space-y-4 rounded-xl border border-border bg-card p-4">
+        <div className="mb-8 space-y-4 rounded-2xl border border-border bg-card p-4">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -142,7 +142,7 @@ const StartupsIndexPage = () => {
         {loading ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-56 animate-pulse rounded-xl border border-border bg-card" />
+              <div key={i} className="h-56 animate-pulse rounded-2xl border border-border bg-card" />
             ))}
           </div>
         ) : loadError ? (
@@ -170,7 +170,7 @@ const StartupCard = ({ s }: { s: IndexStartup }) => {
   return (
     <Link
       to={`/startups/${s.slug}`}
-      className="group flex flex-col rounded-xl border border-border bg-card p-5 transition hover:border-primary/60 hover:shadow-lg"
+      className="group flex flex-col rounded-2xl border border-border bg-card p-5 transition hover:border-primary/60 hover:shadow-lg"
     >
       <div className="flex items-start gap-3">
         {s.logo_url ? (

@@ -45,7 +45,9 @@ export function platforms(): Platform[] {
       description: "Jobs & vetted talent",
       href: talentOrigin(),
       monogram: "T",
-      markClass: "bg-gradient-emerald text-white",
+      // Neutral, not emerald: a third hue beside the blue theme and the
+      // logo's orange made the menu look like three unrelated products.
+      markClass: "bg-foreground text-background",
     },
   ];
 }

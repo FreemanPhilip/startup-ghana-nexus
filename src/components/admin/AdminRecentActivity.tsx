@@ -55,7 +55,7 @@ const AdminRecentActivity = () => {
   };
 
   return (
-    <div className="rounded-xl border border-border bg-card">
+    <div className="rounded-2xl border border-border bg-card">
       <div className="px-4 py-3 border-b border-border">
         <h3 className="font-semibold text-sm">Recent Activity</h3>
       </div>

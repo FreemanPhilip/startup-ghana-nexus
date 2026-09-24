@@ -60,10 +60,10 @@ const MyMenteesPanel = () => {
 
       <div className="space-y-2">
         {active.map((m) => (
-          <div key={m.id} className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+          <div key={m.id} className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
             <Avatar className="h-9 w-9">
               <AvatarImage src={m.avatar_url ?? undefined} />
-              <AvatarFallback className="bg-muted text-xs font-bold">{initials(m.full_name)}</AvatarFallback>
+              <AvatarFallback className="bg-muted text-xs font-semibold">{initials(m.full_name)}</AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{m.full_name ?? "Mentee"}</p>
@@ -79,7 +79,7 @@ const MyMenteesPanel = () => {
           >
             <Avatar className="h-9 w-9 opacity-70">
               <AvatarImage src={m.avatar_url ?? undefined} />
-              <AvatarFallback className="bg-muted text-xs font-bold">{initials(m.full_name)}</AvatarFallback>
+              <AvatarFallback className="bg-muted text-xs font-semibold">{initials(m.full_name)}</AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{m.full_name ?? "Mentee"}</p>

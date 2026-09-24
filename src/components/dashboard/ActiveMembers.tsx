@@ -90,7 +90,7 @@ const ActiveMembers = () => {
             <Users className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div>
-            <h3 className="text-sm font-bold">Active Members</h3>
+            <h3 className="text-sm font-semibold">Active Members</h3>
             <p className="text-[10px] text-muted-foreground">{onlineCount} online now</p>
           </div>
         </div>
@@ -107,7 +107,7 @@ const ActiveMembers = () => {
               <div className="relative">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={m.avatar_url || undefined} />
-                  <AvatarFallback className="text-[10px] font-bold bg-primary/10 text-primary">{initials}</AvatarFallback>
+                  <AvatarFallback className="text-[10px] font-semibold bg-primary/10 text-primary">{initials}</AvatarFallback>
                 </Avatar>
                 {m.is_online && (
                   <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-card bg-emerald-500" />

@@ -134,7 +134,7 @@ const MentorBriefingPage = () => {
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary">Founder briefing</p>
-          <h1 className="mt-1 font-display text-2xl font-bold">Mentor management</h1>
+          <h1 className="mt-1 font-display text-2xl font-semibold">Mentor management</h1>
         </div>
         <Badge variant="outline">{bookings.length} recorded sessions</Badge>
       </div>
@@ -142,15 +142,15 @@ const MentorBriefingPage = () => {
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="p-4">
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Upcoming sessions</p>
-          <p className="mt-3 text-3xl font-bold">{upcomingSessions.length}</p>
+          <p className="mt-3 text-3xl font-semibold">{upcomingSessions.length}</p>
         </Card>
         <Card className="p-4">
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Mentor tasks</p>
-          <p className="mt-3 text-3xl font-bold">{openTaskCount}</p>
+          <p className="mt-3 text-3xl font-semibold">{openTaskCount}</p>
         </Card>
         <Card className="p-4">
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Latest update</p>
-          <p className="mt-3 text-lg font-bold">{latestUpdate ? latestUpdate.type : "No activity yet"}</p>
+          <p className="mt-3 text-lg font-semibold">{latestUpdate ? latestUpdate.type : "No activity yet"}</p>
         </Card>
       </div>
 
