@@ -110,9 +110,8 @@ const PostDetailPage = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-4 md:px-6">
-          <Link to="/" className="flex items-center gap-2">
-            <SparkXLogo variant="mark" className="h-7 w-7" alt="" />
-            <span className="font-display text-lg font-bold">The Index</span>
+          <Link to="/" aria-label="SparkX home" className="flex items-center">
+            <SparkXLogo className="h-7" />
           </Link>
           <Link to="/sparkx-index">
             <Button variant="outline" size="sm">

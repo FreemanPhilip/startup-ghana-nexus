@@ -32,17 +32,17 @@ const PartnersSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="mx-auto mb-16 max-w-2xl text-center md:mb-20"
         >
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-brand/25 bg-brand/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-brand mb-4">
+          <span className="inline-flex items-center gap-1.5 rounded-full text-xs font-semibold uppercase tracking-[0.16em] text-brand mb-5">
             <Handshake className="h-3 w-3" />
             Our Ecosystem
           </span>
-          <h2 className="font-display text-3xl font-bold tracking-[-0.02em] text-balance mb-4 sm:text-4xl md:text-[2.75rem] md:leading-[1.1]">
+          <h2 className="display-lg">
             Backed by Leading{" "}
-            <span className="text-gradient-gold">Organizations</span>
+            <span className="text-gradient-brand">Organizations</span>
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="lede mx-auto mt-5 max-w-[52ch]">
             Working alongside the institutions shaping Africa's startup ecosystem.
           </p>
         </motion.div>

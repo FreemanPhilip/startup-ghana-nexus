@@ -61,15 +61,15 @@ const EcosystemStats = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-16 text-center"
+          className="mx-auto mb-16 max-w-2xl text-center md:mb-20"
         >
-          <span className="mb-3 inline-block rounded-full border border-brand/30 bg-brand/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-brand">
+          <span className="mb-3 inline-block rounded-full text-xs font-semibold uppercase tracking-[0.16em] text-brand">
             Ecosystem Intelligence
           </span>
-          <h2 className="font-display text-3xl font-bold tracking-[-0.02em] text-balance sm:text-4xl md:text-[2.75rem] md:leading-[1.1]">
+          <h2 className="display-lg">
             Africa's Startup Ecosystem at a Glance
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
+          <p className="lede mx-auto mt-5 max-w-[52ch]">
             Real-time data and insights powering smarter decisions for founders,
             investors, and policymakers.
           </p>

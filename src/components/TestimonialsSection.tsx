@@ -49,11 +49,11 @@ const TestimonialsSection = () => {
           eyebrow="What People Say"
           title={
             <>
-              Trusted by Africa's <span className="text-gradient-brand">Startup Community</span>
+              Trusted by Africa's <span className="text-gradient-brand">startup community.</span>
             </>
           }
           description="Hear from the founders, investors, and mentors building the future of African innovation."
-          className="mb-14"
+          className="mb-16 md:mb-20"
         />
 
         <motion.div
@@ -61,13 +61,13 @@ const TestimonialsSection = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-60px" }}
-          className="grid gap-4 md:grid-cols-3"
+          className="grid gap-5 md:grid-cols-3"
         >
           {testimonials.map((t) => (
             <motion.figure
               key={t.name}
               variants={itemVariants}
-              className="group flex flex-col rounded-2xl border border-border bg-card p-6 transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-brand/35 hover:shadow-[0_18px_40px_-24px_hsl(14_88%_45%/0.5)]"
+              className="flex flex-col rounded-3xl border border-border bg-card p-8 transition-colors duration-500 hover:border-foreground/20"
             >
               {/* Three quotes of equal weight were previously gold, emerald and
                   blue, which implied a distinction that does not exist. One
@@ -80,7 +80,7 @@ const TestimonialsSection = () => {
 
               <Quote className="mb-3 h-7 w-7 text-brand/25" aria-hidden="true" />
 
-              <blockquote className="mb-6 flex-1 text-sm leading-relaxed text-foreground/85">
+              <blockquote className="mb-8 flex-1 text-[15px] leading-relaxed text-foreground/85">
                 "{t.quote}"
               </blockquote>
 
@@ -89,7 +89,7 @@ const TestimonialsSection = () => {
                   <AvatarFallback className="bg-brand/10 text-xs font-bold text-brand">{t.initials}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-display text-sm font-semibold">{t.name}</p>
+                  <p className="font-display text-sm font-semibold tracking-[-0.01em]">{t.name}</p>
                   <p className="text-xs text-muted-foreground">
                     {t.role}, {t.company}
                   </p>

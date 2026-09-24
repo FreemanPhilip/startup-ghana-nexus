@@ -80,11 +80,11 @@ const Navbar = ({ overHero = false }: NavbarProps) => {
         <div className="hidden items-center gap-1 md:flex">
           {navLinks.slice(0, 1).map((link) =>
             link.href.startsWith("/") ? (
-              <Link key={link.label} to={link.href} className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <Link key={link.label} to={link.href} className="rounded-md px-3 py-2 text-[14px] font-normal text-muted-foreground transition-colors hover:text-foreground">
                 {link.label}
               </Link>
             ) : (
-              <a key={link.label} href={link.href} className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <a key={link.label} href={link.href} className="rounded-md px-3 py-2 text-[14px] font-normal text-muted-foreground transition-colors hover:text-foreground">
                 {link.label}
               </a>
             )
@@ -96,7 +96,7 @@ const Navbar = ({ overHero = false }: NavbarProps) => {
             onMouseEnter={() => setProductsOpen(true)}
             onMouseLeave={() => setProductsOpen(false)}
           >
-            <button className="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            <button className="flex items-center gap-1 rounded-md px-3 py-2 text-[14px] font-normal text-muted-foreground transition-colors hover:text-foreground">
               Solutions
               <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${productsOpen ? "rotate-180" : ""}`} />
             </button>
@@ -178,11 +178,11 @@ const Navbar = ({ overHero = false }: NavbarProps) => {
 
           {navLinks.slice(1).map((link) =>
             link.href.startsWith("/") ? (
-              <Link key={link.label} to={link.href} className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <Link key={link.label} to={link.href} className="rounded-md px-3 py-2 text-[14px] font-normal text-muted-foreground transition-colors hover:text-foreground">
                 {link.label}
               </Link>
             ) : (
-              <a key={link.label} href={link.href} className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <a key={link.label} href={link.href} className="rounded-md px-3 py-2 text-[14px] font-normal text-muted-foreground transition-colors hover:text-foreground">
                 {link.label}
               </a>
             )
@@ -192,13 +192,13 @@ const Navbar = ({ overHero = false }: NavbarProps) => {
         <div className="hidden items-center gap-3 md:flex">
           {session ? (
             <Link to="/dashboard">
-              <Button size="sm" className="font-semibold">The Index</Button>
+              <Button size="sm" className="rounded-full px-5 font-medium">The Index</Button>
             </Link>
           ) : (
             <>
               <Link to="/auth"><Button variant="ghost" size="sm">Sign In</Button></Link>
               <Link to="/auth">
-                <Button size="sm" className="font-semibold">Get Started</Button>
+                <Button size="sm" className="rounded-full px-5 font-medium">Get Started</Button>
               </Link>
             </>
           )}
@@ -279,7 +279,7 @@ const Navbar = ({ overHero = false }: NavbarProps) => {
             <div className="mt-2 flex flex-col gap-2">
               {session ? (
                 <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
-                  <Button size="sm" className="w-full font-semibold">The Index</Button>
+                  <Button size="sm" className="w-full rounded-full font-medium">The Index</Button>
                 </Link>
               ) : (
                 <>
@@ -287,7 +287,7 @@ const Navbar = ({ overHero = false }: NavbarProps) => {
                     <Button variant="ghost" size="sm" className="w-full">Sign In</Button>
                   </Link>
                   <Link to="/auth" onClick={() => setMobileOpen(false)}>
-                    <Button size="sm" className="w-full font-semibold">Get Started</Button>
+                    <Button size="sm" className="w-full rounded-full font-medium">Get Started</Button>
                   </Link>
                 </>
               )}

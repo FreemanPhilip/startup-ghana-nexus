@@ -5,7 +5,7 @@ import {
   BarChart3, BookOpen, Clock, StarIcon, Building2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import SparkXLogo from "@/components/SparkXLogo";
@@ -140,10 +140,9 @@ const RoleBasedSidebar = ({ activeTab, onTabChange, open, onClose, role }: RoleB
   const sidebarContent = (
     <>
       <div className="flex h-16 items-center justify-between border-b border-border px-5">
-        <div className="flex items-center gap-2">
-          <SparkXLogo variant="mark" className="h-7 w-7" alt="" />
-          <span className="font-display text-lg font-bold">The Index</span>
-        </div>
+        <Link to="/" aria-label="SparkX home" className="flex items-center">
+          <SparkXLogo className="h-7" />
+        </Link>
         <Button variant="ghost" size="icon" className="md:hidden h-8 w-8" onClick={onClose}>
           <X className="h-5 w-5" />
         </Button>

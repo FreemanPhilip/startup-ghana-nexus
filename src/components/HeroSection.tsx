@@ -1,63 +1,74 @@
-import { motion } from "framer-motion";
-import { ArrowRight, Rocket, TrendingUp, Users } from "lucide-react";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const stats = [
-  { icon: Rocket, value: "500+", label: "Startups" },
-  { icon: TrendingUp, value: "$25M+", label: "Funding Raised" },
-  { icon: Users, value: "200+", label: "Investors" },
+  { value: "500+", label: "Startups" },
+  { value: "$25M+", label: "Funding raised" },
+  { value: "200+", label: "Investors" },
 ];
 
 const rise = (delay: number) => ({
-  initial: { opacity: 0, y: 24 },
+  initial: { opacity: 0, y: 26 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const },
+  transition: { duration: 0.85, delay, ease: [0.16, 1, 0.3, 1] as const },
 });
 
 const HeroSection = () => {
+  const ref = useRef<HTMLElement>(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+
+  // The hero recedes as the page moves on, rather than simply scrolling away:
+  // it hands the screen over to the first chapter.
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, 90]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
+
   return (
-    <section className="dark relative isolate overflow-hidden bg-gradient-hero pt-16 text-foreground">
-      {/* Photography is atmosphere, not content: held well back so the
-          headline keeps its contrast instead of competing with a texture. */}
-      <div className="absolute inset-0 -z-10 opacity-[0.18]">
-        <img src={heroBg} alt="" className="h-full w-full object-cover" />
-      </div>
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-navy/70 via-navy/80 to-background" />
-      {/* A single warm bloom in the brand orange, anchoring the eye centre-top. */}
+    <section
+      ref={ref}
+      className="dark relative isolate flex min-h-[100svh] items-center overflow-hidden bg-gradient-hero pt-16 text-foreground"
+    >
+      <motion.div
+        style={reduced ? undefined : { scale: bgScale }}
+        className="absolute inset-0 -z-20 will-change-transform"
+        aria-hidden="true"
+      >
+        <img src={heroBg} alt="" className="h-full w-full object-cover opacity-[0.16]" />
+      </motion.div>
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-b from-navy/60 via-navy/75 to-background" />
       <div
         aria-hidden="true"
-        className="absolute left-1/2 top-0 -z-10 h-[420px] w-[820px] max-w-[140vw] -translate-x-1/2 -translate-y-1/3 rounded-full bg-brand/20 blur-[120px]"
+        className="absolute left-1/2 top-[38%] -z-10 h-[460px] w-[900px] max-w-[150vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/15 blur-[140px]"
       />
 
-      <div className="container relative flex min-h-[88vh] flex-col items-center justify-center py-24 text-center">
-        <motion.div
+      <motion.div
+        style={reduced ? undefined : { y: contentY, opacity: contentOpacity }}
+        className="container relative flex flex-col items-center py-24 text-center"
+      >
+        <motion.p
           {...rise(0)}
-          className="mb-7 inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-sm font-medium text-brand"
+          className="mb-8 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground"
         >
-          <Rocket className="h-4 w-4" />
           Africa's Premier Startup Ecosystem Platform
-        </motion.div>
+        </motion.p>
 
-        <motion.h1
-          {...rise(0.08)}
-          className="max-w-5xl font-display text-[2.75rem] font-bold leading-[1.05] tracking-[-0.03em] sm:text-6xl md:text-7xl lg:text-[5rem]"
-        >
+        <motion.h1 {...rise(0.08)} className="display-xl max-w-[17ch]">
           Connect. Build. <span className="text-gradient-brand">Scale.</span>
         </motion.h1>
 
-        <motion.p
-          {...rise(0.16)}
-          className="mt-7 max-w-xl text-balance text-lg leading-relaxed text-muted-foreground sm:text-xl"
-        >
+        <motion.p {...rise(0.16)} className="lede mt-7 max-w-[46ch]">
           SparkX Index brings together founders, investors, and mentors to power the next generation of
           African innovation.
         </motion.p>
 
-        <motion.div {...rise(0.24)} className="mt-10 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+        <motion.div {...rise(0.24)} className="mt-11 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
           <Link to="/auth" className="sm:w-auto">
-            <Button size="lg" className="glow-brand h-12 w-full px-8 text-base font-semibold sm:w-auto">
+            <Button size="lg" className="h-12 w-full rounded-full px-8 text-[15px] font-medium sm:w-auto">
               Join The Index
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -66,31 +77,27 @@ const HeroSection = () => {
             <Button
               variant="outline"
               size="lg"
-              className="h-12 w-full border-foreground/20 bg-foreground/5 px-8 text-base backdrop-blur-sm hover:bg-foreground/10 sm:w-auto"
+              className="h-12 w-full rounded-full border-foreground/15 bg-foreground/[0.06] px-8 text-[15px] font-medium backdrop-blur-sm hover:bg-foreground/10 sm:w-auto"
             >
               Explore Opportunities
             </Button>
           </Link>
         </motion.div>
 
-        {/* Proof, as one bordered strip rather than three floating clusters —
-            it reads as a single claim about the ecosystem's size. */}
+        {/* Proof stays quiet — three numbers on a hairline, not a boxed panel.
+            The headline should be the only loud thing on the first screen. */}
         <motion.dl
-          {...rise(0.36)}
-          className="mt-16 grid w-full max-w-2xl grid-cols-3 divide-x divide-foreground/10 rounded-2xl border border-foreground/10 bg-foreground/[0.04] backdrop-blur-sm"
+          {...rise(0.4)}
+          className="mt-20 grid w-full max-w-lg grid-cols-3 gap-6 border-t border-foreground/10 pt-8"
         >
           {stats.map((stat) => (
-            <div key={stat.label} className="flex flex-col items-center gap-1 px-2 py-6 sm:px-6">
-              <stat.icon className="mb-1 h-4 w-4 text-brand" aria-hidden="true" />
-              <dt className="sr-only">{stat.label}</dt>
-              <dd className="font-display text-2xl font-bold tracking-tight sm:text-3xl">{stat.value}</dd>
-              <span aria-hidden="true" className="text-xs text-muted-foreground sm:text-sm">
-                {stat.label}
-              </span>
+            <div key={stat.label} className="text-center">
+              <dd className="font-display text-2xl font-semibold tracking-[-0.03em] sm:text-3xl">{stat.value}</dd>
+              <dt className="mt-1 text-[13px] leading-tight text-muted-foreground">{stat.label}</dt>
             </div>
           ))}
         </motion.dl>
-      </div>
+      </motion.div>
     </section>
   );
 };
