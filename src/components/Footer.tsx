@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SparkXLogo from "@/components/SparkXLogo";
 
 const sparkxModules = [
   { label: "SparkX Global", href: "/sparkx-global" },
@@ -22,7 +23,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-2">
-              <span className="font-display text-xl font-bold tracking-tight text-foreground">SparkX</span>
+              <SparkXLogo className="h-7" />
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               Powering Africa's startup ecosystem through connection, mentorship,

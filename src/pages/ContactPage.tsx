@@ -225,7 +225,7 @@ const ContactPage = () => {
                     {errors.message && <p className="mt-1 text-xs text-destructive">{errors.message}</p>}
                   </div>
 
-                  <Button type="submit" size="lg" className="w-full bg-gradient-gold font-semibold text-navy hover:opacity-90" disabled={isSubmitting}>
+                  <Button type="submit" size="lg" className="w-full bg-gradient-gold font-semibold text-white hover:opacity-90" disabled={isSubmitting}>
                     {isSubmitting ? "Sending..." : "Send Message"}
                     <Send className="ml-2 h-4 w-4" />
                   </Button>
@@ -284,7 +284,7 @@ const ContactPage = () => {
             Check out our help center for frequently asked questions, guides, and resources.
           </p>
           <div className="mt-8">
-            <Button size="lg" className="bg-gradient-gold font-semibold text-navy hover:opacity-90">
+            <Button size="lg" className="bg-gradient-gold font-semibold text-white hover:opacity-90">
               Visit Help Center
             </Button>
           </div>

@@ -90,7 +90,7 @@ const TalentCallbackPage = () => {
             <h1 className="font-display text-xl font-bold">Couldn't sign you in</h1>
             <p className="mt-2 text-sm text-muted-foreground">{error}</p>
             <Button
-              className="mt-6 w-full bg-gradient-gold font-semibold text-navy hover:opacity-90"
+              className="mt-6 w-full bg-gradient-gold font-semibold text-white hover:opacity-90"
               onClick={() => navigate("/auth", { replace: true })}
             >
               Back to sign in

@@ -11,6 +11,15 @@ const PORTAL_ORIGIN = import.meta.env.VITE_PORTAL_ORIGIN || import.meta.env.VITE
 
 export const TALENT_CALLBACK_PATH = "/auth/talent/callback";
 
+/**
+ * Where SparkX Talent lives. Exported so the platform switcher and the nav
+ * link the same host the SSO hand-off uses — three hardcoded copies of the
+ * URL is how a staging build ends up sending people to production.
+ */
+export function talentOrigin(): string {
+  return TALENT_ORIGIN.replace(/\/$/, "");
+}
+
 const STATE_KEY = "talent-sso-state";
 
 export function isTrustedPortalOrigin(origin: string | null | undefined): boolean {

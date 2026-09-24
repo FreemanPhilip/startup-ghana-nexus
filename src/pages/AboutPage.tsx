@@ -469,7 +469,7 @@ const FinalCTA = () => (
         </motion.p>
         <motion.div variants={fadeUp} custom={2} className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Link to="/auth">
-            <Button size="lg" className="bg-gradient-gold px-8 text-base font-semibold text-navy hover:opacity-90 glow-gold">
+            <Button size="lg" className="bg-gradient-gold px-8 text-base font-semibold text-white hover:opacity-90 glow-gold">
               Get Started <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>

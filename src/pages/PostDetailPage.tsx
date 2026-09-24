@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Star, Clock } from "lucide-react";
+import { ArrowLeft, Clock } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
+import SparkXLogo from "@/components/SparkXLogo";
 import PostContentRenderer from "@/components/dashboard/PostContentRenderer";
 import ImageCarousel from "@/components/dashboard/ImageCarousel";
 import { formatDistanceToNow } from "date-fns";
@@ -110,9 +111,7 @@ const PostDetailPage = () => {
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-4 md:px-6">
           <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-gold">
-              <Star className="h-4 w-4 text-navy" fill="currentColor" />
-            </div>
+            <SparkXLogo variant="mark" className="h-7 w-7" alt="" />
             <span className="font-display text-lg font-bold">The Index</span>
           </Link>
           <Link to="/sparkx-index">
@@ -151,7 +150,7 @@ const PostDetailPage = () => {
               The link may have expired or the post was removed.
             </p>
             <Link to="/sparkx-index">
-              <Button className="mt-6 bg-gradient-gold font-semibold text-navy hover:opacity-90">
+              <Button className="mt-6 bg-gradient-gold font-semibold text-white hover:opacity-90">
                 Explore the community
               </Button>
             </Link>

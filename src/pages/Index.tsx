@@ -6,7 +6,6 @@ import PlatformPreview from "@/components/PlatformPreview";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import EcosystemStats from "@/components/EcosystemStats";
 import PartnersSection from "@/components/PartnersSection";
-import PricingSection from "@/components/PricingSection";
 import FAQSection from "@/components/FAQSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
@@ -14,7 +13,7 @@ import Footer from "@/components/Footer";
 const Index = () => {
   return (
     <div className="min-h-screen">
-      <Navbar />
+      <Navbar overHero />
       <HeroSection />
       <FeaturesSection />
       <HowItWorks />
@@ -22,7 +21,6 @@ const Index = () => {
       <TestimonialsSection />
       <EcosystemStats />
       <PartnersSection />
-      <PricingSection />
       <FAQSection />
       <CTASection />
       <Footer />

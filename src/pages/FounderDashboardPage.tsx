@@ -133,7 +133,7 @@ const FounderDashboardPage = () => {
                     </div>
                     <Button
                       size="sm"
-                      className="bg-gradient-gold text-navy hover:opacity-90"
+                      className="bg-gradient-gold text-white hover:opacity-90"
                       onClick={() => (myStartups.length > 0 ? handleTabChange("my-startups") : setShowWizard(true))}
                     >
                       {founderSummary.actionLabel}

@@ -12,7 +12,7 @@ const verificationBadge = (status: string) => {
     case "verified":
       return <Badge className="bg-primary/10 text-primary gap-1"><ShieldCheck className="h-3 w-3" /> Verified</Badge>;
     case "premium_verified":
-      return <Badge className="bg-gradient-gold text-navy gap-1"><ShieldCheck className="h-3 w-3" /> Premium Verified</Badge>;
+      return <Badge className="bg-gradient-gold text-white gap-1"><ShieldCheck className="h-3 w-3" /> Premium Verified</Badge>;
     default:
       return <Badge variant="secondary" className="gap-1"><ShieldAlert className="h-3 w-3" /> Pending</Badge>;
   }
@@ -34,7 +34,7 @@ const MyStartupsPage = ({ onViewStartup }: MyStartupsPageProps) => {
           <h1 className="text-2xl font-display font-bold">My Startups</h1>
           <p className="text-sm text-muted-foreground mt-1">Manage your startup pages</p>
         </div>
-        <Button onClick={() => setWizardOpen(true)} className="gap-2 bg-gradient-gold text-navy font-semibold hover:opacity-90">
+        <Button onClick={() => setWizardOpen(true)} className="gap-2 bg-gradient-gold text-white font-semibold hover:opacity-90">
           <Plus className="h-4 w-4" />
           Create New Startup
         </Button>

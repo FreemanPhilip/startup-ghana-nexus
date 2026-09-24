@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import SparkXLogo from "@/components/SparkXLogo";
 import { Star, Mail, Lock, User, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -95,9 +96,7 @@ const AuthPage = () => {
           transition={{ duration: 0.7 }}
           className="max-w-md px-12"
         >
-          <div className="mb-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-gold">
-            <Star className="h-7 w-7 text-navy" fill="currentColor" />
-          </div>
+          <SparkXLogo tone="dark" className="mb-8 h-10" />
           <h1 className="font-display text-4xl font-bold leading-tight text-foreground">
             Join Africa's Startup Ecosystem
           </h1>
@@ -125,10 +124,7 @@ const AuthPage = () => {
         >
           <div className="rounded-2xl border border-border/20 bg-card p-8 shadow-2xl">
             <div className="mb-6 flex items-center gap-2 lg:hidden">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-gold">
-                <Star className="h-5 w-5 text-navy" fill="currentColor" />
-              </div>
-              <span className="font-display text-xl font-bold">SparkX</span>
+              <SparkXLogo tone="dark" className="h-8" />
             </div>
 
             <h2 className="font-display text-2xl font-bold">
@@ -233,7 +229,7 @@ const AuthPage = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-gold font-semibold text-navy hover:opacity-90"
+                className="w-full bg-gradient-gold font-semibold text-white hover:opacity-90"
               >
                 {loading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
               </Button>

@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
 import { useStartups, Startup } from "@/hooks/useStartups";
+import PlatformSwitcher from "./PlatformSwitcher";
 
 export interface PostingIdentity {
   type: "personal" | "startup";
@@ -41,7 +42,7 @@ const AvatarDropdown = ({ onNavigate, onSignOut, activeIdentity, onIdentityChang
           <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-72">
         <DropdownMenuLabel className="font-normal">
           <p className="text-sm font-semibold">{profile?.full_name || "User"}</p>
           <p className="text-xs text-muted-foreground truncate">{profile?.headline || profile?.industry || "Member"}</p>
@@ -93,6 +94,8 @@ const AvatarDropdown = ({ onNavigate, onSignOut, activeIdentity, onIdentityChang
             ))}
           </>
         )}
+
+        <PlatformSwitcher />
 
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => onNavigate("settings")} className="gap-2 cursor-pointer">

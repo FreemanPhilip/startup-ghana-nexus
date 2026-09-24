@@ -1,8 +1,9 @@
-import { Star, LayoutDashboard, Users, Building2, FileText, Shield, BarChart3, LogOut, Menu, X, Briefcase, MessageSquare, UserPlus, ScrollText, GraduationCap } from "lucide-react";
+import { LayoutDashboard, Users, Building2, FileText, Shield, BarChart3, LogOut, Menu, X, Briefcase, MessageSquare, UserPlus, ScrollText, GraduationCap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import SparkXLogo from "@/components/SparkXLogo";
 import { Badge } from "@/components/ui/badge";
 import { canAccessTab, type AdminLevel, ADMIN_LEVELS } from "@/lib/adminPermissions";
 
@@ -51,9 +52,7 @@ const AdminSidebar = ({ activeTab, onTabChange, open, onClose, adminLevel }: Adm
     <>
       <div className="flex h-16 items-center justify-between border-b border-border px-5">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80">
-            <Star className="h-4 w-4 text-primary-foreground" fill="currentColor" />
-          </div>
+          <SparkXLogo variant="mark" className="h-7 w-7" alt="" />
           <div>
             <span className="font-display text-lg font-bold">Admin</span>
             <p className="text-[10px] text-muted-foreground leading-none">SparkX Index</p>

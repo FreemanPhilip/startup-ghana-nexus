@@ -160,7 +160,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
               size="sm"
               variant={isFollowing ? "outline" : "default"}
               onClick={() => onToggleFollow?.(post.author_id)}
-              className={!isFollowing ? "bg-gradient-gold text-navy font-semibold hover:opacity-90 h-7 text-xs" : "h-7 text-xs"}
+              className={!isFollowing ? "bg-gradient-gold text-white font-semibold hover:opacity-90 h-7 text-xs" : "h-7 text-xs"}
             >
               {isFollowing ? "Following" : "Follow"}
             </Button>
@@ -255,7 +255,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
               size="sm"
               onClick={handleAddComment}
               disabled={!newComment.trim()}
-              className="h-8 bg-gradient-gold text-navy font-semibold hover:opacity-90 text-xs"
+              className="h-8 bg-gradient-gold text-white font-semibold hover:opacity-90 text-xs"
             >
               Reply
             </Button>

@@ -1,12 +1,6 @@
 import { motion } from "framer-motion";
-import {
-  Handshake,
-  BookOpen,
-  Target,
-  BarChart3,
-  MessageCircle,
-  Shield,
-} from "lucide-react";
+import { Handshake, BookOpen, Target, BarChart3, MessageCircle, Shield } from "lucide-react";
+import SectionHeading from "@/components/marketing/SectionHeading";
 
 const features = [
   {
@@ -14,93 +8,67 @@ const features = [
     title: "Startup–Investor Matching",
     description:
       "AI-powered recommendations connect startups with the right investors based on industry, stage, and funding needs.",
-    color: "gold" as const,
   },
   {
     icon: BookOpen,
     title: "Mentorship Booking",
     description:
       "Discover verified mentors, book 1:1 sessions, and grow with structured guidance from experienced leaders.",
-    color: "emerald" as const,
   },
   {
     icon: Target,
     title: "Opportunities Board",
     description:
       "Access funding calls, grants, accelerator programs, competitions, and job opportunities in one place.",
-    color: "gold" as const,
   },
   {
     icon: BarChart3,
     title: "Ecosystem Intelligence",
     description:
       "Real-time data dashboards tracking funding trends, startup growth, industry breakdowns, and ecosystem health.",
-    color: "emerald" as const,
   },
   {
     icon: MessageCircle,
     title: "Social Networking",
     description:
       "Post updates, share milestones, follow founders and startups, and engage with the community in your feed.",
-    color: "gold" as const,
   },
   {
     icon: Shield,
     title: "Trust & Verification",
     description:
       "KYC-verified profiles with badges for startups, investors, and mentors build confidence across the platform.",
-    color: "emerald" as const,
   },
 ];
 
-const colorStyles = {
-  gold: "bg-gold/10 text-gold",
-  emerald: "bg-emerald/10 text-emerald",
-};
-
 const FeaturesSection = () => {
   return (
-    <section id="startups" className="py-24">
+    <section id="startups" className="section-y">
       <div className="container">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-16 text-center"
-        >
-          <span className="mb-3 inline-block rounded-full bg-primary/10 px-4 py-1 text-sm font-semibold text-primary">
-            Explore The Index
-          </span>
-          <h2 className="font-display text-3xl font-bold sm:text-4xl md:text-5xl">
-            Everything Your Startup Needs
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            From finding investors to booking mentors, SparkX Index provides the tools to
-            accelerate your startup journey across Africa and beyond.
-          </p>
-        </motion.div>
+        <SectionHeading
+          eyebrow="Explore The Index"
+          title="Everything Your Startup Needs"
+          description="From finding investors to booking mentors, SparkX Index provides the tools to accelerate your startup journey across Africa and beyond."
+          className="mb-14"
+        />
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, i) => (
             <motion.div
               key={feature.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="group rounded-2xl border border-border bg-card p-8 transition-all hover:border-gold/30 hover:shadow-lg"
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.45, delay: Math.min(i, 3) * 0.06, ease: [0.22, 1, 0.36, 1] }}
+              className="group relative rounded-2xl border border-border bg-card p-7 transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-brand/35 hover:shadow-[0_18px_40px_-24px_hsl(14_88%_45%/0.5)]"
             >
-              <div
-                className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl ${colorStyles[feature.color]}`}
-              >
-                <feature.icon className="h-6 w-6" />
+              {/* One accent colour across the grid. Alternating gold and
+                  emerald made six equal features look like two categories. */}
+              <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand/10 text-brand ring-1 ring-inset ring-brand/15 transition-colors duration-300 group-hover:bg-brand/15">
+                <feature.icon className="h-5 w-5" />
               </div>
-              <h3 className="mb-2 font-display text-lg font-bold">
-                {feature.title}
-              </h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {feature.description}
-              </p>
+              <h3 className="mb-2 font-display text-lg font-bold tracking-[-0.01em]">{feature.title}</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
             </motion.div>
           ))}
         </div>

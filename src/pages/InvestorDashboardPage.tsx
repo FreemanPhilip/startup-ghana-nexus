@@ -75,7 +75,7 @@ const InvestorDashboardPage = () => {
                   </div>
                   <Button
                     size="sm"
-                    className="bg-gradient-gold text-navy hover:opacity-90"
+                    className="bg-gradient-gold text-white hover:opacity-90"
                     onClick={() => handleTabChange("discover")}
                   >
                     {investorSummary.actionLabel}

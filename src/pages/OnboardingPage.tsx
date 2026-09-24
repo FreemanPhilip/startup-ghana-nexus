@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star } from "lucide-react";
+import SparkXLogo from "@/components/SparkXLogo";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -126,10 +126,8 @@ const OnboardingPage = () => {
       <div className="container flex flex-col items-center justify-center py-12">
         {/* Logo */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-gold">
-            <Star className="h-5 w-5 text-navy" fill="currentColor" />
-          </div>
-          <span className="font-display text-xl font-bold text-primary-foreground">SparkX Index</span>
+          <SparkXLogo tone="dark" className="h-8" />
+          <span className="font-display text-xl font-bold text-primary-foreground">Index</span>
         </motion.div>
 
         {/* Progress indicator */}

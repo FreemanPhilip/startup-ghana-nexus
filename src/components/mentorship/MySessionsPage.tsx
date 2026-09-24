@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import MyMentorsPanel from "./MyMentorsPanel";
+import MyMenteesPanel from "./MyMenteesPanel";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { format, isPast, parseISO, isSameDay } from "date-fns";
@@ -54,7 +55,10 @@ interface MentorUpdate {
 }
 
 const MySessionsPage = () => {
-  const { user } = useAuth();
+  const { user, primaryRole } = useAuth();
+  // The page is shared by both sides of a mentorship, so the cohort panel and
+  // the empty-state copy have to follow whose dashboard it is rendered on.
+  const viewerIsMentor = primaryRole === "mentor";
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [cancelId, setCancelId] = useState<string | null>(null);
@@ -312,10 +316,12 @@ const MySessionsPage = () => {
     <div className="space-y-4 sm:space-y-6">
       <div>
         <h1 className="text-xl sm:text-2xl font-display font-bold">My Sessions</h1>
-        <p className="text-xs sm:text-sm text-muted-foreground">View and manage your mentorship sessions.</p>
+        <p className="text-xs sm:text-sm text-muted-foreground">
+          {viewerIsMentor ? "View and manage sessions with your mentees." : "View and manage your mentorship sessions."}
+        </p>
       </div>
 
-      <MyMentorsPanel />
+      {viewerIsMentor ? <MyMenteesPanel /> : <MyMentorsPanel />}
 
       <div className="grid gap-3 sm:grid-cols-3">
         <Card className="p-4">
@@ -464,7 +470,9 @@ const MySessionsPage = () => {
                   <CalendarIcon className="h-8 w-8 sm:h-10 sm:w-10 mx-auto text-muted-foreground mb-3" />
                   <h3 className="font-semibold text-sm">No upcoming sessions</h3>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Book a session with a mentor from the Mentors tab.
+                    {viewerIsMentor
+                      ? "Mentees book from your availability — add times on the Availability tab."
+                      : "Book a session with a mentor from the Mentors tab."}
                   </p>
                 </Card>
               ) : (

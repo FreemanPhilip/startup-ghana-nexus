@@ -164,7 +164,7 @@ const ChatRightSidebar = ({ conversation, messages, onViewProfile }: ChatRightSi
         <div className="p-5">
           <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Badge className="bg-gradient-gold text-navy text-[10px] font-semibold px-2 py-0.5">
+              <Badge className="bg-gradient-gold text-white text-[10px] font-semibold px-2 py-0.5">
                 PREMIUM BENEFIT
               </Badge>
             </div>
