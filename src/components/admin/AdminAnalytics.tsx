@@ -228,7 +228,7 @@ const SummaryCard = ({ icon: Icon, label, value, accent }: { icon: any; label: s
       </div>
       <div>
         <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="font-display text-xl font-semibold">{value.toLocaleString()}</p>
+        <p className="stat-value">{value.toLocaleString()}</p>
       </div>
     </div>
   </div>

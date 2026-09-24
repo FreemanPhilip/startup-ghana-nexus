@@ -169,7 +169,7 @@ const AdminMentorAssignments = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-semibold">Mentor assignments</h1>
+        <h1 className="page-title">Mentor assignments</h1>
         <p className="text-sm text-muted-foreground">
           Assign mentees to a mentor in bulk. Both sides are notified.
         </p>

@@ -15,12 +15,18 @@ const colorPresets = [
   "from-cyan-500 to-blue-600",
 ];
 
+/**
+ * Activity bands. The colours were light-theme Tailwind values, so on a dark
+ * card the emerald and blue sat too dark to read; and the labels were shouted
+ * in caps, which is a lot of emphasis for a soft signal about how busy a
+ * group is.
+ */
 function getActivityLabel(count: number) {
-  if (count >= 20) return { label: "VERY ACTIVE", color: "text-emerald-600" };
-  if (count >= 10) return { label: "HIGH ACTIVITY", color: "text-blue-600" };
-  if (count >= 3) return { label: "MODERATE", color: "text-amber-600" };
-  if (count >= 1) return { label: "STEADY", color: "text-muted-foreground" };
-  return { label: "NEW", color: "text-muted-foreground" };
+  if (count >= 20) return { label: "Very active", color: "text-emerald" };
+  if (count >= 10) return { label: "Active", color: "text-brand" };
+  if (count >= 3) return { label: "Moderate", color: "text-muted-foreground" };
+  if (count >= 1) return { label: "Steady", color: "text-muted-foreground" };
+  return { label: "New", color: "text-muted-foreground" };
 }
 
 interface GroupCardProps {

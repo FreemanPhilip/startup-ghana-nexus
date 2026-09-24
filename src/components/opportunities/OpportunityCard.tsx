@@ -86,7 +86,7 @@ const OpportunityCard = ({ opportunity, onApply }: OpportunityCardProps) => {
           </span>
         )}
         {opportunity.deadline && (
-          <span className={`flex items-center gap-1 ${isExpired ? "text-destructive" : daysLeft !== null && daysLeft <= 7 ? "text-amber-600" : ""}`}>
+          <span className={`flex items-center gap-1 ${isExpired ? "text-destructive" : daysLeft !== null && daysLeft <= 7 ? "text-brand" : ""}`}>
             <Calendar className="h-3 w-3" />
             {isExpired ? "Expired" : `Deadline: ${format(new Date(opportunity.deadline), "MMM d, yyyy")}`}
             {!isExpired && daysLeft !== null && daysLeft <= 14 && (
