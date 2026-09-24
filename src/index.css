@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Space+Grotesk:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -116,11 +116,49 @@
   * {
     @apply border-border;
   }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground font-body antialiased;
+    font-optical-sizing: auto;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
+    text-wrap: balance;
+  }
+  /* Tracking tightens as type grows — the single biggest difference between
+     type that reads considered and type that reads like a default. */
+  .display-xl {
+    @apply font-display font-semibold;
+    font-size: clamp(2.75rem, 7.2vw, 6.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+  }
+  .display-lg {
+    @apply font-display font-semibold;
+    font-size: clamp(2.25rem, 4.6vw, 4rem);
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+  }
+  .display-md {
+    @apply font-display font-semibold;
+    font-size: clamp(1.75rem, 2.8vw, 2.5rem);
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+  }
+  .lede {
+    @apply text-muted-foreground;
+    font-size: clamp(1.0625rem, 1.35vw, 1.3125rem);
+    line-height: 1.55;
+    letter-spacing: -0.011em;
+    text-wrap: pretty;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
   }
 }
 
@@ -155,7 +193,7 @@
   /* Consistent vertical rhythm for marketing sections, so every band on the
      site breathes the same way instead of each one picking its own py-. */
   .section-y {
-    @apply py-20 md:py-28;
+    @apply py-24 md:py-36;
   }
   .bg-gradient-emerald {
     background: linear-gradient(135deg, hsl(157, 82%, 24%), hsl(157, 60%, 40%));

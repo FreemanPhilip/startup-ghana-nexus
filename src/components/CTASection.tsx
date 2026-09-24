@@ -22,17 +22,17 @@ const CTASection = () => {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-3xl text-center"
         >
-          <SparkXLogo variant="mark" tone="dark" className="mx-auto mb-7 h-14 w-14 animate-float" alt="" />
-          <h2 className="font-display text-3xl font-bold tracking-[-0.02em] text-balance sm:text-4xl md:text-[3rem] md:leading-[1.08]">
+          <SparkXLogo variant="mark" tone="dark" className="mx-auto mb-8 h-12 w-12" alt="" />
+          <h2 className="display-lg">
             Ready to Join Africa's Startup Movement?
           </h2>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground text-pretty sm:text-lg">
+          <p className="lede mx-auto mt-6 max-w-[46ch]">
             Whether you're a founder, investor, or mentor — SparkX Index is your gateway to opportunities,
             connections, and growth.
           </p>
           <div className="mt-10 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center">
             <Link to="/auth">
-              <Button size="lg" className="glow-brand h-12 w-full px-8 text-base font-semibold sm:w-auto">
+              <Button size="lg" className="h-12 w-full rounded-full px-8 text-[15px] font-medium sm:w-auto">
                 Create Your Account
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -41,7 +41,7 @@ const CTASection = () => {
               <Button
                 variant="outline"
                 size="lg"
-                className="h-12 w-full border-foreground/20 bg-foreground/5 px-8 text-base backdrop-blur-sm hover:bg-foreground/10 sm:w-auto"
+                className="h-12 w-full rounded-full border-foreground/15 bg-foreground/[0.06] px-8 text-[15px] font-medium backdrop-blur-sm hover:bg-foreground/10 sm:w-auto"
               >
                 Learn More
               </Button>
