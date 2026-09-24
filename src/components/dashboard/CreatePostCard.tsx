@@ -243,19 +243,19 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
 
       {/* Action buttons row */}
       <div className="flex items-center justify-around border-t border-border px-4 py-2">
-        <button onClick={() => { openMode("photo"); imageInputRef.current?.click(); }} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+        <button onClick={() => { openMode("photo"); imageInputRef.current?.click(); }} className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg px-3 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
           <ImageIcon className="h-4 w-4" />
           Photo
         </button>
-        <button onClick={() => { openMode("video"); videoInputRef.current?.click(); }} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+        <button onClick={() => { openMode("video"); videoInputRef.current?.click(); }} className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg px-3 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
           <Video className="h-4 w-4" />
           Video
         </button>
-        <button onClick={() => openMode("event")} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+        <button onClick={() => openMode("event")} className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg px-3 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
           <CalendarDays className="h-4 w-4" />
           Event
         </button>
-        <button onClick={() => openMode("article")} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+        <button onClick={() => openMode("article")} className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg px-3 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
           <FileText className="h-4 w-4" />
           Write article
         </button>
