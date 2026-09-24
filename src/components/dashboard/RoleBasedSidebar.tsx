@@ -4,7 +4,10 @@ import {
   LogOut, Upload, Menu, X, CalendarCheck, Settings, Search, BookmarkCheck,
   BarChart3, BookOpen, Clock, StarIcon, Building2,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { tabAccent } from "@/lib/categoryAccents";
+import ProfileRailCard from "./ProfileRailCard";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -24,49 +27,87 @@ interface RoleBasedSidebarProps {
   role: AppRole;
 }
 
-const founderNav = [
-  { id: "home", label: "Home", icon: Home },
-  { id: "network", label: "My Network", icon: Users },
-  { id: "groups", label: "Groups", icon: UserPlus },
-  { id: "messages", label: "Messages", icon: MessageSquare },
-  { id: "mentors", label: "Mentors", icon: StarIcon },
-  { id: "mentor-briefing", label: "Mentor Briefing", icon: CalendarCheck },
-  { id: "my-sessions", label: "My Sessions", icon: CalendarCheck },
-  { id: "investors", label: "Investors", icon: TrendingUp },
-  { id: "opportunities", label: "Opportunities", icon: Briefcase },
-  { id: "my-startups", label: "My Startups", icon: Building2 },
-  { id: "settings", label: "Settings", icon: Settings },
+/**
+ * Navigation, grouped.
+ *
+ * The founder rail was eleven destinations in one flat list with no
+ * relationship between them, so finding anything meant reading all eleven.
+ * Same destinations, same ids — routing is untouched — but gathered under the
+ * job they belong to, which is how a member actually thinks about them.
+ *
+ * Settings moved to the footer: it is not a place you go, it is somewhere you
+ * end up, and it already sits in the profile menu too.
+ */
+interface NavItem {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+}
+
+interface NavGroup {
+  label?: string;
+  items: NavItem[];
+}
+
+const founderNav: NavGroup[] = [
+  { items: [
+    { id: "home", label: "Home", icon: Home },
+    { id: "network", label: "My Network", icon: Users },
+    { id: "messages", label: "Messages", icon: MessageSquare },
+    { id: "groups", label: "Groups", icon: UserPlus },
+  ] },
+  { label: "Mentorship", items: [
+    { id: "mentors", label: "Mentors", icon: StarIcon },
+    { id: "mentor-briefing", label: "Briefing", icon: CalendarCheck },
+    { id: "my-sessions", label: "Sessions", icon: CalendarCheck },
+  ] },
+  { label: "Growth", items: [
+    { id: "my-startups", label: "My Startups", icon: Building2 },
+    { id: "investors", label: "Investors", icon: TrendingUp },
+    { id: "opportunities", label: "Opportunities", icon: Briefcase },
+  ] },
 ];
 
-const investorNav = [
-  { id: "home", label: "Home", icon: Home },
-  { id: "discover", label: "Discover Startups", icon: Search },
-  { id: "saved", label: "Saved Startups", icon: BookmarkCheck },
-  { id: "messages", label: "Messages", icon: MessageSquare },
-  { id: "portfolio", label: "Portfolio", icon: BarChart3 },
-  { id: "settings", label: "Settings", icon: Settings },
+const investorNav: NavGroup[] = [
+  { items: [
+    { id: "home", label: "Home", icon: Home },
+    { id: "messages", label: "Messages", icon: MessageSquare },
+  ] },
+  { label: "Deal flow", items: [
+    { id: "discover", label: "Discover", icon: Search },
+    { id: "saved", label: "Saved", icon: BookmarkCheck },
+    { id: "portfolio", label: "Portfolio", icon: BarChart3 },
+  ] },
 ];
 
-const mentorNav = [
-  { id: "home", label: "Home", icon: Home },
-  { id: "mentees", label: "Mentees", icon: Users },
-  { id: "my-sessions", label: "My Sessions", icon: CalendarCheck },
-  { id: "availability", label: "Availability", icon: Clock },
-  { id: "messages", label: "Messages", icon: MessageSquare },
-  { id: "reviews", label: "Reviews", icon: StarIcon },
-  { id: "settings", label: "Settings", icon: Settings },
+const mentorNav: NavGroup[] = [
+  { items: [
+    { id: "home", label: "Home", icon: Home },
+    { id: "messages", label: "Messages", icon: MessageSquare },
+  ] },
+  { label: "Mentorship", items: [
+    { id: "mentees", label: "Mentees", icon: Users },
+    { id: "my-sessions", label: "Sessions", icon: CalendarCheck },
+    { id: "availability", label: "Availability", icon: Clock },
+    { id: "reviews", label: "Reviews", icon: StarIcon },
+  ] },
 ];
 
-const partnerNav = [
-  { id: "home", label: "Home", icon: Home },
-  { id: "programs", label: "Programs", icon: BookOpen },
-  { id: "opportunities", label: "Opportunities", icon: Briefcase },
-  { id: "startups", label: "Startups", icon: Building2 },
-  { id: "analytics", label: "Analytics", icon: BarChart3 },
-  { id: "settings", label: "Settings", icon: Settings },
+const partnerNav: NavGroup[] = [
+  { items: [
+    { id: "home", label: "Home", icon: Home },
+  ] },
+  { label: "Programmes", items: [
+    { id: "programs", label: "Programs", icon: BookOpen },
+    { id: "opportunities", label: "Opportunities", icon: Briefcase },
+    { id: "startups", label: "Startups", icon: Building2 },
+  ] },
+  { label: "Insight", items: [
+    { id: "analytics", label: "Analytics", icon: BarChart3 },
+  ] },
 ];
 
-function getNavItems(role: AppRole) {
+function getNavItems(role: AppRole): NavGroup[] {
   switch (role) {
     case "startup_founder": return founderNav;
     case "investor": return investorNav;
@@ -81,7 +122,7 @@ const RoleBasedSidebar = ({ activeTab, onTabChange, open, onClose, role }: RoleB
   const [pitchDeckOpen, setPitchDeckOpen] = useState(false);
   const [totalUnread, setTotalUnread] = useState(0);
   const navigate = useNavigate();
-  const navItems = getNavItems(role);
+  const navGroups = getNavItems(role);
 
   const fetchUnreadCount = useCallback(async () => {
     if (!user) return;
@@ -148,63 +189,76 @@ const RoleBasedSidebar = ({ activeTab, onTabChange, open, onClose, role }: RoleB
         </Button>
       </div>
 
-      <div className="border-b border-border px-4 py-4">
-        <button
-          onClick={() => handleTabChange("profile")}
-          className="flex items-center gap-3 w-full text-left hover:opacity-80 transition-opacity"
-        >
-          <Avatar className="h-10 w-10">
-            <AvatarImage src={profile?.avatar_url || undefined} />
-            <AvatarFallback className="bg-muted text-xs font-semibold">{initials}</AvatarFallback>
-          </Avatar>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold">{profile?.full_name || "User"}</p>
-            <p className="truncate text-xs text-muted-foreground capitalize">
-              {role.replace("_", " ")}
-            </p>
-          </div>
-        </button>
+      <div className="px-3 pb-2 pt-3">
+        <ProfileRailCard onNavigate={handleTabChange} />
       </div>
 
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => handleTabChange(item.id)}
-            aria-current={activeTab === item.id ? "page" : undefined}
-            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
-              activeTab === item.id
-                ? "bg-muted font-medium text-foreground"
-                : "font-normal text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-            }`}
-          >
-            {/* A saturated fill on the active row shouted over the content it
-                was meant to introduce. The tint carries the state and the
-                brand shows only in the icon. */}
-            <item.icon className={`h-4 w-4 ${activeTab === item.id ? "text-brand" : ""}`} />
-            <span className="flex-1 text-left">{item.label}</span>
-            {item.id === "messages" && totalUnread > 0 && (
-              <Badge className="h-5 min-w-5 rounded-full px-1.5 py-0 flex items-center justify-center text-[10px] bg-destructive text-destructive-foreground border-0">
-                {totalUnread > 99 ? "99+" : totalUnread}
-              </Badge>
+      <nav className="flex-1 overflow-y-auto px-3 pb-3 pt-1">
+        {navGroups.map((group, gi) => (
+          <div key={group.label ?? `g${gi}`} className={gi > 0 ? "mt-4" : ""}>
+            {group.label && (
+              <p className="px-3 pb-1.5 pt-1 text-[10px] font-medium uppercase tracking-[0.1em] text-muted-foreground/70">
+                {group.label}
+              </p>
             )}
-          </button>
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const active = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleTabChange(item.id)}
+                    aria-current={active ? "page" : undefined}
+                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-sm transition-colors ${
+                      active
+                        ? "bg-muted font-medium text-foreground"
+                        : "font-normal text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                    }`}
+                  >
+                    {/* Each domain keeps its hue, so the rail can be scanned
+                        by colour rather than read top to bottom. */}
+                    <item.icon className={`h-4 w-4 ${active ? `${tabAccent(item.id)} accent-text` : ""}`} />
+                    <span className="flex-1 text-left">{item.label}</span>
+                    {item.id === "messages" && totalUnread > 0 && (
+                      <Badge className="flex h-5 min-w-5 items-center justify-center rounded-full border-0 bg-destructive px-1.5 py-0 text-[10px] text-destructive-foreground">
+                        {totalUnread > 99 ? "99+" : totalUnread}
+                      </Badge>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         ))}
       </nav>
 
-      <div className="border-t border-border p-3 space-y-1">
+      <div className="space-y-0.5 border-t border-border p-3">
         {showPitchDeck && (
           <Button
-            className="w-full gap-2 text-sm font-medium"
+            variant="outline"
+            size="sm"
+            className="w-full gap-2 rounded-lg text-[13px] font-medium"
             onClick={() => setPitchDeckOpen(true)}
           >
-            <Upload className="h-4 w-4" />
-            Pitch Deck Upload
+            <Upload className="h-3.5 w-3.5" />
+            Pitch Deck
           </Button>
         )}
         <button
+          onClick={() => handleTabChange("settings")}
+          aria-current={activeTab === "settings" ? "page" : undefined}
+          className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+            activeTab === "settings"
+              ? "bg-muted font-medium text-foreground"
+              : "font-normal text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+          }`}
+        >
+          <Settings className="h-4 w-4" />
+          Settings
+        </button>
+        <button
           onClick={handleSignOut}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-normal text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
         >
           <LogOut className="h-4 w-4" />
           Sign Out

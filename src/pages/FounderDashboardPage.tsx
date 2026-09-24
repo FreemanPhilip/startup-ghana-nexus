@@ -1,3 +1,4 @@
+import { Rocket } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { usePresenceTracker } from "@/hooks/usePresence";
@@ -120,26 +121,25 @@ const FounderDashboardPage = () => {
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto">
             <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : isWideTab ? "max-w-5xl" : "max-w-3xl"}`}>
-              <Card className="mb-6 p-5 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Founder snapshot</p>
-                    <h2 className="mt-1 font-display text-xl font-bold">{founderSummary.title}</h2>
-                    <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{founderSummary.description}</p>
+              <Card className="mb-6 flex flex-wrap items-center justify-between gap-4 p-4">
+                <div className="flex items-center gap-3">
+                  <div className="a-startup accent-tile h-10 w-10">
+                    <Rocket className="h-4 w-4" />
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary">
-                      {founderSummary.readiness}% readiness
-                    </div>
-                    <Button
-                      size="sm"
-                      className="bg-gradient-gold text-white hover:opacity-90"
-                      onClick={() => (myStartups.length > 0 ? handleTabChange("my-startups") : setShowWizard(true))}
-                    >
-                      {founderSummary.actionLabel}
-                    </Button>
+                  <div>
+                    <p className="text-[15px] font-semibold tracking-[-0.01em]">{founderSummary.title}</p>
+                    <p className="text-[13px] text-muted-foreground">
+                      <span className="font-medium tabular-nums text-foreground">{founderSummary.readiness}%</span> ready
+                    </p>
                   </div>
                 </div>
+                <Button
+                  size="sm"
+                  className="rounded-full px-5 font-medium"
+                  onClick={() => (myStartups.length > 0 ? handleTabChange("my-startups") : setShowWizard(true))}
+                >
+                  {founderSummary.actionLabel}
+                </Button>
               </Card>
               {activeTab === "home" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><EcosystemFeed onViewOpportunity={handleViewOpportunity} onViewGroup={handleViewGroup} onViewStartup={handleViewStartup} activeIdentity={activeIdentity} onIdentityChange={setActiveIdentity} /></motion.div>}
               {activeTab === "messages" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><MessagesPage onViewProfile={handleViewProfile} /></motion.div>}

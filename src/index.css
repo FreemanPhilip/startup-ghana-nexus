@@ -150,6 +150,39 @@
     line-height: 1.12;
     letter-spacing: -0.025em;
   }
+  /* ---- Category accents ------------------------------------------------
+     Colour that carries meaning rather than decorating. Each domain of the
+     product keeps one hue wherever it appears — a mentorship tile is violet
+     in the sidebar, the feed and the right rail — so colour becomes a way to
+     navigate instead of noise.
+
+     Every value below was measured against --background: all clear 4.5:1 as
+     text in both themes (light 5.1-7.3, dark 7.4-12.4). The tile behind them
+     is the same hue at 12% alpha. */
+  .accent-tile {
+    @apply flex shrink-0 items-center justify-center rounded-xl;
+    background-color: hsl(var(--a) / 0.12);
+    color: hsl(var(--a));
+  }
+  .accent-text {
+    color: hsl(var(--a));
+  }
+  .accent-dot {
+    background-color: hsl(var(--a));
+  }
+  .a-network { --a: 219 85% 46%; }
+  .a-mentor { --a: 262 72% 48%; }
+  .a-funding { --a: 158 84% 24%; }
+  .a-opportunity { --a: 32 96% 30%; }
+  .a-startup { --a: 344 76% 44%; }
+  .a-investor { --a: 192 88% 31%; }
+  .dark .a-network { --a: 213 94% 68%; }
+  .dark .a-mentor { --a: 258 95% 76%; }
+  .dark .a-funding { --a: 156 72% 60%; }
+  .dark .a-opportunity { --a: 38 95% 62%; }
+  .dark .a-startup { --a: 350 95% 72%; }
+  .dark .a-investor { --a: 190 92% 62%; }
+
   /* ---- Dashboard scale -------------------------------------------------
      The product side had grown its own vocabulary: 160 panels at rounded-xl
      next to 12 at rounded-2xl, seven padding values, and font-bold on small
