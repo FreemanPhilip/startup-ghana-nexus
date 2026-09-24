@@ -19,6 +19,9 @@ import SettingsPage from "@/components/settings/SettingsPage";
 import type { PostingIdentity } from "@/components/dashboard/AvatarDropdown";
 import { parseDashboardPath } from "@/lib/roleRouting";
 import { buildInvestorDashboardSummary } from "@/lib/dashboardMetrics";
+import { TrendingUp } from "lucide-react";
+import SnapshotBar from "@/components/dashboard/SnapshotBar";
+import { accentClass } from "@/lib/categoryAccents";
 import { useInvestorTracking } from "@/hooks/useInvestorTracking";
 import { useConnections } from "@/hooks/useConnections";
 
@@ -66,22 +69,15 @@ const InvestorDashboardPage = () => {
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto">
             <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : isWideTab ? "max-w-5xl" : "max-w-3xl"}`}>
-              <Card className="mb-6 p-5 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Investor snapshot</p>
-                    <h2 className="mt-1 font-display text-xl font-bold">{investorSummary.title}</h2>
-                    <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{investorSummary.description}</p>
-                  </div>
-                  <Button
-                    size="sm"
-                    className="bg-gradient-gold text-white hover:opacity-90"
-                    onClick={() => handleTabChange("discover")}
-                  >
-                    {investorSummary.actionLabel}
-                  </Button>
-                </div>
-              </Card>
+              {activeTab === "home" && (
+                <SnapshotBar
+                  icon={TrendingUp}
+                  accent={accentClass("investor")}
+                  title={investorSummary.title}
+                  actionLabel={investorSummary.actionLabel}
+                  onAction={() => handleTabChange("discover")}
+                />
+              )}
               {activeTab === "home" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><EcosystemFeed onViewOpportunity={() => {}} onViewGroup={() => {}} onViewStartup={handleViewStartup} activeIdentity={activeIdentity} onIdentityChange={setActiveIdentity} /></motion.div>}
               {activeTab === "discover" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><InvestorsPage onViewStartup={handleViewStartup} /></motion.div>}
               {activeTab === "saved" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><InvestorDashboardContent /></motion.div>}

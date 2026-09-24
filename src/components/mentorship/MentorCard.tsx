@@ -1,6 +1,5 @@
-import { Star, Calendar, Clock, MapPin, Briefcase } from "lucide-react";
+import { Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export interface MentorData {
@@ -27,96 +26,91 @@ interface MentorCardProps {
   onViewProfile?: () => void;
 }
 
-const MentorCard = ({ mentor, onBookSession, onViewProfile }: MentorCardProps) => {
-  const initials = mentor.full_name
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2) || "M";
+/** A figure and the word for it — the whole stat, in two lines. */
+const Stat = ({ value, label }: { value: string; label: string }) => (
+  <div className="min-w-0">
+    <p className="truncate text-sm font-semibold tabular-nums">{value}</p>
+    <p className="truncate text-[11px] text-muted-foreground">{label}</p>
+  </div>
+);
 
-  const availabilityBadge = () => {
-    if (mentor.availability === "available_now") {
-      return (
-        <Badge className="absolute bottom-3 left-3 bg-secondary text-secondary-foreground border-0 text-[10px] font-semibold gap-1">
-          <span className="h-1.5 w-1.5 rounded-full bg-secondary-foreground animate-pulse" />
-          Available ASAP
-        </Badge>
-      );
-    }
-    if (mentor.availability === "advance") {
-      return (
-        <Badge className="absolute bottom-3 left-3 bg-primary text-primary-foreground border-0 text-[10px] font-semibold gap-1">
-          <Calendar className="h-2.5 w-2.5" />
-          Advance
-        </Badge>
-      );
-    }
-    return null;
-  };
+/**
+ * A mentor, as a booking decision.
+ *
+ * The old card led with a 4:3 photo — roughly half its height given to an
+ * avatar — then stacked six labelled rows under it, so a grid of mentors was
+ * mostly pictures and captions. Someone choosing a mentor is comparing a few
+ * numbers and then booking, so the numbers sit in one row and the action is
+ * always in the same place.
+ */
+const MentorCard = ({ mentor, onBookSession, onViewProfile }: MentorCardProps) => {
+  const initials =
+    mentor.full_name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) || "M";
+
+  const availableNow = mentor.availability === "available_now";
 
   return (
-    <div className="group flex flex-col rounded-2xl border border-border bg-card overflow-hidden transition-shadow hover:shadow-lg hover:border-primary/30 cursor-pointer h-full" onClick={onViewProfile}>
-      {/* Avatar / Image area */}
-      <div className="relative aspect-[4/3] bg-muted overflow-hidden">
-        {mentor.avatar_url ? (
-          <img
-            src={mentor.avatar_url}
-            alt={mentor.full_name || "Mentor"}
-            className="h-full w-full object-cover transition-transform group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-gold">
-            <span className="text-4xl font-display font-semibold text-primary-foreground">{initials}</span>
-          </div>
-        )}
-        {availabilityBadge()}
-      </div>
+    <div
+      onClick={onViewProfile}
+      className="group flex h-full cursor-pointer flex-col rounded-2xl border border-border bg-card p-4 transition-colors hover:border-foreground/20"
+    >
+      <div className="flex items-start gap-3">
+        <Avatar className="h-12 w-12 shrink-0">
+          <AvatarImage src={mentor.avatar_url || undefined} alt="" />
+          <AvatarFallback className="a-mentor accent-tile h-full w-full rounded-full text-sm font-semibold">
+            {initials}
+          </AvatarFallback>
+        </Avatar>
 
-      {/* Info */}
-      <div className="p-4 space-y-3 flex-1 flex flex-col">
-        <div>
-          <h3 className="font-display font-semibold text-sm text-foreground truncate">
-            {mentor.full_name}
-          </h3>
-          <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
-            {mentor.headline || `${mentor.industry || "Startup"} Expert`}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h3 className="truncate font-display text-[15px] font-semibold tracking-[-0.01em]">
+              {mentor.full_name}
+            </h3>
+            {availableNow && (
+              // A dot and two words, not a pulsing pill: availability is
+              // useful, it just is not the most important thing on the card.
+              <span className="flex shrink-0 items-center gap-1 text-[11px] font-medium text-emerald">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald" aria-hidden="true" />
+                Available
+              </span>
+            )}
+          </div>
+          <p className="mt-0.5 truncate text-[13px] text-muted-foreground">
+            {mentor.headline || `${mentor.industry || "Startup"} expert`}
           </p>
-        </div>
 
-        {/* Sessions & Reviews */}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Clock className="h-3 w-3" />
-          <span className="font-medium">{mentor.sessions_count} sessions</span>
-          <span>({mentor.reviews_count} reviews)</span>
-        </div>
-
-        {/* Experience & Attendance */}
-        <div className="flex items-center justify-between pt-2 border-t border-border">
-          <div>
-            <p className="text-[10px] text-muted-foreground">Experience</p>
-            <p className="text-sm font-semibold text-foreground">
-              {mentor.years_experience || "—"} years
+          {mentor.rating > 0 && (
+            <p className="mt-1.5 flex items-center gap-1 text-[13px]">
+              <Star className="h-3.5 w-3.5 fill-current text-brand" aria-hidden="true" />
+              <span className="font-semibold tabular-nums">{mentor.rating.toFixed(1)}</span>
+              <span className="text-muted-foreground">({mentor.reviews_count})</span>
             </p>
-          </div>
-          <div className="text-right">
-            <p className="text-[10px] text-muted-foreground">Avg. Attendance</p>
-            <p className="text-sm font-semibold text-foreground">{mentor.attendance_rate}%</p>
-          </div>
+          )}
         </div>
-
-        {/* Book button */}
-        <Button
-          size="sm"
-          className="w-full text-xs font-semibold mt-auto"
-          onClick={(e) => {
-            e.stopPropagation();
-            onBookSession?.(mentor.id);
-          }}
-        >
-          Book a Session
-        </Button>
       </div>
+
+      <div className="mt-4 grid grid-cols-3 gap-3 border-t border-border pt-3">
+        <Stat value={String(mentor.sessions_count)} label="Sessions" />
+        <Stat value={mentor.years_experience ? `${mentor.years_experience}y` : "—"} label="Experience" />
+        <Stat value={`${mentor.attendance_rate}%`} label="Attendance" />
+      </div>
+
+      <Button
+        size="sm"
+        className="mt-4 w-full rounded-full text-[13px] font-medium"
+        onClick={(e) => {
+          e.stopPropagation();
+          onBookSession?.(mentor.id);
+        }}
+      >
+        Book a session
+      </Button>
     </div>
   );
 };

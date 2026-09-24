@@ -1,4 +1,6 @@
 import { Rocket } from "lucide-react";
+import SnapshotBar from "@/components/dashboard/SnapshotBar";
+import { accentClass } from "@/lib/categoryAccents";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { usePresenceTracker } from "@/hooks/usePresence";
@@ -121,26 +123,20 @@ const FounderDashboardPage = () => {
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto">
             <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : isWideTab ? "max-w-5xl" : "max-w-3xl"}`}>
-              <Card className="mb-6 flex flex-wrap items-center justify-between gap-4 p-4">
-                <div className="flex items-center gap-3">
-                  <div className="a-startup accent-tile h-10 w-10">
-                    <Rocket className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <p className="text-[15px] font-semibold tracking-[-0.01em]">{founderSummary.title}</p>
-                    <p className="text-[13px] text-muted-foreground">
+              {activeTab === "home" && (
+                <SnapshotBar
+                  icon={Rocket}
+                  accent={accentClass("startup")}
+                  title={founderSummary.title}
+                  meta={
+                    <>
                       <span className="font-medium tabular-nums text-foreground">{founderSummary.readiness}%</span> ready
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  size="sm"
-                  className="rounded-full px-5 font-medium"
-                  onClick={() => (myStartups.length > 0 ? handleTabChange("my-startups") : setShowWizard(true))}
-                >
-                  {founderSummary.actionLabel}
-                </Button>
-              </Card>
+                    </>
+                  }
+                  actionLabel={founderSummary.actionLabel}
+                  onAction={() => (myStartups.length > 0 ? handleTabChange("my-startups") : setShowWizard(true))}
+                />
+              )}
               {activeTab === "home" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><EcosystemFeed onViewOpportunity={handleViewOpportunity} onViewGroup={handleViewGroup} onViewStartup={handleViewStartup} activeIdentity={activeIdentity} onIdentityChange={setActiveIdentity} /></motion.div>}
               {activeTab === "messages" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><MessagesPage onViewProfile={handleViewProfile} /></motion.div>}
               {activeTab === "network" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><NetworkPage onOpenMessages={handleOpenMessages} /></motion.div>}

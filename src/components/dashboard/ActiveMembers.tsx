@@ -83,49 +83,47 @@ const ActiveMembers = () => {
   const onlineCount = members.filter(m => m.is_online).length;
 
   return (
-    <Card className="p-5">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
-            <Users className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold">Active Members</h3>
-            <p className="text-[10px] text-muted-foreground">{onlineCount} online now</p>
-          </div>
-        </div>
+    /**
+     * Presence, as faces.
+     *
+     * This was an eight-row list of avatar + name + "Online", sitting
+     * directly under another eight-row list of avatar + name + headline.
+     * Two identical structures answering different questions read as the
+     * same module twice. Who is around is a glanceable fact, so it is a row
+     * of faces and a count — the list shape belongs to the one module that
+     * needs a per-person action.
+     */
+    <Card className="p-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-[13px] font-semibold">Around now</h3>
+        <span className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald" aria-hidden="true" />
+          <span className="tabular-nums">{onlineCount}</span>
+        </span>
       </div>
 
-      <div className="space-y-2">
-        {members.map(m => {
-          const initials = (m.full_name || "U").split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
-          const RoleIcon = m.role ? roleIcons[m.role] : null;
-          const roleColor = m.role ? roleColors[m.role] : "";
-
+      <ul className="mt-3 flex flex-wrap gap-1.5">
+        {members.map((m) => {
+          const initials = (m.full_name || "U").split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
           return (
-            <div key={m.user_id} className="flex items-center gap-2.5 rounded-lg p-1.5 hover:bg-muted/50 transition-colors">
-              <div className="relative">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={m.avatar_url || undefined} />
-                  <AvatarFallback className="text-[10px] font-semibold bg-primary/10 text-primary">{initials}</AvatarFallback>
-                </Avatar>
-                {m.is_online && (
-                  <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-card bg-emerald-500" />
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold truncate">{m.full_name}</p>
-                <div className="flex items-center gap-1">
-                  {RoleIcon && <RoleIcon className={`h-2.5 w-2.5 ${roleColor}`} />}
-                  <span className="text-[10px] text-muted-foreground">
-                    {m.is_online ? "Online" : "Recently active"}
-                  </span>
-                </div>
-              </div>
-            </div>
+            <li key={m.user_id} className="relative" title={`${m.full_name ?? "Member"}${m.is_online ? " · online" : ""}`}>
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={m.avatar_url || undefined} alt="" />
+                <AvatarFallback className="bg-muted text-[10px] font-semibold">{initials}</AvatarFallback>
+              </Avatar>
+              {m.is_online && (
+                <span
+                  className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-card bg-emerald"
+                  aria-hidden="true"
+                />
+              )}
+              <span className="sr-only">
+                {m.full_name} {m.is_online ? "online" : "recently active"}
+              </span>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </Card>
   );
 };

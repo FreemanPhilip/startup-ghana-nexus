@@ -4,7 +4,6 @@ import CreatePostCard from "./CreatePostCard";
 import PostCard from "./PostCard";
 import GroupPostFeedCard from "./GroupPostFeedCard";
 import OpportunityFeedCard from "./OpportunityFeedCard";
-import RecommendedConnections from "./RecommendedConnections";
 import { useHomeFeed } from "@/hooks/useHomeFeed";
 import { usePosts } from "@/hooks/usePosts";
 import { useFollows } from "@/hooks/useFollows";
@@ -40,7 +39,6 @@ const EcosystemFeed = ({ onViewOpportunity, onViewGroup, onViewStartup, activeId
         return true;
       });
 
-  const showConnectionsAt = 2;
 
   const handleCreatePost = async (content: string, category: string, imageUrl?: string, videoUrl?: string, startupId?: string, imageUrls?: string[]) => {
     createPost({ content, category, image_url: imageUrl, video_url: videoUrl, startup_id: startupId, image_urls: imageUrls });
@@ -85,8 +83,6 @@ const EcosystemFeed = ({ onViewOpportunity, onViewGroup, onViewStartup, activeId
         <div className="space-y-4">
           {filtered.map((item, index) => (
             <div key={item.id}>
-              {index === showConnectionsAt && <RecommendedConnections />}
-
               {item.type === "post" && (
                 <PostCard
                   post={{
