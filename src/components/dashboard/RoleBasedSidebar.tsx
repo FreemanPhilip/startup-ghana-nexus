@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import {
-  Star, Home, MessageSquare, Users, TrendingUp, Briefcase, UserPlus,
+  Home, MessageSquare, Users, TrendingUp, Briefcase, UserPlus,
   LogOut, Upload, Menu, X, CalendarCheck, Settings, Search, BookmarkCheck,
   BarChart3, BookOpen, Clock, StarIcon, Building2,
 } from "lucide-react";
@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import SparkXLogo from "@/components/SparkXLogo";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import PitchDeckUploadDialog from "./PitchDeckUploadDialog";
@@ -140,9 +141,7 @@ const RoleBasedSidebar = ({ activeTab, onTabChange, open, onClose, role }: RoleB
     <>
       <div className="flex h-16 items-center justify-between border-b border-border px-5">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-gold">
-            <Star className="h-4 w-4 text-navy" fill="currentColor" />
-          </div>
+          <SparkXLogo variant="mark" className="h-7 w-7" alt="" />
           <span className="font-display text-lg font-bold">The Index</span>
         </div>
         <Button variant="ghost" size="icon" className="md:hidden h-8 w-8" onClick={onClose}>

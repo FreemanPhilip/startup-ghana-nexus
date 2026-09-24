@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Star } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import SparkXLogo from "@/components/SparkXLogo";
 
 const CTASection = () => {
   return (
@@ -13,9 +14,7 @@ const CTASection = () => {
           viewport={{ once: true }}
           className="mx-auto max-w-3xl text-center"
         >
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-gold animate-float">
-            <Star className="h-8 w-8 text-navy" fill="currentColor" />
-          </div>
+          <SparkXLogo variant="mark" tone="dark" className="mx-auto mb-6 h-16 w-16 animate-float" />
           <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl md:text-5xl">
             Ready to Join Africa's Startup Movement?
           </h2>

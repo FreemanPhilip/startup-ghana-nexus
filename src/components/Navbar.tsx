@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import solutionsImg from "@/assets/solutions-dropdown.jpg";
+import { talentOrigin } from "@/lib/talentSso";
+import SparkXLogo from "@/components/SparkXLogo";
 
 const solutionCategories = [
   {
@@ -12,7 +14,7 @@ const solutionCategories = [
     items: [
       { label: "SparkX Labs", href: "/sparkx-labs", desc: "Innovation & incubation" },
       { label: "SparkX Academy", href: "/sparkx-academy", desc: "Courses & training" },
-      { label: "SparkX Talent", href: "https://talent.sparkxglobal.net", desc: "Hire vetted talent" },
+      { label: "SparkX Talent", href: talentOrigin(), desc: "Hire vetted talent" },
     ],
   },
   {
@@ -47,7 +49,7 @@ const Navbar = () => {
     >
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <span className="font-display text-xl font-bold tracking-tight text-foreground">SparkX</span>
+          <SparkXLogo className="h-7" />
         </Link>
 
         {/* Desktop */}
