@@ -114,6 +114,7 @@ const FounderDashboardPage = () => {
       />
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         <DashboardHeader
+          hasStartupsTab
           onMenuToggle={() => setSidebarOpen(true)}
           onNavigate={handleTabChange}
           onSignOut={handleSignOut}
@@ -153,7 +154,7 @@ const FounderDashboardPage = () => {
               {activeTab === "settings" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><SettingsPage onSignOut={handleSignOut} /></motion.div>}
             </div>
           </main>
-          {!["messages", "groups", "profile", "my-startups", "startup-profile", "mentor-briefing", "my-sessions", "public-profile", "settings"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar onViewInvestor={() => handleTabChange("investors")} /> : <DashboardRightSidebar onNavigate={handleTabChange} />)}
+          {!["messages", "groups", "profile", "my-startups", "startup-profile", "mentor-briefing", "my-sessions", "public-profile", "settings"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar onViewInvestor={() => handleTabChange("investors")} /> : <DashboardRightSidebar role="startup_founder" onNavigate={handleTabChange} />)}
         </div>
       </div>
       <FirstTimeFounderModal open={showFounderModal} onOpenChange={setShowFounderModal} onCreateStartup={() => setShowWizard(true)} />

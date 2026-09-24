@@ -170,7 +170,7 @@ const PartnerDashboardPage = () => {
               {activeTab === "settings" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><SettingsPage onSignOut={handleSignOut} /></motion.div>}
             </div>
           </main>
-          {!["messages", "profile", "startup-profile", "public-profile", "settings"].includes(activeTab) && <DashboardRightSidebar onNavigate={handleTabChange} />}
+          {!["messages", "profile", "startup-profile", "public-profile", "settings"].includes(activeTab) && <DashboardRightSidebar role="ecosystem_partner" onNavigate={handleTabChange} />}
         </div>
       </div>
     </div>

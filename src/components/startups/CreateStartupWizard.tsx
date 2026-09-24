@@ -10,6 +10,7 @@ import { Building2, Upload, Users, ArrowRight, ArrowLeft, Plus, X, Loader2, Chec
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { canCreateStartup, startupCreationBlockedReason } from "@/lib/startupAccess";
 
 interface CreateStartupWizardProps {
   open: boolean;
@@ -21,7 +22,7 @@ const industries = ["Technology", "FinTech", "AgriTech", "HealthTech", "EdTech",
 const stages = ["Idea", "MVP", "Pre-Seed", "Seed", "Series A", "Series B+", "Growth"];
 
 const CreateStartupWizard = ({ open, onOpenChange, onCreated }: CreateStartupWizardProps) => {
-  const { user } = useAuth();
+  const { user, roles } = useAuth();
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
@@ -74,54 +75,72 @@ const CreateStartupWizard = ({ open, onOpenChange, onCreated }: CreateStartupWiz
 
   const handleSubmit = async () => {
     if (!user || !name.trim()) return;
+
+    // Checked here as well as on the page that opens this wizard, because the
+    // database will refuse the insert regardless and a policy violation
+    // surfaces as an opaque error. Saying why is better than showing that.
+    if (!canCreateStartup(roles)) {
+      toast.error(startupCreationBlockedReason(roles) ?? "You can't create a startup page.");
+      return;
+    }
+
     setSubmitting(true);
     try {
-      let logoUrl: string | undefined;
-      let docUrl: string | undefined;
-
-      // Upload logo
-      if (logoFile) {
-        const ext = logoFile.name.split(".").pop();
-        const path = `logos/${user.id}/${Date.now()}.${ext}`;
-        const { error } = await supabase.storage.from("startup-assets").upload(path, logoFile);
-        if (!error) {
-          const { data } = supabase.storage.from("startup-assets").getPublicUrl(path);
-          logoUrl = data.publicUrl;
-        }
-      }
-
-      // Upload doc
-      if (docFile) {
-        const ext = docFile.name.split(".").pop();
-        const path = `docs/${user.id}/${Date.now()}.${ext}`;
-        const { error } = await supabase.storage.from("startup-assets").upload(path, docFile);
-        if (!error) {
-          const { data } = supabase.storage.from("startup-assets").getPublicUrl(path);
-          docUrl = data.publicUrl;
-        }
-      }
-
       const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
+      // The row goes in first. The startup-assets bucket only accepts an
+      // upload whose first path segment is a startup the uploader administers
+      // (see is_startup_admin), and the creator becomes an owner through the
+      // add_startup_owner trigger — which cannot have run yet. Uploading
+      // beforehand, under logos/<user-id>/, failed the policy every time and
+      // the error was discarded, so a startup was created with no logo and no
+      // registration document and nobody was told.
       const { data: startup, error } = await supabase
         .from("startups")
         .insert({
           name: name.trim(),
           slug,
-          logo_url: logoUrl ?? null,
           industry: industry || null,
           stage: stage || null,
           location: location || null,
           short_description: description || null,
           website_url: websiteUrl || null,
           linkedin_url: linkedinUrl || null,
-          registration_doc_url: docUrl ?? null,
           created_by: user.id,
         } as any)
         .select()
         .single();
 
       if (error) throw error;
+
+      // Now the uploads, addressed under the startup's own folder.
+      const uploadAsset = async (file: File, folder: "logos" | "docs") => {
+        const ext = file.name.split(".").pop();
+        const path = `${startup.id}/${folder}/${Date.now()}.${ext}`;
+        const { error: uploadError } = await supabase.storage
+          .from("startup-assets")
+          .upload(path, file);
+        if (uploadError) return null;
+        return supabase.storage.from("startup-assets").getPublicUrl(path).data.publicUrl;
+      };
+
+      const logoUrl = logoFile ? await uploadAsset(logoFile, "logos") : null;
+      const docUrl = docFile ? await uploadAsset(docFile, "docs") : null;
+
+      if (logoUrl || docUrl) {
+        await supabase
+          .from("startups")
+          .update({
+            ...(logoUrl ? { logo_url: logoUrl } : {}),
+            ...(docUrl ? { registration_doc_url: docUrl } : {}),
+          } as any)
+          .eq("id", startup.id);
+      }
+
+      // Say so rather than leaving a blank logo to be discovered later.
+      if ((logoFile && !logoUrl) || (docFile && !docUrl)) {
+        toast.warning("Your page was created, but a file didn't upload. Add it from Edit.");
+      }
 
       // Send invitations
       if (startup && invites.length > 0) {

@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useStartups } from "@/hooks/useStartups";
+import { useAuth } from "@/contexts/AuthContext";
+import { canCreateStartup, startupCreationBlockedReason } from "@/lib/startupAccess";
 import CreateStartupWizard from "./CreateStartupWizard";
 import EditStartupDialog from "./EditStartupDialog";
 
@@ -24,6 +26,12 @@ interface MyStartupsPageProps {
 
 const MyStartupsPage = ({ onViewStartup }: MyStartupsPageProps) => {
   const { myStartups, loading, refetch } = useStartups();
+  const { roles } = useAuth();
+  // Founding a company is a claim about who you are, not a button everyone
+  // gets. The database enforces the same rule; this keeps the interface from
+  // offering an action that would only be refused.
+  const canCreate = canCreateStartup(roles);
+  const blockedReason = startupCreationBlockedReason(roles);
   const [wizardOpen, setWizardOpen] = useState(false);
   const [editStartup, setEditStartup] = useState<typeof myStartups[0] | null>(null);
 
@@ -32,12 +40,16 @@ const MyStartupsPage = ({ onViewStartup }: MyStartupsPageProps) => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-display font-semibold">My Startups</h1>
-          <p className="text-sm text-muted-foreground mt-1">Manage your startup pages</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            {canCreate ? "Manage your startup pages" : "Startups you've been added to"}
+          </p>
         </div>
-        <Button onClick={() => setWizardOpen(true)} className="gap-2 bg-gradient-brand text-white font-semibold hover:opacity-90">
-          <Plus className="h-4 w-4" />
-          Create New Startup
-        </Button>
+        {canCreate && (
+          <Button onClick={() => setWizardOpen(true)} className="gap-2 bg-gradient-brand text-white font-semibold hover:opacity-90">
+            <Plus className="h-4 w-4" />
+            Create New Startup
+          </Button>
+        )}
       </div>
 
       {loading ? (
@@ -45,11 +57,17 @@ const MyStartupsPage = ({ onViewStartup }: MyStartupsPageProps) => {
       ) : myStartups.length === 0 ? (
         <div className="rounded-2xl border border-border bg-card p-12 text-center">
           <Building2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="font-semibold text-lg">No startup pages yet</h3>
-          <p className="text-sm text-muted-foreground mt-1 mb-4">Create your startup's official presence in the ecosystem.</p>
-          <Button onClick={() => setWizardOpen(true)} className="gap-2">
-            <Plus className="h-4 w-4" /> Create Startup Page
-          </Button>
+          <h3 className="font-semibold text-lg">
+            {canCreate ? "No startup pages yet" : "You're not on a startup yet"}
+          </h3>
+          <p className="mx-auto mt-1 mb-4 max-w-sm text-sm text-muted-foreground">
+            {blockedReason ?? "Create your startup's official presence in the ecosystem."}
+          </p>
+          {canCreate && (
+            <Button onClick={() => setWizardOpen(true)} className="gap-2">
+              <Plus className="h-4 w-4" /> Create Startup Page
+            </Button>
+          )}
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
@@ -96,7 +114,9 @@ const MyStartupsPage = ({ onViewStartup }: MyStartupsPageProps) => {
         </div>
       )}
 
-      <CreateStartupWizard open={wizardOpen} onOpenChange={setWizardOpen} onCreated={refetch} />
+      {canCreate && (
+        <CreateStartupWizard open={wizardOpen} onOpenChange={setWizardOpen} onCreated={refetch} />
+      )}
 
       {editStartup && (
         <EditStartupDialog
