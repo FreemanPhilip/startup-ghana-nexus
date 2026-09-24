@@ -6,41 +6,46 @@ import SparkXLogo from "@/components/SparkXLogo";
 
 const CTASection = () => {
   return (
-    <section className="dark bg-gradient-hero py-24">
+    <section className="dark section-y relative isolate overflow-hidden bg-gradient-hero text-foreground">
+      {/* The same warm bloom that opens the page, closing it — so the site
+          begins and ends on the brand rather than drifting. */}
+      <div
+        aria-hidden="true"
+        className="absolute left-1/2 top-1/2 -z-10 h-[360px] w-[760px] max-w-[140vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/20 blur-[120px]"
+      />
+
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-3xl text-center"
         >
-          <SparkXLogo variant="mark" tone="dark" className="mx-auto mb-6 h-16 w-16 animate-float" />
-          <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl md:text-5xl">
+          <SparkXLogo variant="mark" tone="dark" className="mx-auto mb-7 h-14 w-14 animate-float" alt="" />
+          <h2 className="font-display text-3xl font-bold tracking-[-0.02em] text-balance sm:text-4xl md:text-[3rem] md:leading-[1.08]">
             Ready to Join Africa's Startup Movement?
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Whether you're a founder, investor, or mentor — SparkX Index is your gateway
-            to opportunities, connections, and growth.
+          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground text-pretty sm:text-lg">
+            Whether you're a founder, investor, or mentor — SparkX Index is your gateway to opportunities,
+            connections, and growth.
           </p>
-          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+          <div className="mt-10 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center">
             <Link to="/auth">
-              <Button
-                size="lg"
-                className="bg-gradient-gold px-8 text-base font-semibold text-navy hover:opacity-90 glow-gold"
-              >
+              <Button size="lg" className="glow-brand h-12 w-full px-8 text-base font-semibold sm:w-auto">
                 Create Your Account
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <a href="#pricing">
+            <Link to="/about">
               <Button
                 variant="outline"
                 size="lg"
-                className="border-foreground/20 px-8 text-base text-foreground hover:bg-foreground/10"
+                className="h-12 w-full border-foreground/20 bg-foreground/5 px-8 text-base backdrop-blur-sm hover:bg-foreground/10 sm:w-auto"
               >
                 Learn More
               </Button>
-            </a>
+            </Link>
           </div>
         </motion.div>
       </div>

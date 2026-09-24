@@ -265,7 +265,7 @@ const AISearchChat = () => {
                   type="submit"
                   size="icon"
                   disabled={!query.trim() || isLoading}
-                  className="bg-gradient-gold text-navy hover:opacity-90 shrink-0"
+                  className="bg-gradient-gold text-white hover:opacity-90 shrink-0"
                 >
                   <Send className="h-4 w-4" />
                 </Button>

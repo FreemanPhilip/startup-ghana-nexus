@@ -150,7 +150,7 @@ const PostDetailPage = () => {
               The link may have expired or the post was removed.
             </p>
             <Link to="/sparkx-index">
-              <Button className="mt-6 bg-gradient-gold font-semibold text-navy hover:opacity-90">
+              <Button className="mt-6 bg-gradient-gold font-semibold text-white hover:opacity-90">
                 Explore the community
               </Button>
             </Link>

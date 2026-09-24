@@ -157,7 +157,7 @@ const OnboardingProfileStep = ({ onNext, saving: parentSaving }: Props) => {
       <Button
         onClick={handleSubmit}
         disabled={isSaving || !formData.full_name.trim()}
-        className="mt-8 w-full bg-gradient-gold font-semibold text-navy hover:opacity-90"
+        className="mt-8 w-full bg-gradient-gold font-semibold text-white hover:opacity-90"
       >
         {isSaving ? "Saving..." : "Continue →"}
       </Button>

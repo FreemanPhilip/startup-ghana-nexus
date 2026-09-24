@@ -28,7 +28,7 @@ const DashboardHeader = ({ onMenuToggle, onNavigate, onSignOut, activeIdentity, 
 
       <div className="flex items-center gap-2 md:gap-3">
         {profile?.membership === "premium" && (
-          <Badge className="hidden sm:flex bg-gradient-gold text-navy font-semibold gap-1.5">
+          <Badge className="hidden sm:flex bg-gradient-gold text-white font-semibold gap-1.5">
             <CheckCircle className="h-3.5 w-3.5" />
             PREMIUM VERIFIED
           </Badge>

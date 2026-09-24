@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
 import { Quote } from "lucide-react";
+import SectionHeading from "@/components/marketing/SectionHeading";
 
 const roles = [
   {
     title: "Startup Founders",
-    description: "Showcase your startup, connect with investors, find mentors, and access exclusive funding opportunities.",
+    description:
+      "Showcase your startup, connect with investors, find mentors, and access exclusive funding opportunities.",
     badge: "Build & Raise",
   },
   {
@@ -26,64 +28,54 @@ const roles = [
 
 const HowItWorks = () => {
   return (
-    <section className="border-t border-border bg-muted/30 py-24">
+    <section className="section-y border-t border-border bg-muted/30">
       <div className="container">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-16 text-center"
-        >
-          <span className="mb-3 inline-block rounded-full bg-emerald/10 px-4 py-1 text-sm font-semibold text-emerald">
-            Who Is This For?
-          </span>
-          <h2 className="font-display text-3xl font-bold sm:text-4xl md:text-5xl">
-            One Platform, Every Stakeholder
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Whether you're building, investing, mentoring, or supporting — SparkX Index has a place for you.
-          </p>
-        </motion.div>
+        <SectionHeading
+          eyebrow="Who Is This For?"
+          title="One Platform, Every Stakeholder"
+          description="Whether you're building, investing, mentoring, or supporting — SparkX Index has a place for you."
+          className="mb-14"
+        />
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {roles.map((role, i) => (
             <motion.div
               key={role.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="group rounded-2xl border border-border bg-card p-6 transition-all hover:border-gold/30 hover:shadow-lg"
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.45, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+              className="group flex flex-col rounded-2xl border border-border bg-card p-6 transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-brand/35 hover:shadow-[0_18px_40px_-24px_hsl(14_88%_45%/0.5)]"
             >
-              <span className="inline-block rounded-full bg-gradient-gold px-3 py-0.5 text-xs font-bold text-navy">
+              {/* A quiet tinted chip rather than a solid gold pill: four of
+                  these side by side were shouting over the role names, which
+                  are the thing a visitor is actually scanning for. */}
+              <span className="inline-flex w-fit rounded-full bg-brand/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-brand ring-1 ring-inset ring-brand/15">
                 {role.badge}
               </span>
-              <h3 className="mt-4 font-display text-lg font-bold">{role.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {role.description}
-              </p>
+              <h3 className="mt-4 font-display text-lg font-bold tracking-[-0.01em]">{role.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{role.description}</p>
             </motion.div>
           ))}
         </div>
 
-        {/* Testimonial */}
-        <motion.div
+        <motion.figure
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mx-auto mt-20 max-w-2xl text-center"
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto mt-16 max-w-3xl rounded-2xl border border-border bg-card p-8 text-center sm:p-10"
         >
-          <Quote className="mx-auto mb-4 h-8 w-8 text-gold/40" />
-          <blockquote className="text-lg font-medium italic leading-relaxed text-foreground/80">
-            "SparkX Index connected us with the right investors at exactly the right time.
-            Within three months, we closed our seed round and found an incredible
-            mentor who transformed our go-to-market strategy."
+          <Quote className="mx-auto mb-5 h-7 w-7 text-brand/50" aria-hidden="true" />
+          <blockquote className="font-display text-xl font-medium leading-relaxed tracking-[-0.01em] text-balance sm:text-2xl">
+            "SparkX Index connected us with the right investors at exactly the right time. Within three months,
+            we closed our seed round and found an incredible mentor who transformed our go-to-market strategy."
           </blockquote>
-          <div className="mt-6">
+          <figcaption className="mt-6">
             <p className="font-display font-bold">Kwame Asante</p>
             <p className="text-sm text-muted-foreground">Founder, TechNova Africa</p>
-          </div>
-        </motion.div>
+          </figcaption>
+        </motion.figure>
       </div>
     </section>
   );

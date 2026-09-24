@@ -229,7 +229,7 @@ const AuthPage = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-gold font-semibold text-navy hover:opacity-90"
+                className="w-full bg-gradient-gold font-semibold text-white hover:opacity-90"
               >
                 {loading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
               </Button>

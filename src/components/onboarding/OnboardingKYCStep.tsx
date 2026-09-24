@@ -165,7 +165,7 @@ const OnboardingKYCStep = ({ onNext, onSkip, onBack, saving: parentSaving }: Pro
         <Button
           onClick={handleSubmit}
           disabled={isSaving || (!linkedinUrl.trim() && !docFile)}
-          className="flex-1 bg-gradient-gold font-semibold text-navy hover:opacity-90"
+          className="flex-1 bg-gradient-gold font-semibold text-white hover:opacity-90"
         >
           {isSaving ? "Submitting..." : "Submit & finish"}
         </Button>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,23 +29,47 @@ const solutionCategories = [
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "SparkX Index", href: "/sparkx-index" },
-  { label: "Pricing", href: "#pricing" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
 
-const Navbar = () => {
+interface NavbarProps {
+  /**
+   * True on pages whose first band is the dark hero. The bar then rides over
+   * it transparently instead of cutting a pale strip across the artwork, and
+   * only resolves into a solid surface once the page scrolls under it.
+   */
+  overHero?: boolean;
+}
+
+const Navbar = ({ overHero = false }: NavbarProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
   const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { session } = useAuth();
+
+  useEffect(() => {
+    if (!overHero) return;
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [overHero]);
+
+  // An open mobile sheet needs a readable surface whatever the scroll position.
+  const floating = overHero && !scrolled && !mobileOpen;
 
   return (
     <motion.nav
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl"
+      className={`fixed left-0 right-0 top-0 z-50 border-b transition-colors duration-300 ${
+        floating
+          ? "dark border-transparent bg-transparent text-foreground"
+          : "border-border/40 bg-background/80 backdrop-blur-xl"
+      }`}
     >
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
@@ -168,13 +192,13 @@ const Navbar = () => {
         <div className="hidden items-center gap-3 md:flex">
           {session ? (
             <Link to="/dashboard">
-              <Button size="sm" className="bg-gradient-gold font-semibold text-navy hover:opacity-90">The Index</Button>
+              <Button size="sm" className="font-semibold">The Index</Button>
             </Link>
           ) : (
             <>
               <Link to="/auth"><Button variant="ghost" size="sm">Sign In</Button></Link>
               <Link to="/auth">
-                <Button size="sm" className="bg-gradient-gold font-semibold text-navy hover:opacity-90">Get Started</Button>
+                <Button size="sm" className="font-semibold">Get Started</Button>
               </Link>
             </>
           )}
@@ -255,7 +279,7 @@ const Navbar = () => {
             <div className="mt-2 flex flex-col gap-2">
               {session ? (
                 <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
-                  <Button size="sm" className="w-full bg-gradient-gold font-semibold text-navy">The Index</Button>
+                  <Button size="sm" className="w-full font-semibold">The Index</Button>
                 </Link>
               ) : (
                 <>
@@ -263,7 +287,7 @@ const Navbar = () => {
                     <Button variant="ghost" size="sm" className="w-full">Sign In</Button>
                   </Link>
                   <Link to="/auth" onClick={() => setMobileOpen(false)}>
-                    <Button size="sm" className="w-full bg-gradient-gold font-semibold text-navy">Get Started</Button>
+                    <Button size="sm" className="w-full font-semibold">Get Started</Button>
                   </Link>
                 </>
               )}

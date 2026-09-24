@@ -57,7 +57,7 @@ const verificationBadge = (status: string) => {
     case "verified":
       return <Badge className="bg-primary/10 text-primary gap-1 border-0"><ShieldCheck className="h-3 w-3" /> Verified Startup</Badge>;
     case "premium_verified":
-      return <Badge className="bg-gradient-gold text-navy gap-1 border-0"><ShieldCheck className="h-3 w-3" /> Premium Verified</Badge>;
+      return <Badge className="bg-gradient-gold text-white gap-1 border-0"><ShieldCheck className="h-3 w-3" /> Premium Verified</Badge>;
     default:
       return <Badge variant="secondary" className="gap-1"><ShieldAlert className="h-3 w-3" /> Pending Verification</Badge>;
   }

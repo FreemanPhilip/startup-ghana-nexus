@@ -15,16 +15,26 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 25% 10%;
 
-    --primary: 157 82% 24%;
+    /* Theme colour is blue; the logo's orange stays the logo's own and is
+       used only as a sparing accent (see --orange).
+       --brand is the vivid value for gradients, glows and marks. It clears
+       only 3.38:1 on --background, so it never carries small text.
+       --primary is the action value: 6.17:1 behind white, 5.75:1 as text on
+       --background. Measured, not eyeballed. */
+    --brand: 217 91% 60%;
+    --brand-strong: 221 83% 38%;
+    --brand-soft: 219 90% 96%;
+
+    --primary: 219 85% 46%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 41 100% 48%;
-    --secondary-foreground: 220 25% 10%;
+    --secondary: 213 69% 11%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 220 15% 92%;
     --muted-foreground: 220 10% 45%;
 
-    --accent: 16 100% 60%;
+    --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -32,7 +42,7 @@
 
     --border: 220 15% 88%;
     --input: 220 15% 88%;
-    --ring: 157 82% 24%;
+    --ring: 219 85% 46%;
 
     --radius: 0.75rem;
 
@@ -43,16 +53,16 @@
     --emerald-light: 157 60% 40%;
     --navy: 213 69% 11%;
     --navy-light: 213 50% 20%;
-    --orange: 16 100% 60%;
+    --orange: 14 88% 55%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 157 82% 24%;
+    --sidebar-primary: 219 85% 46%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 157 82% 24%;
+    --sidebar-ring: 219 85% 46%;
   }
 
   .dark {
@@ -65,33 +75,40 @@
     --popover: 215 47% 11%;
     --popover-foreground: 220 14% 90%;
 
-    --primary: 157 82% 24%;
-    --primary-foreground: 0 0% 100%;
+    /* The light action value reaches only 3.3:1 on near-black, so dark mode
+       lifts the blue to 68% lightness (8.07:1 on --background) and puts navy
+       on it — white on that value is 2.52:1 and would fail. */
+    --brand: 213 94% 68%;
+    --brand-strong: 211 96% 76%;
+    --brand-soft: 219 60% 14%;
 
-    --secondary: 41 100% 48%;
-    --secondary-foreground: 220 25% 10%;
+    --primary: 213 94% 68%;
+    --primary-foreground: 213 69% 11%;
+
+    --secondary: 215 40% 16%;
+    --secondary-foreground: 220 14% 90%;
 
     --muted: 215 40% 16%;
     --muted-foreground: 218 11% 65%;
 
-    --accent: 16 100% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 213 94% 68%;
+    --accent-foreground: 213 69% 11%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 215 40% 16%;
     --input: 215 40% 16%;
-    --ring: 157 82% 24%;
+    --ring: 213 94% 68%;
 
     --sidebar-background: 215 47% 11%;
     --sidebar-foreground: 220 14% 90%;
-    --sidebar-primary: 157 82% 24%;
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-primary: 213 94% 68%;
+    --sidebar-primary-foreground: 213 69% 11%;
     --sidebar-accent: 215 40% 16%;
     --sidebar-accent-foreground: 220 14% 90%;
     --sidebar-border: 215 40% 16%;
-    --sidebar-ring: 157 82% 24%;
+    --sidebar-ring: 213 94% 68%;
   }
 }
 
@@ -108,21 +125,43 @@
 }
 
 @layer utilities {
+  /* Deprecated: gold is no longer a theme colour. These aliases keep the
+     remaining call sites rendering the blue ramp; prefer the -brand
+     utilities in new code. */
   .text-gradient-gold {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(41, 100%, 48%), hsl(41, 90%, 60%));
+    @apply text-gradient-brand;
   }
   .bg-gradient-hero {
     background: linear-gradient(135deg, hsl(0, 0%, 2%) 0%, hsl(215, 47%, 11%) 50%, hsl(0, 0%, 2%) 100%);
   }
   .bg-gradient-gold {
-    background: linear-gradient(135deg, hsl(41, 100%, 48%), hsl(41, 90%, 38%));
+    @apply bg-gradient-brand;
+  }
+  /* The brand ramp, drawn from the logo's own orange. Decorative surfaces
+     only — label text on top must use --primary-foreground. */
+  .bg-gradient-brand {
+    background: linear-gradient(135deg, hsl(217, 85%, 52%), hsl(221, 83%, 41%));
+  }
+  .text-gradient-brand {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(219, 90%, 52%), hsl(221, 85%, 40%));
+  }
+  .dark .text-gradient-brand {
+    background-image: linear-gradient(135deg, hsl(213, 94%, 72%), hsl(217, 91%, 58%));
+  }
+  .glow-brand {
+    box-shadow: 0 0 60px -12px hsl(217 91% 60% / 0.45);
+  }
+  /* Consistent vertical rhythm for marketing sections, so every band on the
+     site breathes the same way instead of each one picking its own py-. */
+  .section-y {
+    @apply py-20 md:py-28;
   }
   .bg-gradient-emerald {
     background: linear-gradient(135deg, hsl(157, 82%, 24%), hsl(157, 60%, 40%));
   }
   .glow-gold {
-    box-shadow: 0 0 40px -10px hsl(41, 100%, 48% / 0.4);
+    @apply glow-brand;
   }
   .glow-emerald {
     box-shadow: 0 0 40px -10px hsl(157, 82%, 24% / 0.4);

@@ -210,7 +210,7 @@ const ProductPage = () => {
           </Link>
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <motion.div initial="hidden" animate="visible" custom={0} variants={fadeUp}>
-              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-gold text-navy">
+              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-gold text-white">
                 {product.icon}
               </div>
               <h1 className="font-display text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
@@ -220,7 +220,7 @@ const ProductPage = () => {
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">{product.heroDescription}</p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link to="/auth">
-                  <Button size="lg" className="bg-gradient-gold font-semibold text-navy hover:opacity-90">
+                  <Button size="lg" className="bg-gradient-gold font-semibold text-white hover:opacity-90">
                     {product.ctaText} <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
@@ -306,7 +306,7 @@ const ProductPage = () => {
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Link to="/auth">
-                <Button size="lg" className="bg-gradient-gold font-semibold text-navy hover:opacity-90">
+                <Button size="lg" className="bg-gradient-gold font-semibold text-white hover:opacity-90">
                   {product.ctaText}
                 </Button>
               </Link>

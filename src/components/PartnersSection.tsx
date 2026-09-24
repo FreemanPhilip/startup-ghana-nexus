@@ -25,7 +25,7 @@ const itemVariants: Variants = {
 
 const PartnersSection = () => {
   return (
-    <section className="py-24 border-t border-b border-border bg-muted/30">
+    <section className="section-y border-b border-t border-border bg-muted/30">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -34,11 +34,11 @@ const PartnersSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald/10 px-3 py-1 text-xs font-semibold text-emerald mb-4">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-brand/25 bg-brand/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-brand mb-4">
             <Handshake className="h-3 w-3" />
             Our Ecosystem
           </span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
+          <h2 className="font-display text-3xl font-bold tracking-[-0.02em] text-balance mb-4 sm:text-4xl md:text-[2.75rem] md:leading-[1.1]">
             Backed by Leading{" "}
             <span className="text-gradient-gold">Organizations</span>
           </h2>

@@ -55,7 +55,7 @@ const EcosystemStats = () => {
   ];
 
   return (
-    <section id="ecosystem" className="dark bg-gradient-hero py-24">
+    <section id="ecosystem" className="dark section-y relative isolate overflow-hidden bg-gradient-hero text-foreground">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -63,10 +63,10 @@ const EcosystemStats = () => {
           viewport={{ once: true }}
           className="mb-16 text-center"
         >
-          <span className="mb-3 inline-block rounded-full border border-emerald/30 bg-emerald/10 px-4 py-1 text-sm font-semibold text-emerald-light">
+          <span className="mb-3 inline-block rounded-full border border-brand/30 bg-brand/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-brand">
             Ecosystem Intelligence
           </span>
-          <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl md:text-5xl">
+          <h2 className="font-display text-3xl font-bold tracking-[-0.02em] text-balance sm:text-4xl md:text-[2.75rem] md:leading-[1.1]">
             Africa's Startup Ecosystem at a Glance
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
