@@ -10,6 +10,7 @@ import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardRightSidebar from "@/components/dashboard/DashboardRightSidebar";
 import EcosystemFeed from "@/components/dashboard/EcosystemFeed";
 import InvestorDashboardContent from "@/components/investors/InvestorDashboardPage";
+import SavedInvestorsPage from "@/components/investors/SavedInvestorsPage";
 import InvestorsPage from "@/components/investors/InvestorsPage";
 import MessagesPage from "@/components/messages/MessagesPage";
 import ProfilePage from "@/components/profile/ProfilePage";
@@ -80,7 +81,7 @@ const InvestorDashboardPage = () => {
               )}
               {activeTab === "home" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><EcosystemFeed onViewOpportunity={() => {}} onViewGroup={() => {}} onViewStartup={handleViewStartup} activeIdentity={activeIdentity} onIdentityChange={setActiveIdentity} /></motion.div>}
               {activeTab === "discover" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><InvestorsPage onViewStartup={handleViewStartup} /></motion.div>}
-              {activeTab === "saved" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><InvestorDashboardContent /></motion.div>}
+              {activeTab === "saved" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><SavedInvestorsPage /></motion.div>}
               {activeTab === "portfolio" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><InvestorDashboardContent /></motion.div>}
               {activeTab === "messages" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><MessagesPage onViewProfile={handleViewProfile} /></motion.div>}
               {activeTab === "profile" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><ProfilePage onSignOut={handleSignOut} /></motion.div>}

@@ -139,13 +139,17 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
                 <CheckCircle className="h-4 w-4 text-primary fill-primary/20" />
               )}
             </div>
-            <p className="text-xs text-muted-foreground">
-              {isStartupPost ? "Company Page" : post.likes_count > 0 ? `${post.likes_count.toLocaleString()} followers` : "Member"}
+            {/* This line used to read "<likes_count> followers" — the post's
+                own like count presented as the author's follower count, which
+                is simply a different number. The headline was already being
+                fetched and had nowhere to go. */}
+            <p className="truncate text-xs text-muted-foreground">
+              {isStartupPost ? "Company page" : (post as { author_headline?: string | null }).author_headline || "Member"}
             </p>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <span>{timeAgo}</span>
-              <span>·</span>
-              <Globe className="h-3 w-3" />
+              <span aria-hidden="true">·</span>
+              <Globe className="h-3 w-3" aria-label="Public" />
             </div>
           </div>
         </div>
@@ -158,9 +162,9 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
           {!isOwnPost && !isStartupPost && onToggleFollow && (
             <Button
               size="sm"
-              variant={isFollowing ? "outline" : "default"}
+              variant={isFollowing ? "ghost" : "outline"}
               onClick={() => onToggleFollow?.(post.author_id)}
-              className={!isFollowing ? "bg-gradient-gold text-white font-semibold hover:opacity-90 h-7 text-xs" : "h-7 text-xs"}
+              className="h-7 rounded-full px-3.5 text-xs font-medium"
             >
               {isFollowing ? "Following" : "Follow"}
             </Button>
