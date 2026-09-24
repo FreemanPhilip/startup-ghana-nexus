@@ -63,7 +63,7 @@ export function IndexStartupCard({ startup, onClick }: IndexStartupCardProps) {
           {startup.sparkx_score != null && (
             <div className="text-right shrink-0">
               <div className="text-lg font-semibold text-primary">{startup.sparkx_score}</div>
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Score</div>
+              <div className="text-[12px] text-muted-foreground">Score</div>
             </div>
           )}
         </div>

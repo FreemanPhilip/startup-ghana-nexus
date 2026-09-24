@@ -103,7 +103,7 @@ const InvestorRightSidebar = ({ onViewInvestor }: InvestorRightSidebarProps) => 
         {recentViews.length > 0 && (
           <button
             onClick={() => clearHistory()}
-            className="mt-4 w-full text-center text-[10px] font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground"
+            className="mt-4 w-full text-center text-[12px] text-muted-foreground hover:text-foreground"
           >
             Clear History
           </button>
@@ -116,7 +116,7 @@ const InvestorRightSidebar = ({ onViewInvestor }: InvestorRightSidebarProps) => 
           <Sparkles className="h-5 w-5" />
           <div>
             <p className="text-sm font-semibold">Matching AI</p>
-            <p className="text-[10px] font-semibold uppercase tracking-wider opacity-80">
+            <p className="text-[12px] font-medium opacity-80">
               {matchCount > 0 ? `${matchCount} Shortlisted` : "Ready to Match"}
             </p>
           </div>

@@ -484,24 +484,24 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
             <div className="space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Fund Size</span>
+                  <span className="text-[12px] text-muted-foreground">Fund Size</span>
                   <span className="text-sm font-semibold text-primary">{detail.fundSize}</span>
                 </div>
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Avg Ticket</span>
+                  <span className="text-[12px] text-muted-foreground">Avg Ticket</span>
                   <span className="text-sm font-semibold text-primary">{investor.avgTicket}</span>
                 </div>
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Portfolio</span>
+                  <span className="text-[12px] text-muted-foreground">Portfolio</span>
                   <span className="text-sm font-semibold text-foreground">{allPortfolioItems.length} companies</span>
                 </div>
               </div>
               <div>
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Investment Stages</span>
+                <span className="text-[12px] text-muted-foreground">Investment Stages</span>
                 <div className="flex flex-wrap gap-1.5 mt-1.5">
                   {detail.investmentStage.map(s => (
                     <Badge key={s} variant="outline" className="text-[10px]">{s}</Badge>

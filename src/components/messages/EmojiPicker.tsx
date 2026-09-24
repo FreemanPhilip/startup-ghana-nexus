@@ -64,7 +64,7 @@ const EmojiPicker = ({ onSelect, onClose }: EmojiPickerProps) => {
 
       {/* Emoji grid */}
       <div className="p-2 h-48 overflow-y-auto">
-        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 px-1">
+        <p className="text-[12px] font-medium text-muted-foreground mb-1.5 px-1">
           {EMOJI_CATEGORIES[activeCategory].label}
         </p>
         <div className="grid grid-cols-8 gap-0.5">

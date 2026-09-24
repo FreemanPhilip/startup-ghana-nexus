@@ -92,7 +92,7 @@ const InvestorCard = ({ investor, onConnect, onView, isConnected }: InvestorCard
       {/* Footer */}
       <div className="mt-5 flex items-center justify-between">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">AVG TICKET</p>
+          <p className="text-[12px] text-muted-foreground">AVG TICKET</p>
           <p className="text-sm font-semibold text-primary">{investor.avgTicket}</p>
         </div>
         <Button

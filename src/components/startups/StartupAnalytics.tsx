@@ -169,7 +169,7 @@ const StartupAnalytics = ({ startupId }: StartupAnalyticsProps) => {
           <div key={stat.label} className="rounded-2xl border border-border bg-card p-4 text-center">
             <stat.icon className={`h-5 w-5 mx-auto mb-1.5 ${stat.color}`} />
             <p className="text-2xl font-semibold">{stat.value}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{stat.label}</p>
+            <p className="text-[12px] text-muted-foreground">{stat.label}</p>
           </div>
         ))}
       </div>

@@ -132,7 +132,7 @@ const PitchDeckUploadDialog = ({ open, onOpenChange }: PitchDeckUploadDialogProp
 
         {/* Deck list */}
         <div className="space-y-2">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Your Pitch Decks</h4>
+          <h4 className="text-[12px] text-muted-foreground">Your Pitch Decks</h4>
           {loading ? (
             <div className="flex justify-center py-6">
               <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />

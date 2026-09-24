@@ -86,14 +86,14 @@ const GroupEventsTab = ({ events, loading, isMember, isAdmin, onRsvp, onDelete }
 
       {upcoming.length > 0 && (
         <div>
-          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Upcoming Events</h3>
+          <h3 className="text-[12px] font-medium text-muted-foreground mb-3">Upcoming Events</h3>
           <div className="space-y-3">{upcoming.map(renderEvent)}</div>
         </div>
       )}
 
       {past.length > 0 && (
         <div>
-          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Past Events</h3>
+          <h3 className="text-[12px] font-medium text-muted-foreground mb-3">Past Events</h3>
           <div className="space-y-3 opacity-60">{past.map(renderEvent)}</div>
         </div>
       )}

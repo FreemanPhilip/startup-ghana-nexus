@@ -77,7 +77,7 @@ const LinkPreviewCard = ({ url, isMe }: LinkPreviewCardProps) => {
           ) : (
             <Globe className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
           )}
-          <span className={`text-[10px] uppercase tracking-wider font-medium truncate ${
+          <span className={`text-[12px] font-medium truncate ${
             isMe ? "text-primary-foreground/60" : "text-muted-foreground"
           }`}>
             {domain}

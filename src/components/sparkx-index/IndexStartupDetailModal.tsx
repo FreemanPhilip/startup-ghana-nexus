@@ -58,7 +58,7 @@ export function IndexStartupDetailModal({ startup, rounds, open, onOpenChange }:
             {startup.sparkx_score != null && (
               <div className="text-right shrink-0">
                 <div className="text-2xl font-semibold text-primary">{startup.sparkx_score}</div>
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">SparkX Score</div>
+                <div className="text-[12px] text-muted-foreground">SparkX Score</div>
               </div>
             )}
           </div>

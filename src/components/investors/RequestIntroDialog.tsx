@@ -208,7 +208,7 @@ const RequestIntroDialog = ({ open, onOpenChange, investorName, onSend, startups
                     </div>
                   ) : existingDecks.length > 0 ? (
                     <div className="space-y-1.5">
-                      <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Your Uploaded Decks</p>
+                      <p className="text-[12px] text-muted-foreground">Your Uploaded Decks</p>
                       <div className="max-h-32 overflow-y-auto space-y-1">
                         {existingDecks.map(deck => (
                           <button

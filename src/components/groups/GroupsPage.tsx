@@ -44,8 +44,8 @@ const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-semibold">Ecosystem Groups</h1>
-          <p className="text-sm text-muted-foreground">Discover and join Africa's most active startup communities.</p>
+          <h1 className="page-title">Groups</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Communities across the ecosystem.</p>
         </div>
         <CreateGroupDialog
           onCreate={async (name, description, isPrivate, coverColor, category, iconUrl) => {
@@ -66,8 +66,8 @@ const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => 
           onClick={() => setSelectedCategory("all")}
           className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
             selectedCategory === "all"
-              ? "bg-primary text-primary-foreground"
-              : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              ? "bg-foreground text-background"
+              : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"
           }`}
         >
           All Categories
@@ -78,8 +78,8 @@ const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => 
             onClick={() => setSelectedCategory(c.value)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
               selectedCategory === c.value
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                ? "bg-foreground text-background"
+                : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"
             }`}
           >
             {c.label}
@@ -92,8 +92,8 @@ const GroupsPage = ({ initialGroupId, onDeepLinkConsumed }: GroupsPageProps) => 
         <div className="lg:w-64 shrink-0 space-y-4">
           <div className="rounded-2xl border border-border bg-card p-4">
             <div className="flex items-center gap-2 mb-3">
-              <Bookmark className="h-4 w-4 text-primary" />
-              <h3 className="font-display font-semibold text-sm">Your Groups</h3>
+              <Bookmark className="h-4 w-4 text-brand" />
+              <h3 className="text-[13px] font-semibold">Your groups</h3>
             </div>
             {myGroups.length === 0 ? (
               <p className="text-xs text-muted-foreground">You haven't joined any groups yet.</p>

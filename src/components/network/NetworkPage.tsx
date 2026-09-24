@@ -111,28 +111,27 @@ const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
 
   return (
     <div className="space-y-5">
-      {/* Stats bar */}
-      <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-border bg-card p-4">
-        <div className="text-center px-4">
-          <p className="text-lg font-bold">{connections.size}</p>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Connections</p>
-        </div>
-        <div className="h-8 w-px bg-border" />
-        <div className="text-center px-4">
-          <p className="text-lg font-bold">{followingCount}</p>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Following</p>
-        </div>
-        <div className="h-8 w-px bg-border" />
-        <div className="text-center px-4">
-          <p className="text-lg font-bold">{followerCount}</p>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Followers</p>
-        </div>
-        <div className="h-8 w-px bg-border" />
-        <div className="text-center px-4">
-          <p className="text-lg font-bold">{profiles.length}</p>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">In Network</p>
-        </div>
+      <div>
+        <h1 className="page-title">My Network</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Connections, requests and people to meet.</p>
       </div>
+
+      {/* Four figures separated by hairlines rather than centred columns with
+          vertical rules and tracked-caps captions — same pattern as every
+          other stat group in the portal now. */}
+      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-4">
+        {[
+          { label: "Connections", value: connections.size },
+          { label: "Following", value: followingCount },
+          { label: "Followers", value: followerCount },
+          { label: "In network", value: profiles.length },
+        ].map((s) => (
+          <div key={s.label} className="bg-card p-4">
+            <dd className="stat-value">{s.value}</dd>
+            <dt className="mt-1 text-[12px] text-muted-foreground">{s.label}</dt>
+          </div>
+        ))}
+      </dl>
 
       {/* LinkedIn-style tabs */}
       <div className="flex gap-1 overflow-x-auto scrollbar-none border-b border-border pb-0">
@@ -149,7 +148,7 @@ const NetworkPage = ({ onOpenMessages }: NetworkPageProps) => {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-all shrink-0 ${
                 isActive
-                  ? "border-primary text-primary"
+                  ? "border-brand text-foreground"
                   : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
               }`}
             >

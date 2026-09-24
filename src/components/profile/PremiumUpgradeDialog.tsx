@@ -129,8 +129,8 @@ const PremiumUpgradeDialog = ({ open, onOpenChange }: PremiumUpgradeDialogProps)
               </div>
             ))}
             <div className="flex justify-end gap-6 px-2.5 pb-1">
-              <span className="w-16 text-center text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Standard</span>
-              <span className="w-16 text-center text-[10px] font-semibold uppercase tracking-wider text-primary">Premium</span>
+              <span className="w-16 text-center text-[12px] text-muted-foreground">Standard</span>
+              <span className="w-16 text-center text-[12px] font-medium text-primary">Premium</span>
             </div>
           </div>
 

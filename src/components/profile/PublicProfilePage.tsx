@@ -210,7 +210,7 @@ const PublicProfilePage = ({ userId, onBack, onMessage }: PublicProfilePageProps
               ].map(s => (
                 <div key={s.label} className="text-center">
                   <p className="text-sm font-semibold">{s.value}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{s.label}</p>
+                  <p className="text-[12px] text-muted-foreground">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -253,25 +253,25 @@ const PublicProfilePage = ({ userId, onBack, onMessage }: PublicProfilePageProps
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     {profile.company_name && (
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Name</p>
+                        <p className="text-[12px] text-muted-foreground">Name</p>
                         <p className="font-medium mt-0.5">{profile.company_name}</p>
                       </div>
                     )}
                     {profile.industry && (
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Industry</p>
+                        <p className="text-[12px] text-muted-foreground">Industry</p>
                         <p className="font-medium mt-0.5">{profile.industry}</p>
                       </div>
                     )}
                     {profile.company_stage && (
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Stage</p>
+                        <p className="text-[12px] text-muted-foreground">Stage</p>
                         <p className="font-medium mt-0.5 capitalize">{profile.company_stage}</p>
                       </div>
                     )}
                     {profile.team_size && (
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Team Size</p>
+                        <p className="text-[12px] text-muted-foreground">Team Size</p>
                         <p className="font-medium mt-0.5">{profile.team_size} people</p>
                       </div>
                     )}

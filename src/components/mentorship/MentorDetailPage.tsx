@@ -138,15 +138,15 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
             <h3 className="font-display font-semibold text-sm mb-4">Mentor Stats</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Sessions</span>
+                <span className="text-[12px] text-muted-foreground">Sessions</span>
                 <span className="text-sm font-semibold text-primary">{mentor.sessions_count}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Reviews</span>
+                <span className="text-[12px] text-muted-foreground">Reviews</span>
                 <span className="text-sm font-semibold text-foreground">{mentor.reviews_count}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Rating</span>
+                <span className="text-[12px] text-muted-foreground">Rating</span>
                 <div className="flex items-center gap-1">
                   <Star className="h-3.5 w-3.5 text-primary fill-primary" />
                   <span className="text-sm font-semibold text-foreground">{mentor.rating}</span>

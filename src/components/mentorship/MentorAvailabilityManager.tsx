@@ -195,7 +195,7 @@ const MentorAvailabilityManager = () => {
               if (daySlots.length === 0) return null;
               return (
                 <div key={dayIndex}>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{day}</p>
+                  <p className="text-[12px] font-medium text-muted-foreground mb-2">{day}</p>
                   <div className="space-y-2">
                     {daySlots.map(slot => (
                       <div key={slot.id} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/50 border border-border">

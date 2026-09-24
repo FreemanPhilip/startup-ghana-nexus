@@ -152,22 +152,22 @@ const IncomingRequestsTab = () => {
         <Card className="p-4 text-center cursor-pointer hover:shadow-sm transition-shadow" onClick={() => setFilter("all")}>
           <Users className="h-5 w-5 mx-auto text-primary mb-1" />
           <p className="text-2xl font-semibold">{counts.all}</p>
-          <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Total</p>
+          <p className="text-[12px] text-muted-foreground">Total</p>
         </Card>
         <Card className="p-4 text-center cursor-pointer hover:shadow-sm transition-shadow" onClick={() => setFilter("pending")}>
           <Clock className="h-5 w-5 mx-auto text-amber-500 mb-1" />
           <p className="text-2xl font-semibold">{counts.pending}</p>
-          <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Pending</p>
+          <p className="text-[12px] text-muted-foreground">Pending</p>
         </Card>
         <Card className="p-4 text-center cursor-pointer hover:shadow-sm transition-shadow" onClick={() => setFilter("accepted")}>
           <CheckCircle2 className="h-5 w-5 mx-auto text-emerald-500 mb-1" />
           <p className="text-2xl font-semibold">{counts.accepted}</p>
-          <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Accepted</p>
+          <p className="text-[12px] text-muted-foreground">Accepted</p>
         </Card>
         <Card className="p-4 text-center cursor-pointer hover:shadow-sm transition-shadow" onClick={() => setFilter("rejected")}>
           <XCircle className="h-5 w-5 mx-auto text-destructive mb-1" />
           <p className="text-2xl font-semibold">{counts.rejected}</p>
-          <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Declined</p>
+          <p className="text-[12px] text-muted-foreground">Declined</p>
         </Card>
       </div>
 

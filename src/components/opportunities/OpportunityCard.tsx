@@ -49,7 +49,7 @@ const OpportunityCard = ({ opportunity, onApply }: OpportunityCardProps) => {
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${typeColors[opportunity.type] || typeColors.grant}`}>
+            <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[12px] font-medium ${typeColors[opportunity.type] || typeColors.grant}`}>
               {typeLabels[opportunity.type] || opportunity.type}
             </span>
             {opportunity.is_featured && (

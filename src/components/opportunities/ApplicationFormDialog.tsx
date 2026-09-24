@@ -404,7 +404,7 @@ const ApplicationFormDialog = ({ open, onOpenChange, opportunity, onSuccess }: A
 
             {/* Review Summary */}
             <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Application Summary</h4>
+              <h4 className="text-[12px] text-muted-foreground">Application Summary</h4>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
                   <span className="text-muted-foreground">Name:</span>

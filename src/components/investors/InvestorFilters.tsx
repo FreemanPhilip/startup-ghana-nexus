@@ -33,7 +33,7 @@ const InvestorFilters = ({
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
-          <label className="mb-1.5 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <label className="mb-1.5 block text-[12px] text-muted-foreground">
             Industry Sector
           </label>
           <Select value={industry} onValueChange={onIndustryChange}>
@@ -54,7 +54,7 @@ const InvestorFilters = ({
         </div>
 
         <div>
-          <label className="mb-1.5 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <label className="mb-1.5 block text-[12px] text-muted-foreground">
             Ticket Size
           </label>
           <Select value={ticketSize} onValueChange={onTicketSizeChange}>
@@ -72,7 +72,7 @@ const InvestorFilters = ({
         </div>
 
         <div>
-          <label className="mb-1.5 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <label className="mb-1.5 block text-[12px] text-muted-foreground">
             Region
           </label>
           <Select value={region} onValueChange={onRegionChange}>
