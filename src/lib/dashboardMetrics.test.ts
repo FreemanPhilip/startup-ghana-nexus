@@ -47,15 +47,25 @@ describe("dashboardMetrics", () => {
   it("builds a founder action summary with a clear next step", () => {
     const summary = buildFounderDashboardSummary({ startupCount: 0 });
 
-    expect(summary.title).toContain("Set up");
-    expect(summary.actionLabel).toBe("Create startup page");
+    expect(summary?.title).toContain("Set up");
+    expect(summary?.actionLabel).toBe("Create startup page");
+  });
+
+  it("stops prompting the founder once a startup page exists", () => {
+    // The bar is a setup indicator, not a permanent banner. Returning a
+    // second, cheerier message here is what kept it on screen forever.
+    expect(buildFounderDashboardSummary({ startupCount: 1 })).toBeNull();
   });
 
   it("builds an investor pipeline summary with a meaningful default CTA", () => {
     const summary = buildInvestorDashboardSummary({ savedStartups: 0, pendingRequests: 0, portfolioCount: 0 });
 
-    expect(summary.title).toContain("Start building");
-    expect(summary.actionLabel).toBe("Discover startups");
+    expect(summary?.title).toContain("Start building");
+    expect(summary?.actionLabel).toBe("Discover startups");
+  });
+
+  it("stops prompting the investor once a pipeline exists", () => {
+    expect(buildInvestorDashboardSummary({ savedStartups: 2 })).toBeNull();
   });
 
   it("builds an active mentor pipeline summary for connected founders and tasks", () => {

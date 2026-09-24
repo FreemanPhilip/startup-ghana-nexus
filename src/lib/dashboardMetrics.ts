@@ -78,21 +78,17 @@ export const buildFounderDashboardSummary = ({
   mentorConnections?: number;
   opportunityCount?: number;
 }) => {
-  const readiness = Math.min(100, 30 + startupCount * 35 + mentorConnections * 12 + opportunityCount * 8);
+  // Null once setup is done. This used to return a second, cheerier message
+  // forever ("Founder momentum is building"), so a permanent banner sat above
+  // the dashboard for the entire life of the account. It is a setup
+  // indicator: it has a finish line, and crossing it removes the bar.
+  if (startupCount > 0) return null;
 
-  if (startupCount === 0) {
-    return {
-      title: "Set up your founder presence",
-      description: "Create your startup profile and start building traction with mentors, investors, and your network.",
-      actionLabel: "Create startup page",
-      readiness,
-    };
-  }
+  const readiness = Math.min(100, 30 + mentorConnections * 12 + opportunityCount * 8);
 
   return {
-    title: "Founder momentum is building",
-    description: `You have ${startupCount} startup${startupCount > 1 ? "s" : ""} in motion and are ready to deepen your outreach and build traction.`,
-    actionLabel: "Manage startups",
+    title: "Set up your founder presence",
+    actionLabel: "Create startup page",
     readiness,
   };
 };
@@ -106,20 +102,13 @@ export const buildInvestorDashboardSummary = ({
   pendingRequests?: number;
   portfolioCount?: number;
 }) => {
-  const totalPipeline = savedStartups + pendingRequests + portfolioCount;
-
-  if (totalPipeline === 0) {
-    return {
-      title: "Start building your deal pipeline",
-      description: "Discover promising startups, save the ones you like, and start engaging with founders early.",
-      actionLabel: "Discover startups",
-    };
-  }
+  // Same rule as the founder bar: it is a prompt to get started, so once the
+  // pipeline exists there is nothing left to prompt.
+  if (savedStartups + pendingRequests + portfolioCount > 0) return null;
 
   return {
-    title: "Your deal pipeline is active",
-    description: `You have ${totalPipeline} startup${totalPipeline > 1 ? "s" : ""} in your active pipeline across saved, pending, and portfolio activity.`,
-    actionLabel: "Review pipeline",
+    title: "Start building your deal pipeline",
+    actionLabel: "Discover startups",
   };
 };
 

@@ -123,7 +123,7 @@ const FounderDashboardPage = () => {
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto">
             <div className={`mx-auto px-4 md:px-6 py-6 ${activeTab === "messages" ? "" : isWideTab ? "max-w-5xl" : "max-w-3xl"}`}>
-              {activeTab === "home" && (
+              {activeTab === "home" && founderSummary && (
                 <SnapshotBar
                   icon={Rocket}
                   accent={accentClass("startup")}
