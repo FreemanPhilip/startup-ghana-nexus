@@ -192,7 +192,7 @@ const OpportunitiesPage = ({ initialOpportunityId, onDeepLinkConsumed }: Opportu
           ) : (
             <div className="rounded-2xl border border-border bg-card p-12 text-center">
               <Clock className="mx-auto h-8 w-8 text-muted-foreground mb-3" />
-              <h3 className="font-display text-lg font-semibold">No Applications Yet</h3>
+              <h3 className="text-[15px] font-semibold">No Applications Yet</h3>
               <p className="mt-1 text-sm text-muted-foreground">Browse opportunities and apply to track them here.</p>
             </div>
           )}

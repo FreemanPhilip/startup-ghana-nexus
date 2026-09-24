@@ -50,7 +50,7 @@ const previews = [
     description: "Private conversations that close deals",
     icon: MessageSquare,
     gradient: "from-blue-500/20 via-blue-500/5 to-transparent",
-    iconColor: "text-blue-500",
+    iconColor: "text-brand",
     lines: [
       { w: "40%", h: "6px", color: "bg-blue-500/20" },
       { w: "70%", h: "4px", color: "bg-muted" },

@@ -168,7 +168,7 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
                     title={isShortlisted(inv.id) ? "Remove from shortlist" : "Add to shortlist"}
                   >
                     {isShortlisted(inv.id) ? (
-                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                      <Star className="h-4 w-4 fill-current text-brand" />
                     ) : (
                       <Star className="h-4 w-4 text-muted-foreground" />
                     )}
@@ -221,7 +221,7 @@ const InvestorsPage = ({ onViewStartup }: InvestorsPageProps) => {
                     }}
                     title="Remove from shortlist"
                   >
-                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    <Star className="h-4 w-4 fill-current text-brand" />
                   </button>
                   <InvestorCard
                     investor={inv}

@@ -134,7 +134,7 @@ const MentorBriefingPage = () => {
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary">Founder briefing</p>
-          <h1 className="mt-1 font-display text-2xl font-semibold">Mentor management</h1>
+          <h1 className="mt-1 page-title">Mentor management</h1>
         </div>
         <Badge variant="outline">{bookings.length} recorded sessions</Badge>
       </div>

@@ -248,7 +248,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="font-display text-xl font-semibold">{startup.name}</h1>
+                    <h1 className="page-title">{startup.name}</h1>
                     {verificationBadge(startup.verification_status)}
                     {teamVerified && (
                       <Badge className="bg-secondary/10 text-secondary gap-1 border-0">

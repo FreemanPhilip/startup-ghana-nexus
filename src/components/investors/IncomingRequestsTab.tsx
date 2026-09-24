@@ -155,12 +155,12 @@ const IncomingRequestsTab = () => {
           <p className="text-[12px] text-muted-foreground">Total</p>
         </Card>
         <Card className="p-4 text-center cursor-pointer hover:shadow-sm transition-shadow" onClick={() => setFilter("pending")}>
-          <Clock className="h-5 w-5 mx-auto text-amber-500 mb-1" />
+          <Clock className="h-5 w-5 mx-auto text-brand mb-1" />
           <p className="text-2xl font-semibold">{counts.pending}</p>
           <p className="text-[12px] text-muted-foreground">Pending</p>
         </Card>
         <Card className="p-4 text-center cursor-pointer hover:shadow-sm transition-shadow" onClick={() => setFilter("accepted")}>
-          <CheckCircle2 className="h-5 w-5 mx-auto text-emerald-500 mb-1" />
+          <CheckCircle2 className="h-5 w-5 mx-auto text-emerald mb-1" />
           <p className="text-2xl font-semibold">{counts.accepted}</p>
           <p className="text-[12px] text-muted-foreground">Accepted</p>
         </Card>

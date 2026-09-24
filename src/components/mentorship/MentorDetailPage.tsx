@@ -59,7 +59,7 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="font-display text-xl font-semibold">{mentor.full_name}</h1>
+                    <h1 className="page-title">{mentor.full_name}</h1>
                     <CheckCircle2 className="h-5 w-5 text-primary fill-primary/20" />
                   </div>
                   <p className="text-sm text-muted-foreground mt-0.5">

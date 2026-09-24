@@ -124,7 +124,7 @@ const GroupDetailPage = ({ groupId, onBack }: GroupDetailPageProps) => {
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="font-display text-xl font-semibold">{group.name}</h1>
+              <h1 className="page-title">{group.name}</h1>
               <Badge variant="outline" className="text-[10px] gap-1">
                 {group.is_private ? <><Lock className="h-3 w-3" /> Private</> : <><Globe className="h-3 w-3" /> Public</>}
               </Badge>

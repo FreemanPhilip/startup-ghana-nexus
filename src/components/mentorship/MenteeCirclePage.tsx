@@ -602,7 +602,7 @@ const MenteeCirclePage = () => {
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary">Mentorship</p>
-          <h1 className="mt-1 font-display text-2xl font-semibold">Mentee Circle</h1>
+          <h1 className="mt-1 page-title">Mentee Circle</h1>
         </div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Users className="h-4 w-4" />
@@ -614,7 +614,7 @@ const MenteeCirclePage = () => {
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Mentorship snapshot</p>
-            <h2 className="mt-1 font-display text-xl font-semibold">{mentorSummary.title}</h2>
+            <h2 className="mt-1 page-title">{mentorSummary.title}</h2>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{mentorSummary.description}</p>
           </div>
           <div className="flex items-center gap-3">
@@ -716,7 +716,7 @@ const MenteeCirclePage = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h2 className="font-display text-xl font-semibold">{selectedMentee.fullName}</h2>
+                    <h2 className="page-title">{selectedMentee.fullName}</h2>
                     <p className="text-sm text-muted-foreground">{selectedMentee.headline}</p>
                   </div>
                 </div>

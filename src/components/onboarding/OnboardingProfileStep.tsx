@@ -92,7 +92,7 @@ const OnboardingProfileStep = ({ onNext, saving: parentSaving }: Props) => {
 
   return (
     <div className="w-full max-w-md rounded-2xl border border-border/20 bg-card p-8 shadow-2xl">
-      <h2 className="font-display text-2xl font-semibold">Complete your profile</h2>
+      <h2 className="page-title">Complete your profile</h2>
       <p className="mt-1 text-sm text-muted-foreground">Just a few details to get you started</p>
 
       <div className="mt-6 space-y-5">
