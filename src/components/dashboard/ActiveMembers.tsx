@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Users, Rocket, TrendingUp, GraduationCap, Handshake } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,20 +10,6 @@ interface ActiveMember {
   is_online: boolean;
   role?: string | null;
 }
-
-const roleIcons: Record<string, any> = {
-  startup_founder: Rocket,
-  investor: TrendingUp,
-  mentor: GraduationCap,
-  ecosystem_partner: Handshake,
-};
-
-const roleColors: Record<string, string> = {
-  startup_founder: "text-emerald-500",
-  investor: "text-blue-500",
-  mentor: "text-purple-500",
-  ecosystem_partner: "text-amber-500",
-};
 
 const ActiveMembers = () => {
   const [members, setMembers] = useState<ActiveMember[]>([]);

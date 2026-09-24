@@ -50,7 +50,7 @@ const PendingRequestsPanel = ({ requests, loading, onAccept, onReject }: Pending
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
+                className="h-8 w-8 text-emerald hover:bg-emerald/10 hover:text-emerald"
                 disabled={processing === req.id}
                 onClick={() => handleAction(req.id, "accept")}
               >

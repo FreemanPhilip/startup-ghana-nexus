@@ -1,6 +1,7 @@
-import { DollarSign, Briefcase, Calendar, ExternalLink } from "lucide-react";
+import { DollarSign, Briefcase, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { accentClass, type Category } from "@/lib/categoryAccents";
 import type { FeedItem } from "@/hooks/useHomeFeed";
 
 interface OpportunityFeedCardProps {
@@ -8,56 +9,73 @@ interface OpportunityFeedCardProps {
   onViewDetail?: (id: string) => void;
 }
 
-const typeConfig: Record<string, { icon: typeof DollarSign; label: string; color: string }> = {
-  grant: { icon: DollarSign, label: "Grant", color: "text-emerald-600 bg-emerald-50" },
-  funding: { icon: DollarSign, label: "Funding", color: "text-emerald-600 bg-emerald-50" },
-  accelerator: { icon: Briefcase, label: "Accelerator", color: "text-blue-600 bg-blue-50" },
-  job: { icon: Briefcase, label: "Job", color: "text-purple-600 bg-purple-50" },
+/**
+ * These used to be hardcoded Tailwind pairs — text-emerald-600 bg-emerald-50,
+ * text-blue-600 bg-blue-50 — which are light-theme values. On a dark card the
+ * tile rendered a near-white block, and none of them matched the hue the rest
+ * of the platform uses for the same idea.
+ */
+const typeConfig: Record<string, { icon: typeof DollarSign; label: string; category: Category }> = {
+  grant: { icon: DollarSign, label: "Grant", category: "funding" },
+  funding: { icon: DollarSign, label: "Funding", category: "funding" },
+  accelerator: { icon: Briefcase, label: "Accelerator", category: "startup" },
+  job: { icon: Briefcase, label: "Job", category: "opportunity" },
 };
 
 const OpportunityFeedCard = ({ item, onViewDetail }: OpportunityFeedCardProps) => {
   const config = typeConfig[item.opp_type || "grant"] || typeConfig.grant;
   const Icon = config.icon;
+  const accent = accentClass(config.category);
   const deadline = item.deadline ? new Date(item.deadline) : null;
 
   return (
-    <div className="rounded-2xl border border-border bg-card overflow-hidden">
-      <div className="flex items-center gap-2 px-5 pt-4 pb-2">
-        <div className={`h-5 w-5 rounded flex items-center justify-center ${config.color}`}>
-          <Icon className="h-3 w-3" />
+    <div className="rounded-2xl border border-border bg-card p-5">
+      <div className="flex items-start gap-3">
+        <div className={`${accent} accent-tile h-9 w-9`}>
+          <Icon className="h-4 w-4" aria-hidden="true" />
         </div>
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          {config.label} Opportunity
-        </span>
+
+        <div className="min-w-0 flex-1">
+          <p className={`${accent} accent-text text-[11px] font-semibold uppercase tracking-[0.1em]`}>
+            {config.label}
+          </p>
+          <h3 className="mt-1 text-[15px] font-semibold tracking-[-0.01em]">{item.title}</h3>
+          <p className="mt-0.5 truncate text-[13px] text-muted-foreground">{item.organization}</p>
+        </div>
+
+        {item.amount && (
+          <p className="shrink-0 text-[15px] font-semibold tabular-nums">{item.amount}</p>
+        )}
       </div>
-      <div className="px-5 pb-4 space-y-2">
-        <h3 className="text-sm font-semibold">{item.title}</h3>
-        <p className="text-xs text-muted-foreground">{item.organization}</p>
-        <p className="text-xs text-muted-foreground line-clamp-2">{item.description}</p>
-        <div className="flex items-center gap-3 flex-wrap">
-          {item.amount && (
-            <span className="text-xs font-semibold text-emerald-600">{item.amount}</span>
-          )}
-          {deadline && (
-            <span className="text-xs text-muted-foreground flex items-center gap-1">
-              <Calendar className="h-3 w-3" />
-              Deadline: {deadline.toLocaleDateString("en", { month: "short", day: "numeric", year: "numeric" })}
-            </span>
-          )}
+
+      <p className="mt-3 line-clamp-2 text-[14px] leading-relaxed text-muted-foreground">{item.description}</p>
+
+      {item.tags && item.tags.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {item.tags.slice(0, 3).map((tag) => (
+            <Badge key={tag} variant="secondary" className="rounded-full text-[11px] font-normal">
+              {tag}
+            </Badge>
+          ))}
         </div>
-        {item.tags && item.tags.length > 0 && (
-          <div className="flex gap-1 flex-wrap">
-            {item.tags.slice(0, 3).map(tag => (
-              <Badge key={tag} variant="secondary" className="text-[10px]">{tag}</Badge>
-            ))}
-          </div>
+      )}
+
+      <div className="mt-4 flex items-center justify-between gap-3 border-t border-border pt-3">
+        {deadline ? (
+          <p className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
+            Closes {deadline.toLocaleDateString("en", { month: "short", day: "numeric" })}
+          </p>
+        ) : (
+          <p className="text-[12px] text-muted-foreground">Rolling</p>
         )}
         <Button
           size="sm"
-          className="gap-1.5 text-xs mt-1"
+          variant="outline"
+          className="rounded-full px-4 text-[13px] font-medium"
           onClick={() => onViewDetail?.(item.id)}
         >
-          <ExternalLink className="h-3 w-3" /> View Details
+          View
         </Button>
       </div>
     </div>

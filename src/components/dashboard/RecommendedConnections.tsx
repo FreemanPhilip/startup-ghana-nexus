@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { Sparkles, Rocket, TrendingUp, GraduationCap, Handshake } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFollows } from "@/hooks/useFollows";
-import { accentClass } from "@/lib/categoryAccents";
-import type { LucideIcon } from "lucide-react";
+import RoleBadge from "./RoleBadge";
 
 interface Suggestion {
   user_id: string;
@@ -15,19 +14,6 @@ interface Suggestion {
   headline: string | null;
   role?: string | null;
 }
-
-/**
- * Roles borrow the platform's category accents rather than four hand-picked
- * Tailwind palettes. Those were emerald/blue/purple/amber chosen here alone,
- * so a founder was one green in this card and a different one everywhere
- * else, and none of them had been checked for contrast.
- */
-const roleConfig: Record<string, { label: string; accent: string; icon: LucideIcon }> = {
-  startup_founder: { label: "Founder", accent: accentClass("startup"), icon: Rocket },
-  investor: { label: "Investor", accent: accentClass("investor"), icon: TrendingUp },
-  mentor: { label: "Mentor", accent: accentClass("mentor"), icon: GraduationCap },
-  ecosystem_partner: { label: "Partner", accent: accentClass("funding"), icon: Handshake },
-};
 
 const RecommendedConnections = () => {
   const { user } = useAuth();
@@ -126,8 +112,6 @@ const RecommendedConnections = () => {
         {suggestions.map((s) => {
           const initials = (s.full_name || "U").split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
           const following = isFollowing(s.user_id);
-          const config = s.role ? roleConfig[s.role] : null;
-          const RoleIcon = config?.icon;
           return (
             <li key={s.user_id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
               <Avatar className="h-10 w-10 shrink-0">
@@ -138,12 +122,7 @@ const RecommendedConnections = () => {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
                   <p className="truncate text-[13px] font-semibold">{s.full_name || "Member"}</p>
-                  {config && RoleIcon && (
-                    <span className={`${config.accent} accent-text flex shrink-0 items-center gap-0.5 text-[11px] font-medium`}>
-                      <RoleIcon className="h-3 w-3" aria-hidden="true" />
-                      {config.label}
-                    </span>
-                  )}
+                  <RoleBadge role={s.role} variant="inline" />
                 </div>
                 <p className="truncate text-[12px] text-muted-foreground">{s.headline || "Member"}</p>
               </div>
