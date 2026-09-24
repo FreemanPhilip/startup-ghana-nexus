@@ -11,6 +11,8 @@ import { queryClient } from "@/lib/queryClient";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import TalentCallbackPage from "./pages/TalentCallbackPage";
+import SsoAuthorizePage from "./pages/SsoAuthorizePage";
+import TalentSsoStartPage from "./pages/TalentSsoStartPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import FounderDashboardPage from "./pages/FounderDashboardPage";
 import InvestorDashboardPage from "./pages/InvestorDashboardPage";
@@ -133,7 +135,11 @@ const App = () => (
             <Route path="/post/:postId" element={<Suspense fallback={<LoadingSpinner />}><PostDetailPage /></Suspense>} />
             <Route path="/sparkx-index" element={<SparkXIndexPage />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/auth/talent/start" element={<TalentSsoStartPage />} />
             <Route path="/auth/talent/callback" element={<TalentCallbackPage />} />
+            {/* This app as identity provider: Talent sends members here to
+                prove they hold a SparkX Index account. */}
+            <Route path="/sso/authorize" element={<SsoAuthorizePage />} />
             <Route path="/admin/login" element={<AdminAuthPage />} />
             <Route path="/onboarding" element={<OnboardingRoute><OnboardingPage /></OnboardingRoute>} />
             

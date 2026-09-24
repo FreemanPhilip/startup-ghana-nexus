@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import SparkXLogo from "@/components/SparkXLogo";
-import { Star, Mail, Lock, User, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { takePendingSso } from "@/lib/pendingSso";
+import { Mail, Lock, User, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,9 +26,11 @@ const AuthPage = () => {
   // Redirect authenticated users away from auth page without flashing the landing page
   useEffect(() => {
     if (authLoading) return;
-    if (session) {
-      navigate(sanitizeAppPath(getPostAuthRoute(roles, profile)), { replace: true });
-    }
+    if (!session) return;
+    // A platform hand-off parked before sign-in wins over the usual landing
+    // route: the member asked to switch platforms, not to visit a dashboard.
+    const pending = takePendingSso();
+    navigate(pending ?? sanitizeAppPath(getPostAuthRoute(roles, profile)), { replace: true });
   }, [session, profile, roles, authLoading, navigate]);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
@@ -134,10 +137,27 @@ const AuthPage = () => {
               {isSignUp ? "Start your journey in Africa's startup ecosystem" : "Sign in to continue"}
             </p>
 
+            {/* SparkX Talent first: it is a first-party SparkX account, so for
+                anyone already in the ecosystem it is the shortest way in.
+                Talent runs on a separate Supabase project, which is why this
+                is a redirect hand-off rather than an OAuth provider. */}
+            <Button
+              variant="outline"
+              className="mt-6 h-11 w-full justify-center gap-2.5 rounded-xl border-border/60 text-[15px] font-medium hover:border-brand/60"
+              onClick={handleTalentAuth}
+              disabled={loading}
+            >
+              <SparkXLogo variant="mark" className="h-4 w-4" alt="" />
+              Continue with SparkX Talent
+            </Button>
+            <p className="mt-2 text-center text-xs text-muted-foreground">
+              Already on SparkX Talent? You{"\u2019"}ll be signed straight in.
+            </p>
+
             {/* Google OAuth */}
             <Button
               variant="outline"
-              className="mt-6 w-full gap-2"
+              className="mt-3 h-11 w-full justify-center gap-2.5 rounded-xl border-border/60 text-[15px] font-medium"
               onClick={handleGoogleAuth}
               disabled={loading}
             >
@@ -148,18 +168,6 @@ const AuthPage = () => {
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
               </svg>
               Continue with Google
-            </Button>
-
-            {/* SparkX Talent lives on a separate Supabase project, so this is a
-                redirect hand-off rather than an OAuth provider. */}
-            <Button
-              variant="outline"
-              className="mt-3 w-full gap-2"
-              onClick={handleTalentAuth}
-              disabled={loading}
-            >
-              <Star className="h-4 w-4 text-brand" fill="currentColor" />
-              Continue with SparkX Talent
             </Button>
 
             <div className="my-6 flex items-center gap-3">
@@ -216,12 +224,20 @@ const AuthPage = () => {
                     required
                     minLength={6}
                   />
+                  {/* The icon is 16px; the hit area is 40 so a thumb can find
+                      it. Inset rather than padded so it still sits inside the
+                      field's right edge. */}
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute right-1 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" aria-hidden="true" />
+                    ) : (
+                      <Eye className="h-4 w-4" aria-hidden="true" />
+                    )}
                   </button>
                 </div>
               </div>

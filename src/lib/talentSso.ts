@@ -48,6 +48,22 @@ export function getPortalOrigin(): string {
   return "https://sparkxglobal.net";
 }
 
+/**
+ * Where SparkX Talent begins an Index -> Talent switch.
+ *
+ * The switch cannot start here. Talent is the destination, so Talent has to be
+ * the one that stores the CSRF state — sessionStorage is per-origin, and a
+ * value written here would be invisible to the callback that has to check it.
+ * So the switcher links to a small entry point on Talent, which either finds
+ * an existing Talent session or turns around and asks this app for an
+ * assertion. Either way the member lands on Talent signed in.
+ */
+export const TALENT_SWITCH_PATH = "/auth/sparkx-index/start";
+
+export function talentSwitchUrl(): string {
+  return `${talentOrigin()}${TALENT_SWITCH_PATH}`;
+}
+
 /** The exact callback URL — must be allowlisted on the Talent project. */
 export function talentCallbackUrl(): string {
   return `${getPortalOrigin()}${TALENT_CALLBACK_PATH}`;
