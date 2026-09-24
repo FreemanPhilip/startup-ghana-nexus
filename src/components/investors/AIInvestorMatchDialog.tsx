@@ -31,7 +31,7 @@ interface AIInvestorMatchDialogProps {
 const getMatchColor = (pct: number) => {
   if (pct >= 90) return "text-emerald-600 dark:text-emerald-400";
   if (pct >= 75) return "text-primary";
-  if (pct >= 60) return "text-amber-600 dark:text-amber-400";
+  if (pct >= 60) return "text-amber-600 dark:text-brand";
   return "text-muted-foreground";
 };
 
@@ -188,7 +188,7 @@ const AIInvestorMatchDialog = ({ open, onOpenChange, onViewInvestor }: AIInvesto
                         toggleShortlist({ investorId: match.investor_id, investorName: match.investor_name });
                       }}
                     >
-                      <Star className={`h-3 w-3 ${isShortlisted(match.investor_id) ? "fill-amber-400 text-amber-400" : ""}`} />
+                      <Star className={`h-3 w-3 ${isShortlisted(match.investor_id) ? "fill-current text-brand" : ""}`} />
                       {isShortlisted(match.investor_id) ? "Shortlisted" : "Shortlist"}
                     </Button>
                     <Button

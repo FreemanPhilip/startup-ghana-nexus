@@ -358,7 +358,7 @@ const CreatePostCard = ({ onSubmit, activeIdentity, onIdentityChange }: CreatePo
                 size="sm"
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="bg-gradient-gold text-white font-semibold hover:opacity-90 gap-2"
+                className="bg-gradient-brand text-white font-semibold hover:opacity-90 gap-2"
               >
                 <Send className="h-3.5 w-3.5" />
                 {submitting ? "Posting..." : "Post"}

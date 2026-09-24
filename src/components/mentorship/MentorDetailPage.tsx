@@ -50,7 +50,7 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
           <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10">
             <Avatar className="h-20 w-20 border-4 border-card shadow-lg">
               <AvatarImage src={mentor.avatar_url || undefined} />
-              <AvatarFallback className="bg-gradient-gold text-2xl font-semibold text-primary-foreground">
+              <AvatarFallback className="bg-gradient-brand text-2xl font-semibold text-primary-foreground">
                 {initials}
               </AvatarFallback>
             </Avatar>
@@ -59,7 +59,7 @@ const MentorDetailPage = ({ mentor, onBack, onOpenMessages }: MentorDetailPagePr
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="font-display text-xl font-semibold">{mentor.full_name}</h1>
+                    <h1 className="page-title">{mentor.full_name}</h1>
                     <CheckCircle2 className="h-5 w-5 text-primary fill-primary/20" />
                   </div>
                   <p className="text-sm text-muted-foreground mt-0.5">

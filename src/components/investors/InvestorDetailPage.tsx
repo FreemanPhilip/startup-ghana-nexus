@@ -287,7 +287,7 @@ const InvestorDetailPage = ({ investor, onBack, onViewStartup }: InvestorDetailP
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="font-display text-xl font-semibold">{investor.name}</h1>
+                    <h1 className="page-title">{investor.name}</h1>
                     <CheckCircle2 className="h-5 w-5 text-primary fill-primary/20" />
                     <span className={`inline-block rounded-full border px-2.5 py-0.5 text-xs font-semibold ${getMatchColor(investor.matchPercent)}`}>
                       {investor.matchPercent}% Match

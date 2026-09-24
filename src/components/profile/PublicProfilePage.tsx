@@ -161,7 +161,7 @@ const PublicProfilePage = ({ userId, onBack, onMessage }: PublicProfilePageProps
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="font-display text-xl font-semibold">{profile.full_name || "Anonymous"}</h1>
+                  <h1 className="page-title">{profile.full_name || "Anonymous"}</h1>
                   {profile.verification === "verified" && (
                     <CheckCircle className="h-5 w-5 text-primary fill-primary/20" />
                   )}

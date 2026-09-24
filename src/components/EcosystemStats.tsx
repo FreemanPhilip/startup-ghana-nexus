@@ -86,8 +86,8 @@ const EcosystemStats = () => {
               className="rounded-2xl border border-foreground/10 bg-foreground/5 p-6 backdrop-blur-sm"
             >
               <div className="mb-3 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gold/10">
-                  <stat.icon className="h-5 w-5 text-gold" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand/10">
+                  <stat.icon className="h-5 w-5 text-brand" />
                 </div>
               </div>
               <p className="font-display text-3xl font-bold text-foreground">

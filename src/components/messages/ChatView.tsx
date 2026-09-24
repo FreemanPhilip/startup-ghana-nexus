@@ -241,11 +241,9 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
   if (!conversation) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center bg-background text-center p-8">
-        <div className="rounded-2xl border border-border bg-card p-10 max-w-sm">
-          <h3 className="font-display text-lg font-semibold mb-2">Select a conversation</h3>
-          <p className="text-sm text-muted-foreground">
-            Choose a conversation from the sidebar or start a new one from the Network tab.
-          </p>
+        <div className="max-w-xs">
+          <p className="text-[15px] font-medium">Select a conversation</p>
+          <p className="mt-1 text-sm text-muted-foreground">Or start a new one from anyone's profile.</p>
         </div>
       </div>
     );
@@ -273,7 +271,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
   return (
     <div className="flex flex-1 flex-col bg-background min-w-0">
       {/* Chat header */}
-      <div className="flex items-center justify-between border-b border-border bg-card px-4 py-3">
+      <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-card/85 px-4 py-3 backdrop-blur-xl">
         <div className="flex items-center gap-2">
           {onBack && (
             <Button variant="ghost" size="icon" className="h-8 w-8 sm:hidden shrink-0" onClick={onBack}>
@@ -288,7 +286,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
               </AvatarFallback>
             </Avatar>
             {otherUserPresence.is_online && (
-              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-card" />
+              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald border-2 border-card" />
             )}
           </div>
           <div>
@@ -395,9 +393,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
           </div>
         ) : messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-sm text-muted-foreground">
-              No messages yet. Say hello! 👋
-            </p>
+            <p className="text-sm text-muted-foreground">No messages yet — say hello.</p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -455,7 +451,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
                             className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                               isMe
                                 ? "bg-primary text-primary-foreground rounded-br-md"
-                                : "bg-card border border-border text-foreground rounded-bl-md"
+                                : "bg-muted text-foreground rounded-bl-md"
                             }`}
                           >
                             {/* File attachment */}
@@ -546,7 +542,7 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
                 {getInitials(otherUser?.full_name)}
               </AvatarFallback>
             </Avatar>
-            <div className="bg-muted border border-border rounded-2xl rounded-bl-md px-4 py-2.5 flex items-center gap-1">
+            <div className="flex items-center gap-1 rounded-2xl rounded-bl-md bg-muted px-4 py-2.5">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:0ms]" />
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:150ms]" />
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:300ms]" />
@@ -622,11 +618,11 @@ const ChatView = ({ conversation, messages, loading, onSendMessage, onBack, onDe
           <input ref={docRef} type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" className="hidden" onChange={handleFileSelect} />
           <input ref={fileRef} type="file" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" className="hidden" onChange={handleFileSelect} />
           <Input
-            placeholder="Type a message..."
+            placeholder="Message"
             value={input}
             onChange={(e) => { setInput(e.target.value); broadcastTyping(); }}
             onKeyDown={handleKeyDown}
-            className="flex-1 h-9"
+            className="h-10 flex-1 rounded-full border-transparent bg-muted text-sm"
           />
           <div className="relative">
             <Button

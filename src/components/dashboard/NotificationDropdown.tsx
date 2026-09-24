@@ -1,4 +1,5 @@
 import { Bell, UserPlus, MessageSquare, Users, Heart, MessageCircle, Check, Trash2, Building2, Loader2, X, CalendarCheck2, ClipboardList } from "lucide-react";
+import { accentClass } from "@/lib/categoryAccents";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -25,18 +26,25 @@ const typeIconMap: Record<string, typeof Bell> = {
   session_cancelled: X,
 };
 
+/**
+ * Notification types on the platform's category accents rather than a
+ * separate palette invented here. The old map mixed alpha tints (fine in
+ * both themes) with solid -600 text values (light-theme only, dim on dark),
+ * and picked a hue per type with no relation to the hue that type uses
+ * everywhere else in the portal.
+ */
 const typeColorMap: Record<string, string> = {
-  follow: "bg-primary/10 text-primary",
-  message: "bg-blue-500/10 text-blue-500",
-  group_invitation: "bg-emerald-500/10 text-emerald-500",
-  post_like: "bg-rose-500/10 text-rose-500",
-  post_comment: "bg-amber-500/10 text-amber-500",
-  startup_invitation: "bg-violet-500/10 text-violet-500",
-  connection_request: "bg-primary/10 text-primary",
-  connection_accepted: "bg-emerald-500/10 text-emerald-500",
-  meeting: "bg-cyan-500/10 text-cyan-600",
-  task: "bg-amber-500/10 text-amber-600",
-  session_cancelled: "bg-red-500/10 text-red-600",
+  follow: accentClass("network"),
+  message: accentClass("network"),
+  group_invitation: accentClass("network"),
+  connection_request: accentClass("network"),
+  post_like: accentClass("startup"),
+  startup_invitation: accentClass("startup"),
+  post_comment: accentClass("opportunity"),
+  task: accentClass("opportunity"),
+  connection_accepted: accentClass("funding"),
+  meeting: accentClass("mentor"),
+  session_cancelled: accentClass("investor"),
 };
 
 const NotificationItem = ({
@@ -49,16 +57,16 @@ const NotificationItem = ({
   onConfirmStartup: (membershipId: string, notifId: string) => void;
 }) => {
   const Icon = typeIconMap[notification.type] || Bell;
-  const colorClass = typeColorMap[notification.type] || "bg-muted text-muted-foreground";
+  const colorClass = typeColorMap[notification.type] || accentClass("network");
   const isUnread = !notification.read_at;
   const isStartupInvite = notification.type === "startup_invitation" && isUnread;
 
   return (
     <div
-      className={`flex gap-3 p-3 cursor-pointer transition-colors hover:bg-muted/50 ${isUnread ? "bg-primary/5" : ""}`}
+      className={`flex gap-3 p-3 cursor-pointer transition-colors hover:bg-muted/50 ${isUnread ? "bg-muted/60" : ""}`}
       onClick={() => !isStartupInvite && isUnread && onMarkRead(notification.id)}
     >
-      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${colorClass}`}>
+      <div className={`accent-tile h-9 w-9 ${colorClass}`}>
         <Icon className="h-4 w-4" />
       </div>
       <div className="flex-1 min-w-0">

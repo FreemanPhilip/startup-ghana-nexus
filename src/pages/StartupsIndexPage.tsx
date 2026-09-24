@@ -94,7 +94,7 @@ const StartupsIndexPage = () => {
       <Navbar />
       <main className="container mx-auto px-4 pt-28 pb-16">
         <header className="mb-8">
-          <h1 className="text-4xl font-bold tracking-tight">Startups Directory</h1>
+          <h1 className="display-lg">Startups Directory</h1>
           <p className="mt-2 text-muted-foreground">
             The pan-African startup index — discover, rank, and follow ventures ranked by SparkX Score.
           </p>

@@ -184,7 +184,7 @@ const ProductPage = () => {
       <div className="min-h-screen">
         <Navbar />
         <div className="container flex min-h-[60vh] flex-col items-center justify-center pt-16 text-center">
-          <h1 className="font-display text-3xl font-bold">Product Not Found</h1>
+          <h1 className="display-lg">Product Not Found</h1>
           <Link to="/">
             <Button variant="outline" className="mt-4">Back to Home</Button>
           </Link>
@@ -210,17 +210,17 @@ const ProductPage = () => {
           </Link>
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <motion.div initial="hidden" animate="visible" custom={0} variants={fadeUp}>
-              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-gold text-white">
+              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-brand text-white">
                 {product.icon}
               </div>
-              <h1 className="font-display text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
+              <h1 className="display-xl">
                 {product.title}
               </h1>
               <p className="mt-2 font-display text-xl text-secondary md:text-2xl">{product.tagline}</p>
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">{product.heroDescription}</p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link to="/auth">
-                  <Button size="lg" className="bg-gradient-gold font-semibold text-white hover:opacity-90">
+                  <Button size="lg" className="bg-gradient-brand font-semibold text-white hover:opacity-90">
                     {product.ctaText} <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
@@ -234,7 +234,7 @@ const ProductPage = () => {
             <motion.div initial="hidden" animate="visible" custom={1} variants={fadeUp} className="grid grid-cols-2 gap-4">
               {product.stats.map((stat, i) => (
                 <div key={i} className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
-                  <p className="font-display text-3xl font-bold text-primary">{stat.value}</p>
+                  <p className="stat-value text-3xl text-primary">{stat.value}</p>
                   <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
                 </div>
               ))}
@@ -247,7 +247,7 @@ const ProductPage = () => {
       <section id="features" className="bg-card py-20 md:py-28">
         <div className="container">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={fadeUp} className="text-center">
-            <h2 className="font-display text-3xl font-bold md:text-4xl">What We Offer</h2>
+            <h2 className="display-lg">What We Offer</h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">Everything you need to succeed, built specifically for the African startup ecosystem.</p>
           </motion.div>
           <div className="mt-16 grid gap-8 sm:grid-cols-2">
@@ -277,7 +277,7 @@ const ProductPage = () => {
         <div className="container">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={fadeUp}>
-              <h2 className="font-display text-3xl font-bold md:text-4xl">Why Choose {product.title}?</h2>
+              <h2 className="display-lg">Why Choose {product.title}?</h2>
               <p className="mt-4 text-muted-foreground">Built by Africans, for Africa — with a global standard of excellence.</p>
             </motion.div>
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} variants={fadeUp}>
@@ -298,7 +298,7 @@ const ProductPage = () => {
       <section className="bg-navy py-20 text-center md:py-28">
         <div className="container">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={fadeUp}>
-            <h2 className="font-display text-3xl font-bold text-white md:text-4xl">
+            <h2 className="display-lg">
               Ready to Get Started with {product.title}?
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-white/70">
@@ -306,7 +306,7 @@ const ProductPage = () => {
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Link to="/auth">
-                <Button size="lg" className="bg-gradient-gold font-semibold text-white hover:opacity-90">
+                <Button size="lg" className="bg-gradient-brand font-semibold text-white hover:opacity-90">
                   {product.ctaText}
                 </Button>
               </Link>

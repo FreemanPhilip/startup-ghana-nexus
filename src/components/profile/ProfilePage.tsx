@@ -596,12 +596,12 @@ const ProfilePage = ({ onSignOut }: ProfilePageProps) => {
                     : "Upgrade to Premium for unlimited connections, messaging, advanced search, and more."}
                 </p>
                 <div className="flex items-center justify-between">
-                  <Badge className={`text-[10px] ${isPremium ? "bg-gradient-gold text-primary-foreground border-0" : ""}`}>
+                  <Badge className={`text-[10px] ${isPremium ? "bg-gradient-brand text-primary-foreground border-0" : ""}`}>
                     {isPremium ? "Premium" : "Standard"}
                   </Badge>
                   <Button
                     size="sm"
-                    className={`text-xs gap-1.5 ${isPremium ? "" : "bg-gradient-gold border-0"}`}
+                    className={`text-xs gap-1.5 ${isPremium ? "" : "bg-gradient-brand border-0"}`}
                     variant={isPremium ? "outline" : "default"}
                     onClick={() => setUpgradeOpen(true)}
                   >

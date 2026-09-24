@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -46,9 +46,6 @@
 
     --radius: 0.75rem;
 
-    --gold: 41 100% 48%;
-    --gold-light: 41 90% 60%;
-    --gold-dark: 41 90% 38%;
     --emerald: 157 82% 24%;
     --emerald-light: 157 60% 40%;
     --navy: 213 69% 11%;
@@ -231,18 +228,11 @@
 }
 
 @layer utilities {
-  /* Deprecated: gold is no longer a theme colour. These aliases keep the
-     remaining call sites rendering the blue ramp; prefer the -brand
-     utilities in new code. */
-  .text-gradient-gold {
-    @apply text-gradient-brand;
-  }
+
   .bg-gradient-hero {
     background: linear-gradient(135deg, hsl(0, 0%, 2%) 0%, hsl(215, 47%, 11%) 50%, hsl(0, 0%, 2%) 100%);
   }
-  .bg-gradient-gold {
-    @apply bg-gradient-brand;
-  }
+
   /* The brand ramp, drawn from the logo's own orange. Decorative surfaces
      only — label text on top must use --primary-foreground. */
   .bg-gradient-brand {
@@ -266,9 +256,7 @@
   .bg-gradient-emerald {
     background: linear-gradient(135deg, hsl(157, 82%, 24%), hsl(157, 60%, 40%));
   }
-  .glow-gold {
-    @apply glow-brand;
-  }
+
   .glow-emerald {
     box-shadow: 0 0 40px -10px hsl(157, 82%, 24% / 0.4);
   }

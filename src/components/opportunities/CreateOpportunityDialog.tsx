@@ -74,7 +74,7 @@ const CreateOpportunityDialog = ({ onCreated, trigger }: CreateOpportunityDialog
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button className="bg-gradient-gold text-white font-semibold hover:opacity-90 gap-2">
+          <Button className="bg-gradient-brand text-white font-semibold hover:opacity-90 gap-2">
             <Plus className="h-4 w-4" /> Post Opportunity
           </Button>
         )}
@@ -131,7 +131,7 @@ const CreateOpportunityDialog = ({ onCreated, trigger }: CreateOpportunityDialog
             <Label className="text-xs">Tags (comma-separated)</Label>
             <Input value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="e.g. fintech, AI, agriculture" />
           </div>
-          <Button onClick={handleSubmit} disabled={submitting} className="w-full bg-gradient-gold text-white font-semibold hover:opacity-90 gap-2">
+          <Button onClick={handleSubmit} disabled={submitting} className="w-full bg-gradient-brand text-white font-semibold hover:opacity-90 gap-2">
             <Send className="h-4 w-4" />
             {submitting ? "Posting..." : "Post Opportunity"}
           </Button>

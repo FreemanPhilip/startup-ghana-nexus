@@ -39,7 +39,7 @@ import SparkXIndexPage from "./pages/SparkXIndexPage";
 // to tell apart from "the app crashed" when something goes wrong.
 const LoadingSpinner = ({ label = "Loading…" }: { label?: string }) => (
   <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-    <div className="h-8 w-8 animate-spin rounded-full border-4 border-gold border-t-transparent" />
+    <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand border-t-transparent" />
     <p className="text-sm text-muted-foreground">{label}</p>
   </div>
 );

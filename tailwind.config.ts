@@ -15,14 +15,16 @@ export default {
     },
     extend: {
       fontFamily: {
-        /* One family, precisely. `sans` is the default for everything;
-           `display` and `body` are kept as aliases so existing font-display /
-           font-body classes resolve, and `mono` is deliberately mapped to
-           Inter too so a stray font-mono cannot reintroduce a second face. */
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        body: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        /* Inter, with Poppins as the fallback. `sans` is the default for
+           everything; `display` and `body` are aliases so existing
+           font-display / font-body classes resolve, and `mono` maps to the
+           same stack so a stray font-mono cannot reintroduce a third face.
+           Poppins is loaded alongside Inter — a webfont named as a fallback
+           only helps if it is actually fetched. */
+        sans: ['Inter', 'Poppins', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Inter', 'Poppins', 'system-ui', '-apple-system', 'sans-serif'],
+        body: ['Inter', 'Poppins', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['Inter', 'Poppins', 'system-ui', '-apple-system', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -62,14 +64,6 @@ export default {
           DEFAULT: "hsl(var(--brand))",
           strong: "hsl(var(--brand-strong))",
           soft: "hsl(var(--brand-soft))",
-        },
-        /* Deprecated alias. Gold was retired as a theme colour; these map on
-           to the blue ramp so existing text-gold / bg-gold/10 call sites
-           follow the theme instead of each needing a hand edit. */
-        gold: {
-          DEFAULT: "hsl(var(--brand))",
-          light: "hsl(var(--brand))",
-          dark: "hsl(var(--brand-strong))",
         },
         emerald: {
           DEFAULT: "hsl(var(--emerald))",

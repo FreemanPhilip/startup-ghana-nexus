@@ -186,7 +186,7 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-semibold">Settings</h1>
+        <h1 className="page-title">Settings</h1>
         <p className="text-sm text-muted-foreground mt-1">Manage your account, preferences, and integrations.</p>
       </div>
 
@@ -438,7 +438,7 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
                     <div>
                       <p className="text-sm font-medium">Membership</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <Badge className={`text-[10px] ${isPremium ? "bg-gradient-gold text-primary-foreground border-0" : ""}`}>
+                        <Badge className={`text-[10px] ${isPremium ? "bg-gradient-brand text-primary-foreground border-0" : ""}`}>
                           {isPremium ? "Premium" : "Standard"}
                         </Badge>
                         {isPremium && (
@@ -449,7 +449,7 @@ const SettingsPage = ({ onSignOut }: SettingsPageProps) => {
                     {isFounder && (
                       <Button
                         size="sm"
-                        className={`text-xs gap-1.5 ${isPremium ? "" : "bg-gradient-gold border-0"}`}
+                        className={`text-xs gap-1.5 ${isPremium ? "" : "bg-gradient-brand border-0"}`}
                         variant={isPremium ? "outline" : "default"}
                         onClick={() => setUpgradeOpen(true)}
                       >

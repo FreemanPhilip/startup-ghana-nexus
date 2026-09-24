@@ -121,7 +121,7 @@ const MentorsPage = ({ onOpenMessages }: MentorsPageProps) => {
       <div>
         <div className="flex items-center gap-2 mb-1">
           <Users className="h-5 w-5 text-primary" />
-          <h1 className="font-display text-2xl font-semibold text-foreground">Mentors</h1>
+          <h1 className="page-title">Mentors</h1>
         </div>
         <p className="text-sm text-muted-foreground">
           Connect with experienced mentors across Ghana's startup ecosystem

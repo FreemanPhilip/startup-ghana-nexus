@@ -62,7 +62,7 @@ const LinkPreviewCard = ({ url, isMe }: LinkPreviewCardProps) => {
       }`}
     >
       {/* Colored top bar */}
-      <div className={`h-1 ${isMeeting ? "bg-green-500" : "bg-primary/60"}`} />
+      <div className={`h-1 ${isMeeting ? "bg-emerald" : "bg-primary/60"}`} />
 
       <div className="px-3 py-2.5 space-y-1">
         {/* Domain + favicon row */}

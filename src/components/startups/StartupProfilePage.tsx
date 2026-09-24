@@ -57,7 +57,7 @@ const verificationBadge = (status: string) => {
     case "verified":
       return <Badge className="bg-primary/10 text-primary gap-1 border-0"><ShieldCheck className="h-3 w-3" /> Verified Startup</Badge>;
     case "premium_verified":
-      return <Badge className="bg-gradient-gold text-white gap-1 border-0"><ShieldCheck className="h-3 w-3" /> Premium Verified</Badge>;
+      return <Badge className="bg-gradient-brand text-white gap-1 border-0"><ShieldCheck className="h-3 w-3" /> Premium Verified</Badge>;
     default:
       return <Badge variant="secondary" className="gap-1"><ShieldAlert className="h-3 w-3" /> Pending Verification</Badge>;
   }
@@ -248,7 +248,7 @@ const StartupProfilePage = ({ startupId, onBack }: StartupProfilePageProps) => {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="font-display text-xl font-semibold">{startup.name}</h1>
+                    <h1 className="page-title">{startup.name}</h1>
                     {verificationBadge(startup.verification_status)}
                     {teamVerified && (
                       <Badge className="bg-secondary/10 text-secondary gap-1 border-0">

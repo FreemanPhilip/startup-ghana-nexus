@@ -241,7 +241,7 @@ const PostCard = ({ post, onToggleLike, onFetchComments, onAddComment, onToggleF
               size="sm"
               onClick={handleAddComment}
               disabled={!newComment.trim()}
-              className="h-8 bg-gradient-gold text-white font-semibold hover:opacity-90 text-xs"
+              className="h-8 bg-gradient-brand text-white font-semibold hover:opacity-90 text-xs"
             >
               Reply
             </Button>

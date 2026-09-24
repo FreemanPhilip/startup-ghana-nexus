@@ -1,8 +1,7 @@
-import { Search, Plus } from "lucide-react";
+import { Search, SquarePen } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Conversation } from "@/hooks/useMessages";
 import { formatDistanceToNow } from "date-fns";
@@ -16,6 +15,19 @@ interface ConversationListProps {
   onSelect: (id: string) => void;
   onNewConversation?: () => void;
 }
+
+/** "2 hours" reads long in a 44px column; every inbox shortens it. */
+const shortTime = (iso: string) => {
+  const d = formatDistanceToNow(new Date(iso), { addSuffix: false });
+  return d
+    .replace(/^about |^almost |^over /, "")
+    .replace(/ minutes?/, "m")
+    .replace(/ hours?/, "h")
+    .replace(/ days?/, "d")
+    .replace(/ months?/, "mo")
+    .replace(/ years?/, "y")
+    .replace("less than am", "now");
+};
 
 const ConversationList = ({
   conversations,
@@ -36,33 +48,35 @@ const ConversationList = ({
 
   return (
     <div className="flex h-full w-full flex-col border-r border-border bg-card">
-      {/* Header */}
-      <div className="border-b border-border p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-display text-lg font-semibold">Messaging Center</h2>
-          {onNewConversation && (
-            <Button
-              size="icon"
-              variant="default"
-              className="h-8 w-8 rounded-full shrink-0"
-              onClick={onNewConversation}
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
+      <div className="flex items-center justify-between gap-3 px-4 pb-3 pt-4">
+        {/* "Messaging Center" was a product name for a screen the member
+            reached by clicking "Messages". */}
+        <h2 className="page-title">Messages</h2>
+        {onNewConversation && (
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 shrink-0 text-muted-foreground hover:text-foreground"
+            onClick={onNewConversation}
+            aria-label="New conversation"
+          >
+            <SquarePen className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+
+      <div className="px-4 pb-3">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
           <Input
-            placeholder="Search messages..."
-            className="pl-9 h-9 text-sm"
+            placeholder="Search"
+            className="h-9 rounded-full border-transparent bg-muted pl-9 text-sm"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
         </div>
       </div>
 
-      {/* Conversations */}
       <div className="flex-1 overflow-y-auto">
         {loading ? (
           <div className="space-y-1 p-2">
@@ -77,55 +91,68 @@ const ConversationList = ({
             ))}
           </div>
         ) : conversations.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              {searchQuery ? "No conversations found" : "No messages yet. Start a conversation from the Network tab!"}
+          <div className="px-6 py-14 text-center">
+            <p className="text-sm font-medium">{searchQuery ? "No matches" : "No messages yet"}</p>
+            <p className="mt-1 text-[13px] text-muted-foreground">
+              {searchQuery ? "Try a different name." : "Start one from anyone's profile."}
             </p>
           </div>
         ) : (
-          <div className="space-y-0.5 p-1.5">
-            {conversations.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => onSelect(c.id)}
-                className={`flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left transition-colors ${
-                  activeConversation === c.id
-                    ? "bg-primary/10 border border-primary/20"
-                    : "hover:bg-muted"
-                }`}
-              >
-                <div className="relative">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={c.other_user?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-muted text-xs font-semibold">
-                      {getInitials(c.other_user?.full_name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  {c.other_user?.verification === "verified" && (
-                    <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-primary border-2 border-card" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold truncate">
-                      {c.other_user?.full_name || "User"}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground shrink-0 ml-2">
-                      {formatDistanceToNow(new Date(c.last_message_at), { addSuffix: false })}
-                    </span>
-                  </div>
-                  <p className={`text-xs truncate mt-0.5 ${c.unread_count > 0 ? "text-primary font-medium" : "text-muted-foreground"}`}>
-                    {c.last_message || "Start a conversation..."}
-                  </p>
-                </div>
-                {c.unread_count > 0 && (
-                  <Badge className="h-5 w-5 rounded-full p-0 flex items-center justify-center text-[10px] bg-primary text-primary-foreground shrink-0">
-                    {c.unread_count}
-                  </Badge>
-                )}
-              </button>
-            ))}
-          </div>
+          <ul>
+            {conversations.map((c) => {
+              const active = activeConversation === c.id;
+              const unread = c.unread_count > 0;
+              return (
+                <li key={c.id}>
+                  <button
+                    onClick={() => onSelect(c.id)}
+                    aria-current={active ? "true" : undefined}
+                    // A tinted, bordered box for the open thread made the list
+                    // look like a stack of cards. A flat wash reads as
+                    // selection without adding an edge to every row.
+                    className={`flex w-full items-center gap-3 px-4 py-3 text-left transition-colors ${
+                      active ? "bg-muted" : "hover:bg-muted/50"
+                    }`}
+                  >
+                    <Avatar className="h-10 w-10 shrink-0">
+                      <AvatarImage src={c.other_user?.avatar_url || undefined} alt="" />
+                      <AvatarFallback className="bg-muted text-xs font-semibold">
+                        {getInitials(c.other_user?.full_name)}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <span className={`truncate text-[14px] ${unread ? "font-semibold" : "font-medium"}`}>
+                          {c.other_user?.full_name || "User"}
+                        </span>
+                        <span className="shrink-0 text-[12px] text-muted-foreground">
+                          {shortTime(c.last_message_at)}
+                        </span>
+                      </div>
+                      <p
+                        className={`mt-0.5 truncate text-[13px] ${
+                          unread ? "font-medium text-foreground" : "text-muted-foreground"
+                        }`}
+                      >
+                        {c.last_message || "No messages yet"}
+                      </p>
+                    </div>
+
+                    {/* A dot, not a count. The number is already one tap away,
+                        and a row of coloured badges down the list competes
+                        with the names. */}
+                    {unread && (
+                      <span
+                        className="h-2 w-2 shrink-0 rounded-full bg-brand"
+                        aria-label={`${c.unread_count} unread`}
+                      />
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
         )}
       </div>
     </div>

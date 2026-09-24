@@ -101,7 +101,7 @@ const ContactPage = () => {
             <span className="inline-block rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
               Get in Touch
             </span>
-            <h1 className="mt-6 font-display text-4xl font-bold md:text-5xl lg:text-6xl">
+            <h1 className="display-xl mt-6">
               Let's Build Africa's Future <span className="text-primary">Together</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
@@ -225,7 +225,7 @@ const ContactPage = () => {
                     {errors.message && <p className="mt-1 text-xs text-destructive">{errors.message}</p>}
                   </div>
 
-                  <Button type="submit" size="lg" className="w-full bg-gradient-gold font-semibold text-white hover:opacity-90" disabled={isSubmitting}>
+                  <Button type="submit" size="lg" className="w-full bg-gradient-brand font-semibold text-white hover:opacity-90" disabled={isSubmitting}>
                     {isSubmitting ? "Sending..." : "Send Message"}
                     <Send className="ml-2 h-4 w-4" />
                   </Button>
@@ -277,14 +277,14 @@ const ContactPage = () => {
       {/* FAQ CTA */}
       <section className="bg-navy py-16 text-center">
         <div className="container">
-          <h2 className="font-display text-2xl font-bold text-white md:text-3xl">
+          <h2 className="display-md">
             Looking for Quick Answers?
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-white/70">
             Check out our help center for frequently asked questions, guides, and resources.
           </p>
           <div className="mt-8">
-            <Button size="lg" className="bg-gradient-gold font-semibold text-white hover:opacity-90">
+            <Button size="lg" className="bg-gradient-brand font-semibold text-white hover:opacity-90">
               Visit Help Center
             </Button>
           </div>

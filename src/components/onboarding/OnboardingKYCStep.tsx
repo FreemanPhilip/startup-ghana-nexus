@@ -82,11 +82,11 @@ const OnboardingKYCStep = ({ onNext, onSkip, onBack, saving: parentSaving }: Pro
       )}
 
       <div className="flex items-center gap-3 mb-2">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gold/10">
-          <Shield className="h-5 w-5 text-gold" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand/10">
+          <Shield className="h-5 w-5 text-brand" />
         </div>
         <div>
-          <h2 className="font-display text-2xl font-semibold">Identity Verification</h2>
+          <h2 className="page-title">Identity Verification</h2>
           <p className="text-sm text-muted-foreground">Build trust in the ecosystem</p>
         </div>
       </div>
@@ -117,11 +117,11 @@ const OnboardingKYCStep = ({ onNext, onSkip, onBack, saving: parentSaving }: Pro
           <p className="text-xs text-muted-foreground">Upload a government ID, business registration, or professional certificate</p>
           <label
             htmlFor="kyc-doc-upload"
-            className="flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-border p-4 hover:border-gold/50 hover:bg-gold/5 transition-colors"
+            className="flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-border p-4 hover:border-brand/50 hover:bg-brand/5 transition-colors"
           >
             {docName ? (
               <>
-                <FileText className="h-5 w-5 text-gold" />
+                <FileText className="h-5 w-5 text-brand" />
                 <span className="text-sm truncate">{docName}</span>
               </>
             ) : (
@@ -165,7 +165,7 @@ const OnboardingKYCStep = ({ onNext, onSkip, onBack, saving: parentSaving }: Pro
         <Button
           onClick={handleSubmit}
           disabled={isSaving || (!linkedinUrl.trim() && !docFile)}
-          className="flex-1 bg-gradient-gold font-semibold text-white hover:opacity-90"
+          className="flex-1 bg-gradient-brand font-semibold text-white hover:opacity-90"
         >
           {isSaving ? "Submitting..." : "Submit & finish"}
         </Button>
