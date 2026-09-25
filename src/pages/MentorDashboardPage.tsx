@@ -106,7 +106,7 @@ const MentorDashboardPage = () => {
               {activeTab === "settings" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><SettingsPage onSignOut={handleSignOut} /></motion.div>}
             </div>
           </main>
-          {!["messages", "profile", "public-profile", "settings", "my-sessions", "availability"].includes(activeTab) && <DashboardRightSidebar role="mentor" onNavigate={handleTabChange} />}
+          {!["messages", "profile", "public-profile", "settings", "my-sessions", "availability"].includes(activeTab) && <DashboardRightSidebar role="mentor" onNavigate={handleTabChange} onViewProfile={handleViewProfile} />}
         </div>
       </div>
     </div>

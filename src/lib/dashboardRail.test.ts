@@ -46,10 +46,25 @@ describe("dashboardRail", () => {
     expect(actions.filter((a) => a.emphasis === "primary")).toHaveLength(1);
   });
 
-  it("does not offer to find a mentor a mentor", () => {
-    const labels = railConfig("mentor").upcoming.actions.map((a) => a.label);
-    expect(labels).toEqual(["Availability", "Mentees"]);
-    expect(labels).not.toContain("Browse");
+  it("gives every role a way to browse people", () => {
+    // Browse is for everyone; who it lists is browseAudience's job, not this
+    // config's — a mentor gets the button and sees founders behind it.
+    for (const role of ROLES) {
+      const dialogs = railConfig(role)
+        .upcoming.actions.filter((a) => a.target.kind === "dialog")
+        .map((a) => (a.target as { dialog: string }).dialog);
+      expect(dialogs).toContain("browse-people");
+    }
+  });
+
+  it("offers AI mentor matching only where looking for a mentor is the point", () => {
+    const hasMatch = (role: RailRole) =>
+      railConfig(role).upcoming.actions.some(
+        (a) => a.target.kind === "dialog" && a.target.dialog === "ai-match",
+      );
+    expect(hasMatch("startup_founder")).toBe(true);
+    expect(hasMatch("mentor")).toBe(false);
+    expect(hasMatch("investor")).toBe(false);
   });
 
   it("counts a mentor's own side of a booking", () => {

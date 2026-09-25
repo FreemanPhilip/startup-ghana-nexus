@@ -16,7 +16,7 @@ export type RailRole = Extract<
  */
 export type RailTarget =
   | { kind: "tab"; tab: string }
-  | { kind: "dialog"; dialog: "browse-mentors" | "ai-match" };
+  | { kind: "dialog"; dialog: "browse-people" | "ai-match" };
 
 export interface RailAction {
   label: string;
@@ -57,7 +57,7 @@ const FOUNDER: RailConfig = {
     empty: "Nothing booked",
     allTab: "my-sessions",
     actions: [
-      { label: "Browse", icon: "search", emphasis: "secondary", target: { kind: "dialog", dialog: "browse-mentors" } },
+      { label: "Browse", icon: "search", emphasis: "secondary", target: { kind: "dialog", dialog: "browse-people" } },
       { label: "Match me", icon: "sparkles", emphasis: "primary", target: { kind: "dialog", dialog: "ai-match" } },
     ],
   },
@@ -76,11 +76,11 @@ const MENTOR: RailConfig = {
     title: "Upcoming",
     empty: "No sessions booked",
     allTab: "my-sessions",
-    // A mentor does not shop for mentors. Their two next moves are opening up
-    // more time and seeing who they are already working with.
+    // A mentor does not shop for mentors — Browse shows them founders (see
+    // browseAudience). The other move is opening up more time.
     actions: [
-      { label: "Availability", icon: "calendar", emphasis: "secondary", target: { kind: "tab", tab: "availability" } },
-      { label: "Mentees", icon: "users", emphasis: "primary", target: { kind: "tab", tab: "mentees" } },
+      { label: "Browse", icon: "search", emphasis: "secondary", target: { kind: "dialog", dialog: "browse-people" } },
+      { label: "Availability", icon: "calendar", emphasis: "primary", target: { kind: "tab", tab: "availability" } },
     ],
   },
   progress: {
@@ -100,8 +100,8 @@ const INVESTOR: RailConfig = {
     // This dashboard has no sessions tab, so there is nowhere for "All" to go.
     allTab: null,
     actions: [
+      { label: "Browse", icon: "search", emphasis: "secondary", target: { kind: "dialog", dialog: "browse-people" } },
       { label: "Discover", icon: "compass", emphasis: "primary", target: { kind: "tab", tab: "discover" } },
-      { label: "Portfolio", icon: "briefcase", emphasis: "secondary", target: { kind: "tab", tab: "portfolio" } },
     ],
   },
   progress: null,
@@ -113,8 +113,8 @@ const PARTNER: RailConfig = {
     empty: "Nothing booked",
     allTab: null,
     actions: [
+      { label: "Browse", icon: "search", emphasis: "secondary", target: { kind: "dialog", dialog: "browse-people" } },
       { label: "Programs", icon: "calendar", emphasis: "primary", target: { kind: "tab", tab: "programs" } },
-      { label: "Startups", icon: "search", emphasis: "secondary", target: { kind: "tab", tab: "startups" } },
     ],
   },
   progress: null,

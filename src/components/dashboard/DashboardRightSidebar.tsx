@@ -11,7 +11,7 @@ import {
   Loader2,
   type LucideIcon,
 } from "lucide-react";
-import BrowseMentorsDialog from "./BrowseMentorsDialog";
+import BrowsePeopleDialog from "./BrowsePeopleDialog";
 import AIMatchDialog from "./AIMatchDialog";
 import ActiveMembers from "./ActiveMembers";
 import RecommendedConnections from "./RecommendedConnections";
@@ -47,6 +47,8 @@ interface DashboardRightSidebarProps {
    */
   role?: RailRole;
   onNavigate?: (tab: string) => void;
+  /** Open someone's public profile — where a browse result leads. */
+  onViewProfile?: (userId: string) => void;
 }
 
 const ACTION_ICONS: Record<RailAction["icon"], LucideIcon> = {
@@ -67,11 +69,11 @@ function sessionHours(session: SessionData): number {
   return minutes > 0 ? minutes / 60 : 0;
 }
 
-const DashboardRightSidebar = ({ role, onNavigate }: DashboardRightSidebarProps) => {
+const DashboardRightSidebar = ({ role, onNavigate, onViewProfile }: DashboardRightSidebarProps) => {
   const { user } = useAuth();
   const [sessions, setSessions] = useState<SessionData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [browseMentorsOpen, setBrowseMentorsOpen] = useState(false);
+  const [browseOpen, setBrowseOpen] = useState(false);
   const [aiMatchOpen, setAiMatchOpen] = useState(false);
 
   const config = railConfig(role);
@@ -144,7 +146,7 @@ const DashboardRightSidebar = ({ role, onNavigate }: DashboardRightSidebarProps)
       onNavigate?.(action.target.tab);
       return;
     }
-    if (action.target.dialog === "browse-mentors") setBrowseMentorsOpen(true);
+    if (action.target.dialog === "browse-people") setBrowseOpen(true);
     else setAiMatchOpen(true);
   };
 
@@ -260,10 +262,11 @@ const DashboardRightSidebar = ({ role, onNavigate }: DashboardRightSidebarProps)
 
       <ActiveMembers />
 
-      <BrowseMentorsDialog
-        open={browseMentorsOpen}
-        onOpenChange={setBrowseMentorsOpen}
-        onSelectMentor={() => onNavigate?.("mentors")}
+      <BrowsePeopleDialog
+        open={browseOpen}
+        onOpenChange={setBrowseOpen}
+        role={role}
+        onSelectPerson={onViewProfile}
       />
       <AIMatchDialog
         open={aiMatchOpen}

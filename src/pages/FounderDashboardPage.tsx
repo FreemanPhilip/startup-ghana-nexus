@@ -154,7 +154,7 @@ const FounderDashboardPage = () => {
               {activeTab === "settings" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><SettingsPage onSignOut={handleSignOut} /></motion.div>}
             </div>
           </main>
-          {!["messages", "groups", "profile", "my-startups", "startup-profile", "mentor-briefing", "my-sessions", "public-profile", "settings"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar onViewInvestor={() => handleTabChange("investors")} /> : <DashboardRightSidebar role="startup_founder" onNavigate={handleTabChange} />)}
+          {!["messages", "groups", "profile", "my-startups", "startup-profile", "mentor-briefing", "my-sessions", "public-profile", "settings"].includes(activeTab) && (activeTab === "investors" ? <InvestorRightSidebar onViewInvestor={() => handleTabChange("investors")} /> : <DashboardRightSidebar role="startup_founder" onNavigate={handleTabChange} onViewProfile={handleViewProfile} />)}
         </div>
       </div>
       <FirstTimeFounderModal open={showFounderModal} onOpenChange={setShowFounderModal} onCreateStartup={() => setShowWizard(true)} />

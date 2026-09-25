@@ -31,7 +31,11 @@ const RecommendedConnections = () => {
       // Get profiles not yet followed
       const { data: profiles } = await supabase
         .from("public_profiles")
-        .select("user_id, full_name, avatar_url, headline")
+        // role comes from the view rather than a second query against
+        // user_roles: that table is readable only by its owner, so the old
+        // lookup returned nothing for other people and every suggestion fell
+        // into one bucket — the diversification below never diversified.
+        .select("user_id, full_name, avatar_url, headline, roles")
         .not("user_id", "in", `(${[...followedIds].join(",")})`)
         .limit(12);
 
@@ -40,14 +44,9 @@ const RecommendedConnections = () => {
         return;
       }
 
-      // Fetch roles for these users
-      const userIds = profiles.map(p => p.user_id);
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("user_id, role")
-        .in("user_id", userIds);
-
-      const roleMap = new Map((roles || []).map(r => [r.user_id, r.role]));
+      // One role per person is enough to spread the suggestions out; the
+      // array is ordered, so the choice is stable between renders.
+      const roleMap = new Map(profiles.map(p => [p.user_id, p.roles?.[0] ?? null]));
 
       // Diversify: pick at most 1 from each role, then fill remaining
       const byRole = new Map<string, Suggestion[]>();
