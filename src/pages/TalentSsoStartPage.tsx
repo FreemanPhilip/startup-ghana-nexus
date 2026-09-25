@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import SparkXLogo from "@/components/SparkXLogo";
 import { useAuth } from "@/contexts/AuthContext";
@@ -45,7 +45,9 @@ const TalentSsoStartPage = () => {
   return (
     <div className="dark flex min-h-screen items-center justify-center bg-gradient-hero px-6 text-foreground">
       <div className="w-full max-w-sm text-center">
-        <SparkXLogo tone="dark" className="mx-auto h-8" />
+        <Link to="/" aria-label="SparkX home" className="inline-flex">
+          <SparkXLogo tone="dark" className="h-8" />
+        </Link>
         <Loader2 className="mx-auto mt-8 h-5 w-5 animate-spin text-muted-foreground" aria-hidden="true" />
         <p className="mt-4 text-[15px] font-medium">Taking you to SparkX Index</p>
         <p className="mt-1.5 text-sm text-muted-foreground">

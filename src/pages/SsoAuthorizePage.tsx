@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -87,7 +87,9 @@ const SsoAuthorizePage = () => {
   return (
     <div className="dark flex min-h-screen items-center justify-center bg-gradient-hero px-6 text-foreground">
       <div className="w-full max-w-sm text-center">
-        <SparkXLogo tone="dark" className="mx-auto h-8" />
+        <Link to="/" aria-label="SparkX home" className="inline-flex">
+          <SparkXLogo tone="dark" className="h-8" />
+        </Link>
 
         {!redirectUri ? (
           <>

@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import PitchDeckUploadDialog from "./PitchDeckUploadDialog";
 import type { Database } from "@/integrations/supabase/types";
+import { LANDING_PATH } from "@/lib/roleRouting";
 
 type AppRole = Database["public"]["Enums"]["app_role"];
 
@@ -181,7 +182,7 @@ const RoleBasedSidebar = ({ activeTab, onTabChange, open, onClose, role }: RoleB
   const sidebarContent = (
     <>
       <div className="flex h-16 items-center justify-between border-b border-border px-5">
-        <Link to="/" aria-label="SparkX home" className="flex items-center">
+        <Link to={LANDING_PATH} aria-label="SparkX home" className="flex items-center">
           <SparkXLogo className="h-7" />
         </Link>
         <Button variant="ghost" size="icon" className="md:hidden h-8 w-8" onClick={onClose}>

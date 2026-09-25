@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import SparkXLogo from "@/components/SparkXLogo";
 import { useAuth } from "@/contexts/AuthContext";
@@ -126,7 +126,9 @@ const OnboardingPage = () => {
       <div className="container flex flex-col items-center justify-center py-12">
         {/* Logo */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 flex items-center gap-2">
-          <SparkXLogo tone="dark" className="h-8" />
+          <Link to="/" aria-label="SparkX home" className="inline-flex">
+            <SparkXLogo tone="dark" className="h-8" />
+          </Link>
           <span className="font-display text-xl font-bold text-primary-foreground">Index</span>
         </motion.div>
 

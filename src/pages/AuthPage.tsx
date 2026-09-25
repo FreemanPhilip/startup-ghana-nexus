@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import SparkXLogo from "@/components/SparkXLogo";
 import { takePendingSso } from "@/lib/pendingSso";
@@ -99,7 +99,9 @@ const AuthPage = () => {
           transition={{ duration: 0.7 }}
           className="max-w-md px-12"
         >
-          <SparkXLogo tone="dark" className="mb-8 h-10" />
+          <Link to="/" aria-label="SparkX home" className="mb-8 inline-flex">
+            <SparkXLogo tone="dark" className="h-10" />
+          </Link>
           <h1 className="display-lg">
             Join Africa's Startup Ecosystem
           </h1>
@@ -127,7 +129,9 @@ const AuthPage = () => {
         >
           <div className="rounded-2xl border border-border/20 bg-card p-8 shadow-2xl">
             <div className="mb-6 flex items-center gap-2 lg:hidden">
-              <SparkXLogo tone="dark" className="h-8" />
+              <Link to="/" aria-label="SparkX home" className="inline-flex">
+                <SparkXLogo tone="dark" className="h-8" />
+              </Link>
             </div>
 
             <h2 className="font-display text-2xl font-bold">

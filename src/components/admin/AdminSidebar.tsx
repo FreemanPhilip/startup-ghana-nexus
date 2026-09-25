@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import SparkXLogo from "@/components/SparkXLogo";
 import { Badge } from "@/components/ui/badge";
 import { canAccessTab, type AdminLevel, ADMIN_LEVELS } from "@/lib/adminPermissions";
+import { LANDING_PATH } from "@/lib/roleRouting";
 
 interface AdminSidebarProps {
   activeTab: string;
@@ -51,7 +52,7 @@ const AdminSidebar = ({ activeTab, onTabChange, open, onClose, adminLevel }: Adm
   const content = (
     <>
       <div className="flex h-16 items-center justify-between border-b border-border px-5">
-        <Link to="/" aria-label="SparkX home" className="flex items-center gap-2.5">
+        <Link to={LANDING_PATH} aria-label="SparkX home" className="flex items-center gap-2.5">
           <SparkXLogo className="h-7" />
           <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
             Admin

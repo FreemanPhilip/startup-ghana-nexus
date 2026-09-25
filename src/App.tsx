@@ -118,6 +118,9 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/" element={<HomeOrDashboardRedirect />} />
+            {/* The landing page, reachable while signed in — what the logo in
+                the app chrome points at. */}
+            <Route path="/home" element={<Index />} />
             <Route path="/sparkx-talent" element={<ProductPage />} />
             <Route path="/sparkx-labs" element={<ProductPage />} />
             <Route path="/sparkx-advisory" element={<ProductPage />} />
