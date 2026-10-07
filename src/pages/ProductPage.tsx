@@ -13,7 +13,8 @@ interface ProductData {
   features: { title: string; description: string }[];
   benefits: string[];
   ctaText: string;
-  stats: { value: string; label: string }[];
+  /** Omitted where there are no verified figures to show yet. */
+  stats?: { value: string; label: string }[];
 }
 
 const productData: Record<string, ProductData> = {
@@ -32,10 +33,10 @@ const productData: Record<string, ProductData> = {
     ctaText: "Find Talent Now",
     stats: [{ value: "10K+", label: "Professionals" }, { value: "54", label: "Countries" }, { value: "60%", label: "Faster Hiring" }, { value: "95%", label: "Match Rate" }],
   },
-  "sparkx-labs": {
-    title: "SparkX Labs",
-    tagline: "Where Innovation Takes Shape",
-    heroDescription: "Our innovation lab program helps early-stage startups validate ideas, build MVPs, and prepare for market entry with hands-on mentorship, technical resources, and rapid prototyping support.",
+  "sparkx-workspaces": {
+    title: "SparkX WorkSpaces",
+    tagline: "Incubation and Co-working Systems",
+    heroDescription: "Desks, studios and incubation for early-stage teams. Build your product somewhere designed for it, alongside founders at the same stage, with the technical support and rapid prototyping resources to get from idea to market entry.",
     icon: <Lightbulb className="h-8 w-8" />,
     features: [
       { title: "MVP Development", description: "Go from idea to functional product in weeks, not months, with dedicated technical support." },
@@ -44,12 +45,12 @@ const productData: Record<string, ProductData> = {
       { title: "Launch Accelerator", description: "A structured 12-week program taking you from concept to market-ready product." },
     ],
     benefits: ["Rapid prototyping in 4-6 weeks", "Access to shared dev infrastructure", "Weekly technical office hours", "Demo day with 50+ investors"],
-    ctaText: "Apply to Labs",
+    ctaText: "Apply to WorkSpaces",
     stats: [{ value: "200+", label: "Startups Built" }, { value: "12", label: "Week Program" }, { value: "$2M+", label: "Raised by Alumni" }, { value: "85%", label: "Launch Rate" }],
   },
-  "sparkx-advisory": {
-    title: "SparkX Advisory",
-    tagline: "Expert Guidance for Sustainable Growth",
+  "sparkx-consult": {
+    title: "SparkX Consult",
+    tagline: "Business Advisory and Support",
     heroDescription: "Access seasoned advisors and consultants who specialize in scaling businesses across African markets. Get strategic advice tailored to your stage, sector, and ambition.",
     icon: <Briefcase className="h-8 w-8" />,
     features: [
@@ -59,8 +60,22 @@ const productData: Record<string, ProductData> = {
       { title: "Growth Playbooks", description: "Proven frameworks and templates used by Africa's fastest-growing startups." },
     ],
     benefits: ["Access 100+ vetted advisors", "Flexible engagement models", "Industry-specific guidance", "Confidential & trusted"],
-    ctaText: "Get Advisory",
+    ctaText: "Talk to a Consultant",
     stats: [{ value: "100+", label: "Advisors" }, { value: "15+", label: "Sectors" }, { value: "500+", label: "Sessions Delivered" }, { value: "4.9/5", label: "Rating" }],
+  },
+  "sparkx-mentoring": {
+    title: "SparkX Mentoring",
+    tagline: "Structured Mentorship Sessions",
+    heroDescription: "Mentorship with a shape to it. Get matched to an operator who has done what you are doing, book sessions against a plan rather than a favour, and keep a record of what was agreed between them.",
+    icon: <Users className="h-8 w-8" />,
+    features: [
+      { title: "Matched, Not Guessed", description: "Pair with a mentor by sector, stage and the problem in front of you, rather than whoever happens to be free." },
+      { title: "Sessions on a Schedule", description: "Book recurring slots with a clear agenda, so mentoring is a commitment on both sides and not an occasional catch-up." },
+      { title: "A Record That Carries", description: "Notes, actions and decisions from every session, so the next one starts where the last one ended." },
+      { title: "Progress You Can See", description: "Track hours, sessions and the ground covered across your mentoring relationship." },
+    ],
+    benefits: ["Matched on sector and stage", "Recurring sessions, not one-offs", "Shared notes and agreed actions", "Mentors drawn from the SparkX Index"],
+    ctaText: "Find a Mentor",
   },
   "sparkx-academy": {
     title: "SparkX Academy",
@@ -230,15 +245,18 @@ const ProductPage = () => {
               </div>
             </motion.div>
 
-            {/* Stats Grid */}
-            <motion.div initial="hidden" animate="visible" custom={1} variants={fadeUp} className="grid grid-cols-2 gap-4">
-              {product.stats.map((stat, i) => (
-                <div key={i} className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
-                  <p className="stat-value text-3xl text-primary">{stat.value}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
-                </div>
-              ))}
-            </motion.div>
+            {/* Stats Grid — absent entirely for a product with no figures to
+                quote, rather than an empty frame where numbers should be. */}
+            {product.stats && product.stats.length > 0 && (
+              <motion.div initial="hidden" animate="visible" custom={1} variants={fadeUp} className="grid grid-cols-2 gap-4">
+                {product.stats.map((stat, i) => (
+                  <div key={i} className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
+                    <p className="stat-value text-3xl text-primary">{stat.value}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
+                  </div>
+                ))}
+              </motion.div>
+            )}
           </div>
         </div>
       </section>

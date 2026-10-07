@@ -122,8 +122,14 @@ const App = () => (
                 the app chrome points at. */}
             <Route path="/home" element={<Index />} />
             <Route path="/sparkx-talent" element={<ProductPage />} />
-            <Route path="/sparkx-labs" element={<ProductPage />} />
-            <Route path="/sparkx-advisory" element={<ProductPage />} />
+            <Route path="/sparkx-workspaces" element={<ProductPage />} />
+            <Route path="/sparkx-consult" element={<ProductPage />} />
+            <Route path="/sparkx-mentoring" element={<ProductPage />} />
+            {/* The old slugs. Labs became WorkSpaces and Advisory became
+                Consult; anything already linking to them — a post, an email,
+                a search result — still lands on the right page. */}
+            <Route path="/sparkx-labs" element={<Navigate to="/sparkx-workspaces" replace />} />
+            <Route path="/sparkx-advisory" element={<Navigate to="/sparkx-consult" replace />} />
             <Route path="/sparkx-academy" element={<ProductPage />} />
             <Route path="/sparkx-global" element={<ProductPage />} />
             <Route path="/sparkx-summit" element={<ProductPage />} />
