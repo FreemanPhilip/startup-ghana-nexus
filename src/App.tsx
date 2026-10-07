@@ -22,6 +22,7 @@ import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminAuthPage from "./pages/AdminAuthPage";
 import NotFound from "./pages/NotFound";
 import ProductPage from "./pages/ProductPage";
+import MentoringPage from "./pages/MentoringPage";
 
 const PostDetailPage = lazy(async () => {
   try {
@@ -124,7 +125,7 @@ const App = () => (
             <Route path="/sparkx-talent" element={<ProductPage />} />
             <Route path="/sparkx-workspaces" element={<ProductPage />} />
             <Route path="/sparkx-consult" element={<ProductPage />} />
-            <Route path="/sparkx-mentoring" element={<ProductPage />} />
+            <Route path="/sparkx-mentoring" element={<MentoringPage />} />
             {/* The old slugs. Labs became WorkSpaces and Advisory became
                 Consult; anything already linking to them — a post, an email,
                 a search result — still lands on the right page. */}

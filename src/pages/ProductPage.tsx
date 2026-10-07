@@ -63,20 +63,6 @@ const productData: Record<string, ProductData> = {
     ctaText: "Talk to a Consultant",
     stats: [{ value: "100+", label: "Advisors" }, { value: "15+", label: "Sectors" }, { value: "500+", label: "Sessions Delivered" }, { value: "4.9/5", label: "Rating" }],
   },
-  "sparkx-mentoring": {
-    title: "SparkX Mentoring",
-    tagline: "Structured Mentorship Sessions",
-    heroDescription: "Mentorship with a shape to it. Get matched to an operator who has done what you are doing, book sessions against a plan rather than a favour, and keep a record of what was agreed between them.",
-    icon: <Users className="h-8 w-8" />,
-    features: [
-      { title: "Matched, Not Guessed", description: "Pair with a mentor by sector, stage and the problem in front of you, rather than whoever happens to be free." },
-      { title: "Sessions on a Schedule", description: "Book recurring slots with a clear agenda, so mentoring is a commitment on both sides and not an occasional catch-up." },
-      { title: "A Record That Carries", description: "Notes, actions and decisions from every session, so the next one starts where the last one ended." },
-      { title: "Progress You Can See", description: "Track hours, sessions and the ground covered across your mentoring relationship." },
-    ],
-    benefits: ["Matched on sector and stage", "Recurring sessions, not one-offs", "Shared notes and agreed actions", "Mentors drawn from the SparkX Index"],
-    ctaText: "Find a Mentor",
-  },
   "sparkx-academy": {
     title: "SparkX Academy",
     tagline: "Learn. Build. Scale.",
