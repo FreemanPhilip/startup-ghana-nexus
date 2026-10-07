@@ -8,23 +8,22 @@ import solutionsImg from "@/assets/solutions-dropdown.jpg";
 import { talentOrigin } from "@/lib/talentSso";
 import SparkXLogo from "@/components/SparkXLogo";
 
+// Two columns purely for layout — the headings that used to label them were
+// categories the products did not really divide along, and the names say
+// what each one is.
 const solutionCategories = [
   {
-    title: "BUILD & GROW",
     items: [
-      { label: "SparkX Labs", href: "/sparkx-labs", desc: "Innovation & incubation" },
+      { label: "SparkX WorkSpaces", href: "/sparkx-workspaces", desc: "Incubation & co-working systems" },
       { label: "SparkX Academy", href: "/sparkx-academy", desc: "Courses & training" },
       { label: "SparkX Talent", href: talentOrigin(), desc: "Hire vetted talent" },
     ],
   },
   {
-    title: "FUND & ADVISE",
     items: [
-      { label: "SparkX Advisory", href: "/sparkx-advisory", desc: "Mentorship & consulting" },
+      { label: "SparkX Consult", href: "/sparkx-consult", desc: "Business advisory & support" },
       { label: "SparkX Fund", href: "/sparkx-fund", desc: "Funding & capital access" },
-      // Also a top-level link, but the Solutions menu is where someone
-      // browsing the products looks for it, and the column was a row short.
-      { label: "SparkX Index", href: "/sparkx-index", desc: "Ecosystem & mentorship" },
+      { label: "SparkX Mentoring", href: "/sparkx-mentoring", desc: "Structured mentorship sessions" },
     ],
   },
 ];
@@ -134,11 +133,8 @@ const Navbar = ({ overHero = false }: NavbarProps) => {
 
                     {/* Right: Categories */}
                     <div className="flex flex-1 gap-8 p-6">
-                      {solutionCategories.map((cat) => (
-                        <div key={cat.title} className="flex-1">
-                          <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-                            {cat.title}
-                          </p>
+                      {solutionCategories.map((cat, ci) => (
+                        <div key={ci} className="flex-1">
                           <div className="flex flex-col gap-1">
                             {cat.items.map((item) =>
                               item.href.startsWith("/") ? (
@@ -249,9 +245,8 @@ const Navbar = ({ overHero = false }: NavbarProps) => {
                   exit={{ opacity: 0, height: 0 }}
                   className="overflow-hidden pl-4"
                 >
-                  {solutionCategories.map((cat) => (
-                    <div key={cat.title} className="mb-2">
-                      <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{cat.title}</p>
+                  {solutionCategories.map((cat, ci) => (
+                    <div key={ci} className="mb-2">
                       {cat.items.map((item) =>
                         item.href.startsWith("/") ? (
                           <Link
