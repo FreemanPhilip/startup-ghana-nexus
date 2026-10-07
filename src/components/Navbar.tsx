@@ -22,6 +22,9 @@ const solutionCategories = [
     items: [
       { label: "SparkX Advisory", href: "/sparkx-advisory", desc: "Mentorship & consulting" },
       { label: "SparkX Fund", href: "/sparkx-fund", desc: "Funding & capital access" },
+      // Also a top-level link, but the Solutions menu is where someone
+      // browsing the products looks for it, and the column was a row short.
+      { label: "SparkX Index", href: "/sparkx-index", desc: "Ecosystem & mentorship" },
     ],
   },
 ];
