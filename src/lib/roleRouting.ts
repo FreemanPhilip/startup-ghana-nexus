@@ -16,6 +16,16 @@ const DASHBOARD_ROLES = new Set<AppRole>([
   "admin",
 ]);
 
+/**
+ * Where the SparkX logo goes from inside the app.
+ *
+ * Not "/": that route sends a signed-in visitor straight back to their
+ * dashboard, so the logo in the dashboard chrome was a no-op for exactly the
+ * people who click it. This route always renders the landing page, while "/"
+ * keeps its behaviour of dropping a returning member back into the app.
+ */
+export const LANDING_PATH = "/home";
+
 export function sanitizeAppPath(path: string | null | undefined, fallback = "/dashboard"): string {
   const candidate = typeof path === "string" ? path.trim() : "";
 

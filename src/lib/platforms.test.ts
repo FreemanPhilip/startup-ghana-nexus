@@ -6,11 +6,16 @@ describe("platforms", () => {
     expect(platforms().map((p) => p.id)).toEqual(["index", "talent"]);
   });
 
-  it("points Talent at the same origin the SSO hand-off uses", () => {
-    // Three hardcoded copies of the host is how a staging build ends up
-    // sending people to production, so the switcher must not have its own.
+  it("points Talent at the switch entry, not its home page", () => {
+    // A plain link to talent.sparkxglobal.net lands a signed-in member on a
+    // login form for a product they already belong to. The switch entry
+    // carries their SparkX account across instead.
+    //
+    // The host comes from talentSso rather than being spelt again here:
+    // three hardcoded copies of it is how a staging build ends up sending
+    // people to production.
     const talent = platforms().find((p) => p.id === "talent");
-    expect(talent?.href).toBe("https://talent.sparkxglobal.net");
+    expect(talent?.href).toBe("https://talent.sparkxglobal.net/auth/sparkx-index/start");
   });
 
   it("gives every platform an absolute href", () => {

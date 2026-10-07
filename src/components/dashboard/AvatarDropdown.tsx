@@ -5,6 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { useAuth } from "@/contexts/AuthContext";
 import { useStartups, Startup } from "@/hooks/useStartups";
 import PlatformSwitcher from "./PlatformSwitcher";
+import { canSeeMyStartups } from "@/lib/startupAccess";
 
 export interface PostingIdentity {
   type: "personal" | "startup";
@@ -12,16 +13,27 @@ export interface PostingIdentity {
 }
 
 interface AvatarDropdownProps {
+  /**
+   * Whether the dashboard behind this header has a my-startups tab. Only the
+   * founder dashboard does, so elsewhere the link would switch to a tab that
+   * does not exist and bounce back to home.
+   */
+  hasStartupsTab?: boolean;
   onNavigate: (tab: string) => void;
   onSignOut: () => void;
   activeIdentity: PostingIdentity;
   onIdentityChange: (identity: PostingIdentity) => void;
 }
 
-const AvatarDropdown = ({ onNavigate, onSignOut, activeIdentity, onIdentityChange }: AvatarDropdownProps) => {
-  const { profile, primaryRole } = useAuth();
+const AvatarDropdown = ({ hasStartupsTab = false, onNavigate, onSignOut, activeIdentity, onIdentityChange }: AvatarDropdownProps) => {
+  const { profile, roles } = useAuth();
   const { myStartups } = useStartups();
-  const hideStartups = primaryRole === "mentor" || primaryRole === "investor";
+  // Read the whole roles array, not primaryRole. Someone who onboarded as an
+  // investor and later added the founder role has primaryRole "investor", and
+  // the old check hid their own startups from them. It also showed the item to
+  // partners and admins, whose dashboards have no my-startups tab, so it was a
+  // dead click in one direction and a missing one in the other.
+  const showStartupsLink = hasStartupsTab && canSeeMyStartups(roles, myStartups.length);
 
   const initials = profile?.full_name?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "U";
 
@@ -52,14 +64,14 @@ const AvatarDropdown = ({ onNavigate, onSignOut, activeIdentity, onIdentityChang
         <DropdownMenuItem onClick={() => onNavigate("profile")} className="gap-2 cursor-pointer">
           <User className="h-4 w-4" /> View Profile
         </DropdownMenuItem>
-        {!hideStartups && (
+        {showStartupsLink && (
           <DropdownMenuItem onClick={() => onNavigate("my-startups")} className="gap-2 cursor-pointer">
             <Building2 className="h-4 w-4" /> My Startups
           </DropdownMenuItem>
         )}
 
         {/* Identity switching */}
-        {!hideStartups && myStartups.length > 0 && (
+        {myStartups.length > 0 && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuLabel className="text-xs text-muted-foreground flex items-center gap-1">

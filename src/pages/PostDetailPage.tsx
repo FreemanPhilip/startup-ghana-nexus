@@ -11,6 +11,7 @@ import SparkXLogo from "@/components/SparkXLogo";
 import PostContentRenderer from "@/components/dashboard/PostContentRenderer";
 import ImageCarousel from "@/components/dashboard/ImageCarousel";
 import { formatDistanceToNow } from "date-fns";
+import { LANDING_PATH } from "@/lib/roleRouting";
 
 interface PublicPost {
   id: string;
@@ -110,7 +111,7 @@ const PostDetailPage = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-4 md:px-6">
-          <Link to="/" aria-label="SparkX home" className="flex items-center">
+          <Link to={LANDING_PATH} aria-label="SparkX home" className="flex items-center">
             <SparkXLogo className="h-7" />
           </Link>
           <Link to="/sparkx-index">

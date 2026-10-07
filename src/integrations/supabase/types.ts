@@ -1893,6 +1893,7 @@ export type Database = {
           linkedin_url: string | null
           location: string | null
           onboarding_step: Database["public"]["Enums"]["onboarding_step"] | null
+          roles: Database["public"]["Enums"]["app_role"][] | null
           user_id: string | null
           verification:
             | Database["public"]["Enums"]["verification_status"]
@@ -1916,6 +1917,7 @@ export type Database = {
           onboarding_step?:
             | Database["public"]["Enums"]["onboarding_step"]
             | null
+          roles?: Database["public"]["Enums"]["app_role"][] | null
           user_id?: string | null
           verification?:
             | Database["public"]["Enums"]["verification_status"]
@@ -1939,6 +1941,7 @@ export type Database = {
           onboarding_step?:
             | Database["public"]["Enums"]["onboarding_step"]
             | null
+          roles?: Database["public"]["Enums"]["app_role"][] | null
           user_id?: string | null
           verification?:
             | Database["public"]["Enums"]["verification_status"]

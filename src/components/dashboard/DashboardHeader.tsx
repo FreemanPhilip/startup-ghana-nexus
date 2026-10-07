@@ -7,6 +7,8 @@ import NotificationDropdown from "./NotificationDropdown";
 import AvatarDropdown, { PostingIdentity } from "./AvatarDropdown";
 
 interface DashboardHeaderProps {
+  /** Passed through to the avatar menu — only the founder dashboard has one. */
+  hasStartupsTab?: boolean;
   onMenuToggle?: () => void;
   onNavigate: (tab: string) => void;
   onSignOut: () => void;
@@ -14,7 +16,7 @@ interface DashboardHeaderProps {
   onIdentityChange: (identity: PostingIdentity) => void;
 }
 
-const DashboardHeader = ({ onMenuToggle, onNavigate, onSignOut, activeIdentity, onIdentityChange }: DashboardHeaderProps) => {
+const DashboardHeader = ({ hasStartupsTab, onMenuToggle, onNavigate, onSignOut, activeIdentity, onIdentityChange }: DashboardHeaderProps) => {
   const { profile } = useAuth();
 
   return (
@@ -38,6 +40,7 @@ const DashboardHeader = ({ onMenuToggle, onNavigate, onSignOut, activeIdentity, 
         )}
         <NotificationDropdown />
         <AvatarDropdown
+          hasStartupsTab={hasStartupsTab}
           onNavigate={onNavigate}
           onSignOut={onSignOut}
           activeIdentity={activeIdentity}
