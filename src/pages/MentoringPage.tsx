@@ -71,19 +71,10 @@ const MentoringPage = () => (
             booked against a real calendar, and recorded so the next session builds on the last.
           </p>
 
-          <div className="mt-9 flex flex-wrap items-center gap-3">
+          <div className="mt-9">
             <Link to="/auth">
               <Button size="lg" className="h-12 rounded-xl px-7 text-[15px] font-semibold">
                 Get started <ArrowRight className="ml-1.5 h-4 w-4" />
-              </Button>
-            </Link>
-            <Link to="/sparkx-index">
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-12 rounded-xl border-white/25 bg-transparent px-7 text-[15px] font-semibold text-white hover:bg-white/10 hover:text-white"
-              >
-                How the Index works
               </Button>
             </Link>
           </div>
